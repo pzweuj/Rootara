@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "China" },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [[[105, 35], [115, 35], [115, 25], [105, 25], [105, 35]]]
+        ]
+      }
+    }
+  ]
+} 
