@@ -5,11 +5,44 @@
 # 注，由于gvcf文件巨大，会转换出两个文件
 # 1，核心区，包含wegene和23andme并集的所有位点
 # 2，突变区，包含突变位点
+# 为提高效率，使用bcftools
 
-import pysam
-import gzip
+import os
 import sys
 import argparse
+import gzip
+
+# bcftools路径
+BCFTOOLS = "bcftools"
+
+def extract_variants(gvcf_file, output_vcf):
+    """提取 gVCF 文件中的突变位点。"""
+    print("Extracting variant sites...")
+    command = f"{BCFTOOLS} view -i 'FILTER=\"PASS\"' {gvcf_file} -Oz -o {output_vcf}"
+    os.system(command)
+    command = f"{BCFTOOLS} index {output_vcf}"
+    os.system(command)
+    print(f"Variant sites saved to {output_vcf}")
+
+def extract_wildtype_sites(gvcf_file, bed_file, output_vcf):
+    """提取 BED 区域内的野生型位点。"""
+    print("Extracting wildtype sites in BED regions...")
+    
+    # 使用管道合并两个命令，直接提取bed区域并过滤
+    command = f"{BCFTOOLS} view -R {bed_file} {gvcf_file} | " \
+              f"{BCFTOOLS} view -i 'FILTER!=\"PASS\" && FORMAT/GT=\"0/0\"' | " \
+              f"{BCFTOOLS} norm -d all -Oz -o {output_vcf}"
+    os.system(command)
+    command = f"{BCFTOOLS} index {output_vcf}"
+    os.system(command)
+    print(f"Wildtype sites saved to {output_vcf}")
+
+def merge_vcfs(variant_vcf, wildtype_vcf, output_vcf):
+    """合并突变位点和野生型位点。"""
+    print("Merging variant and wildtype sites...")
+    command = f"{BCFTOOLS} concat -a {variant_vcf} {wildtype_vcf} -Oz -o {output_vcf}"
+    os.system(command)
+    print(f"Merged VCF saved to {output_vcf}")
 
 def gvcf_to_vcf(input_gvcf, core_bed, output_vcf):
     """
@@ -18,56 +51,56 @@ def gvcf_to_vcf(input_gvcf, core_bed, output_vcf):
     :param core_bed: 核心区bed文件路径
     :param output_prefix: 输出文件前缀
     """
+    # bcftools
+    varaint_vcf = output_vcf.replace(".vcf", ".variant.vcf")
+    extract_variants(input_gvcf, varaint_vcf)
 
-    # 打开输入文件
-    vcf_in = pysam.VariantFile(input_gvcf)
+    wild_type_vcf = output_vcf.replace(".vcf", ".wild_type.vcf")
+    extract_wildtype_sites(input_gvcf, core_bed, wild_type_vcf)
+    merge_vcfs(varaint_vcf, wild_type_vcf, output_vcf)
     
-    # 创建输出文件
-    core_out = pysam.VariantFile(output_vcf, 'w', header=vcf_in.header)
+    # 清理临时文件
+    os.remove(varaint_vcf)
+    os.remove(varaint_vcf + ".csi")    
+    os.remove(wild_type_vcf)
+    os.remove(wild_type_vcf + ".csi")
 
-    # 读取核心区bed文件
-    core_regions = []
-    open_func = gzip.open if core_bed.endswith('.gz') else open
-    with open_func(core_bed, "rt") as f:
-        for line in f:
-            try:
-                chrom, start, end = line.strip().split()[:3]
-                core_regions.append((chrom, int(start), int(end)))
-            except Exception as e:
-                print("[Warning]", e)
+def process_vcf(input_vcf, output_vcf):
+    with gzip.open(input_vcf, "rt") as infile, gzip.open(output_vcf, "wt") as outfile:
+        for line in infile:
+            if line.startswith("#"):  # 保留注释行
+                outfile.write(line)
                 continue
-
-    # 处理每个variant
-    for record in vcf_in:
-        # 检查是否在核心区
-        in_core = any(
-            region[0] == record.chrom and 
-            region[1] <= record.pos <= region[2]
-            for region in core_regions
-        )
-
-        # 如果是核心区变异
-        if in_core:
-            core_out.write(record)
-        
-        # 如果是突变（非参考基因型）
-        elif any(sample["GT"] != (0, 0) for sample in record.samples.values()):
-            core_out.write(record)
-        
-        else:
-            continue
-
-    # 关闭文件
-    vcf_in.close()
-    core_out.close()
+            
+            # 解析数据行
+            parts = line.strip().split("\t")
+            chrom, pos, id_, ref, alt, qual, filter_, info, format_, *samples = parts
+            
+            # 处理 ALT 字段
+            if "<*>" in alt or "<NON_REF>" in alt:
+                # 获取基因型（假设基因型在 FORMAT 字段的第一个位置）
+                sample = samples[0]  # 假设只有一个样本
+                format_fields = format_.split(":")
+                gt_index = format_fields.index("GT")  # 找到 GT 字段的索引
+                gt = sample.split(":")[gt_index]  # 提取基因型
+                
+                if gt == "0/0":  # 基因型是 0/0
+                    alt = ref  # 将 ALT 替换为 REF
+                else:  # 基因型不是 0/0
+                    alt = alt.replace(",<*>", "").replace(",<NON_REF>", "")  # 去掉 ,<*> 或 ,<NON_REF>
+                
+                parts[4] = alt  # 更新 ALT 字段
+            
+            # 写入处理后的行
+            outfile.write("\t".join(parts) + "\n")
 
 def gvcf2VcfMain():
     parser = argparse.ArgumentParser(
         usage = "python3 gvcf_2_vcf.py -i <gvcf file> -o <output vcf> -b <core bed>",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("-i", "--input", type=str, help="gvcf format")
-    parser.add_argument("-o", "--output", type=str, help="output vcf")
+    parser.add_argument("-i", "--input", type=str, help="gvcf format, gvcf.gz")
+    parser.add_argument("-o", "--output", type=str, help="output vcf.gz")
     parser.add_argument("-b", "--bed", type=str, help="core bed")
 
     if len(sys.argv[1:]) == 0:
@@ -78,9 +111,11 @@ def gvcf2VcfMain():
     input = args.input
     output = args.output
     bed = args.bed
-    gvcf_to_vcf(input, bed, output)
+    gvcf_to_vcf(input, bed, output.replace(".vcf", ".pre.vcf"))
+    process_vcf(output.replace(".vcf.gz", ".pre.vcf.gz"), output)
+    os.remove(output.replace(".vcf.gz", ".pre.vcf.gz"))
 
 if __name__ == "__main__":
-    gvcf2VcfMain
+    gvcf2VcfMain()
 
 # end
