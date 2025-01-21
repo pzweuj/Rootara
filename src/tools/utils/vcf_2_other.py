@@ -55,9 +55,9 @@ def vcf_to_other(input_vcf, output_file):
             
             # 处理插入和缺失
             if len(ref) > len(alt):
-                genotype = 'D'  # 缺失
+                alt = 'D'  # 缺失
             elif len(ref) < len(alt):
-                genotype = 'I'  # 插入
+                alt = 'I'  # 插入
 
             # 处理染色体格式
             if chrom.startswith('chr'):
