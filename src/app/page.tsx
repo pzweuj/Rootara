@@ -47,19 +47,19 @@ export default function Home() {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* 左侧导航栏 */}
-      <nav className="w-64 bg-white shadow-lg p-6 flex flex-col justify-between">
+      <nav className="w-64 bg-gray-50 shadow-lg p-6 flex flex-col justify-between">
         {/* 导航栏内容 */}
         <div>
           {/* Rootara 标题 */}
-          <div className="text-2xl font-semibold mb-6 text-gray-800">Rootara</div>
+          <div className="text-2xl font-semibold mb-6 text-gray-700">Rootara</div>
 
           {/* 导航链接 */}
           <ul>
             <li className="mb-4">
               <a
                 href="#"
-                className={`text-gray-700 hover:text-white hover:bg-blue-500 hover:shadow-md transition duration-300 p-2 rounded-lg block ${
-                  activeTab === "祖源分析" ? "bg-blue-500 text-white" : ""
+                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+                  activeTab === "祖源分析" ? "bg-gray-200 text-gray-700" : ""
                 }`}
                 onClick={() => setActiveTab("祖源分析")}
               >
@@ -69,19 +69,8 @@ export default function Home() {
             <li className="mb-4">
               <a
                 href="#"
-                className={`text-gray-700 hover:text-white hover:bg-blue-500 hover:shadow-md transition duration-300 p-2 rounded-lg block ${
-                  activeTab === "药物指南" ? "bg-blue-500 text-white" : ""
-                }`}
-                onClick={() => setActiveTab("药物指南")}
-              >
-                药物指南
-              </a>
-            </li>
-            <li className="mb-4">
-              <a
-                href="#"
-                className={`text-gray-700 hover:text-white hover:bg-blue-500 hover:shadow-md transition duration-300 p-2 rounded-lg block ${
-                  activeTab === "遗传性疾病" ? "bg-blue-500 text-white" : ""
+                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+                  activeTab === "遗传性疾病" ? "bg-gray-200 text-gray-700" : ""
                 }`}
                 onClick={() => setActiveTab("遗传性疾病")}
               >
@@ -91,12 +80,34 @@ export default function Home() {
             <li className="mb-4">
               <a
                 href="#"
-                className={`text-gray-700 hover:text-white hover:bg-blue-500 hover:shadow-md transition duration-300 p-2 rounded-lg block ${
-                  activeTab === "遗传特征" ? "bg-blue-500 text-white" : ""
+                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+                  activeTab === "药物反应" ? "bg-gray-200 text-gray-700" : ""
+                }`}
+                onClick={() => setActiveTab("药物反应")}
+              >
+                药物反应
+              </a>
+            </li>
+            <li className="mb-4">
+              <a
+                href="#"
+                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+                  activeTab === "遗传特征" ? "bg-gray-200 text-gray-700" : ""
                 }`}
                 onClick={() => setActiveTab("遗传特征")}
               >
                 遗传特征
+              </a>
+            </li>
+            <li className="mb-4">
+              <a
+                href="#"
+                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+                  activeTab === "我的模块" ? "bg-gray-200 text-gray-700" : ""
+                }`}
+                onClick={() => setActiveTab("我的模块")}
+              >
+                我的模块
               </a>
             </li>
           </ul>
@@ -105,11 +116,11 @@ export default function Home() {
         {/* 用户头像和信息 */}
         <div className="relative" ref={dropdownRef}>
           <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
-            <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
               <span className="text-gray-600 text-lg">U</span>
             </div>
             <div className="ml-3">
-              <p className="text-gray-800 font-medium">Username</p>
+              <p className="text-gray-700 font-medium">Username</p>
               <p className="text-sm text-gray-500">user@example.com</p>
             </div>
           </div>
