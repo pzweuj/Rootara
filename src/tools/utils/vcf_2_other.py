@@ -59,6 +59,10 @@ def vcf_to_other(input_vcf, output_file):
             elif len(ref) < len(alt):
                 alt = 'I'  # 插入
 
+            # reference调整
+            if len(ref) > 1:
+                ref = ref[0]
+
             # 处理染色体格式
             if chrom.startswith('chr'):
                 chrom = chrom[3:]
