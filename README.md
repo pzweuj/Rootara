@@ -42,6 +42,9 @@ Rootara 支持自行部署，所有数据均存储在您自己的服务器中，
 
 ### 推荐使用 Docker Compose 部署
 
+rootara-tools内置了所需的数据库，体积约8G。
+
+
 ```yaml
 
 (待补充)
