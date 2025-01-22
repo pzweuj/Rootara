@@ -1,8 +1,8 @@
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-import React, { useState } from "react";
-import { geoCentroid } from "d3-geo";
-import worldMap from "@react-simple-maps/world";
-import { ZoomableGroup } from "react-simple-maps";
+'use client';
+
+import React from 'react';
+import worldSvg from './world.svg';
+import Image from 'next/image';
 
 interface RegionData {
   id: string;
@@ -16,60 +16,52 @@ interface RegionData {
 }
 
 const AncestryMap: React.FC<{ regions: RegionData[] }> = ({ regions }) => {
-  const [hoveredRegion, setHoveredRegion] = useState<RegionData | null>(null);
+  const [hoveredRegion, setHoveredRegion] = React.useState<RegionData | null>(null);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">祖源地图</h3>
       <div className="relative w-full h-[400px]">
-        <ComposableMap
-          projection="geoMercator"
-          projectionConfig={{
-            scale: 150,
-            center: [105, 35]
-          }}
+        <div className="absolute inset-0">
+          <Image
+            src={worldSvg}
+            alt="World Map"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
+        
+        <svg
+          viewBox="0 0 1000 500"
+          className="absolute inset-0 w-full h-full"
+          style={{ pointerEvents: 'none' }}
         >
-          <ZoomableGroup>
-            <Geographies geography={worldMap}>
-              {({ geographies }) =>
-                geographies.map((geo) => (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill="#EAEAEC"
-                    stroke="#D6D6DA"
-                    style={{
-                      default: { outline: "none" },
-                      hover: { fill: "#F5F5F5", outline: "none" },
-                      pressed: { fill: "#E2E2E2", outline: "none" },
-                    }}
-                  />
-                ))
-              }
-            </Geographies>
-            {regions.map((region) => (
-              <Marker
-                key={region.id}
-                coordinates={[region.coordinates.cx, region.coordinates.cy]}
+          {regions.map((region) => (
+            <g key={region.id} style={{ pointerEvents: 'auto' }}>
+              <circle
+                cx={region.coordinates.cx * 1000 / 360 + 500}
+                cy={250 - (region.coordinates.cy * 250 / 90)}
+                r={Math.max(5, region.percentage * 0.5)}
                 fill="#FF5733"
                 stroke="#FFFFFF"
-                strokeWidth={2}
-                radius={region.coordinates.r}
+                strokeWidth="2"
+                opacity="0.8"
                 onMouseEnter={() => setHoveredRegion(region)}
                 onMouseLeave={() => setHoveredRegion(null)}
+                className="cursor-pointer transition-all duration-200 hover:opacity-100"
               />
-            ))}
-          </ZoomableGroup>
-        </ComposableMap>
+            </g>
+          ))}
+        </svg>
 
         {hoveredRegion && (
           <div
-            className="absolute bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm"
+            className="absolute bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm pointer-events-none"
             style={{
-              left: `${hoveredRegion.coordinates.cx}px`,
-              top: `${hoveredRegion.coordinates.cy}px`,
+              left: `${(hoveredRegion.coordinates.cx * 1000 / 360 + 500) * 100 / 1000}%`,
+              top: `${(250 - (hoveredRegion.coordinates.cy * 250 / 90)) * 100 / 500}%`,
               transform: 'translate(-50%, -100%)',
-              pointerEvents: 'none'
             }}
           >
             {hoveredRegion.name}: {hoveredRegion.percentage}%
