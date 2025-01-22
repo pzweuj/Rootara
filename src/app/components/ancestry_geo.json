@@ -1,0 +1,427 @@
+{
+    "regions": [
+      {
+        "name": "Kushitic",
+        "coordinates": [
+          { "lat": 10, "lng": 30 },
+          { "lat": 20, "lng": 30 },
+          { "lat": 20, "lng": 50 },
+          { "lat": 10, "lng": 50 }
+        ]
+      },
+      {
+        "name": "North-Iberian",
+        "coordinates": [
+          { "lat": 40, "lng": -10 },
+          { "lat": 45, "lng": -10 },
+          { "lat": 45, "lng": 0 },
+          { "lat": 40, "lng": 0 }
+        ]
+      },
+      {
+        "name": "East-Iberian",
+        "coordinates": [
+          { "lat": 38, "lng": 0 },
+          { "lat": 42, "lng": 0 },
+          { "lat": 42, "lng": 5 },
+          { "lat": 38, "lng": 5 }
+        ]
+      },
+      {
+        "name": "Tibeto-Burman",
+        "coordinates": [
+          { "lat": 25, "lng": 90 },
+          { "lat": 35, "lng": 90 },
+          { "lat": 35, "lng": 105 },
+          { "lat": 25, "lng": 105 }
+        ]
+      },
+      {
+        "name": "North-African",
+        "coordinates": [
+          { "lat": 20, "lng": -15 },
+          { "lat": 35, "lng": -15 },
+          { "lat": 35, "lng": 35 },
+          { "lat": 20, "lng": 35 }
+        ]
+      },
+      {
+        "name": "South-Caucasian",
+        "coordinates": [
+          { "lat": 40, "lng": 40 },
+          { "lat": 45, "lng": 40 },
+          { "lat": 45, "lng": 50 },
+          { "lat": 40, "lng": 50 }
+        ]
+      },
+      {
+        "name": "North-Caucasian",
+        "coordinates": [
+          { "lat": 45, "lng": 40 },
+          { "lat": 50, "lng": 40 },
+          { "lat": 50, "lng": 50 },
+          { "lat": 45, "lng": 50 }
+        ]
+      },
+      {
+        "name": "Paleo-Balkan",
+        "coordinates": [
+          { "lat": 40, "lng": 20 },
+          { "lat": 45, "lng": 20 },
+          { "lat": 45, "lng": 30 },
+          { "lat": 40, "lng": 30 }
+        ]
+      },
+      {
+        "name": "Turkic-Altai",
+        "coordinates": [
+          { "lat": 45, "lng": 80 },
+          { "lat": 55, "lng": 80 },
+          { "lat": 55, "lng": 100 },
+          { "lat": 45, "lng": 100 }
+        ]
+      },
+      {
+        "name": "Proto-Austronesian",
+        "coordinates": [
+          { "lat": -10, "lng": 100 },
+          { "lat": 10, "lng": 100 },
+          { "lat": 10, "lng": 150 },
+          { "lat": -10, "lng": 150 }
+        ]
+      },
+      {
+        "name": "Nilotic",
+        "coordinates": [
+          { "lat": 0, "lng": 25 },
+          { "lat": 10, "lng": 25 },
+          { "lat": 10, "lng": 35 },
+          { "lat": 0, "lng": 35 }
+        ]
+      },
+      {
+        "name": "East-Med",
+        "coordinates": [
+          { "lat": 30, "lng": 20 },
+          { "lat": 40, "lng": 20 },
+          { "lat": 40, "lng": 40 },
+          { "lat": 30, "lng": 40 }
+        ]
+      },
+      {
+        "name": "Omotic",
+        "coordinates": [
+          { "lat": 5, "lng": 35 },
+          { "lat": 10, "lng": 35 },
+          { "lat": 10, "lng": 40 },
+          { "lat": 5, "lng": 40 }
+        ]
+      },
+      {
+        "name": "Munda",
+        "coordinates": [
+          { "lat": 20, "lng": 80 },
+          { "lat": 25, "lng": 80 },
+          { "lat": 25, "lng": 90 },
+          { "lat": 20, "lng": 90 }
+        ]
+      },
+      {
+        "name": "North-Amerind",
+        "coordinates": [
+          { "lat": 50, "lng": -130 },
+          { "lat": 70, "lng": -130 },
+          { "lat": 70, "lng": -60 },
+          { "lat": 50, "lng": -60 }
+        ]
+      },
+      {
+        "name": "Arabic",
+        "coordinates": [
+          { "lat": 15, "lng": 35 },
+          { "lat": 30, "lng": 35 },
+          { "lat": 30, "lng": 60 },
+          { "lat": 15, "lng": 60 }
+        ]
+      },
+      {
+        "name": "East-Euro",
+        "coordinates": [
+          { "lat": 50, "lng": 20 },
+          { "lat": 60, "lng": 20 },
+          { "lat": 60, "lng": 40 },
+          { "lat": 50, "lng": 40 }
+        ]
+      },
+      {
+        "name": "Central-African",
+        "coordinates": [
+          { "lat": -5, "lng": 10 },
+          { "lat": 10, "lng": 10 },
+          { "lat": 10, "lng": 30 },
+          { "lat": -5, "lng": 30 }
+        ]
+      },
+      {
+        "name": "Andean",
+        "coordinates": [
+          { "lat": -20, "lng": -80 },
+          { "lat": -10, "lng": -80 },
+          { "lat": -10, "lng": -70 },
+          { "lat": -20, "lng": -70 }
+        ]
+      },
+      {
+        "name": "Indo-Chinese",
+        "coordinates": [
+          { "lat": 10, "lng": 90 },
+          { "lat": 25, "lng": 90 },
+          { "lat": 25, "lng": 110 },
+          { "lat": 10, "lng": 110 }
+        ]
+      },
+      {
+        "name": "South-Indian",
+        "coordinates": [
+          { "lat": 8, "lng": 70 },
+          { "lat": 20, "lng": 70 },
+          { "lat": 20, "lng": 80 },
+          { "lat": 8, "lng": 80 }
+        ]
+      },
+      {
+        "name": "NE-Asian",
+        "coordinates": [
+          { "lat": 40, "lng": 100 },
+          { "lat": 50, "lng": 100 },
+          { "lat": 50, "lng": 140 },
+          { "lat": 40, "lng": 140 }
+        ]
+      },
+      {
+        "name": "Volgan",
+        "coordinates": [
+          { "lat": 50, "lng": 40 },
+          { "lat": 60, "lng": 40 },
+          { "lat": 60, "lng": 60 },
+          { "lat": 50, "lng": 60 }
+        ]
+      },
+      {
+        "name": "Mongolian",
+        "coordinates": [
+          { "lat": 45, "lng": 90 },
+          { "lat": 55, "lng": 90 },
+          { "lat": 55, "lng": 120 },
+          { "lat": 45, "lng": 120 }
+        ]
+      },
+      {
+        "name": "Siberian",
+        "coordinates": [
+          { "lat": 55, "lng": 60 },
+          { "lat": 70, "lng": 60 },
+          { "lat": 70, "lng": 180 },
+          { "lat": 55, "lng": 180 }
+        ]
+      },
+      {
+        "name": "North-Sea-Germanic",
+        "coordinates": [
+          { "lat": 50, "lng": 0 },
+          { "lat": 60, "lng": 0 },
+          { "lat": 60, "lng": 10 },
+          { "lat": 50, "lng": 10 }
+        ]
+      },
+      {
+        "name": "Celtic",
+        "coordinates": [
+          { "lat": 50, "lng": -10 },
+          { "lat": 60, "lng": -10 },
+          { "lat": 60, "lng": 0 },
+          { "lat": 50, "lng": 0 }
+        ]
+      },
+      {
+        "name": "West-African",
+        "coordinates": [
+          { "lat": 5, "lng": -15 },
+          { "lat": 15, "lng": -15 },
+          { "lat": 15, "lng": 15 },
+          { "lat": 5, "lng": 15 }
+        ]
+      },
+      {
+        "name": "West-Finnic",
+        "coordinates": [
+          { "lat": 60, "lng": 20 },
+          { "lat": 70, "lng": 20 },
+          { "lat": 70, "lng": 40 },
+          { "lat": 60, "lng": 40 }
+        ]
+      },
+      {
+        "name": "Uralic",
+        "coordinates": [
+          { "lat": 55, "lng": 50 },
+          { "lat": 65, "lng": 50 },
+          { "lat": 65, "lng": 70 },
+          { "lat": 55, "lng": 70 }
+        ]
+      },
+      {
+        "name": "Sahelian",
+        "coordinates": [
+          { "lat": 10, "lng": -10 },
+          { "lat": 20, "lng": -10 },
+          { "lat": 20, "lng": 20 },
+          { "lat": 10, "lng": 20 }
+        ]
+      },
+      {
+        "name": "NW-Indian",
+        "coordinates": [
+          { "lat": 25, "lng": 70 },
+          { "lat": 35, "lng": 70 },
+          { "lat": 35, "lng": 80 },
+          { "lat": 25, "lng": 80 }
+        ]
+      },
+      {
+        "name": "East-African",
+        "coordinates": [
+          { "lat": -10, "lng": 30 },
+          { "lat": 10, "lng": 30 },
+          { "lat": 10, "lng": 50 },
+          { "lat": -10, "lng": 50 }
+        ]
+      },
+      {
+        "name": "East-Asian",
+        "coordinates": [
+          { "lat": 20, "lng": 100 },
+          { "lat": 50, "lng": 100 },
+          { "lat": 50, "lng": 140 },
+          { "lat": 20, "lng": 140 }
+        ]
+      },
+      {
+        "name": "Amuro-Manchurian",
+        "coordinates": [
+          { "lat": 45, "lng": 120 },
+          { "lat": 55, "lng": 120 },
+          { "lat": 55, "lng": 140 },
+          { "lat": 45, "lng": 140 }
+        ]
+      },
+      {
+        "name": "Scando-Germanic",
+        "coordinates": [
+          { "lat": 55, "lng": 5 },
+          { "lat": 65, "lng": 5 },
+          { "lat": 65, "lng": 20 },
+          { "lat": 55, "lng": 20 }
+        ]
+      },
+      {
+        "name": "Iranian",
+        "coordinates": [
+          { "lat": 25, "lng": 40 },
+          { "lat": 40, "lng": 40 },
+          { "lat": 40, "lng": 60 },
+          { "lat": 25, "lng": 60 }
+        ]
+      },
+      {
+        "name": "South-African",
+        "coordinates": [
+          { "lat": -35, "lng": 15 },
+          { "lat": -20, "lng": 15 },
+          { "lat": -20, "lng": 35 },
+          { "lat": -35, "lng": 35 }
+        ]
+      },
+      {
+        "name": "Amazonian",
+        "coordinates": [
+          { "lat": -10, "lng": -70 },
+          { "lat": 5, "lng": -70 },
+          { "lat": 5, "lng": -50 },
+          { "lat": -10, "lng": -50 }
+        ]
+      },
+      {
+        "name": "Baltic",
+        "coordinates": [
+          { "lat": 55, "lng": 20 },
+          { "lat": 60, "lng": 20 },
+          { "lat": 60, "lng": 30 },
+          { "lat": 55, "lng": 30 }
+        ]
+      },
+      {
+        "name": "Malay",
+        "coordinates": [
+          { "lat": -10, "lng": 95 },
+          { "lat": 10, "lng": 95 },
+          { "lat": 10, "lng": 120 },
+          { "lat": -10, "lng": 120 }
+        ]
+      },
+      {
+        "name": "Meso-Amerind",
+        "coordinates": [
+          { "lat": 10, "lng": -100 },
+          { "lat": 20, "lng": -100 },
+          { "lat": 20, "lng": -80 },
+          { "lat": 10, "lng": -80 }
+        ]
+      },
+      {
+        "name": "South-Chinese",
+        "coordinates": [
+          { "lat": 20, "lng": 100 },
+          { "lat": 30, "lng": 100 },
+          { "lat": 30, "lng": 120 },
+          { "lat": 20, "lng": 120 }
+        ]
+      },
+      {
+        "name": "Papuan",
+        "coordinates": [
+          { "lat": -10, "lng": 140 },
+          { "lat": 0, "lng": 140 },
+          { "lat": 0, "lng": 160 },
+          { "lat": -10, "lng": 160 }
+        ]
+      },
+      {
+        "name": "West-Med",
+        "coordinates": [
+          { "lat": 35, "lng": -5 },
+          { "lat": 45, "lng": -5 },
+          { "lat": 45, "lng": 10 },
+          { "lat": 35, "lng": 10 }
+        ]
+      },
+      {
+        "name": "Pamirian",
+        "coordinates": [
+          { "lat": 35, "lng": 70 },
+          { "lat": 40, "lng": 70 },
+          { "lat": 40, "lng": 80 },
+          { "lat": 35, "lng": 80 }
+        ]
+      },
+      {
+        "name": "Central-Med",
+        "coordinates": [
+          { "lat": 35, "lng": 10 },
+          { "lat": 45, "lng": 10 },
+          { "lat": 45, "lng": 20 },
+          { "lat": 35, "lng": 20 }
+        ]
+      }
+    ]
+}
