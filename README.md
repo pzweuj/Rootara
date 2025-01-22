@@ -1,11 +1,11 @@
 # Rootara
 
-自托管的遗传基因检测结果分析平台。
+开源遗传基因检测结果分析平台。
 
 
 ## 前言
 
-Rootara 是一个自托管的遗传基因检测结果分析平台，旨在帮助用户更好地管理自己的基因检测结果。通过 Rootara，用户可以上传基因检测数据，挖掘自身的遗传信息，发现潜在的遗传疾病风险，并探索家族遗传特征。Rootara 建议您上传由基因检测公司分析生成的 GVCF 文件，同时也支持 VCF 文件，以及 23andme、微基因等主流基因检测公司的结果文件。
+Rootara 是一个自托管的遗传基因检测结果分析平台，旨在帮助用户更好地管理自己的基因检测结果。通过 Rootara，用户可以上传来源基因检测服务商的检测数据，挖掘自身的遗传信息，发现潜在的遗传疾病风险，并探索家族遗传特征。Rootara 同时支持上传来源于全基因组检测的GVCF、VCF文件。
 
 Rootara 支持自行部署，所有数据均存储在您自己的服务器中，确保数据安全和隐私保护。
 
@@ -22,7 +22,7 @@ Rootara 支持自行部署，所有数据均存储在您自己的服务器中，
 
 - 使用 **PostgreSQL** 数据库存储用户信息、基因检测报告、授权信息等。
 - 前端基于 **Next.js** 框架构建。
-- 后端基于人类参考基因组GRCh37，使用**VEP**作为主注释程序。
+- 后端基于人类参考基因组GRCh37，使用**BCFtools**作为主注释程序。
 
 ### 基因检测报告
 
@@ -51,13 +51,24 @@ rootara-tools内置了所需的数据库，体积约8G。
 
 ```
 
+## 支持导入的基因检测结果
+
+[23andme](https://www.23andme.com/)
+
+[wegene](https://www.wegene.com/)
+
+[ancestry](https://www.ancestry.com/)
+
+[23MoFang](https://www.23mofang.com/)
 
 
 ## 基因检测小知识
 
 ### 定制芯片测序
 
-定制化芯片测序，直接获得芯片中设计好的位点的基因型。23andme、微基因等均采用如下格式回报结果：
+定制化芯片测序，直接获得芯片中设计好的位点的基因型。为了缩小rootara-tools中的包含的数据库大小，我们对dbSNP和ClinVar进行了过滤，仅保留能被[GSA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-global-screening.html)、[ASA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-asian-screening.html)，以及[CGA芯片](https://support.illumina.com/downloads/infinium-chinese-genotyping-array-v1-0-support-files.html)并集覆盖的位点。
+
+23andme、微基因等均采用如下格式回报结果：
 
 ```
 # 位点  染色体  坐标    基因型
@@ -66,7 +77,7 @@ rootara-tools内置了所需的数据库，体积约8G。
 Rootara支持这个格式的txt文件作为输入。
 
 
-### 全基因组
+### 全基因组（接口开发中）
 
 全基因组测序不需要进行特异捕获，直接检测所有的所有的位点；全外显子测序则会使用探针捕获全基因组中的所有外显子区域，覆盖的位点无法进行祖源分析；因此，Rootara建议您上传全基因组结果。
 
