@@ -43,11 +43,16 @@ def vcf_to_other(input_vcf, output_file):
             rsid = fields[2]
             ref = fields[3]
             alt = fields[4]
+            info = fields[7]
             format_fields = fields[8].split(':')  # 获取FORMAT字段
             sample_fields = fields[9].split(':')  # 获取样本字段
 
             gt_index = format_fields.index('GT') if 'GT' in format_fields else -1
             genotype = sample_fields[gt_index] if gt_index != -1 else '.'
+
+            # 尝试从INFO
+            info_dict = {k: v for k, v in (item.split("=", 1) for item in info.split(";") if "=" in item)}
+            rsid = info_dict.get("RSID", rsid)
 
             # 如果没有rsid
             if rsid == "." or rsid == "":
