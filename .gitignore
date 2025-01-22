@@ -35,3 +35,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# database
+/src/database/*
+!/src/database/rootara.grch37.vcf.gz*
+!/src/database/*.py
