@@ -1,23 +1,13 @@
 import React, { useState } from "react";
-import AncestryMap from "./AncestryAnalysis/AncestryMap";
-import HaplogroupY from "./AncestryAnalysis/HaplogroupY";
-import HaplogroupMT from "./AncestryAnalysis/HaplogroupMT";
-import Neanderthal from "./AncestryAnalysis/Neanderthal";
+import AncestryMap from "./Ancestry/AncestryMap";
+import HaplogroupY from "./Ancestry/YHaplogroup";
+import HaplogroupMT from "./Ancestry/MTHaplogroup";
+import Neanderthal from "./Ancestry/Neanderthal";
 
 const AncestryAnalysis: React.FC = () => {
-  const [regions] = useState([
-    {
-      id: "east-asia",
-      name: "东亚",
-      percentage: 80,
-      coordinates: { cx: 750, cy: 200, r: 30 }
-    },
-    // ... other regions
-  ]);
-
   return (
     <div className="grid grid-cols-1 gap-6">
-      <AncestryMap regions={regions} />
+      <AncestryMap />
       <HaplogroupY />
       <HaplogroupMT />
       <Neanderthal />
