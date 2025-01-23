@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import AncestryAnalysis from "./components/AncestryAnalysis";
 import NavBar from "./components/NavBar";
 import UserProfile from "./components/UserSetting";
+import CharacterAnalysis from "./components/CharacterAnalysis";
 
 const TAB_ITEMS = [
   "祖源分析",
@@ -23,6 +24,7 @@ const renderTabContent = (activeTab: string) => {
       return <div>药物反应内容</div>;
     case "遗传特征":
       return <div>遗传特征内容</div>;
+      // return <CharacterAnalysis />
     case "我的模块":
       return <div>我的模块内容</div>;
     default:
