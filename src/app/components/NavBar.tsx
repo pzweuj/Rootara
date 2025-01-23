@@ -17,15 +17,14 @@ export default function NavBar({ activeTab, onTabChange, tabItems, userProfile }
         <ul>
           {tabItems.map((tab) => (
             <li key={tab} className="mb-4">
-              <a
-                href="#"
-                className={`text-gray-600 hover:text-white hover:bg-gray-200 transition duration-300 p-2 block ${
+              <button
+                className={`w-full text-left text-gray-600 hover:text-gray-800 hover:bg-gray-200 transition duration-300 p-2 block ${
                   activeTab === tab ? "bg-gray-200 text-gray-700" : ""
                 }`}
                 onClick={() => onTabChange(tab)}
               >
                 {tab}
-              </a>
+              </button>
             </li>
           ))}
         </ul>
