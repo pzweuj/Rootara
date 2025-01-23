@@ -17,24 +17,14 @@ interface CharacteristicFile {
   content: string;
 }
 
-const Characteristics = () => {
+interface CharacteristicsProps {
+  content: string;
+  genotypes: GenotypeData[];
+}
+
+const Characteristics: React.FC<CharacteristicsProps> = ({ content, genotypes }) => {
   const [characteristics, setCharacteristics] = useState<Characteristic[]>([]);
   const [selectedCharacteristic, setSelectedCharacteristic] = useState<string | null>(null);
-  const [genotypes, setGenotypes] = useState<GenotypeData[]>([]);
-
-  useEffect(() => {
-    const loadGenotypeData = async () => {
-      try {
-        const response = await fetch('/api/genotype');
-        const data = await response.json();
-        setGenotypes(data);
-      } catch (error) {
-        console.error('Error loading genotype data:', error);
-      }
-    };
-
-    loadGenotypeData();
-  }, []);
 
   useEffect(() => {
     const loadCharacteristics = async () => {
