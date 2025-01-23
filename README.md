@@ -21,7 +21,7 @@ Rootara 支持自行部署，所有数据均存储在您自己的服务器中，
 ### 技术栈
 
 - 使用 **PostgreSQL** 数据库存储用户信息、基因检测报告、授权信息等。
-- 前端基于 **Next.js** 框架构建。
+- 前端基于 **NextJs** 框架构建。
 - 后端基于人类参考基因组GRCh37，使用**BCFtools**作为主注释程序。
 
 ### 基因检测报告
@@ -92,3 +92,36 @@ Rootara支持这个格式的txt文件作为输入。
 
 GVCF文件除了发生变异的位点信息外，还包含了未发生变异（野生型）的位点信息。Rootara建议您优先上传GVCF文件，获得更准确的结果。当输入文件是VCF时，由于缺少了野生型位点信息，Rootara只能假定未记录的位点都是野生型。
 
+## 项目结构规划思路
+
+```
+src/
+  app/
+    layout.tsx                # 根布局，包含导航栏和内容容器
+    page.tsx                  # 主页面，用于渲染动态内容
+    components/               # 组件文件夹
+      Navbar.tsx              # 导航栏组件
+      HomeContent.tsx         # 首页内容组件
+      AncestryAnalysis.tsx    # 祖源分析主组件
+      Ancestry/               # 祖源分析组件
+        AncestryMap.tsx       # 祖源地图
+        YHaplogroup.tsx       # Y单倍群
+        MTHaplogroup.tsx      # MT单倍群
+        Neanderthal.tsx       # 尼安德特人
+      Characteristics.tsx     # 遗传特征
+      Disease.tsx             # 遗传性疾病
+      Drug.tsx                # 药物反应
+      MyModule.tsx            # 我的模块
+      UserManagement/         # 用户管理相关组件
+        UserContent.tsx       # 用户管理内容组件
+        UserList.tsx          # 用户列表组件
+        UserForm.tsx          # 用户表单组件
+      Settings/               # 设置相关组件
+        SettingsContent.tsx   # 设置内容组件
+        ProfileSettings.tsx   # 个人资料设置组件
+        SystemSettings.tsx    # 系统设置组件
+    lib/
+      ancestry/               # 祖源分析项目
+      characteristics/        # 遗传特征项目
+      myModule/               # 我的模块项目
+```
