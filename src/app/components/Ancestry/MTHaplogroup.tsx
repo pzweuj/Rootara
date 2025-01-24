@@ -61,7 +61,7 @@ const MTHaplogroup: React.FC = () => {
       <div 
         style={{ 
           width: '100%', 
-          height: '400px',
+          height: '200px',
           position: 'relative',
           border: '1px solid #ddd'
         }}
@@ -80,8 +80,13 @@ const MTHaplogroup: React.FC = () => {
             transitionDuration={300}
             draggable={true}
             enableLegacyTransitions={true}
-            separation={{ siblings: 1, nonSiblings: 2 }}
+            separation={{ siblings: 0.5, nonSiblings: 1 }}  // 缩小节点间距
             initialCollapsedIds={Array.from(toggledIds)}
+            scaleExtent={{ min: 0.1, max: 2 }}
+            zoomBehavior={{
+              scaleExtent: [0.1, 2],
+              translateExtent: [[-1000, -1000], [1000, 1000]]
+            }}
           />
         )}
       </div>
