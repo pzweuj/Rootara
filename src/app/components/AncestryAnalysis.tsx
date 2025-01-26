@@ -9,7 +9,7 @@ const AncestryAnalysis: React.FC = () => {
     <div className="grid grid-cols-1 gap-6">
       <AncestryMap />
       <HaplogroupY />
-      <HaplogroupMT />
+      <HaplogroupMT highlightedNode="L1c3" />
       <Neanderthal />
     </div>
   );
