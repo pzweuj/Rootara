@@ -134,7 +134,6 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           zoom={1}
           transitionDuration={300}
           scaleExtent={{ min: 0.1, max: 2 }}
-          translateExtent={[[0, 0], [2000, 2000]]}
           separation={{ siblings: 1, nonSiblings: 2 }}
           draggable={true}
         />
