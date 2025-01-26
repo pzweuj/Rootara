@@ -34,7 +34,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const treeContainerRef = useRef<HTMLDivElement>(null);
   const treeRef = useRef<any>(null);
-  const uniqueId = useRef(`tree-diagram-${Math.random().toString(36).substr(2, 9)}`);
+  const uniqueId = useRef(`tree-diagram-${Math.random().toString(36).slice(2, 11)}`);
 
   useEffect(() => {
     setIsClient(true);
@@ -188,8 +188,8 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       </style>
 
       <div 
-        ref={treeContainerRef}
         className={uniqueId.current}
+        ref={treeContainerRef}
         style={{ 
           width, 
           height, 
@@ -222,7 +222,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
                   Math.abs(sourceIndex - targetIndex) === 1) {
                 return 'highlighted-path';
               }
-              return '';
+              return 'rd3t-link';
             }}
           />
         </div>
