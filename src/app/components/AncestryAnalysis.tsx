@@ -8,7 +8,7 @@ const AncestryAnalysis: React.FC = () => {
   return (
     <div className="grid grid-cols-1 gap-6">
       <AncestryMap />
-      <HaplogroupY />
+      <HaplogroupY highlightedNode="F1a1" />
       <HaplogroupMT highlightedNode="L1c3" />
       <Neanderthal />
     </div>
