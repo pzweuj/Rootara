@@ -11,12 +11,12 @@ const AncestryAnalysis: React.FC = () => {
     <div className="grid grid-cols-1 gap-6">
       <AncestryMap />
       <Suspense fallback={<div>加载Y染色体单倍群...</div>}>
-        <HaplogroupY highlightedNode="F1a1" />
+        <HaplogroupY highlightedNode="O2a1a1a2" />
       </Suspense>
       <Suspense fallback={<div>加载线粒体单倍群...</div>}>
-        <HaplogroupMT highlightedNode="L1c3" />
+        <HaplogroupMT highlightedNode="F1a1" />
       </Suspense>
-      <Neanderthal />
+      <Neanderthal percentage={2.1}/>
     </div>
   );
 };
