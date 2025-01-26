@@ -15,7 +15,7 @@ interface Props {
 }
 
 const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
-  const [treeData, setTreeData] = useState<TreeNode>({ name: 'Y-Adam', children: [] });
+  const [treeData, setTreeData] = useState<TreeNode | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch('/lib/ancestry/mt_tree.json', {
+        const response = await fetch('/lib/ancestry/y_tree.json', {
           signal: abortController.signal
         });
         const data = await response.json();
@@ -31,8 +31,8 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
         // 直接处理数据
         processDataInChunks(data, (chunk) => {
           setTreeData(prev => ({
-            ...prev,
-            children: [...(prev.children || []), ...chunk]
+            ...(prev || {}),
+            children: [...((prev?.children) || []), ...chunk]
           }));
         });
         setIsLoading(false);
@@ -48,10 +48,10 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
 
     return () => {
       abortController.abort();
-      setTreeData({ name: 'Y-Adam', children: [] });
+      setTreeData(null);
       setIsLoading(true);
     };
-  }, []); // 空依赖数组表示只在组件挂载时执行
+  }, []);
 
   const transformData = (data: RawDataNode, depth = 0): TreeNode[] => {
     if (depth > 50) {
@@ -80,13 +80,13 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
   const processDataInChunks = (data: RawDataNode, callback: (result: TreeNode[]) => void) => {
     const entries = Object.entries(data);
     let index = 0;
-    const chunkSize = 100; // 每次处理100个节点
+    const chunkSize = 100;
 
     const processChunk = () => {
       const startTime = performance.now();
       const result: TreeNode[] = [];
 
-      while (index < entries.length && performance.now() - startTime < 16) { // 每帧最多16ms
+      while (index < entries.length && performance.now() - startTime < 16) {
         const [key, value] = entries[index];
         if (!key.startsWith('_uk_')) {
           const node: TreeNode = { name: key };
@@ -104,7 +104,10 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
         index++;
       }
 
-      callback(result);
+      // 修改：直接使用第一个有效节点作为根节点
+      if (result.length > 0) {
+        setTreeData(result[0]);
+      }
 
       if (index < entries.length) {
         requestIdleCallback(processChunk);
@@ -124,11 +127,13 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
       ) : (
         <>
           <p className="text-gray-600">Y染色体单倍群: {highlightedNode}</p>
-          <TreeDiagram 
-            treeData={treeData}
-            highlightedNode={highlightedNode}
-            highlightColor="#7f7fff"
-          />
+          {treeData && (
+            <TreeDiagram 
+              treeData={treeData}
+              highlightedNode={highlightedNode}
+              highlightColor="#7f7fff"
+            />
+          )}
         </>
       )}
     </div>

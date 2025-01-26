@@ -26,6 +26,13 @@ const MTHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
 
     return Object.entries(data).reduce<TreeNode[]>((acc, [key, value]) => {
       if (!key.startsWith('_uk_')) {
+        if (key === 'mt-MRCA') {
+          if (typeof value === 'object' && !('mutations' in value)) {
+            return transformData(value as RawDataNode, depth + 1);
+          }
+          return acc;
+        }
+
         const node: TreeNode = { name: key };
         
         const hasValidChildren = Object.keys(value).some(
@@ -45,7 +52,6 @@ const MTHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
   const processDataInChunks = (data: RawDataNode, callback: (result: TreeNode[]) => void) => {
     const entries = Object.entries(data);
     let index = 0;
-    const chunkSize = 100;
 
     const processChunk = () => {
       const startTime = performance.now();
@@ -54,17 +60,23 @@ const MTHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
       while (index < entries.length && performance.now() - startTime < 16) {
         const [key, value] = entries[index];
         if (!key.startsWith('_uk_')) {
-          const node: TreeNode = { name: key };
-          
-          const hasValidChildren = Object.keys(value).some(
-            k => !k.startsWith('_uk_') && k !== 'mutations'
-          );
-          
-          if (hasValidChildren && typeof value === 'object') {
-            node.children = transformData(value as RawDataNode, 0);
+          if (key === 'mt-MRCA') {
+            if (typeof value === 'object' && !('mutations' in value)) {
+              result.push(...transformData(value as RawDataNode, 0));
+            }
+          } else {
+            const node: TreeNode = { name: key };
+            
+            const hasValidChildren = Object.keys(value).some(
+              k => !k.startsWith('_uk_') && k !== 'mutations'
+            );
+            
+            if (hasValidChildren && typeof value === 'object') {
+              node.children = transformData(value as RawDataNode, 0);
+            }
+            
+            result.push(node);
           }
-          
-          result.push(node);
         }
         index++;
       }
@@ -92,10 +104,10 @@ const MTHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
         const data = await response.json();
         
         processDataInChunks(data, (chunk) => {
-          setTreeData(prev => ({
-            ...prev,
-            children: [...(prev.children || []), ...chunk]
-          }));
+          setTreeData({
+            name: 'MT-Eve',
+            children: chunk
+          });
         });
       } catch (error) {
         if (error instanceof Error && error.name !== 'AbortError') {
