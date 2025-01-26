@@ -9,13 +9,16 @@ interface AncestryData {
 
 const data: AncestryData = require('/public/lib/ancestry/test_aim.json'); // 测试数据
 
+// 地图来源
+// https://mapsvg.com/maps/world
+
 const AncestryMap = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">祖源地图</h3>
-      <div className="relative w-full h-[400px]">
+      <div className="relative w-full h-[400px] border border-gray-200 rounded-lg overflow-hidden">
         <div className="absolute inset-0">
           <Image
             priority
