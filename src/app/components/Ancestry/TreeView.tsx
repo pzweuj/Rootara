@@ -31,6 +31,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   const [isClient, setIsClient] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const treeContainerRef = useRef<HTMLDivElement>(null);
+  const treeRef = useRef<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -57,12 +58,45 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     if (node.children) {
       for (let child of node.children) {
         const result = findNodePath(child, targetName, currentPath);
-        if (result) return result;
+        if (result.length > 0) {
+          return result;
+        }
       }
     }
     
     return [];
   };
+
+  const expandToNode = async (path: string[]) => {
+    if (!treeRef.current) return;
+    
+    console.log(`Expanding path: ${path.join(' -> ')}`);
+    
+    for (let i = 0; i < path.length; i++) {
+      const nodeName = path[i];
+      if (treeRef.current.getNodeById(nodeName)) {
+        console.log(`Expanding node: ${nodeName}`);
+        treeRef.current.expandNode(nodeName);
+        await new Promise(resolve => setTimeout(resolve, 200));
+      } else {
+        console.warn(`Node not found: ${nodeName}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (highlightedNode) {
+      const path = findNodePath(treeData, highlightedNode);
+      if (path.length > 0) {
+        console.log(`Found target path: ${path.join(' -> ')}`);
+        setTimeout(() => {
+          expandToNode(path);
+        }, 100);
+      } else {
+        console.warn(`Target node ${highlightedNode} not found in tree`);
+      }
+    }
+  }, [highlightedNode, treeData]);
 
   const highlightedPath = findNodePath(treeData, highlightedNode);
 
@@ -119,6 +153,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     >
       <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
         <Tree
+          ref={treeRef}
           data={treeData}
           orientation="horizontal"
           translate={translate}
