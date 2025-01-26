@@ -28,7 +28,7 @@ const MTHaplogroup: React.FC = () => {
       <p className="text-gray-600">线粒体单倍群: F1a1</p>
       <TreeDiagram 
         treeData={treeData}
-        highlightedNode="L2"
+        highlightedNode="L2a"
       />
     </div>
   );
