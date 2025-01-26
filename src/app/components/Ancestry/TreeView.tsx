@@ -26,7 +26,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   treeData,
   highlightedNode,
   width = '100%',
-  height = '200px',
+  height = '250px',
   highlightColor = '#a0c4ff'
 }) => {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -168,7 +168,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
         onMouseOut={(e) => onNodeMouseOut?.(e, nodeDatum)}
       >
         <circle
-          r={10}
+          r={6} // 圆点大小
           fill={isHighlighted ? (hasChildren ? highlightColor : '#fff') : (hasChildren ? '#9ca3af' : '#fff')}
           stroke={isHighlighted ? highlightColor : '#9ca3af'}
           strokeWidth={2}
@@ -176,10 +176,11 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
         <text
           style={{
             fill: isHighlighted ? highlightColor : '#6b7280',
-            fontSize: '12px',
-            fontWeight: 'normal',
+            fontSize: '8px !important',
+            fontWeight: '100 !important',
             userSelect: 'none',
-            dominantBaseline: 'middle'
+            dominantBaseline: 'middle',
+            fontFamily: 'Arial Narrow, sans-serif !important'
           }}
           x={15}
           dy={5}
@@ -257,7 +258,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
             zoom={1}
             transitionDuration={300}
             scaleExtent={{ min: 0.1, max: 2 }}
-            separation={{ siblings: 0.5, nonSiblings: 1 }}
+            separation={{ siblings: 0.3, nonSiblings: 0.6 }}
             draggable={true}
             initialDepth={0}
             pathClassFunc={(link) => {
