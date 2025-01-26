@@ -16,15 +16,78 @@ interface Props {
 
 const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
   const [treeData, setTreeData] = useState<TreeNode>({ name: 'Y-Adam', children: [] });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const transformData = (data: RawDataNode, depth = 0): TreeNode[] => {
-      if (depth > 50) {
-        console.warn('Maximum recursion depth reached');
-        return [];
-      }
+    const abortController = new AbortController();
 
-      return Object.entries(data).reduce<TreeNode[]>((acc, [key, value]) => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/lib/ancestry/mt_tree.json', {
+          signal: abortController.signal
+        });
+        const data = await response.json();
+        
+        // 直接处理数据
+        processDataInChunks(data, (chunk) => {
+          setTreeData(prev => ({
+            ...prev,
+            children: [...(prev.children || []), ...chunk]
+          }));
+        });
+        setIsLoading(false);
+      } catch (error) {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Failed to fetch data:', error);
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      abortController.abort();
+      setTreeData({ name: 'Y-Adam', children: [] });
+      setIsLoading(true);
+    };
+  }, []); // 空依赖数组表示只在组件挂载时执行
+
+  const transformData = (data: RawDataNode, depth = 0): TreeNode[] => {
+    if (depth > 50) {
+      console.warn('Maximum recursion depth reached');
+      return [];
+    }
+
+    return Object.entries(data).reduce<TreeNode[]>((acc, [key, value]) => {
+      if (!key.startsWith('_uk_')) {
+        const node: TreeNode = { name: key };
+        
+        const hasValidChildren = Object.keys(value).some(
+          k => !k.startsWith('_uk_') && k !== 'mutations'
+        );
+        
+        if (hasValidChildren && typeof value === 'object') {
+          node.children = transformData(value as RawDataNode, depth + 1);
+        }
+        
+        acc.push(node);
+      }
+      return acc;
+    }, []);
+  };
+
+  const processDataInChunks = (data: RawDataNode, callback: (result: TreeNode[]) => void) => {
+    const entries = Object.entries(data);
+    let index = 0;
+    const chunkSize = 100; // 每次处理100个节点
+
+    const processChunk = () => {
+      const startTime = performance.now();
+      const result: TreeNode[] = [];
+
+      while (index < entries.length && performance.now() - startTime < 16) { // 每帧最多16ms
+        const [key, value] = entries[index];
         if (!key.startsWith('_uk_')) {
           const node: TreeNode = { name: key };
           
@@ -33,35 +96,41 @@ const YHaplogroup: React.FC<Props> = ({ highlightedNode }) => {
           );
           
           if (hasValidChildren && typeof value === 'object') {
-            node.children = transformData(value as RawDataNode, depth + 1);
+            node.children = transformData(value as RawDataNode, 0);
           }
           
-          acc.push(node);
+          result.push(node);
         }
-        return acc;
-      }, []);
+        index++;
+      }
+
+      callback(result);
+
+      if (index < entries.length) {
+        requestIdleCallback(processChunk);
+      } else {
+        setIsLoading(false);
+      }
     };
 
-    const fetchData = async () => {
-      const response = await fetch('/lib/ancestry/mt_tree.json');
-      const data = await response.json();
-      setTreeData({
-        name: 'Y-Adam',
-        children: transformData(data)
-      });
-    };
-    fetchData();
-  }, []);
+    requestIdleCallback(processChunk);
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">Y染色体单倍群</h3>
-      <p className="text-gray-600">Y染色体单倍群: {highlightedNode}</p>
-      <TreeDiagram 
-        treeData={treeData}
-        highlightedNode={highlightedNode}
-        highlightColor="#7f7fff"
-      />
+      {isLoading ? (
+        <div>正在加载数据，请稍候...</div>
+      ) : (
+        <>
+          <p className="text-gray-600">Y染色体单倍群: {highlightedNode}</p>
+          <TreeDiagram 
+            treeData={treeData}
+            highlightedNode={highlightedNode}
+            highlightColor="#7f7fff"
+          />
+        </>
+      )}
     </div>
   );
 };
