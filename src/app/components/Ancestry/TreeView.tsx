@@ -115,7 +115,13 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           onClick={toggleNode}
         />
         <text
-          fill={isHighlighted ? '#a0c4ff' : '#6b7280'}
+          style={{
+            fill: isHighlighted ? '#a0c4ff' : '#6b7280',
+            fontSize: '12px',
+            fontWeight: 'normal',
+            userSelect: 'none',
+            dominantBaseline: 'middle'
+          }}
           x={15}
           dy={5}
         >
@@ -141,35 +147,65 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   }
 
   return (
-    <div 
-      ref={treeContainerRef}
-      style={{ 
-        width, 
-        height, 
-        border: '1px solid #ddd', 
-        position: 'relative',
-        overflow: 'hidden'
-      }}
-    >
-      <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
-        <Tree
-          ref={treeRef}
-          data={treeData}
-          orientation="horizontal"
-          translate={translate}
-          dimensions={dimensions}
-          renderCustomNodeElement={renderCustomNodeElement}
-          pathFunc="step"
-          zoomable={true}
-          zoom={1}
-          transitionDuration={300}
-          scaleExtent={{ min: 0.1, max: 2 }}
-          separation={{ siblings: 0.5, nonSiblings: 1 }}
-          draggable={true}
-          initialDepth={0}
-        />
+    <>
+      <style>
+        {`
+          .highlighted-path {
+            stroke: #a0c4ff !important;
+            stroke-width: 2px !important;
+          }
+          .rd3t-label {
+            fill: #6b7280 !important;
+          }
+          .rd3t-label.highlighted {
+            fill: #a0c4ff !important;
+          }
+        `}
+      </style>
+
+      <div 
+        ref={treeContainerRef}
+        style={{ 
+          width, 
+          height, 
+          border: '1px solid #ddd', 
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
+          <Tree
+            ref={treeRef}
+            data={treeData}
+            orientation="horizontal"
+            translate={translate}
+            dimensions={dimensions}
+            renderCustomNodeElement={renderCustomNodeElement}
+            pathFunc="step"
+            zoomable={true}
+            zoom={1}
+            transitionDuration={300}
+            scaleExtent={{ min: 0.1, max: 2 }}
+            separation={{ siblings: 0.5, nonSiblings: 1 }}
+            draggable={true}
+            initialDepth={0}
+            pathClassFunc={(link) => {
+              const sourceInPath = highlightedPath.includes(link.source.data.name);
+              const targetInPath = highlightedPath.includes(link.target.data.name);
+              
+              const sourceIndex = highlightedPath.indexOf(link.source.data.name);
+              const targetIndex = highlightedPath.indexOf(link.target.data.name);
+              
+              if (sourceIndex !== -1 && targetIndex !== -1 && 
+                  Math.abs(sourceIndex - targetIndex) === 1) {
+                return 'highlighted-path';
+              }
+              return '';
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
