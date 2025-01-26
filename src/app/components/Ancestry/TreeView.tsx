@@ -46,7 +46,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       });
       setTranslate({
         x: rect.width / 2,
-        y: 50
+        y: rect.height / 2  // 调整为1/4高度，给下方留出空间
       });
     }
   }, []);
@@ -75,26 +75,45 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     
     console.log(`Expanding path: ${path.join(' -> ')}`);
     
-    const expandNode = (node: TreeNodeDatum, currentPath: string[]) => {
+    // 使用更可靠的方式获取节点
+    const nodes = treeRef.current.state?.data?.children || [];
+    const nodeMap = new Map<string, any>();
+    
+    // 递归遍历节点树
+    const traverseNodes = (nodes: any[], parentPath: string[] = []) => {
+      nodes.forEach(node => {
+        const currentPath = [...parentPath, node.name];
+        nodeMap.set(node.name, { ...node, path: currentPath });
+        
+        if (node.children) {
+          traverseNodes(node.children, currentPath);
+        }
+      });
+    };
+    
+    traverseNodes(nodes);
+
+    const expandNode = async (currentPath: string[]) => {
       if (currentPath.length === 0) return;
       
-      const nextNodeName = currentPath[0];
-      const childNode = node.children?.find(child => child.name === nextNodeName);
+      const currentNodeName = currentPath[0];
+      const currentNode = nodeMap.get(currentNodeName);
       
-      if (childNode) {
-        treeRef.current.setState((prevState: any) => ({
-          ...prevState,
-          expandedNodeIds: {
-            ...prevState.expandedNodeIds,
-            [node.__rd3t.id]: true
-          }
-        }));
+      if (currentNode) {
+        // 确保节点存在且未展开
+        if (!treeRef.current.state.expandedNodeIds?.[currentNode.__rd3t.id]) {
+          treeRef.current.onNodeToggle(currentNode.__rd3t.id);
+        }
         
-        expandNode(childNode, currentPath.slice(1));
+        // 等待动画完成
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // 递归展开子节点
+        await expandNode(currentPath.slice(1));
       }
     };
     
-    expandNode(treeRef.current.state.data, path);
+    await expandNode(path);
   };
 
   useEffect(() => {
@@ -102,9 +121,14 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       const path = findNodePath(treeData, highlightedNode);
       if (path.length > 0) {
         console.log(`Found target path: ${path.join(' -> ')}`);
-        setTimeout(() => {
-          expandToNode(path);
-        }, 100);
+        // 等待树图完全渲染
+        setTimeout(async () => {
+          try {
+            await expandToNode(path);
+          } catch (error) {
+            console.error('Error expanding nodes:', error);
+          }
+        }, 500);  // 增加初始延迟确保树图完全加载
       } else {
         console.warn(`Target node ${highlightedNode} not found in tree`);
       }
@@ -114,18 +138,24 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   const highlightedPath = findNodePath(treeData, highlightedNode);
 
   const renderCustomNodeElement = (rd3tNodeProps: CustomNodeElementProps) => {
-    const { nodeDatum, toggleNode } = rd3tNodeProps;
+    const { nodeDatum, toggleNode, onNodeClick, onNodeMouseOver, onNodeMouseOut } = rd3tNodeProps;
     const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
     const isHighlighted = highlightedPath.includes(nodeDatum.name);
     
     return (
-      <g>
+      <g
+        onClick={(e) => {
+          toggleNode();
+          onNodeClick?.(e, nodeDatum);
+        }}
+        onMouseOver={(e) => onNodeMouseOver?.(e, nodeDatum)}
+        onMouseOut={(e) => onNodeMouseOut?.(e, nodeDatum)}
+      >
         <circle
           r={10}
           fill={isHighlighted ? (hasChildren ? highlightColor : '#fff') : (hasChildren ? '#9ca3af' : '#fff')}
           stroke={isHighlighted ? highlightColor : '#9ca3af'}
           strokeWidth={2}
-          onClick={toggleNode}
         />
         <text
           style={{
