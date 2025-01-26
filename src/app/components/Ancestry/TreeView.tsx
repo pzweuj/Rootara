@@ -36,8 +36,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   const treeRef = useRef<any>(null);
   const uniqueId = useRef(`tree-diagram-${Math.random().toString(36).slice(2, 11)}`);
 
-  useEffect(() => {
-    setIsClient(true);
+  const updateDimensions = () => {
     if (treeContainerRef.current) {
       const rect = treeContainerRef.current.getBoundingClientRect();
       setDimensions({
@@ -46,9 +45,26 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       });
       setTranslate({
         x: rect.width / 2,
-        y: rect.height / 2  // 调整为1/4高度，给下方留出空间
+        y: rect.height / 2
       });
     }
+  };
+
+  useEffect(() => {
+    setIsClient(true);
+    updateDimensions();
+
+    // 添加窗口resize事件监听
+    const handleResize = () => {
+      updateDimensions();
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // 清理函数
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const findNodePath = (node: TreeNode, targetName: string, path: string[] = []): string[] => {
