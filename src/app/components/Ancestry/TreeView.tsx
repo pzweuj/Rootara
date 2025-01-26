@@ -29,15 +29,19 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
 }) => {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
-  const [scale, setScale] = useState(1);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const treeContainerRef = useRef<HTMLDivElement>(null);
-  const treeRef = useRef<any>(null);
 
   useEffect(() => {
     setIsClient(true);
     if (treeContainerRef.current) {
+      const rect = treeContainerRef.current.getBoundingClientRect();
+      setDimensions({
+        width: rect.width,
+        height: rect.height
+      });
       setTranslate({
-        x: treeContainerRef.current.clientWidth / 2,
+        x: rect.width / 2,
         y: 50
       });
     }
@@ -62,17 +66,6 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
 
   const highlightedPath = findNodePath(treeData, highlightedNode);
 
-  const handleNodeClick = (nodeDatum: TreeNodeDatum) => {
-    if (treeRef.current && nodeDatum) {
-      treeRef.current.zoomToNode(nodeDatum, {
-        duration: 300,
-        scale: 1,
-        offsetX: 0,
-        offsetY: 0
-      });
-    }
-  };
-
   const renderCustomNodeElement = (rd3tNodeProps: CustomNodeElementProps) => {
     const { nodeDatum, toggleNode } = rd3tNodeProps;
     const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
@@ -85,10 +78,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           fill={hasChildren ? '#9ca3af' : '#fff'}
           stroke={isHighlighted ? 'blue' : '#9ca3af'}
           strokeWidth={2}
-          onClick={(event: React.MouseEvent<SVGCircleElement>) => {
-            toggleNode();
-            handleNodeClick(nodeDatum);
-          }}
+          onClick={toggleNode}
         />
         <text
           fill="black"
@@ -129,10 +119,10 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     >
       <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
         <Tree
-          ref={treeRef}
           data={treeData}
           orientation="horizontal"
           translate={translate}
+          dimensions={dimensions}
           renderCustomNodeElement={renderCustomNodeElement}
           pathFunc="step"
           zoomable={true}
@@ -141,6 +131,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           scaleExtent={{ min: 0.1, max: 2 }}
           separation={{ siblings: 0.5, nonSiblings: 1 }}
           draggable={true}
+          initialDepth={0}
         />
       </div>
     </div>
