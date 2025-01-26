@@ -7,7 +7,7 @@ interface AncestryData {
   [key: string]: number;
 }
 
-const data: AncestryData = require('/public/test/test_aim.json'); // 测试数据
+const data: AncestryData = require('/public/lib/ancestry/test_aim.json'); // 测试数据
 
 const AncestryMap = () => {
   const [isExpanded, setIsExpanded] = useState(false);
