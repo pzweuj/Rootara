@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import HomePage from "./components/HomePage"; // 新增导入
 import AncestryAnalysis from "./components/AncestryAnalysis";
 import NavBar from "./components/NavBar";
 import UserProfile from "./components/UserSetting";
@@ -15,6 +16,9 @@ const TAB_ITEMS = [
 ];
 
 const renderTabContent = (activeTab: string) => {
+  if (activeTab === "主页") {
+    return <HomePage />;
+  }
   switch (activeTab) {
     case "祖源分析":
       return <AncestryAnalysis />;
@@ -33,14 +37,14 @@ const renderTabContent = (activeTab: string) => {
 };
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState(TAB_ITEMS[0]);
+  const [activeTab, setActiveTab] = useState("主页"); // 默认显示主页
 
   return (
     <div className="min-h-screen flex bg-gray-50">
       <NavBar 
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        tabItems={TAB_ITEMS}
+        tabItems={["主页", ...TAB_ITEMS]} // 添加主页选项
         userProfile={<UserProfile />}
       />
       
