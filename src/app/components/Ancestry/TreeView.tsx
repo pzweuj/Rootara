@@ -11,6 +11,7 @@ interface TreeDiagramProps {
   highlightedNode: string;
   width?: number | string;
   height?: number | string;
+  highlightColor?: string;
 }
 
 interface CustomNodeElementProps {
@@ -25,13 +26,15 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
   treeData,
   highlightedNode,
   width = '100%',
-  height = '200px'
+  height = '200px',
+  highlightColor = '#a0c4ff'
 }) => {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const treeContainerRef = useRef<HTMLDivElement>(null);
   const treeRef = useRef<any>(null);
+  const uniqueId = useRef(`tree-diagram-${Math.random().toString(36).substr(2, 9)}`);
 
   useEffect(() => {
     setIsClient(true);
@@ -72,16 +75,26 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     
     console.log(`Expanding path: ${path.join(' -> ')}`);
     
-    for (let i = 0; i < path.length; i++) {
-      const nodeName = path[i];
-      if (treeRef.current.getNodeById(nodeName)) {
-        console.log(`Expanding node: ${nodeName}`);
-        treeRef.current.expandNode(nodeName);
-        await new Promise(resolve => setTimeout(resolve, 200));
-      } else {
-        console.warn(`Node not found: ${nodeName}`);
+    const expandNode = (node: TreeNodeDatum, currentPath: string[]) => {
+      if (currentPath.length === 0) return;
+      
+      const nextNodeName = currentPath[0];
+      const childNode = node.children?.find(child => child.name === nextNodeName);
+      
+      if (childNode) {
+        treeRef.current.setState((prevState: any) => ({
+          ...prevState,
+          expandedNodeIds: {
+            ...prevState.expandedNodeIds,
+            [node.__rd3t.id]: true
+          }
+        }));
+        
+        expandNode(childNode, currentPath.slice(1));
       }
-    }
+    };
+    
+    expandNode(treeRef.current.state.data, path);
   };
 
   useEffect(() => {
@@ -109,14 +122,14 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       <g>
         <circle
           r={10}
-          fill={isHighlighted ? (hasChildren ? '#a0c4ff' : '#fff') : (hasChildren ? '#9ca3af' : '#fff')}
-          stroke={isHighlighted ? '#a0c4ff' : '#9ca3af'}
+          fill={isHighlighted ? (hasChildren ? highlightColor : '#fff') : (hasChildren ? '#9ca3af' : '#fff')}
+          stroke={isHighlighted ? highlightColor : '#9ca3af'}
           strokeWidth={2}
           onClick={toggleNode}
         />
         <text
           style={{
-            fill: isHighlighted ? '#a0c4ff' : '#6b7280',
+            fill: isHighlighted ? highlightColor : '#6b7280',
             fontSize: '12px',
             fontWeight: 'normal',
             userSelect: 'none',
@@ -150,21 +163,33 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     <>
       <style>
         {`
-          .highlighted-path {
-            stroke: #a0c4ff !important;
-            stroke-width: 2px !important;
+          .${uniqueId.current} .highlighted-path {
+            stroke: ${highlightColor} !important;
+            stroke-width: 3px !important;
+            z-index: 2;
+            pointer-events: none;
           }
-          .rd3t-label {
+          .${uniqueId.current} .hidden-path {
+            stroke: transparent !important;
+            stroke-width: 0 !important;
+          }
+          .${uniqueId.current} .rd3t-link {
+            stroke: #9ca3af;
+            stroke-width: 1px;
+            z-index: 1;
+          }
+          .${uniqueId.current} .rd3t-label {
             fill: #6b7280 !important;
           }
-          .rd3t-label.highlighted {
-            fill: #a0c4ff !important;
+          .${uniqueId.current} .rd3t-label.highlighted {
+            fill: ${highlightColor} !important;
           }
         `}
       </style>
 
       <div 
         ref={treeContainerRef}
+        className={uniqueId.current}
         style={{ 
           width, 
           height, 
@@ -190,9 +215,6 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
             draggable={true}
             initialDepth={0}
             pathClassFunc={(link) => {
-              const sourceInPath = highlightedPath.includes(link.source.data.name);
-              const targetInPath = highlightedPath.includes(link.target.data.name);
-              
               const sourceIndex = highlightedPath.indexOf(link.source.data.name);
               const targetIndex = highlightedPath.indexOf(link.target.data.name);
               
