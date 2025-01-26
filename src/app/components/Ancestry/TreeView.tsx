@@ -109,13 +109,13 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
       <g>
         <circle
           r={10}
-          fill={hasChildren ? '#9ca3af' : '#fff'}
-          stroke={isHighlighted ? 'blue' : '#9ca3af'}
+          fill={isHighlighted ? (hasChildren ? '#a0c4ff' : '#fff') : (hasChildren ? '#9ca3af' : '#fff')}
+          stroke={isHighlighted ? '#a0c4ff' : '#9ca3af'}
           strokeWidth={2}
           onClick={toggleNode}
         />
         <text
-          fill="black"
+          fill={isHighlighted ? '#a0c4ff' : '#6b7280'}
           x={15}
           dy={5}
         >
