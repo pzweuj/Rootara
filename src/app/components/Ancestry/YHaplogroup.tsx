@@ -28,7 +28,7 @@ const YHaplogroup: React.FC = () => {
       <p className="text-gray-600">Y染色体单倍群: O2a1</p>
       <TreeDiagram 
         treeData={treeData}
-        highlightedNode="L2"
+        highlightedNode="L2b"
       />
     </div>
   );

@@ -29,6 +29,7 @@ const MTHaplogroup: React.FC = () => {
       <TreeDiagram 
         treeData={treeData}
         highlightedNode="L2a"
+        highlightColor="#ff7f7f"
       />
     </div>
   );
