@@ -29,7 +29,9 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
 }) => {
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
+  const [scale, setScale] = useState(1);
   const treeContainerRef = useRef<HTMLDivElement>(null);
+  const treeRef = useRef<any>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -60,6 +62,17 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
 
   const highlightedPath = findNodePath(treeData, highlightedNode);
 
+  const handleNodeClick = (nodeDatum: TreeNodeDatum) => {
+    if (treeRef.current && nodeDatum) {
+      treeRef.current.zoomToNode(nodeDatum, {
+        duration: 300,
+        scale: 1,
+        offsetX: 0,
+        offsetY: 0
+      });
+    }
+  };
+
   const renderCustomNodeElement = (rd3tNodeProps: CustomNodeElementProps) => {
     const { nodeDatum, toggleNode } = rd3tNodeProps;
     const hasChildren = nodeDatum.children && nodeDatum.children.length > 0;
@@ -74,16 +87,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           strokeWidth={2}
           onClick={(event: React.MouseEvent<SVGCircleElement>) => {
             toggleNode();
-            
-            if ((nodeDatum as any).__rd3t && treeContainerRef.current) {
-              const { translateX, translateY } = (nodeDatum as any).__rd3t;
-              const containerWidth = treeContainerRef.current.clientWidth;
-              
-              setTranslate({
-                x: containerWidth / 2 - translateX,
-                y: 50
-              });
-            }
+            handleNodeClick(nodeDatum);
           }}
         />
         <text
@@ -125,6 +129,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
     >
       <div style={{ width: '100%', height: '100%', position: 'absolute' }}>
         <Tree
+          ref={treeRef}
           data={treeData}
           orientation="horizontal"
           translate={translate}
@@ -134,7 +139,7 @@ const TreeDiagram: React.FC<TreeDiagramProps> = ({
           zoom={1}
           transitionDuration={300}
           scaleExtent={{ min: 0.1, max: 2 }}
-          separation={{ siblings: 1, nonSiblings: 2 }}
+          separation={{ siblings: 0.5, nonSiblings: 1 }}
           draggable={true}
         />
       </div>
