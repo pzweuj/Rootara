@@ -27,6 +27,46 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [regionAlias] = useState<RegionAlias>(regionAliasData);
+  const [initialRender, setInitialRender] = useState(true);
+
+  // 添加复位函数
+  const resetMapView = () => {
+    if (!mapRef.current) return;
+
+    // 找出最高比例的地区
+    let maxPercentage = 0;
+    let maxRegion = '';
+    Object.entries(data).forEach(([region, percentage]) => {
+      if (percentage > maxPercentage) {
+        maxPercentage = percentage;
+        maxRegion = region;
+      }
+    });
+
+    if (maxRegion && regionAlias[maxRegion]) {
+      const targetCountries = regionAlias[maxRegion];
+      const bounds: L.LatLngBounds[] = [];
+      
+      mapRef.current.eachLayer((layer: any) => {
+        if (layer.feature) {
+          const countryName = layer.feature.properties?.name;
+          if (targetCountries.includes(countryName)) {
+            bounds.push(layer.getBounds());
+          }
+        }
+      });
+
+      if (bounds.length > 0) {
+        const totalBounds = L.latLngBounds(bounds[0].getSouthWest(), bounds[0].getNorthEast());
+        bounds.forEach(bound => totalBounds.extend(bound));
+        
+        mapRef.current.fitBounds(totalBounds, {
+          padding: [50, 50],
+          maxZoom: 5
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
@@ -64,13 +104,16 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
 
       // 初始化地图
       mapRef.current = L.map(mapContainerRef.current, {
-        center: [30, 0], // 默认中心点
+        center: [30, 0],
         zoom: 2,
         minZoom: 2,
         maxZoom: 5,
         zoomControl: false,
-        worldCopyJump: false,
-        maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
+        worldCopyJump: true,
+        maxBounds: [
+          [-90, -200],
+          [90, 200]
+        ],
         attributionControl: false
       });
 
@@ -111,30 +154,44 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         }
       }).addTo(mapRef.current);
 
-      // 找到最高比例地区对应的国家边界并居中显示
-      if (maxRegion && regionAlias[maxRegion]) {
-        const targetCountries = regionAlias[maxRegion];
-        const bounds: L.LatLngBounds[] = [];
+      // 添加缩放和复位按钮
+      const zoomControl = L.control.zoom({
+        position: 'topright'
+      });
+      
+      const CustomResetControl = L.Control.extend({
+        options: {
+          position: 'topright'
+        },
         
-        geoJSONLayer.eachLayer((layer: any) => {
-          const countryName = layer.feature?.properties?.name;
-          if (targetCountries.includes(countryName)) {
-            bounds.push(layer.getBounds());
-          }
-        });
-
-        if (bounds.length > 0) {
-          // 合并所有相关国家的边界
-          const totalBounds = L.latLngBounds(bounds[0].getSouthWest(), bounds[0].getNorthEast());
-          bounds.forEach(bound => totalBounds.extend(bound));
+        onAdd: function() {
+          const div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-bar');
+          div.innerHTML = `
+            <a class="leaflet-control-zoom-home" href="#" title="复位到主要区域" 
+               style="font-size: 18px; line-height: 26px;">⌂</a>
+          `;
           
-          // 设置地图视图到合并后的边界
-          mapRef.current.fitBounds(totalBounds, {
-            padding: [50, 50], // 添加一些内边距
-            maxZoom: 5 // 限制最大缩放级别
+          L.DomEvent.on(div, 'click', function(e) {
+            L.DomEvent.preventDefault(e);
+            resetMapView();
           });
+          
+          return div;
         }
-      }
+      });
+
+      const resetControl = new CustomResetControl();
+      
+      zoomControl.addTo(mapRef.current);
+      resetControl.addTo(mapRef.current);
+
+      // 设置初始视图
+      setTimeout(() => {
+        if (initialRender) {
+          resetMapView();
+          setInitialRender(false);
+        }
+      }, 100);
     }
 
     return () => {
@@ -146,7 +203,7 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         mapRef.current = null;
       }
     };
-  }, [data, regionAlias]);
+  }, [data, regionAlias, initialRender]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
