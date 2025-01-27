@@ -8,12 +8,11 @@ interface AncestryData {
   [key: string]: number;
 }
 
-const data: AncestryData = require('/public/lib/ancestry/test_aim.json'); // 测试数据
+interface AncestryMapProps {
+  data: AncestryData;
+}
 
-// 地图来源
-// https://mapsvg.com/maps/world
-
-const AncestryMap = () => {
+const AncestryMap = ({ data }: AncestryMapProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -26,7 +25,10 @@ const AncestryMap = () => {
         zoom: 2,
         minZoom: 2,
         maxZoom: 5,
-        zoomControl: false
+        zoomControl: false,
+        worldCopyJump: false,  // 禁止地图重复
+        maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),  // 设置地图边界
+        attributionControl: false
       });
 
       // 修改地图源为OpenStreetMap
@@ -84,24 +86,26 @@ const AncestryMap = () => {
           </div>
         </div>
         <button 
-          className="mt-3 text-blue-500 hover:text-blue-700 flex items-center gap-1 transition-colors"
+          className="mt-4 w-full flex items-center justify-center gap-2 py-2 px-4 text-sm text-gray-600 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-200"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          {isExpanded ? (
-            <>
-              <span>收起</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-            </>
-          ) : (
-            <>
-              <span>显示更多</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </>
-          )}
+          <span className="font-medium">
+            {isExpanded ? '收起内容' : '显示更多内容'}
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-4 w-4 transition-transform duration-300 ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
         </button>
       </div>
     </div>
