@@ -7,6 +7,9 @@ import NavBar from "./components/NavBar";
 import UserProfile from "./components/UserSetting";
 import CharacterAnalysis from "./components/CharacterAnalysis";
 
+// 测试数据
+// https://my.pgp-hms.org/public_genetic_data?data_type=23andMe
+
 const TAB_ITEMS = [
   "祖源分析",
   "遗传性疾病", 
