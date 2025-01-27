@@ -1,5 +1,8 @@
 "use client";
 
+// 测试数据 https://my.pgp-hms.org/public_genetic_data
+
+
 import { useState } from "react";
 import NavBar from "./components/NavBar";
 import UserProfile from "./components/UserSetting";
