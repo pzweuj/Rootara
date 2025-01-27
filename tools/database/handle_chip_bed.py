@@ -13,7 +13,7 @@ def txt_to_vcf(input_txt_path, output_vcf_path):
 #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO
 """
 
-    chrom_list = [str(i) for i in range(1, 23)] + ["X", "Y", "MT"]
+    chrom_list = [str(i) for i in range(1, 23)] + ["X", "Y", "MT", "M"]
 
     # 打开TXT文件并读取内容
     with open(input_txt_path, "r") as txt_file:
@@ -32,6 +32,9 @@ def txt_to_vcf(input_txt_path, output_vcf_path):
 
         if not chrom in chrom_list:
             continue
+
+        if chrom == "M":
+            chrom = "MT"
 
         pos = fields[2]
         alleles = fields[3].strip("[]").split("/")
