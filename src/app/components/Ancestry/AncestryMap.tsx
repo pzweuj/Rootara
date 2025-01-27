@@ -179,10 +179,10 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
                          maxWidth: '100%',
                          opacity: 0.7
                        }} />
-                  <span className={`relative z-10 ${item.value > 60 ? 'text-white' : 'text-gray-600'}`}>
+                  <span className="relative z-10 text-gray-600">
                     {item.region}
                   </span>
-                  <span className={`font-medium relative z-10 ${item.value > 60 ? 'text-white' : 'text-gray-600'}`}>
+                  <span className="font-medium relative z-10 text-gray-600">
                     {item.percentage}%
                   </span>
                 </div>
