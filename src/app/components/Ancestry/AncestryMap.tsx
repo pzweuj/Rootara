@@ -17,7 +17,8 @@ interface AncestryMapProps {
 }
 
 // 导入地区别名数据
-import regionAliasData from '@/public/lib/ancestry/K47_region_alias.json';
+// import regionAliasData from '@/public/lib/ancestry/K47_region_alias.json';
+import regionAliasData from '@/public/lib/ancestry/K12b_region_alias.json';
 
 // 地区geojson来源：https://github.com/johan/world.geo.json/blob/master/countries.geo.json
 import worldGeoJSON from '@/public/lib/ancestry/countries.geo.json';

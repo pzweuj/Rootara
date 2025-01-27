@@ -7,7 +7,7 @@ const HaplogroupY = lazy(() => import("./Ancestry/YHaplogroup"));
 const HaplogroupMT = lazy(() => import("./Ancestry/MTHaplogroup"));
 
 // 加载数据
-const test_data = require('/public/lib/ancestry/test_aim.json');
+const test_data = require('/public/test/23andme_test.k12b.json');
 
 const AncestryAnalysis: React.FC = () => {
   return (
