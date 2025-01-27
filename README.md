@@ -1,4 +1,4 @@
-# Rootara
+# Rootara （画饼中）
 
 开源遗传基因检测结果分析平台。
 
@@ -57,11 +57,6 @@ rootara-tools内置了所需的数据库，体积约8G。
 
 [wegene](https://www.wegene.com/)
 
-[ancestry](https://www.ancestry.com/)
-
-[23MoFang](https://www.23mofang.com/)
-
-
 ## 基因检测小知识
 
 ### 定制芯片测序
@@ -77,7 +72,7 @@ rootara-tools内置了所需的数据库，体积约8G。
 Rootara支持这个格式的txt文件作为输入。
 
 
-### 全基因组（接口开发中）
+### 全基因组（规划中）
 
 全基因组测序不需要进行特异捕获，直接检测所有的所有的位点；全外显子测序则会使用探针捕获全基因组中的所有外显子区域，覆盖的位点无法进行祖源分析；因此，Rootara建议您上传全基因组结果。
 
@@ -92,36 +87,4 @@ Rootara支持这个格式的txt文件作为输入。
 
 GVCF文件除了发生变异的位点信息外，还包含了未发生变异（野生型）的位点信息。Rootara建议您优先上传GVCF文件，获得更准确的结果。当输入文件是VCF时，由于缺少了野生型位点信息，Rootara只能假定未记录的位点都是野生型。
 
-## 项目结构规划思路
 
-```
-src/
-  app/
-    layout.tsx                # 根布局，包含导航栏和内容容器
-    page.tsx                  # 主页面，用于渲染动态内容
-    components/               # 组件文件夹
-      Navbar.tsx              # 导航栏组件
-      HomeContent.tsx         # 首页内容组件
-      AncestryAnalysis.tsx    # 祖源分析主组件
-      Ancestry/               # 祖源分析组件
-        AncestryMap.tsx       # 祖源地图
-        YHaplogroup.tsx       # Y单倍群
-        MTHaplogroup.tsx      # MT单倍群
-        Neanderthal.tsx       # 尼安德特人
-      Characteristics.tsx     # 遗传特征
-      Disease.tsx             # 遗传性疾病
-      Drug.tsx                # 药物反应
-      MyModule.tsx            # 我的模块
-      UserManagement/         # 用户管理相关组件
-        UserContent.tsx       # 用户管理内容组件
-        UserList.tsx          # 用户列表组件
-        UserForm.tsx          # 用户表单组件
-      Settings/               # 设置相关组件
-        SettingsContent.tsx   # 设置内容组件
-        ProfileSettings.tsx   # 个人资料设置组件
-        SystemSettings.tsx    # 系统设置组件
-    lib/
-      ancestry/               # 祖源分析项目
-      characteristics/        # 遗传特征项目
-      myModule/               # 我的模块项目
-```
