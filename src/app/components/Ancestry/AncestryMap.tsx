@@ -8,14 +8,25 @@ interface AncestryData {
   [key: string]: number;
 }
 
+interface RegionAlias {
+  [key: string]: string[];
+}
+
 interface AncestryMapProps {
   data: AncestryData;
 }
+
+// 导入地区别名数据
+import regionAliasData from '@/public/lib/ancestry/K47_region_alias.json';
+
+// 地区geojson来源：https://github.com/johan/world.geo.json/blob/master/countries.geo.json
+import worldGeoJSON from '@/public/lib/ancestry/countries.geo.json';
 
 const AncestryMap = ({ data }: AncestryMapProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [regionAlias] = useState<RegionAlias>(regionAliasData);
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
@@ -26,22 +37,58 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         minZoom: 2,
         maxZoom: 5,
         zoomControl: false,
-        worldCopyJump: false,  // 禁止地图重复
-        maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),  // 设置地图边界
+        worldCopyJump: false,
+        maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180)),
         attributionControl: false
       });
 
-      // 修改地图源为OpenStreetMap
+      // 添加底图
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
       }).addTo(mapRef.current);
 
-      // 添加数据点
-      Object.entries(data).forEach(([region, value]) => {
-        // 这里可以根据你的数据格式添加标记
-        // 示例：L.marker([lat, lng]).addTo(mapRef.current)
+      // 创建一个存储所有相关国家及其比例的映射
+      const countryPercentages = new Map<string, number>();
+
+      // 遍历祖源数据
+      Object.entries(data).forEach(([region, percentage]) => {
+        if (percentage > 0 && regionAlias[region]) {
+          // 获取该地区对应的所有国家
+          regionAlias[region].forEach(country => {
+            // 如果一个国家属于多个地区，取最大的比例
+            const currentPercentage = countryPercentages.get(country) || 0;
+            countryPercentages.set(country, Math.max(currentPercentage, percentage));
+          });
+        }
       });
+
+      // 添加 GeoJSON 图层
+      L.geoJSON(worldGeoJSON as any, {
+        style: (feature) => {
+          const countryName = feature?.properties?.name;
+          const percentage = countryPercentages.get(countryName) || 0;
+          
+          return {
+            fillColor: percentage > 0 ? getColor(percentage) : '#F5F5F5',
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            fillOpacity: percentage > 0 ? 0.7 : 0.3
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          const countryName = feature?.properties?.name;
+          const percentage = countryPercentages.get(countryName) || 0;
+          
+          if (percentage > 0) {
+            layer.bindPopup(`
+              <strong>${countryName}</strong><br/>
+              比例: ${percentage.toFixed(2)}%
+            `);
+          }
+        }
+      }).addTo(mapRef.current);
     }
 
     return () => {
@@ -50,7 +97,7 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         mapRef.current = null;
       }
     };
-  }, []);
+  }, [data, regionAlias]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -110,6 +157,19 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
       </div>
     </div>
   );
+};
+
+// 根据比例返回不同深度的颜色
+const getColor = (percentage: number): string => {
+  // 使用更深更饱和的蓝色渐变，特别加深了最低比例的颜色
+  return percentage > 80 ? '#034E7B' :   // 最深蓝色
+         percentage > 60 ? '#0868A6' :   // 深蓝色
+         percentage > 40 ? '#2E88C5' :   // 中深蓝色
+         percentage > 20 ? '#4AA6DB' :   // 中蓝色
+         percentage > 10 ? '#72B9E3' :   // 中浅蓝色
+         percentage > 5  ? '#93C8E7' :   // 浅蓝色
+         percentage > 0  ? '#7EBCE4' :   // 调整后的最低比例颜色
+                          '#F5F5F5';     // 无数据区域颜色
 };
 
 export default AncestryMap;
