@@ -18,6 +18,7 @@ interface NavBarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   userProfile: ReactNode;
+  userAvatar: ReactNode;  // 新增用户头像属性
 }
 
 const TAB_ITEMS = [
@@ -28,7 +29,7 @@ const TAB_ITEMS = [
   { name: "我的模块", icon: UserCircleIcon }
 ];
 
-export default function NavBar({ activeTab, onTabChange, userProfile }: NavBarProps) {
+export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar }: NavBarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const renderTabContent = () => {
@@ -57,7 +58,7 @@ export default function NavBar({ activeTab, onTabChange, userProfile }: NavBarPr
       <nav 
         className={`${
           isCollapsed ? 'w-16' : 'w-64'
-        } h-screen bg-gray-50 shadow-lg p-6 flex flex-col justify-between sticky top-0 transition-all duration-300`}
+        } h-screen bg-gray-50 shadow-lg ${isCollapsed ? 'p-3' : 'p-6'} flex flex-col justify-between sticky top-0 transition-all duration-300`}
       >
         <div>
           <div className="flex items-center justify-between mb-6">
@@ -105,7 +106,17 @@ export default function NavBar({ activeTab, onTabChange, userProfile }: NavBarPr
             })}
           </ul>
         </div>
-        {!isCollapsed && userProfile}
+        <div className={`${isCollapsed ? 'flex justify-center items-center' : ''}`}>
+          {isCollapsed ? (
+            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="w-full h-full">
+                {userAvatar}
+              </div>
+            </div>
+          ) : (
+            userProfile
+          )}
+        </div>
       </nav>
       <main className="flex-1 overflow-y-auto h-screen">
         <div className="p-8 bg-white">
