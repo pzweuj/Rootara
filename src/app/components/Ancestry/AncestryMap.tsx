@@ -139,6 +139,9 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
 
     return () => {
       if (mapRef.current) {
+        mapRef.current.eachLayer((layer) => {
+          layer.remove();
+        });
         mapRef.current.remove();
         mapRef.current = null;
       }
