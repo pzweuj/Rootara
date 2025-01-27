@@ -1,7 +1,8 @@
 'use client';
 
-import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface AncestryData {
   [key: string]: number;
@@ -14,21 +15,48 @@ const data: AncestryData = require('/public/lib/ancestry/test_aim.json'); // 测
 
 const AncestryMap = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const mapRef = useRef<L.Map | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mapContainerRef.current && !mapRef.current) {
+      // 初始化地图
+      mapRef.current = L.map(mapContainerRef.current, {
+        center: [30, 0],
+        zoom: 2,
+        minZoom: 2,
+        maxZoom: 5,
+        zoomControl: false
+      });
+
+      // 修改地图源为OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(mapRef.current);
+
+      // 添加数据点
+      Object.entries(data).forEach(([region, value]) => {
+        // 这里可以根据你的数据格式添加标记
+        // 示例：L.marker([lat, lng]).addTo(mapRef.current)
+      });
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">祖源地图</h3>
-      <div className="relative w-full h-[400px] border border-gray-200 rounded-lg overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            priority
-            src="/lib/ancestry/world.svg"
-            alt="World Map"
-            fill
-            className="object-contain"
-          />
-        </div>
-      </div>
+      <div 
+        ref={mapContainerRef}
+        className="w-full h-[400px] border border-gray-200 rounded-lg overflow-hidden"
+      />
       <div className="mt-6 relative">
         <h4 className="text-lg font-medium mb-3">祖源比例</h4>
         <div className="space-y-2 relative">
