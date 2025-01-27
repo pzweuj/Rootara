@@ -170,10 +170,21 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
               .map((item, index) => (
                 <div 
                   key={index} 
-                  className="flex items-center justify-between py-1.5"
+                  className="flex items-center justify-between py-1.5 relative"
                 >
-                  <span className="text-gray-600">{item.region}</span>
-                  <span className="font-medium">{item.percentage}%</span>
+                  <div className="absolute left-0 top-0 bottom-0"
+                       style={{
+                         backgroundColor: getColor(item.value),
+                         width: `${item.value}%`,
+                         maxWidth: '100%',
+                         opacity: 0.7
+                       }} />
+                  <span className={`relative z-10 ${item.value > 60 ? 'text-white' : 'text-gray-600'}`}>
+                    {item.region}
+                  </span>
+                  <span className={`font-medium relative z-10 ${item.value > 60 ? 'text-white' : 'text-gray-600'}`}>
+                    {item.percentage}%
+                  </span>
                 </div>
               ))}
           </div>
