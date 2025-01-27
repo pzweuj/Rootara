@@ -1,0 +1,14 @@
+{
+    "Gedrosia": ["Iran", "Pakistan", "Afghanistan"],
+    "Siberian": ["Russian Federation", "Mongolia"],
+    "Northwest African": ["Morocco", "Algeria", "Tunisia", "Libya"],
+    "Southeast Asian": ["Thailand", "Viet Nam", "Cambodia", "Lao People's Democratic Republic", "Myanmar", "Malaysia", "Indonesia", "Philippines"],
+    "Atlantic Med": ["Portugal", "Spain", "Italy", "Greece", "France"],
+    "North European": ["United Kingdom", "Ireland", "Germany", "Netherlands", "Belgium", "Denmark", "Norway", "Sweden", "Finland"],
+    "South Asian": ["India", "Pakistan", "Bangladesh", "Sri Lanka", "Nepal"],
+    "East African": ["Ethiopia", "Somalia", "Kenya", "United Republic of Tanzania"],
+    "Southwest Asian": ["Saudi Arabia", "Yemen", "Oman", "United Arab Emirates", "Iraq", "Syrian Arab Republic"],
+    "East Asian": ["China", "Hong Kong", "Macao", "Taiwan", "Japan", "South Korea", "North Korea"],
+    "Caucasus": ["Georgia", "Armenia", "Azerbaijan", "Turkey", "Iran"],
+    "Sub Saharan": ["Nigeria", "Cameroon", "Ghana", "Senegal", "Congo", "Angola"]
+}
