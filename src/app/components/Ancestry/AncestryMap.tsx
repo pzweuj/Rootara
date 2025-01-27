@@ -30,9 +30,28 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
+      // 创建一个存储所有相关国家及其比例的映射
+      const countryPercentages = new Map<string, number>();
+
+      // 遍历祖源数据，找出最高比例的地区
+      let maxPercentage = 0;
+      let maxRegion = '';
+      Object.entries(data).forEach(([region, percentage]) => {
+        if (percentage > maxPercentage) {
+          maxPercentage = percentage;
+          maxRegion = region;
+        }
+        if (percentage > 0 && regionAlias[region]) {
+          regionAlias[region].forEach(country => {
+            const currentPercentage = countryPercentages.get(country) || 0;
+            countryPercentages.set(country, Math.max(currentPercentage, percentage));
+          });
+        }
+      });
+
       // 初始化地图
       mapRef.current = L.map(mapContainerRef.current, {
-        center: [30, 0],
+        center: [30, 0], // 默认中心点
         zoom: 2,
         minZoom: 2,
         maxZoom: 5,
@@ -48,23 +67,8 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         maxZoom: 19
       }).addTo(mapRef.current);
 
-      // 创建一个存储所有相关国家及其比例的映射
-      const countryPercentages = new Map<string, number>();
-
-      // 遍历祖源数据
-      Object.entries(data).forEach(([region, percentage]) => {
-        if (percentage > 0 && regionAlias[region]) {
-          // 获取该地区对应的所有国家
-          regionAlias[region].forEach(country => {
-            // 如果一个国家属于多个地区，取最大的比例
-            const currentPercentage = countryPercentages.get(country) || 0;
-            countryPercentages.set(country, Math.max(currentPercentage, percentage));
-          });
-        }
-      });
-
-      // 添加 GeoJSON 图层
-      L.geoJSON(worldGeoJSON as any, {
+      // 添加 GeoJSON 图层并获取引用
+      const geoJSONLayer = L.geoJSON(worldGeoJSON as any, {
         style: (feature) => {
           const countryName = feature?.properties?.name;
           const percentage = countryPercentages.get(countryName) || 0;
@@ -82,13 +86,42 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
           const percentage = countryPercentages.get(countryName) || 0;
           
           if (percentage > 0) {
-            layer.bindPopup(`
+            layer.bindTooltip(`
               <strong>${countryName}</strong><br/>
               比例: ${percentage.toFixed(2)}%
-            `);
+            `, {
+              permanent: false,
+              direction: 'auto',
+              className: 'leaflet-tooltip-custom'
+            });
           }
         }
       }).addTo(mapRef.current);
+
+      // 找到最高比例地区对应的国家边界并居中显示
+      if (maxRegion && regionAlias[maxRegion]) {
+        const targetCountries = regionAlias[maxRegion];
+        const bounds: L.LatLngBounds[] = [];
+        
+        geoJSONLayer.eachLayer((layer: any) => {
+          const countryName = layer.feature?.properties?.name;
+          if (targetCountries.includes(countryName)) {
+            bounds.push(layer.getBounds());
+          }
+        });
+
+        if (bounds.length > 0) {
+          // 合并所有相关国家的边界
+          const totalBounds = L.latLngBounds(bounds[0].getSouthWest(), bounds[0].getNorthEast());
+          bounds.forEach(bound => totalBounds.extend(bound));
+          
+          // 设置地图视图到合并后的边界
+          mapRef.current.fitBounds(totalBounds, {
+            padding: [50, 50], // 添加一些内边距
+            maxZoom: 5 // 限制最大缩放级别
+          });
+        }
+      }
     }
 
     return () => {
