@@ -1,10 +1,12 @@
-import React, { useState, Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import AncestryMap from "./Ancestry/AncestryMap";
 import Neanderthal from "./Ancestry/Neanderthal";
 
 // 使用lazy加载
 const HaplogroupY = lazy(() => import("./Ancestry/YHaplogroup"));
 const HaplogroupMT = lazy(() => import("./Ancestry/MTHaplogroup"));
+
+// 加载数据
 const test_data = require('/public/lib/ancestry/test_aim.json');
 
 const AncestryAnalysis: React.FC = () => {
