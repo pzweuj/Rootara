@@ -13,6 +13,7 @@ export default function Home() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         userProfile={<UserProfile />}
+        userAvatar="/path/to/default-avatar.png"
       />
     </div>
   );

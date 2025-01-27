@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon,
@@ -31,6 +31,25 @@ const TAB_ITEMS = [
 
 export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar }: NavBarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    // 创建媒体查询，检查窗口宽度是否小于 768px
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    
+    // 根据媒体查询结果设置侧边栏状态
+    const handleResize = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsCollapsed(e.matches);
+    };
+
+    // 初始化时检查一次
+    handleResize(mediaQuery);
+
+    // 添加监听器
+    mediaQuery.addEventListener('change', handleResize);
+
+    // 清理监听器
+    return () => mediaQuery.removeEventListener('change', handleResize);
+  }, []);
 
   const renderTabContent = () => {
     if (activeTab === "主页") {
