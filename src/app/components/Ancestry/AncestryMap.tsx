@@ -49,6 +49,19 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         }
       });
 
+      // 创建一个反向映射，用于从国家名称找到对应的区域
+      const countryToRegionMap = new Map<string, { region: string; percentage: number }>();
+      Object.entries(data).forEach(([region, percentage]) => {
+        if (percentage > 0 && regionAlias[region]) {
+          regionAlias[region].forEach(country => {
+            const currentData = countryToRegionMap.get(country);
+            if (!currentData || currentData.percentage < percentage) {
+              countryToRegionMap.set(country, { region, percentage });
+            }
+          });
+        }
+      });
+
       // 初始化地图
       mapRef.current = L.map(mapContainerRef.current, {
         center: [30, 0], // 默认中心点
@@ -83,12 +96,12 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         },
         onEachFeature: (feature, layer) => {
           const countryName = feature?.properties?.name;
-          const percentage = countryPercentages.get(countryName) || 0;
+          const regionData = countryToRegionMap.get(countryName);
           
-          if (percentage > 0) {
+          if (regionData) {
             layer.bindTooltip(`
-              <strong>${countryName}</strong><br/>
-              比例: ${percentage.toFixed(2)}%
+              <strong>${regionData.region.replace(/-/g, ' ')}</strong><br/>
+              比例: ${regionData.percentage.toFixed(2)}%
             `, {
               permanent: false,
               direction: 'auto',
