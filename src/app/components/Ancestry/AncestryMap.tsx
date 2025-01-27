@@ -152,7 +152,7 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
             });
           }
         }
-      }).addTo(mapRef.current);
+      });
 
       // 添加缩放和复位按钮
       const zoomControl = L.control.zoom({
@@ -182,16 +182,21 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
 
       const resetControl = new CustomResetControl();
       
+      // 先添加图层，再添加控件
+      geoJSONLayer.addTo(mapRef.current);
       zoomControl.addTo(mapRef.current);
       resetControl.addTo(mapRef.current);
 
-      // 设置初始视图
-      setTimeout(() => {
+      // 等待地图和图层完全加载后再进行初始定位
+      mapRef.current.whenReady(() => {
         if (initialRender) {
-          resetMapView();
-          setInitialRender(false);
+          // 确保所有图层都已加载
+          setTimeout(() => {
+            resetMapView();
+            setInitialRender(false);
+          }, 300); // 增加延迟时间以确保图层完全加载
         }
-      }, 100);
+      });
     }
 
     return () => {
