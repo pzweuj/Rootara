@@ -1,7 +1,7 @@
 export default function HomePage() {
   return (
     <div>
-      <img src="/logo.png" alt="Rootara Logo" style={{ width: '200px', marginBottom: '20px' }} />
+      <img src="/rootara.png" alt="Rootara Logo" style={{ width: '200px', marginBottom: '20px' }} />
       
       <h1>欢迎来到 Rootara</h1>
       
