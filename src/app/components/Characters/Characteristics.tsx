@@ -7,6 +7,9 @@ interface Characteristic {
   id: string;
   title: string;
   content: string;
+  metadata?: {
+    [key: string]: any;  // 用于存储任何可能的元数据
+  };
 }
 
 interface GenotypeData {
@@ -36,10 +39,12 @@ const Characteristics: React.FC<CharacteristicsProps> = ({ content, genotypes })
         
         const loadedCharacteristics = data.map((file: CharacteristicFile) => {
           let content = file.content;
-          // 提取标题时增加容错处理
-          const title = content.split('\n')[0]?.replace('#', '').trim() || '未命名特征';
           
-          // 改进基因型替换，确保只替换检测位点部分的rsid
+          // 提取标题（保持通用性，支持不同的标题格式）
+          const titleMatch = content.match(/^#\s*(.+)$/m);
+          const title = titleMatch ? titleMatch[1].trim() : '未命名特征';
+          
+          // 通用的基因型替换逻辑
           content = content.replace(/### .+\n([\s\S]*?)(?=\n## |\n```|$)/g, (section) => {
             return section.replace(/rs\d+/g, (rsid: string) => {
               const genotypeData = genotypes.find(g => g.rsid === rsid);
@@ -68,7 +73,7 @@ const Characteristics: React.FC<CharacteristicsProps> = ({ content, genotypes })
     }
   }, [genotypes]);
 
-  const selectedContent = characteristics.find(c => c.id === selectedCharacteristic)?.content || '';
+  const selectedChar = characteristics.find(c => c.id === selectedCharacteristic);
 
   return (
     <div className="characteristics-container">
@@ -84,7 +89,7 @@ const Characteristics: React.FC<CharacteristicsProps> = ({ content, genotypes })
         ))}
       </div>
       <div className="characteristic-content">
-        <MDXRemote source={selectedContent} />
+        <MDXRemote source={selectedChar?.content || ''} />
       </div>
     </div>
   );
