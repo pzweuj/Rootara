@@ -61,7 +61,7 @@ rootara-tools内置了所需的数据库，体积约8G。
 
 ### 定制芯片测序
 
-定制化芯片测序，直接获得芯片中设计好的位点的基因型。为了缩小rootara-tools中的包含的数据库大小，我们对dbSNP和ClinVar进行了过滤，仅保留能被[GSA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-global-screening.html)、[ASA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-asian-screening.html)，以及[CGA芯片](https://support.illumina.com/downloads/infinium-chinese-genotyping-array-v1-0-support-files.html)并集覆盖的位点。
+定制化芯片测序，直接获得芯片中设计好的位点的基因型。为了缩小rootara-tools中的包含的数据库大小，Rootara将[GSA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-global-screening.html)、[ASA芯片](https://www.illumina.com/products/by-type/microarray-kits/infinium-asian-screening.html)，以及[CGA芯片](https://support.illumina.com/downloads/infinium-chinese-genotyping-array-v1-0-support-files.html)取并集，并加入若干消费级基因检测公司覆盖的位点，最后补充了Clinvar中提示致病或可能致病的位点，形成Rootara位点库。
 
 23andme、微基因等均采用如下格式回报结果：
 
