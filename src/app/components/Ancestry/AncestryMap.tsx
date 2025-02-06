@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -29,6 +29,77 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [regionAlias] = useState<RegionAlias>(regionAliasData);
   const [initialRender, setInitialRender] = useState(true);
+
+  // 使用useMemo缓存地图配置
+  const mapConfig = useMemo(() => ({
+    center: [30, 0] as L.LatLngExpression,
+    zoom: 2,
+    minZoom: 2,
+    maxZoom: 5,
+    zoomControl: false,
+    worldCopyJump: true,
+    maxBounds: [
+      [-90, -200],
+      [90, 200]
+    ] as L.LatLngBoundsExpression,
+    attributionControl: false
+  }), []);
+
+  // 使用useMemo缓存tileLayer配置
+  const tileLayerConfig = useMemo(() => ({
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
+  }), []);
+
+  // 使用useMemo缓存geoJSON样式
+  const geoJSONStyle = useMemo(() => {
+    const countryPercentages = new Map<string, number>();
+    const countryToRegionMap = new Map<string, { region: string; percentage: number }>();
+
+    Object.entries(data).forEach(([region, percentage]) => {
+      if (percentage > 0 && regionAlias[region]) {
+        regionAlias[region].forEach(country => {
+          const currentPercentage = countryPercentages.get(country) || 0;
+          countryPercentages.set(country, Math.max(currentPercentage, percentage));
+
+          const currentData = countryToRegionMap.get(country);
+          if (!currentData || currentData.percentage < percentage) {
+            countryToRegionMap.set(country, { region, percentage });
+          }
+        });
+      }
+    });
+
+    return {
+      style: (feature: any) => {
+        const countryName = feature?.properties?.name;
+        const percentage = countryPercentages.get(countryName) || 0;
+        
+        return {
+          fillColor: percentage > 0 ? getColor(percentage) : '#F5F5F5',
+          weight: 1,
+          opacity: 1,
+          color: 'white',
+          fillOpacity: percentage > 0 ? 0.7 : 0.3
+        };
+      },
+      onEachFeature: (feature: any, layer: any) => {
+        const countryName = feature?.properties?.name;
+        const regionData = countryToRegionMap.get(countryName);
+        
+        if (regionData) {
+          layer.bindTooltip(`
+            <strong>${regionData.region.replace(/-/g, ' ')}</strong><br/>
+            比例: ${regionData.percentage.toFixed(2)}%
+          `, {
+            permanent: false,
+            direction: 'auto',
+            className: 'leaflet-tooltip-custom'
+          });
+        }
+      }
+    };
+  }, [data, regionAlias]);
 
   // 添加复位函数
   const resetMapView = () => {
@@ -71,95 +142,21 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
-      // 创建一个存储所有相关国家及其比例的映射
-      const countryPercentages = new Map<string, number>();
-
-      // 遍历祖源数据，找出最高比例的地区
-      let maxPercentage = 0;
-      let maxRegion = '';
-      Object.entries(data).forEach(([region, percentage]) => {
-        if (percentage > maxPercentage) {
-          maxPercentage = percentage;
-          maxRegion = region;
-        }
-        if (percentage > 0 && regionAlias[region]) {
-          regionAlias[region].forEach(country => {
-            const currentPercentage = countryPercentages.get(country) || 0;
-            countryPercentages.set(country, Math.max(currentPercentage, percentage));
-          });
-        }
-      });
-
-      // 创建一个反向映射，用于从国家名称找到对应的区域
-      const countryToRegionMap = new Map<string, { region: string; percentage: number }>();
-      Object.entries(data).forEach(([region, percentage]) => {
-        if (percentage > 0 && regionAlias[region]) {
-          regionAlias[region].forEach(country => {
-            const currentData = countryToRegionMap.get(country);
-            if (!currentData || currentData.percentage < percentage) {
-              countryToRegionMap.set(country, { region, percentage });
-            }
-          });
-        }
-      });
-
       // 初始化地图
-      mapRef.current = L.map(mapContainerRef.current, {
-        center: [30, 0],
-        zoom: 2,
-        minZoom: 2,
-        maxZoom: 5,
-        zoomControl: false,
-        worldCopyJump: true,
-        maxBounds: [
-          [-90, -200],
-          [90, 200]
-        ],
-        attributionControl: false
-      });
+      mapRef.current = L.map(mapContainerRef.current, mapConfig);
 
       // 添加底图
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
-      }).addTo(mapRef.current);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', tileLayerConfig)
+        .addTo(mapRef.current);
 
-      // 添加 GeoJSON 图层并获取引用
-      const geoJSONLayer = L.geoJSON(worldGeoJSON as any, {
-        style: (feature) => {
-          const countryName = feature?.properties?.name;
-          const percentage = countryPercentages.get(countryName) || 0;
-          
-          return {
-            fillColor: percentage > 0 ? getColor(percentage) : '#F5F5F5',
-            weight: 1,
-            opacity: 1,
-            color: 'white',
-            fillOpacity: percentage > 0 ? 0.7 : 0.3
-          };
-        },
-        onEachFeature: (feature, layer) => {
-          const countryName = feature?.properties?.name;
-          const regionData = countryToRegionMap.get(countryName);
-          
-          if (regionData) {
-            layer.bindTooltip(`
-              <strong>${regionData.region.replace(/-/g, ' ')}</strong><br/>
-              比例: ${regionData.percentage.toFixed(2)}%
-            `, {
-              permanent: false,
-              direction: 'auto',
-              className: 'leaflet-tooltip-custom'
-            });
-          }
-        }
-      });
+      // 添加 GeoJSON 图层
+      const geoJSONLayer = L.geoJSON(worldGeoJSON as any, geoJSONStyle);
+      geoJSONLayer.addTo(mapRef.current);
 
-      // 添加缩放和复位按钮
-      const zoomControl = L.control.zoom({
-        position: 'topright'
-      });
-      
+      // 添加控件
+      const zoomControl = L.control.zoom({ position: 'topright' });
+      zoomControl.addTo(mapRef.current);
+
       const CustomResetControl = L.Control.extend({
         options: {
           position: 'topright'
@@ -182,20 +179,15 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
       });
 
       const resetControl = new CustomResetControl();
-      
-      // 先添加图层，再添加控件
-      geoJSONLayer.addTo(mapRef.current);
-      zoomControl.addTo(mapRef.current);
       resetControl.addTo(mapRef.current);
 
-      // 等待地图和图层完全加载后再进行初始定位
+      // 初始定位
       mapRef.current.whenReady(() => {
         if (initialRender) {
-          // 确保所有图层都已加载
           setTimeout(() => {
             resetMapView();
             setInitialRender(false);
-          }, 300); // 增加延迟时间以确保图层完全加载
+          }, 300);
         }
       });
     }
@@ -209,7 +201,7 @@ const AncestryMap = ({ data }: AncestryMapProps) => {
         mapRef.current = null;
       }
     };
-  }, [data, regionAlias, initialRender]);
+  }, [mapConfig, tileLayerConfig, geoJSONStyle, initialRender]);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
