@@ -1,5 +1,5 @@
 import React from 'react';
-import MetabolismParser from './Characters/MetabolismParser';
+import MetabolismParser from './Characters/Characteristics';
 
 const CharacterAnalysis: React.FC = () => {
   // 模拟基因型数据

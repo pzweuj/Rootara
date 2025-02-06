@@ -1,98 +1,177 @@
-'use client';
+import React from 'react';
 
-import React, { useEffect, useState } from 'react';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-
-interface Characteristic {
-  id: string;
-  title: string;
-  content: string;
-  metadata?: {
-    [key: string]: any;  // 用于存储任何可能的元数据
-  };
+interface Genotypes {
+  [rsid: string]: string;
 }
 
-interface GenotypeData {
+interface Locus {
   rsid: string;
+  gene: string;
   genotype: string;
 }
 
-interface CharacteristicFile {
-  id: string;
-  content: string;
+interface ConclusionDetails {
+  title: string;
+  description: string;
+  suggestions: string[];
 }
 
-interface CharacteristicsProps {
-  content: string;
-  genotypes: GenotypeData[];
+interface ParseResult {
+  projectName: string;
+  projectDescription: string;
+  loci: Locus[];
+  metabolismLevel: string;
+  conclusion: string;
+  conclusionDetails: ConclusionDetails;
 }
 
-const Characteristics: React.FC<CharacteristicsProps> = ({ content, genotypes }) => {
-  const [characteristics, setCharacteristics] = useState<Characteristic[]>([]);
-  const [selectedCharacteristic, setSelectedCharacteristic] = useState<string | null>(null);
+interface Props {
+  genotypes: Genotypes;
+  markdownPath: string;
+}
 
-  useEffect(() => {
-    const loadCharacteristics = async () => {
+const MetabolismParser: React.FC<Props> = ({ genotypes, markdownPath }) => {
+  const [markdownFile, setMarkdownFile] = React.useState<string>('');
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const fetchMarkdown = async () => {
       try {
-        const response = await fetch('/api/characteristics');
-        const data = await response.json();
-        
-        const loadedCharacteristics = data.map((file: CharacteristicFile) => {
-          let content = file.content;
-          
-          // 提取标题（保持通用性，支持不同的标题格式）
-          const titleMatch = content.match(/^#\s*(.+)$/m);
-          const title = titleMatch ? titleMatch[1].trim() : '未命名特征';
-          
-          // 通用的基因型替换逻辑
-          content = content.replace(/### .+\n([\s\S]*?)(?=\n## |\n```|$)/g, (section) => {
-            return section.replace(/rs\d+/g, (rsid: string) => {
-              const genotypeData = genotypes.find(g => g.rsid === rsid);
-              return genotypeData ? `${rsid} (${genotypeData.genotype})` : rsid;
-            });
-          });
-
-          return {
-            id: file.id,
-            title,
-            content
-          };
-        });
-
-        setCharacteristics(loadedCharacteristics);
-        if (loadedCharacteristics.length > 0) {
-          setSelectedCharacteristic(loadedCharacteristics[0].id);
+        const response = await fetch(markdownPath);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch markdown: ${response.statusText}`);
         }
-      } catch (error) {
-        console.error('Error loading characteristics:', error);
+        const text = await response.text();
+        setMarkdownFile(text);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '未知错误');
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (genotypes.length > 0) {
-      loadCharacteristics();
-    }
-  }, [genotypes]);
+    fetchMarkdown();
+  }, [markdownPath]);
 
-  const selectedChar = characteristics.find(c => c.id === selectedCharacteristic);
+  if (loading) return <div>加载中...</div>;
+  if (error) return <div>错误: {error}</div>;
+
+  // 跳过元数据部分，直接解析正文
+  const content = markdownFile.replace(/---[\s\S]*?---/, '').trim();
+
+  // 提取项目信息
+  const projectNameMatch = content.match(/# (.*)\n/);
+  const projectName = projectNameMatch ? projectNameMatch[1] : '未知项目';
+  
+  const projectDescriptionMatch = content.match(/## 项目描述\n(.*)\n(##|$)/);
+  const projectDescription = projectDescriptionMatch ? projectDescriptionMatch[1] : '无项目描述';
+
+  // 提取参考文献（如果存在）
+  const references = content.match(/## 参考文献\n([\s\S]*)/)?.[1] || '';
+
+  // 提取检测位点
+  const loci: Locus[] = [...content.matchAll(/### (.*)\n基因: (.*)\n/g)].map(match => ({
+    rsid: match[1],
+    gene: match[2],
+    genotype: genotypes[match[1]] || '未检测'
+  }));
+
+  // 提取计算规则
+  const calculateFunctionMatch = content.match(/```javascript([\s\S]*?)```/);
+  if (!calculateFunctionMatch) {
+    throw new Error('未找到计算规则');
+  }
+  
+  // 添加调试信息
+  console.log('提取的计算函数:', calculateFunctionMatch[1]);
+  
+  // 在try块外部声明变量
+  let metabolismLevel: string;
+
+  try {
+    console.log('原始基因型数据:', genotypes);
+    console.log('提取的计算函数代码:', calculateFunctionMatch[1]);
+    
+    // 使用Function构造函数创建计算函数
+    const calculateFunction = new Function('genotypes', `
+      ${calculateFunctionMatch[1]}
+      return calculate(genotypes);
+    `) as (genotypes: Genotypes) => string;
+    
+    // 计算代谢能力
+    metabolismLevel = calculateFunction(genotypes);
+    console.log('计算结果:', metabolismLevel);
+    
+    // 添加验证
+    if (!metabolismLevel || !['high', 'medium', 'low'].includes(metabolismLevel)) {
+      throw new Error(`无效的代谢能力等级: ${metabolismLevel}`);
+    }
+  } catch (err) {
+    console.error('计算函数执行错误:', err);
+    throw new Error(`计算函数执行失败: ${err instanceof Error ? err.message : '未知错误'}`);
+  }
+
+  // 提取结论信息
+  const conclusionSectionMatch = markdownFile.match(/## 结论库\n([\s\S]*)/);
+  const conclusionSection = conclusionSectionMatch?.[1] || '';
+  
+  // 查找对应结论
+  let conclusionDetailsMatch = null;
+  if (conclusionSection) {
+    conclusionDetailsMatch = conclusionSection.match(
+      new RegExp(`### ${metabolismLevel}\n标题: (.*?)\n描述: (.*?)\n建议:\n([\\s\\S]*?)(\n###|$)`)
+    );
+  }
+
+  // 添加调试信息
+  console.log('结论库内容:', conclusionSection);
+  console.log('匹配到的结论信息:', conclusionDetailsMatch);
+  
+  // 默认结论信息
+  const defaultConclusion = {
+    title: '结论信息未找到',
+    description: '无法找到与当前代谢能力等级对应的结论信息',
+    suggestions: ['请咨询专业医生获取建议']
+  };
+
+  const result: ParseResult = {
+    projectName,
+    projectDescription,
+    loci,
+    metabolismLevel,
+    conclusion: conclusionDetailsMatch ? conclusionDetailsMatch[1] : defaultConclusion.title,
+    conclusionDetails: {
+      title: conclusionDetailsMatch ? conclusionDetailsMatch[1] : defaultConclusion.title,
+      description: conclusionDetailsMatch ? conclusionDetailsMatch[2] : defaultConclusion.description,
+      suggestions: conclusionDetailsMatch ? 
+        conclusionDetailsMatch[3].trim().split('\n').map((s: string) => s.replace(/^  - /, '').trim()) :
+        defaultConclusion.suggestions
+    }
+  };
 
   return (
-    <div className="characteristics-container">
-      <div className="characteristics-sidebar">
-        {characteristics.map(c => (
-          <div
-            key={c.id}
-            className={`characteristic-item ${selectedCharacteristic === c.id ? 'active' : ''}`}
-            onClick={() => setSelectedCharacteristic(c.id)}
-          >
-            {c.title}
-          </div>
+    <div>
+      <h1>{result.projectName}</h1>
+      <p>{result.projectDescription}</p>
+      <h2>检测结果</h2>
+      <p>{result.projectName}: {result.metabolismLevel}</p>
+      <h3>结论</h3>
+      <p>{result.conclusion}</p>
+      <h4>建议</h4>
+      <ul>
+        {result.conclusionDetails.suggestions.map((suggestion, index) => (
+          <li key={index}>{suggestion}</li>
         ))}
-      </div>
-      <div className="characteristic-content">
-        <MDXRemote source={selectedChar?.content || ''} />
-      </div>
+      </ul>
+      {references && (
+        <div>
+          <h4>参考文献</h4>
+          <div dangerouslySetInnerHTML={{ __html: references }} />
+        </div>
+      )}
     </div>
   );
 };
 
-export default Characteristics;
+export default MetabolismParser;

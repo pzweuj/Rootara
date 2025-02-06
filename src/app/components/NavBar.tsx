@@ -11,6 +11,7 @@ import {
   FingerPrintIcon,        // 遗传特征
   UserCircleIcon          // 我的模块
 } from "@heroicons/react/24/outline";
+// import CharacterAnalysis from "./CharacterAnalysis";
 
 interface NavBarProps {
   activeTab: string;
@@ -31,6 +32,7 @@ const TAB_ITEMS = [
 const preloadedComponents = {
   HomePage: React.lazy(() => import('./HomePage')),
   AncestryAnalysis: React.lazy(() => import('./AncestryAnalysis')),
+  CharacterAnalysis: React.lazy(() => import('./CharacterAnalysis')),
   // ... 其他组件
 };
 
@@ -43,7 +45,8 @@ const componentsMap: Record<TabKey, JSX.Element> = {
       <preloadedComponents.AncestryAnalysis key="ancestry-analysis" />
     </div>
   </Suspense>,
-  "遗传性疾病": <div>遗传性疾病内容</div>,
+  // "遗传性疾病": <div>遗传性疾病内容</div>,
+  "遗传性疾病": <Suspense fallback={<div>加载中...</div>}><preloadedComponents.CharacterAnalysis /></Suspense>,
   "药物反应": <div>药物反应内容</div>,
   "遗传特征": <div>遗传特征内容</div>,
   "我的模块": <div>我的模块内容</div>
