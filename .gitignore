@@ -40,3 +40,4 @@ next-env.d.ts
 /src/database/*
 !/src/database/*.py
 /tools/database/Rootara.grch37.core.vcf.gz*
+.cursorrules
