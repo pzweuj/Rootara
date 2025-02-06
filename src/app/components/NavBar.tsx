@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, Suspense } from "react";
+import type { JSX } from 'react';
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon,
@@ -10,9 +11,6 @@ import {
   FingerPrintIcon,        // 遗传特征
   UserCircleIcon          // 我的模块
 } from "@heroicons/react/24/outline";
-import HomePage from "./HomePage";
-import AncestryAnalysis from "./AncestryAnalysis";
-import CharacterAnalysis from "./CharacterAnalysis";
 
 interface NavBarProps {
   activeTab: string;
@@ -28,6 +26,28 @@ const TAB_ITEMS = [
   { name: "遗传特征", icon: FingerPrintIcon },
   { name: "我的模块", icon: UserCircleIcon }
 ];
+
+// 在组件外部预先加载
+const preloadedComponents = {
+  HomePage: React.lazy(() => import('./HomePage')),
+  AncestryAnalysis: React.lazy(() => import('./AncestryAnalysis')),
+  // ... 其他组件
+};
+
+type TabKey = "主页" | "祖源分析" | "遗传性疾病" | "药物反应" | "遗传特征" | "我的模块";
+
+const componentsMap: Record<TabKey, JSX.Element> = {
+  "主页": <Suspense fallback={<div>加载中...</div>}><preloadedComponents.HomePage /></Suspense>,
+  "祖源分析": <Suspense fallback={<div>加载中...</div>}>
+    <div className="w-full h-full">
+      <preloadedComponents.AncestryAnalysis key="ancestry-analysis" />
+    </div>
+  </Suspense>,
+  "遗传性疾病": <div>遗传性疾病内容</div>,
+  "药物反应": <div>药物反应内容</div>,
+  "遗传特征": <div>遗传特征内容</div>,
+  "我的模块": <div>我的模块内容</div>
+};
 
 export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar }: NavBarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -52,24 +72,7 @@ export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar
   }, []);
 
   const renderTabContent = () => {
-    if (activeTab === "主页") {
-      return <HomePage />;
-    }
-    switch (activeTab) {
-      case "祖源分析":
-        return <AncestryAnalysis />;
-      case "遗传性疾病":
-        return <div>遗传性疾病内容</div>;
-      case "药物反应":
-        return <div>药物反应内容</div>;
-      case "遗传特征":
-        // return <div>遗传特征内容</div>;
-        return <CharacterAnalysis />;
-      case "我的模块":
-        return <div>我的模块内容</div>;
-      default:
-        return null;
-    }
+    return componentsMap[activeTab as TabKey] || null;
   };
 
   return (
@@ -140,7 +143,9 @@ export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar
       <main className="flex-1 overflow-y-auto h-screen">
         <div className="p-8 bg-white">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">{activeTab}</h2>
-          {renderTabContent()}
+          <Suspense fallback={<div>加载中...</div>}>
+            {componentsMap[activeTab as TabKey]}
+          </Suspense>
         </div>
       </main>
     </>
