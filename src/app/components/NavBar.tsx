@@ -63,8 +63,8 @@ export default function NavBar({ activeTab, onTabChange, userProfile, userAvatar
       case "药物反应":
         return <div>药物反应内容</div>;
       case "遗传特征":
-        return <div>遗传特征内容</div>;
-        // return <CharacterAnalysis />
+        // return <div>遗传特征内容</div>;
+        return <CharacterAnalysis />;
       case "我的模块":
         return <div>我的模块内容</div>;
       default:
