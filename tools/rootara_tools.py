@@ -14,10 +14,14 @@ def tool_box():
 
     from utils.other_2_vcf import other2VcfMain
     from utils.vcf_2_rootara import vcf2RootaraMain
+    from utils.admixture import admixMain
+    from utils.haplogroup import haplogroupeMain
 
     function_dict = {
         "o2v": {"fun": other2VcfMain, "des": "rootara/other to vcf"},
-        "v2r": {"fun": vcf2RootaraMain, "des": "vcf to rootara"}
+        "v2r": {"fun": vcf2RootaraMain, "des": "vcf to rootara"},
+        "admix": {"fun": admixMain, "des": "admixture cal"},
+        "group": {"fun": haplogroupeMain, "des": "haplogroup"},
     }
     
     ################⬆️⬆️⬆️ 编辑区域 ⬆️⬆️⬆️####################
