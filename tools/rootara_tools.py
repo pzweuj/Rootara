@@ -10,18 +10,20 @@ import argparse
 def tool_box():
 
     ################⬇️⬇️⬇️ 编辑区域 ⬇️⬇️⬇️#####################
-    version = "Version 0.2 20250121"
+    version = "Version 0.3 20250207"
 
     from utils.other_2_vcf import other2VcfMain
     from utils.vcf_2_rootara import vcf2RootaraMain
     from utils.admixture import admixMain
     from utils.haplogroup import haplogroupeMain
+    from utils.neanderthal import neanMain
 
     function_dict = {
         "o2v": {"fun": other2VcfMain, "des": "rootara/other to vcf"},
         "v2r": {"fun": vcf2RootaraMain, "des": "vcf to rootara"},
         "admix": {"fun": admixMain, "des": "admixture cal"},
         "group": {"fun": haplogroupeMain, "des": "haplogroup"},
+        "neanderthal": {"fun": neanMain, "des": "neanderthal precentage"}
     }
     
     ################⬆️⬆️⬆️ 编辑区域 ⬆️⬆️⬆️####################
