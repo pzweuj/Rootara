@@ -36,6 +36,13 @@ def ref_alt_get(input_genotype, chrom, ref, alt):
     elif len(ref) < len(alt):
         ref = "D"
         alt = "I"
+    
+    if ref == "-":
+        ref = "D"
+        alt = "I"
+    elif alt == "-":
+        ref = "I"
+        alt = "D"
 
     output_genotype = "./."
     ref_sum = input_genotype.count(ref)
@@ -69,6 +76,8 @@ def read_rootara_core_and_write(db_file, output_vcf, input_dict):
         # 先写入header
         for header_line in file.header:
             if header_line.startswith("#CHROM"):
+                vcf.write("##FORMAT=<ID=RAW,Number=1,Type=String,Description=\"Raw Genotype\">\n")
+                vcf.write("##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n")
                 vcf.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE\n")
             else:
                 vcf.write(header_line + "\n")
@@ -95,8 +104,8 @@ def read_rootara_core_and_write(db_file, output_vcf, input_dict):
                 continue
             
             n += 1
-            line_split.append("RAW=" + genotype)
-            line_split.append(output_genotype)
+            line_split.append("RAW:GT")
+            line_split.append(genotype + ":" + output_genotype)
             vcf.write("\t".join(line_split) + "\n")
     
     print("[Done] efficiency: ", "%.2f" % (n / input_sum * 100) + "%")

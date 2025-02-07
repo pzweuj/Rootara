@@ -14,7 +14,6 @@ def tool_box():
 
     from utils.other_2_vcf import other2VcfMain
     from utils.vcf_2_rootara import vcf2RootaraMain
-    from utils.gvcf_2_vcf import gvcf2VcfMain
 
     function_dict = {
         "o2v": {"fun": other2VcfMain, "des": "rootara/other to vcf"},

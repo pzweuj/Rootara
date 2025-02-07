@@ -26,15 +26,20 @@ def vcf_to_rootara(input_vcf, output_file):
         out.write("#\n")
         out.write("# Below is a text version of your data. Fields are TAB-separated.\n")
         out.write("# Each line corresponds to a single SNP.\n")
-        out.write("# For more information, see https://github.com/pzweuj/rootara\n")
         out.write("# D for del. I for ins. - for missing.\n")
+        out.write("# Reference Genome: GRCh37\n")
+        out.write("# For more information, see https://github.com/pzweuj/rootara\n")
         out.write("# rsid\tchromosome\tposition\tgenotype\n")
         
         # 解析VCF文件
+        n = 0
+        m = 0
         for line in f:
             # 跳过注释行
             if line.startswith('#'):
                 continue
+
+            n += 1
                 
             # 解析VCF行
             fields = line.strip().split('\t')
@@ -60,9 +65,18 @@ def vcf_to_rootara(input_vcf, output_file):
             
             # 处理插入和缺失
             if len(ref) > len(alt):
+                ref = "I"
                 alt = 'D'  # 缺失
             elif len(ref) < len(alt):
+                ref = "D"
                 alt = 'I'  # 插入
+            
+            if ref == "-":
+                ref = "D"
+                alt = "I"
+            elif alt == "-":
+                ref = "I"
+                alt = "D"
 
             # reference调整
             if len(ref) > 1:
@@ -94,7 +108,10 @@ def vcf_to_rootara(input_vcf, output_file):
                 genotype = '--'  # 空值改为-
 
             # 写入输出文件
+            m += 1
             out.write(f"{rsid}\t{chrom}\t{pos}\t{genotype}\n")
+    
+        print("[Done] efficiency: ", "%.2f" % (m / n * 100) + "%")
 
 def vcf2RootaraMain():
     parser = argparse.ArgumentParser(
