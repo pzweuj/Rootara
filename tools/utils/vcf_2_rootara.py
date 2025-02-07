@@ -1,14 +1,14 @@
 # coding=utf-8
 # pzw
 # 20250121
-# vcf转为23andme/wegene等格式
+# vcf转为rootara格式
 
 import sys
 import argparse
 import gzip
 from datetime import datetime
 
-def vcf_to_other(input_vcf, output_file):
+def vcf_to_rootara(input_vcf, output_file):
     """
     将VCF文件转换为类似23andme格式
     :param input_vcf: 输入的VCF文件路径
@@ -96,13 +96,13 @@ def vcf_to_other(input_vcf, output_file):
             # 写入输出文件
             out.write(f"{rsid}\t{chrom}\t{pos}\t{genotype}\n")
 
-def vcf2OtherMain():
+def vcf2RootaraMain():
     parser = argparse.ArgumentParser(
-        usage = "python3 vcf_2_other.py -i <vcf file> -o <other file>",
+        usage = "python3 vcf_2_rootara.py -i <vcf file> -o <other file>",
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("-i", "--input", type=str, help="vcf format")
-    parser.add_argument("-o", "--output", type=str, help="23andme format")
+    parser.add_argument("-o", "--output", type=str, help="rootara format")
 
     if len(sys.argv[1:]) == 0:
         parser.print_help()
@@ -111,9 +111,9 @@ def vcf2OtherMain():
     args = parser.parse_args()
     input = args.input
     output = args.output
-    vcf_to_other(input, output)
+    vcf_to_rootara(input, output)
 
 if __name__ == "__main__":
-    vcf2OtherMain()
+    vcf2RootaraMain()
 
 # end
