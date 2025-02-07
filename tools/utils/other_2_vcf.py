@@ -1,188 +1,126 @@
 # coding=utf-8
 # pzw
-# 20250121
-# 23andme, wegene等格式转换为vcf.gz
+# 20250207
+# 根据rootara核心库，将第三方结果转换为vcf格式
 
+import os
 import sys
-import pandas as pd
-import pysam
 import argparse
+import pysam
+import pandas as pd
 
-def convert_other_to_vcf(input_file, output_file, reference_vcf):
-    # 读取23andMe数据文件
-    df = pd.read_csv(input_file, sep='\t', comment='#', header=None, names=['rsid', 'chromosome', 'position', 'genotype'], low_memory=False)
-
+# 读取文件，所有以此格式建立的文件理论都可读
+def read_rsid_report(input_file):
+    df = pd.read_csv(input_file, sep='\t', comment='#', header=None, names=['rsid', 'chromosome', 'position', 'genotype'], low_memory=False, skiprows=lambda x: x > 0 and str(x).startswith('rsid'))
     # 过滤掉无效的行（例如，染色体为0的行）
     df = df[df['chromosome'] != '0']
-
     # 将染色体名称转换为VCF格式（例如，'23' -> 'X', '24' -> 'Y', '25' -> 'MT'）
     df['chromosome'] = df['chromosome'].replace({'23': 'X', '24': 'Y', '25': 'MT'})
+    df.loc[:, 'chromosome'] = df["chromosome"].str.replace("chr", "")
+    df = df[df["genotype"] != "--"]
 
-    # 打开参考VCF文件
-    vcf_ref = pysam.VariantFile(reference_vcf)
-    valid_chroms = set(vcf_ref.header.contigs)
-
-    # 定义需要保留的染色体（排除小染色体）
-    # 这里假设你只需要1-22, X, Y, MT染色体
-    valid_main_chroms = {str(c) for c in range(1, 23)} | {'X', 'Y', 'MT'}
-    if any(c.startswith('chr') for c in valid_chroms):
-        valid_main_chroms = {f'chr{c}' for c in valid_main_chroms}
-
-    # 检查参考基因组是否使用"chr"前缀
-    has_chr_prefix = any(c.startswith('chr') for c in valid_chroms)
-
-    # 转换染色体名称格式
-    def format_chrom(chrom):
-        chrom = str(chrom)
-        # 处理MT染色体
-        if chrom.upper() in ['MT', 'M']:
-            return 'chrM' if has_chr_prefix else 'MT'
-        # 处理X/Y染色体
-        if chrom.upper() in ['X', 'Y']:
-            return f'chr{chrom}' if has_chr_prefix else chrom
-        # 处理数字染色体
-        if chrom.isdigit():
-            return f'chr{chrom}' if has_chr_prefix else chrom
-        # 处理其他情况
-        if chrom.startswith('chr'):
-            return chrom if has_chr_prefix else chrom[3:]
-        return chrom
+    # 使用pandas的apply方法替代循环
+    df['variant_id'] = df.apply(lambda row: row['rsid'] if row['rsid'].startswith('rs') else f"rti_{row['chromosome']}_{row['position']}", axis=1)
     
-    df['chromosome'] = df['chromosome'].apply(format_chrom)
-    # 过滤掉不需要的小染色体
-    df = df[df['chromosome'].isin(valid_main_chroms)]
+    # 直接创建字典
+    variant_dict = dict(zip(df['variant_id'], df['genotype']))
+    return variant_dict
 
-    # 创建VCF文件头
-    vcf_header = pysam.VariantHeader()
-    vcf_header.add_line('##fileformat=VCFv4.2')
-    vcf_header.add_line(f'##reference={reference_vcf}')
+# ref/alt的判断方案
+def ref_alt_get(input_genotype, chrom, ref, alt):
+    check_variant = True
 
-    def natural_sort_key(chrom):
-        # 处理带chr前缀的情况
-        if chrom.startswith('chr'):
-            chrom = chrom[3:]
-        
-        # 特殊染色体的排序权重
-        special_chroms = {
-            'X': 23,
-            'Y': 24,
-            'MT': 25,
-            'M': 25
-        }
-        
-        # 如果是特殊染色体
-        if chrom.upper() in special_chroms:
-            return (special_chroms[chrom.upper()],)
-        
-        # 如果是数字染色体
-        if chrom.isdigit():
-            return (int(chrom),)
-            
-        # 其他情况按字符串排序
-        return (26, chrom)
+    if len(ref) > len(alt):
+        ref = "I"
+        alt = "D"
+    elif len(ref) < len(alt):
+        ref = "D"
+        alt = "I"
+
+    output_genotype = "./."
+    ref_sum = input_genotype.count(ref)
+    if ref_sum == 2:
+        output_genotype = "0/0"
+    elif ref_sum == 1:
+        output_genotype = "0/1"
+    elif ref_sum == 0:
+        output_genotype = "1/1"
+
+    # 线粒体和Y
+    if chrom in ["MT", "Y"]:
+        if len(input_genotype) == 1:
+            if ref_sum == 1:
+                output_genotype = "0"
+            elif ref_sum == 0:
+                output_genotype = "1"
     
-    sorted_chroms = sorted(valid_main_chroms, key=natural_sort_key)
-    vcf_header.add_line('##INFO=<ID=RAW,Number=1,Type=String,Description="Raw Genotype">')
-    vcf_header.add_line('##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">')
-    # 动态添加contig信息
-    for chrom in sorted_chroms:
-        vcf_header.add_line(f'##contig=<ID={chrom}>')
-    vcf_header.add_sample('SAMPLE')
+    # 需要确认alt是否一致
+    if output_genotype in ["0/1", "1/1"]:
+        if input_genotype[1] != alt:
+            check_variant = False
 
-    # 使用pysam创建压缩的VCF文件
-    with pysam.VariantFile(output_file, mode='wz', header=vcf_header) as vcf_file:
-        # 遍历每一行数据并写入VCF格式
-        for _, row in df.iterrows():
-            chrom = row['chromosome']
-            pos = int(row['position'])
-            rsid = row['rsid']
-            genotype = row['genotype']
+    return output_genotype, check_variant
+
+# 遍历数据库
+def read_rootara_core_and_write(db_file, output_vcf, input_dict):
+    n = 0
+    input_sum = len(input_dict)
+    with pysam.TabixFile(db_file, encoding='utf-8') as file, open(output_vcf, "w", encoding="utf-8") as vcf:
+        # 先写入header
+        for header_line in file.header:
+            if header_line.startswith("#CHROM"):
+                vcf.write("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE\n")
+            else:
+                vcf.write(header_line + "\n")
+        
+        # 读取数据行
+        for line in file.fetch():
+            line_split = line.strip().split("\t")
+            id = line_split[2]
+            genotype = input_dict.get(id, "--")
+
+            # genotype是 -- ，可能是id无法匹配，需要使用坐标进行匹配 | 忽略掉rs类型的id
+            if genotype == "--":
+                check_id = "rti_" + line_split[0] + "_" + line_split[1]
+                genotype = input_dict.get(check_id, "--")
 
             if genotype == "--":
                 continue
-
-            # 从参考VCF中获取参考等位基因
-            try:
-                # 确保染色体名称与参考基因组一致
-                chrom_str = str(chrom)
-                if chrom_str not in valid_chroms:
-                    print(f"Warning: Chromosome {chrom} not found in reference genome. Skipping.")
-                    continue
-                
-                # 在参考VCF中查找匹配的位点
-                ref_record = None
-                for record in vcf_ref.fetch(chrom_str, pos-1, pos):
-                    if record.pos == pos:
-                        ref_record = record
-                        break
-                
-                if ref_record is None:
-                    print(f"Warning: Position {chrom}:{pos} not found in reference VCF. Skipping.")
-                    continue
-                    
-                ref_allele = ref_record.ref
-                alt_alleles = set(ref_record.alts) if ref_record.alts else set()
-
-            except ValueError as e:
-                print(f"Warning: {str(e)}. Skipping.")
-                continue
-
-            # 确定ALT等位基因
-            sample_alleles = set(genotype) - {ref_allele}
-            alt_alleles = alt_alleles | sample_alleles
-            alt_allele = ','.join(alt_alleles) if alt_alleles else '.'
-
-            # 确定基因型GT
-            if chrom in ['MT', 'Y']:
-                if alt_allele == '.':
-                    gt = '0'
-                else:
-                    gt = '1'
-            else:
-                if alt_allele == '.':
-                    gt = '0/0'
-                elif len(genotype) == 1:
-                    gt = '1/1'
-                else:
-                    if len(set(genotype)) == 1:
-                        gt = '1/1'
-                    else:
-                        gt = '0/1'
             
-            # 修复alt
-            if gt in ['0/0', '0']:
-                alt_allele = ref_allele
-            
-            # 创建VCF记录
-            record = vcf_file.new_record()
-            # 确保染色体名称与参考基因组一致
-            if chrom_str not in valid_chroms:
-                print(f"Warning: Chromosome {chrom} not found in reference genome. Skipping.")
+            chrom = line_split[0]
+            ref = line_split[3]
+            alt = line_split[4]
+            output_genotype, check_variant = ref_alt_get(genotype, chrom, ref, alt)
+            if not check_variant:
                 continue
-            record.chrom = chrom_str
-            record.pos = pos
-            record.id = rsid
-            record.ref = ref_allele
-            record.alts = (alt_allele,) if alt_allele != '.' else None
-            record.stop = pos
-            record.info['RAW'] = genotype
-            record.samples['SAMPLE']['GT'] = tuple(map(int, gt.replace('/', '|').split('|')))
+            
+            n += 1
+            line_split.append("RAW=" + genotype)
+            line_split.append(output_genotype)
+            vcf.write("\t".join(line_split) + "\n")
+    
+    print("[Done] efficiency: ", "%.2f" % (n / input_sum * 100) + "%")
 
-            # 写入记录
-            vcf_file.write(record)
+# 总流程
+def convert_other_to_vcf(input_file, output_vcf_gz, db_file):
+    output_vcf_gz = os.path.abspath(output_vcf_gz)
+    output_vcf = output_vcf_gz.replace(".gz", "")
+    input_dict = read_rsid_report(input_file)
+    print("[Process] read data done!")    
+    read_rootara_core_and_write(db_file, output_vcf, input_dict)
 
-    # 关闭参考VCF文件
-    vcf_ref.close()
+    # 清理临时文件
+    pysam.tabix_compress(output_vcf, output_vcf_gz, force=True)
+    pysam.tabix_index(output_vcf_gz, preset="vcf", force=True)
+    os.remove(output_vcf)
 
-    # 创建tabix索引
-    pysam.tabix_index(output_file, preset="vcf", force=True)
-
+# 
 def other2VcfMain():
     parser = argparse.ArgumentParser(
         usage = "python3 other_2_vcf.py -i <txt file> -o <vcf file> -r <reference>",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("-i", "--input", type=str, help="23andme format")
+    parser.add_argument("-i", "--input", type=str, help="rootara format")
     parser.add_argument("-o", "--output", type=str, help="vcf.gz format")
     parser.add_argument("-r", "--reference", type=str, help="reference.vcf.gz")
 
