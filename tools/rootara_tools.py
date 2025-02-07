@@ -13,13 +13,12 @@ def tool_box():
     version = "Version 0.2 20250121"
 
     from utils.other_2_vcf import other2VcfMain
-    from utils.vcf_2_other import vcf2OtherMain
+    from utils.vcf_2_rootara import vcf2RootaraMain
     from utils.gvcf_2_vcf import gvcf2VcfMain
 
     function_dict = {
-        "o2v": {"fun": other2VcfMain, "des": "23andme to vcf"},
-        "v2o": {"fun": vcf2OtherMain, "des": "vcf to 23andme"},
-        "g2v": {"fun": gvcf2VcfMain, "des": "gvcf to vcf"}
+        "o2v": {"fun": other2VcfMain, "des": "rootara/other to vcf"},
+        "v2r": {"fun": vcf2RootaraMain, "des": "vcf to rootara"}
     }
     
     ################⬆️⬆️⬆️ 编辑区域 ⬆️⬆️⬆️####################
