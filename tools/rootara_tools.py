@@ -17,13 +17,15 @@ def tool_box():
     from utils.admixture import admixMain
     from utils.haplogroup import haplogroupeMain
     from utils.neanderthal import neanMain
+    from utils.clinvar_extract import clinvarMain
 
     function_dict = {
         "o2v": {"fun": other2VcfMain, "des": "rootara/other to vcf"},
         "v2r": {"fun": vcf2RootaraMain, "des": "vcf to rootara"},
         "admix": {"fun": admixMain, "des": "admixture cal"},
         "group": {"fun": haplogroupeMain, "des": "haplogroup"},
-        "neanderthal": {"fun": neanMain, "des": "neanderthal precentage"}
+        "neanderthal": {"fun": neanMain, "des": "neanderthal precentage"},
+        "clinvar": {"fun": clinvarMain, "des": "clinvar message extract"}        
     }
     
     ################⬆️⬆️⬆️ 编辑区域 ⬆️⬆️⬆️####################
