@@ -1,0 +1,257 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  Home,
+  BarChart2,
+  FileText,
+  Dna,
+  Heart,
+  User,
+  Database,
+  Share2,
+  Settings,
+  HelpCircle,
+  Menu,
+  ChevronLeft,
+  ChevronDown,
+  ChevronRight,
+  AlertCircle,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { useSidebar } from "./sidebar-context"
+import { useLanguage } from "@/contexts/language-context"
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const { isCollapsed, toggleSidebar } = useSidebar()
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({})
+  const { t } = useLanguage()
+
+  useEffect(() => {
+    // 当路径变化时，根据当前路径自动展开相关菜单
+    const newOpenItems = {}
+    navigation.forEach((item) => {
+      if (
+        item.children &&
+        item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"))
+      ) {
+        newOpenItems[item.name] = true
+      }
+    })
+    setOpenItems(newOpenItems)
+  }, [pathname])
+
+  const navigation = [
+    { name: t("dashboard"), href: "/", icon: Home },
+    {
+      name: t("myReports"),
+      href: "/reports",
+      icon: FileText,
+      children: [
+        { name: t("allReports"), href: "/reports" },
+        { name: t("uploadNewReport"), href: "/reports/upload" },
+      ],
+    },
+    {
+      name: t("analysisModules"),
+      href: "/analysis",
+      icon: BarChart2,
+      children: [
+        { name: t("ancestryAnalysis"), href: "/analysis/ancestry", icon: Dna },
+        {
+          name: t("healthRisks"),
+          href: "/analysis/health",
+          icon: Heart,
+          children: [
+            { name: "Hereditary Diseases", href: "/analysis/health/hereditary" },
+            { name: "Drug Responses", href: "/analysis/health/drugs" },
+          ],
+        },
+        { name: t("traitInterpretation"), href: "/analysis/traits", icon: User },
+        { name: t("rawData"), href: "/analysis/raw-data", icon: Database },
+        { name: "ClinVar", href: "/analysis/clinvar", icon: AlertCircle },
+      ],
+    },
+    {
+      name: t("tools"),
+      href: "/tools",
+      icon: Settings,
+      children: [
+        { name: t("dataSharingManagement"), href: "/tools/sharing", icon: Share2 },
+        { name: t("accountSettings"), href: "/tools/settings", icon: Settings },
+      ],
+    },
+  ]
+
+  const bottomNavigation = [{ name: t("helpCenter"), href: "/help", icon: HelpCircle }]
+
+  const toggleItem = (name: string) => {
+    setOpenItems((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }))
+  }
+
+  const NavItem = ({ item, level = 0, isBottom = false }) => {
+    const hasChildren = item.children && item.children.length > 0
+    const isActive =
+      pathname === item.href ||
+      (item.href !== "/" && pathname.startsWith(item.href + "/")) ||
+      (item.children && item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/")))
+    const isOpen = openItems[item.name]
+
+    if (hasChildren) {
+      return (
+        <>
+          <Collapsible
+            open={isOpen}
+            onOpenChange={() => toggleItem(item.name)}
+            className={cn("w-full", isCollapsed && "hidden")}
+          >
+            <CollapsibleTrigger asChild>
+              <div
+                className={cn(
+                  "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors cursor-pointer",
+                  isActive
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                  isCollapsed && "justify-center px-2",
+                  level > 0 && "pl-6",
+                )}
+              >
+                {item.icon && <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />}
+                {!isCollapsed && (
+                  <>
+                    <span className="flex-1">{item.name}</span>
+                    {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </>
+                )}
+              </div>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="pl-4 space-y-1">
+                {item.children.map((child) => (
+                  <NavItem key={child.name} item={child} level={level + 1} />
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Show icon-only version when collapsed */}
+          {isCollapsed && (
+            <TooltipProvider>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <div
+                    onClick={() => toggleItem(item.name)}
+                    className={cn(
+                      "flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors cursor-pointer",
+                      isActive
+                        ? "bg-secondary text-secondary-foreground"
+                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                    )}
+                  >
+                    {item.icon && <item.icon className="h-4 w-4" />}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="flex items-center gap-4">
+                  {item.name}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </>
+      )
+    }
+
+    return (
+      <TooltipProvider>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <Link
+              href={item.href}
+              className={cn(
+                "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-secondary text-secondary-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                isCollapsed && "justify-center px-2",
+                level > 0 && !isCollapsed && "pl-6",
+              )}
+            >
+              {item.icon && <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />}
+              {!isCollapsed && <span>{item.name}</span>}
+            </Link>
+          </TooltipTrigger>
+          {isCollapsed && (
+            <TooltipContent side="right" className="flex items-center gap-4">
+              {item.name}
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+    )
+  }
+
+  return (
+    <>
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-background rounded-md shadow-md"
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        aria-label="Toggle sidebar"
+      >
+        <Menu className="h-6 w-6" />
+      </button>
+      <div
+        className={cn(
+          "fixed inset-y-0 z-20 flex flex-col bg-background transition-all duration-300 ease-in-out",
+          isCollapsed ? "w-[72px]" : "w-72",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        )}
+      >
+        <div className="border-b border-border">
+          <div className={cn("flex h-16 items-center gap-2 px-4", isCollapsed && "justify-center px-2")}>
+            {!isCollapsed && (
+              <Link href="/" className="flex items-center font-semibold">
+                <Dna className="h-6 w-6 mr-2 text-primary" />
+                <span className="text-lg">Rootara</span>
+              </Link>
+            )}
+            {/* 移除桌面视图中的收起按钮，只在移动设备上显示 */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn("ml-auto h-8 w-8 lg:hidden", isCollapsed && "ml-0")}
+              onClick={toggleSidebar}
+            >
+              <ChevronLeft className={cn("h-4 w-4 transition-transform", isCollapsed && "rotate-180")} />
+              <span className="sr-only">{isCollapsed ? "Expand" : "Collapse"} Sidebar</span>
+            </Button>
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto">
+          <nav className="flex-1 space-y-1 px-2 py-4">
+            {navigation.map((item) => (
+              <NavItem key={item.name} item={item} />
+            ))}
+          </nav>
+        </div>
+        <div className="border-t border-border p-2">
+          <nav className="space-y-1">
+            {bottomNavigation.map((item) => (
+              <NavItem key={item.name} item={item} isBottom />
+            ))}
+          </nav>
+        </div>
+      </div>
+    </>
+  )
+}
+
