@@ -35,8 +35,8 @@ import { useLanguage } from "@/contexts/language-context"
 const sampleReports = [
   {
     id: "RPT-7A2B9C",
-    name: "Ancestry Analysis #1",
-    nameZh: "祖源分析 #1",
+    name: "23andMe #1",
+    nameZh: "23andMe #1",
     uploadDate: "2023-05-15",
     source: "23andMe",
     isShared: true,
@@ -46,7 +46,7 @@ const sampleReports = [
   {
     id: "RPT-3F8D1E",
     name: "Health Screening #2",
-    nameZh: "健康筛查 #2",
+    nameZh: "我的健康筛查 #2",
     uploadDate: "2023-06-22",
     source: "AncestryDNA",
     isShared: false,
@@ -55,33 +55,23 @@ const sampleReports = [
   },
   {
     id: "RPT-5K9L2M",
-    name: "Maternal Lineage",
-    nameZh: "母系血统",
+    name: "WeGene",
+    nameZh: "微基因",
     uploadDate: "2023-07-10",
-    source: "MyHeritage",
+    source: "WeGene",
     isShared: true,
     isDefault: false,
     sharedWith: ["Genomics Research Institute"],
   },
   {
     id: "RPT-4P7Q9R",
-    name: "Paternal Ancestry",
-    nameZh: "父系祖源",
+    name: "Test Name",
+    nameZh: "测试名称",
     uploadDate: "2023-08-05",
     source: "FamilyTreeDNA",
     isShared: false,
     isDefault: false,
     sharedWith: [],
-  },
-  {
-    id: "RPT-2S5T8U",
-    name: "Health Traits Analysis",
-    nameZh: "健康特征分析",
-    uploadDate: "2023-09-18",
-    source: "23andMe",
-    isShared: true,
-    isDefault: false,
-    sharedWith: ["Dr. Sarah Johnson"],
   },
 ]
 
@@ -211,7 +201,7 @@ export function ReportSwitcher() {
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
       case "AncestryDNA":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-      case "MyHeritage":
+      case "WeGene":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
       case "FamilyTreeDNA":
         return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
