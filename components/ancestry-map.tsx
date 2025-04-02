@@ -88,41 +88,66 @@ export function AncestryMap() {
     },
   }
 
-  const t = (key) => {
-    return translations[language][key] || key
+  const t = (key: string) => {
+    return translations[language as keyof typeof translations][key as keyof (typeof translations)['en']] || key
   }
 
   // 根据语言获取区域名称
-  const getRegionName = (name) => {
-    return language === "zh-CN" ? regionTranslations[name] || name : name
+  const getRegionName = (name: string) => {
+    return language === "zh-CN" ? (regionTranslations[name as keyof typeof regionTranslations] || name) : name
   }
 
-  const getColorForRegion = (region) => {
+  const getColorForRegion = (region: string) => {
     const colors = {
-      "East Asian": "bg-blue-500",
-      European: "bg-green-500",
-      "South Asian": "bg-yellow-500",
-      African: "bg-red-500",
-      default: "bg-gray-500",
+      // 欧洲 - 蓝色系
+      "European": "bg-blue-500",           // 蓝色 - 欧洲(总体)
+      "Northern European": "bg-blue-600",   // 深蓝色 - 北欧
+      "Southern European": "bg-blue-400",   // 浅蓝色 - 南欧
+      "Eastern European": "bg-blue-300",    // 更浅蓝色 - 东欧
+      "Western European": "bg-blue-700",    // 更深蓝色 - 西欧
+      
+      // 亚洲 - 黄色系
+      "East Asian": "bg-yellow-500",       // 黄色 - 东亚(总体)
+      "Chinese": "bg-yellow-600",          // 深黄色 - 中国
+      "Japanese": "bg-yellow-400",         // 浅黄色 - 日本
+      "Korean": "bg-yellow-300",           // 更浅黄色 - 韩国
+      "South Asian": "bg-amber-500",       // 琥珀色 - 南亚(总体)
+      "Indian": "bg-amber-600",            // 深琥珀色 - 印度
+      "Pakistani": "bg-amber-400",         // 浅琥珀色 - 巴基斯坦
+      "Southeast Asian": "bg-yellow-700",  // 深黄色 - 东南亚
+      
+      // 非洲 - 黑/灰色系
+      "African": "bg-gray-800",            // 深灰色 - 非洲(总体)
+      "West African": "bg-gray-900",        // 更深灰色 - 西非
+      "East African": "bg-gray-700",        // 灰色 - 东非
+      "North African": "bg-gray-600",       // 中灰色 - 北非
+      "South African": "bg-gray-500",       // 浅灰色 - 南非
+      
+      // 大洋洲 - 绿色系
+      "Oceanian": "bg-green-500",          // 绿色 - 大洋洲(总体)
+      "Australian": "bg-green-600",         // 深绿色 - 澳大利亚
+      "New Zealand": "bg-green-400",        // 浅绿色 - 新西兰
+      "Polynesian": "bg-green-300",         // 更浅绿色 - 波利尼西亚
+      
+      // 美洲 - 红色系
+      "North American": "bg-red-500",      // 红色 - 北美(总体)
+      "Native American": "bg-red-700",      // 深红色 - 美洲原住民
+      "South American": "bg-red-400",      // 浅红色 - 南美
+      "Central American": "bg-red-300",    // 更浅红色 - 中美
+      "Caribbean": "bg-red-600",           // 深红色 - 加勒比
+      
+      // 其他区域
+      "Middle Eastern": "bg-orange-500",   // 橙色 - 中东
+      default: "bg-gray-400",              // 默认灰色
     }
-    return colors[region] || colors.default
+    return colors[region as keyof typeof colors] || colors.default
   }
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg font-medium">{t("ancestryComposition")}</CardTitle>
-        <Select value={selectedView} onValueChange={setSelectedView}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={t("view")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="global">{t("global")}</SelectItem>
-            <SelectItem value="european">{t("european")}</SelectItem>
-            <SelectItem value="asian">{t("asian")}</SelectItem>
-            <SelectItem value="african">{t("african")}</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* 删除了地区切换按钮 */}
       </CardHeader>
       <CardContent>
         <div className="relative h-[300px] w-full bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden mb-4">
