@@ -13,7 +13,7 @@ const profileData = {
   ],
   totalSnps: 635287,
   healthTraits: 127,
-  analysisDate: "2023-05-12",
+  clinvarPathogenic: 20,
 }
 
 export function GeneticProfileOverview() {
@@ -36,8 +36,10 @@ export function GeneticProfileOverview() {
   }
 
   // Get region name based on current language
-  const getRegionName = (region) => {
-    return regionTranslations[language][region] || region
+  const getRegionName = (region: string) => {
+    return (language === 'en' || language === 'zh-CN' 
+      ? regionTranslations[language as keyof typeof regionTranslations][region as keyof (typeof regionTranslations)['en']] 
+      : region)
   }
 
   return (
@@ -133,9 +135,9 @@ export function GeneticProfileOverview() {
                 <CardContent className="p-4">
                   <div className="flex items-center mb-2">
                     <Dna className="h-5 w-5 mr-2 text-green-500" />
-                    <span className="text-sm font-medium">{language === "en" ? "Last updated" : "最近更新"}</span>
+                    <span className="text-sm font-medium">{language === "en" ? "Last updated" : "Clinvar致病位点"}</span>
                   </div>
-                  <p className="text-xs font-medium">{profileData.analysisDate}</p>
+                  <p className="text-xs font-medium">{profileData.clinvarPathogenic}</p>
                 </CardContent>
               </Card>
             </div>
