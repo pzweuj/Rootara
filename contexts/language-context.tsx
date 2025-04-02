@@ -4,10 +4,13 @@ import { createContext, useContext, useState, type ReactNode, useEffect } from "
 
 type Language = "en" | "zh-CN"
 
+// 定义翻译键的类型
+type TranslationKey = keyof typeof translations.en
+
 interface LanguageContextType {
   language: Language
   setLanguage: (language: Language) => void
-  t: (key: string) => string
+  t: (key: TranslationKey) => string
 }
 
 const translations = {
@@ -33,7 +36,7 @@ const translations = {
     profile: "Profile",
     dataSharing: "Data Sharing",
     home: "Home",
-    geneticDashboard: "Genetic Dashboard",
+    geneticDashboard: "My Genetic Dashboard",
     snpsAnalyzed: "SNPs Analyzed",
     ancestryComposition: "Ancestry Composition",
     analysisSummary: "Analysis Summary",
@@ -68,7 +71,7 @@ const translations = {
     profile: "个人资料",
     dataSharing: "数据共享",
     home: "首页",
-    geneticDashboard: "基因仪表盘",
+    geneticDashboard: "我的基因",
     snpsAnalyzed: "个SNP已分析",
     ancestryComposition: "祖源构成",
     analysisSummary: "分析摘要",
@@ -109,7 +112,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("language", newLanguage)
   }
 
-  const t = (key: string): string => {
+  const t = (key: TranslationKey): string => {
     return translations[language][key] || key
   }
 
