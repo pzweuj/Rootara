@@ -26,6 +26,7 @@ import {
   Calendar,
   Download,
   Trash2,
+  Lock,
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
@@ -143,7 +144,7 @@ export function ReportSwitcher() {
     },
   }
 
-  const t = (key) => {
+  const t = (key: keyof typeof translations['en']) => {
     return translations[language][key] || key
   }
 
@@ -185,7 +186,7 @@ export function ReportSwitcher() {
     }
   }
 
-  const handleSelectReport = (report) => {
+  const handleSelectReport = (report: typeof sampleReports[0]) => {
     setSelectedReport(report)
     // In a real app, this would navigate to the report or update the context
     // For now, we'll just update the selected report
@@ -387,6 +388,7 @@ export function ReportSwitcher() {
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                    <Lock className="h-3 w-3 mr-1" />
                     {t("private")}
                   </Badge>
                 )}
@@ -436,7 +438,7 @@ export function ReportSwitcher() {
                             variant="outline"
                             className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
                           >
-                            {t("private")}
+                            <Lock className="h-3 w-3" />
                           </Badge>
                         )}
                       </div>
