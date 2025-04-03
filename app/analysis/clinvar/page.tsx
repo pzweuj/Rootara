@@ -228,9 +228,9 @@ export default function ClinvarAnalysisPage() {
         return (
           <Badge
             variant="outline"
-            className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800"
+            className="bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 border-teal-200 dark:border-teal-800"
           >
-            <CheckCircle className="h-3 w-3 mr-1" />
+            <Info className="h-3 w-3 mr-1" />
             {t("likelyBenign")}
           </Badge>
         )
@@ -330,12 +330,12 @@ export default function ClinvarAnalysisPage() {
                     <div className="text-sm text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
                   </CardContent>
                 </Card>
-                <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
                   <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
                       {clinvarData.likelyBenign}
                     </div>
-                    <div className="text-sm text-green-600 dark:text-green-400">{t("likelyBenign")}</div>
+                    <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
                   </CardContent>
                 </Card>
                 <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">

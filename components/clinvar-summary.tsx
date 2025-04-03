@@ -92,6 +92,8 @@ export function ClinvarSummary() {
         return <AlertTriangle className="h-4 w-4 text-yellow-500" />
       case "Risk factor":
         return <Info className="h-4 w-4 text-blue-500" />
+      case "Likely benign":
+        return <Info className="h-4 w-4 text-teal-500" />
       case "Benign":
         return <CheckCircle className="h-4 w-4 text-green-500" />
       default:
@@ -121,9 +123,9 @@ export function ClinvarSummary() {
               <div className="text-xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.uncertain}</div>
               <div className="text-xs text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
             </div>
-            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-green-600 dark:text-green-400">{clinvarData.likelyBenign}</div>
-              <div className="text-xs text-green-600 dark:text-green-400">{t("likelyBenign")}</div>
+            <div className="bg-teal-50 dark:bg-teal-900/20 p-3 rounded-lg text-center">
+              <div className="text-xl font-bold text-teal-600 dark:text-teal-400">{clinvarData.likelyBenign}</div>
+              <div className="text-xs text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
             </div>
             <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-center">
               <div className="text-xl font-bold text-green-600 dark:text-green-400">{clinvarData.benign}</div>
