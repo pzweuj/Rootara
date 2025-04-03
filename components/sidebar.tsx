@@ -36,13 +36,13 @@ export function Sidebar() {
 
   useEffect(() => {
     // 当路径变化时，根据当前路径自动展开相关菜单
-    const newOpenItems = {}
+    const newOpenItems: Record<string, boolean> = {}
     navigation.forEach((item) => {
       if (
         item.children &&
         item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"))
       ) {
-        newOpenItems[item.name] = true as const
+        newOpenItems[item.name] = true
       }
     })
     setOpenItems(newOpenItems)
@@ -127,17 +127,17 @@ export function Sidebar() {
     let isActive = false;
     
     if (level === 0) {
-      // 父菜单项的活动状态判断
-      isActive = pathname === item.href ? true :
-        (item.href !== "/" && pathname.startsWith(item.href + "/")) ||
+      // 父菜单项的活动状态判断 - 确保每个表达式都返回布尔值
+      isActive = (pathname === item.href) ? true :
+        ((item.href !== "/" && pathname.startsWith(item.href + "/")) ? true :
         (item.children && item.children.some((child: { href: string; children?: Array<{ href: string }> }) =>
-          pathname === child.href || 
+          (pathname === child.href) || 
           (child.href !== "/" && pathname.startsWith(child.href + "/")) ||
           (child.children && child.children.some(grandchild => 
-            pathname === grandchild.href || 
+            (pathname === grandchild.href) || 
             (grandchild.href !== "/" && pathname.startsWith(grandchild.href + "/"))
           ))
-        ));
+        )) ? true : false);
     } else {
       // 子菜单项的活动状态判断 - 完全重写这部分逻辑
       
