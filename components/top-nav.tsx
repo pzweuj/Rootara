@@ -23,9 +23,17 @@ export function TopNav() {
   const { settings } = useSettings()
   const { t } = useLanguage()
 
+  // 获取当前页面标题
+  const getPageTitle = () => {
+    if (pathSegments.length === 0) return t("home")
+    const lastSegment = pathSegments[pathSegments.length - 1]
+    return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1)
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background w-full">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        {/* 桌面端显示面包屑导航 */}
         <div className="hidden md:block">
           <nav className="flex items-center space-x-2">
             <Link href="/" className="text-sm font-medium">
@@ -33,7 +41,7 @@ export function TopNav() {
             </Link>
             {pathSegments.map((segment, index) => (
               <React.Fragment key={segment}>
-                <span className="text-muted-foreground">/</span>
+                <div className="text-muted-foreground">/</div>
                 <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`} className="text-sm font-medium">
                   {segment.charAt(0).toUpperCase() + segment.slice(1)}
                 </Link>
@@ -41,6 +49,13 @@ export function TopNav() {
             ))}
           </nav>
         </div>
+        
+        {/* 移动端显示当前页面标题 */}
+        <div className="md:hidden">
+          <h1 className="text-lg font-semibold">{getPageTitle()}</h1>
+        </div>
+        
+        {/* 右侧按钮组 - 在所有屏幕尺寸下都显示 */}
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
           <ThemeToggle />

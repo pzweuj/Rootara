@@ -12,10 +12,10 @@ export function MainContent({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         "flex-1 transition-all duration-300 ease-in-out",
-        // 在桌面视图中始终使用展开状态的边距，在移动视图中根据 isCollapsed 状态调整
-        "ml-72 lg:ml-72",
-        isCollapsed ? "ml-[72px]" : "ml-72",
-        "lg:translate-x-0",
+        // 移动设备上不设置左边距，让内容占满整个宽度
+        "ml-0",
+        // 大屏幕上根据侧边栏状态调整左边距
+        isCollapsed ? "lg:ml-[72px]" : "lg:ml-72",
       )}
     >
       <TopNav />
