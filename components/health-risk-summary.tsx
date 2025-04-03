@@ -37,11 +37,11 @@ export function HealthRiskSummary() {
     },
   }
 
-  const t = (key) => {
-    return translations[language][key] || key
+  const t = (key: keyof typeof translations[typeof language]) => {
+    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
   }
 
-  const getRiskIcon = (risk) => {
+  const getRiskIcon = (risk: string) => {
     switch (risk) {
       case "Elevated":
         return <AlertCircle className="h-4 w-4 text-red-500" />
@@ -55,7 +55,7 @@ export function HealthRiskSummary() {
     }
   }
 
-  const getRiskColor = (level) => {
+  const getRiskColor = (level: number) => {
     if (level >= 70) return "bg-red-500"
     if (level >= 60) return "bg-yellow-500"
     if (level <= 40) return "bg-green-500"
@@ -78,13 +78,20 @@ export function HealthRiskSummary() {
                 </div>
                 <span className="text-sm">{language === "zh-CN" ? risk.riskZh : risk.risk}</span>
               </div>
-              <Progress value={risk.level} className="h-2" indicatorClassName={getRiskColor(risk.level)} />
+              <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
+                <div 
+                  className={`h-full ${getRiskColor(risk.level)} rounded-full transition-all duration-300`} 
+                  style={{ width: `${risk.level}%` }}
+                ></div>
+              </div>
               <p className="text-xs text-right text-muted-foreground">
                 {risk.variants} {t("geneticVariants")}
               </p>
             </div>
           ))}
-          <Button className="w-full mt-2">{t("viewDetailedHealthReport")}</Button>
+          <Button className="w-full mt-2" variant="outline">
+            {t("viewDetailedHealthReport")}
+          </Button>
         </div>
       </CardContent>
     </Card>

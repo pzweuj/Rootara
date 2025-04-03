@@ -36,6 +36,13 @@ const clinvarData = {
       classification: "Risk factor",
       severity: "medium",
     },
+    {
+      id: "rs121908312",
+      gene: "APOE",
+      condition: "Alzheimer's disease (late onset), susceptibility to",
+      classification: "Risk factor",
+      severity: "medium",
+    },
   ],
 }
 
@@ -73,11 +80,11 @@ export function ClinvarSummary() {
     },
   }
 
-  const t = (key) => {
+  const t = (key: keyof typeof translations[typeof language]) => {
     return translations[language][key] || key
   }
 
-  const getClassificationIcon = (classification) => {
+  const getClassificationIcon = (classification: string) => {
     switch (classification) {
       case "Pathogenic":
         return <AlertCircle className="h-4 w-4 text-red-500" />
@@ -148,10 +155,10 @@ export function ClinvarSummary() {
             <span>
               {t("totalVariants")}: {clinvarData.totalVariants}
             </span>
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" className="gap-1" asChild>
               <Link href="/analysis/clinvar">
                 {t("viewDetails")}
-                <ExternalLink className="ml-2 h-3 w-3" />
+                <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>
           </div>
