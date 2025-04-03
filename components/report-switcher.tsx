@@ -89,7 +89,7 @@ export function ReportSwitcher() {
 
   const translations = {
     en: {
-      myReports: "My Reports",
+      myReports: "All Reports",
       uploadNewReport: "Upload New Report",
       searchReports: "Search reports...",
       allReports: "All Reports",
@@ -116,7 +116,7 @@ export function ReportSwitcher() {
       noReportsFound: "No reports found matching your criteria",
     },
     "zh-CN": {
-      myReports: "我的报告",
+      myReports: "所有报告",
       uploadNewReport: "上传新报告",
       searchReports: "搜索报告...",
       allReports: "所有报告",
