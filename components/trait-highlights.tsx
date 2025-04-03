@@ -83,11 +83,11 @@ export function TraitHighlights() {
     },
   }
 
-  const t = (key) => {
-    return translations[language][key] || key
+  const t = (key: string) => {
+    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
   }
 
-  const getConfidenceBadge = (confidence) => {
+  const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
     const styles = {
       high: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
       medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
@@ -101,8 +101,8 @@ export function TraitHighlights() {
     }
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[confidence]}`}>
-        {confidenceText[confidence]}
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[confidence as keyof typeof styles]}`}>
+        {confidenceText[confidence as keyof typeof confidenceText]}
       </span>
     )
   }
@@ -121,7 +121,7 @@ export function TraitHighlights() {
                   <trait.icon className="h-5 w-5 text-primary mr-2" />
                   <span className="font-medium">{language === "zh-CN" ? trait.nameZh : trait.name}</span>
                 </div>
-                {getConfidenceBadge(trait.confidence)}
+                {getConfidenceBadge(trait.confidence as "high" | "medium" | "low")}
               </div>
               <div>
                 <p className="text-sm font-semibold">{language === "zh-CN" ? trait.resultZh : trait.result}</p>
