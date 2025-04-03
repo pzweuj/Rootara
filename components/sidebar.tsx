@@ -42,7 +42,7 @@ export function Sidebar() {
         item.children &&
         item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"))
       ) {
-        newOpenItems[item.name] = true
+        newOpenItems[item.name] = true as const
       }
     })
     setOpenItems(newOpenItems)
@@ -99,12 +99,60 @@ export function Sidebar() {
     }))
   }
 
-  const NavItem = ({ item, level = 0, isBottom = false }) => {
+  const NavItem = ({ 
+    item, 
+    level = 0, 
+    isBottom = false 
+  }: { 
+    item: {
+      name: string;
+      href: string;
+      icon?: React.ComponentType<{ className?: string }>;
+      children?: Array<{
+        name: string;
+        href: string;
+        icon?: React.ComponentType<{ className?: string }>;
+        children?: Array<{
+          name: string;
+          href: string;
+        }>;
+      }>;
+    };
+    level?: number;
+    isBottom?: boolean;
+  }) => {
     const hasChildren = item.children && item.children.length > 0
-    const isActive =
-      pathname === item.href ||
-      (item.href !== "/" && pathname.startsWith(item.href + "/")) ||
-      (item.children && item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/")))
+    
+    // 特殊处理子菜单项的活动状态
+    let isActive = false;
+    
+    if (level === 0) {
+      // 父菜单项的活动状态判断
+      isActive = pathname === item.href ? true :
+        (item.href !== "/" && pathname.startsWith(item.href + "/")) ||
+        (item.children && item.children.some((child: { href: string; children?: Array<{ href: string }> }) =>
+          pathname === child.href || 
+          (child.href !== "/" && pathname.startsWith(child.href + "/")) ||
+          (child.children && child.children.some(grandchild => 
+            pathname === grandchild.href || 
+            (grandchild.href !== "/" && pathname.startsWith(grandchild.href + "/"))
+          ))
+        ));
+    } else {
+      // 子菜单项的活动状态判断
+      if (item.href === "/reports" && pathname === "/reports") {
+        // 特殊处理"所有报告"菜单项
+        isActive = true;
+      } else if (item.href === "/reports/upload" && pathname === "/reports/upload") {
+        // 特殊处理"上传新报告"菜单项
+        isActive = true;
+      } else {
+        // 其他子菜单项
+        isActive = pathname === item.href || 
+          (item.href !== "/" && pathname.startsWith(item.href + "/"));
+      }
+    }
+    
     const isOpen = openItems[item.name]
 
     if (hasChildren) {
@@ -136,8 +184,8 @@ export function Sidebar() {
               </div>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="pl-4 space-y-1">
-                {item.children.map((child) => (
+              <div className="pl-4 space-y-2 mt-2">
+                {item.children?.map((child) => (
                   <NavItem key={child.name} item={child} level={level + 1} />
                 ))}
               </div>
@@ -224,7 +272,6 @@ export function Sidebar() {
                 <span className="text-lg">Rootara</span>
               </Link>
             )}
-            {/* 移除桌面视图中的收起按钮，只在移动设备上显示 */}
             <Button
               variant="ghost"
               size="sm"
@@ -237,14 +284,14 @@ export function Sidebar() {
           </div>
         </div>
         <div className="flex-1 overflow-auto">
-          <nav className="flex-1 space-y-1 px-2 py-4">
+          <nav className="flex-1 space-y-3 px-2 py-4">
             {navigation.map((item) => (
               <NavItem key={item.name} item={item} />
             ))}
           </nav>
         </div>
         <div className="border-t border-border p-2">
-          <nav className="space-y-1">
+          <nav className="space-y-3">
             {bottomNavigation.map((item) => (
               <NavItem key={item.name} item={item} isBottom />
             ))}
