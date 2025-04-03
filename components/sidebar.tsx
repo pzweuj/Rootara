@@ -139,17 +139,20 @@ export function Sidebar() {
           ))
         ));
     } else {
-      // 子菜单项的活动状态判断
-      if (item.href === "/reports" && pathname === "/reports") {
-        // 特殊处理"所有报告"菜单项
+      // 子菜单项的活动状态判断 - 完全重写这部分逻辑
+      
+      // 精确匹配路径
+      isActive = pathname === item.href;
+      
+      // 特殊情况：如果是根路径且不是精确匹配，则不激活
+      if (item.href === "/" && pathname !== "/") {
+        isActive = false;
+      }
+      
+      // 特殊情况：如果当前路径以该项的路径开头，且该项不是"/reports"，则激活
+      // 这样可以处理子路径的情况，但排除了"/reports"和"/reports/upload"的冲突
+      if (!isActive && item.href !== "/" && item.href !== "/reports" && pathname.startsWith(item.href + "/")) {
         isActive = true;
-      } else if (item.href === "/reports/upload" && pathname === "/reports/upload") {
-        // 特殊处理"上传新报告"菜单项
-        isActive = true;
-      } else {
-        // 其他子菜单项
-        isActive = pathname === item.href || 
-          (item.href !== "/" && pathname.startsWith(item.href + "/"));
       }
     }
     
