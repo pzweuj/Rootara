@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -76,16 +76,53 @@ const sampleReports = [
   },
 ]
 
-export function ReportSwitcher() {
+// 添加接口定义
+interface ReportSwitcherProps {
+  defaultReportId?: string;
+}
+
+export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()
-  const [reports, setReports] = useState(sampleReports)
+  
+  // 初始化报告数据，如果提供了默认报告ID，则更新isDefault属性
+  const initialReports = defaultReportId 
+    ? sampleReports.map(report => ({
+        ...report,
+        isDefault: report.id === defaultReportId
+      }))
+    : sampleReports
+  
+  const [reports, setReports] = useState(initialReports)
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState<"name" | "date" | "source">("date")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [filterShared, setFilterShared] = useState<"all" | "shared" | "private">("all")
-  const [selectedReport, setSelectedReport] = useState(reports.find((r) => r.isDefault) || reports[0])
+  
+  // 根据defaultReportId或isDefault属性选择默认报告
+  const [selectedReport, setSelectedReport] = useState(() => {
+    if (defaultReportId) {
+      const report = reports.find(r => r.id === defaultReportId)
+      if (report) return report
+    }
+    return reports.find(r => r.isDefault) || reports[0]
+  })
+
+  // 当defaultReportId变化时更新选中的报告
+  useEffect(() => {
+    if (defaultReportId) {
+      const report = reports.find(r => r.id === defaultReportId)
+      if (report) {
+        setSelectedReport(report)
+        // 更新所有报告的isDefault属性
+        setReports(reports.map(r => ({
+          ...r,
+          isDefault: r.id === defaultReportId
+        })))
+      }
+    }
+  }, [defaultReportId])
 
   const translations = {
     en: {
