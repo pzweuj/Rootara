@@ -51,15 +51,6 @@ export function Sidebar() {
   const navigation = [
     { name: t("dashboard"), href: "/", icon: Home },
     {
-      name: t("myReports"),
-      href: "/reports",
-      icon: FileText,
-      children: [
-        { name: t("allReports"), href: "/reports" },
-        { name: t("uploadNewReport"), href: "/reports/upload" },
-      ],
-    },
-    {
       name: t("analysisModules"),
       href: "/analysis",
       icon: BarChart2,
@@ -77,6 +68,15 @@ export function Sidebar() {
         { name: t("traitInterpretation"), href: "/analysis/traits", icon: User },
         { name: t("rawData"), href: "/analysis/raw-data", icon: Database },
         { name: "ClinVar", href: "/analysis/clinvar", icon: AlertCircle },
+      ],
+    },
+    {
+      name: t("myReports"),
+      href: "/reports",
+      icon: FileText,
+      children: [
+        { name: t("allReports"), href: "/reports" },
+        { name: t("uploadNewReport"), href: "/reports/upload" },
       ],
     },
     {
