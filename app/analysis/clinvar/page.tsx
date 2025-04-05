@@ -357,7 +357,7 @@ export default function ClinvarAnalysisPage() {
                       <TableCell className="font-medium">{variant.gene}</TableCell>
                       <TableCell>
                         <a
-                          href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
+                          href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center text-blue-600 hover:underline"
@@ -415,8 +415,7 @@ export default function ClinvarAnalysisPage() {
                   <TableHead>{t("position")}</TableHead>
                   <TableHead>{t("condition")}</TableHead>
                   <TableHead>{t("classification")}</TableHead>
-                  <TableHead>{t("reviewStatus")}</TableHead>
-                  <TableHead>{t("lastUpdated")}</TableHead>
+                  {/* 已删除 Review Status 和 Last Updated 列 */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -426,7 +425,7 @@ export default function ClinvarAnalysisPage() {
                       <TableCell className="font-medium">{variant.gene}</TableCell>
                       <TableCell>
                         <a
-                          href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
+                          href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center text-blue-600 hover:underline"
@@ -441,15 +440,12 @@ export default function ClinvarAnalysisPage() {
                         {variant.condition}
                       </TableCell>
                       <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                      <TableCell className="max-w-[150px] truncate" title={variant.reviewStatus}>
-                        {variant.reviewStatus}
-                      </TableCell>
-                      <TableCell>{variant.lastUpdated}</TableCell>
+                      {/* 已删除 Review Status 和 Last Updated 单元格 */}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
+                    <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
                       {t("noVariantsFound")}
                     </TableCell>
                   </TableRow>
