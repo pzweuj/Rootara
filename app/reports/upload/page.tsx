@@ -190,7 +190,7 @@ export default function UploadReportPage() {
                     <SelectItem value="AncestryDNA">AncestryDNA</SelectItem>
                     <SelectItem value="WeGene">WeGene</SelectItem>
                     <SelectItem value="FamilyTreeDNA">FamilyTreeDNA</SelectItem>
-                    <SelectItem value="Other">{t("other")}</SelectItem>
+                    <SelectItem value="Other">{localT("other")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -212,7 +212,7 @@ export default function UploadReportPage() {
                   required
                 />
                 <label htmlFor="file-upload">
-                  <Button variant="outline" className="mx-auto" type="button" as="span">
+                  <Button variant="outline" className="mx-auto" type="button">
                     {localT("selectFile")}
                   </Button>
                 </label>
@@ -231,7 +231,11 @@ export default function UploadReportPage() {
               )}
 
               <div className="flex items-center space-x-2">
-                <Checkbox id="default" checked={isDefault} onCheckedChange={setIsDefault} />
+                <Checkbox 
+                  id="default" 
+                  checked={isDefault} 
+                  onCheckedChange={(checked: boolean) => setIsDefault(checked)} 
+                />
                 <Label htmlFor="default">{localT("setAsDefault")}</Label>
               </div>
 

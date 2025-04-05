@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dna, Globe, Heart, Brain } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { Badge } from "@/components/ui/badge"
 
 const profileData = {
   ancestryComposition: [
@@ -14,6 +15,7 @@ const profileData = {
   totalSnps: 635287,
   healthTraits: 127,
   clinvarPathogenic: 20,
+  reportId: "RPT-7A2B9C", // 添加报告编号
 }
 
 export function GeneticProfileOverview() {
@@ -45,10 +47,15 @@ export function GeneticProfileOverview() {
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-medium flex items-center">
-          <Dna className="mr-2 h-5 w-5 text-primary" />
-          {language === "en" ? "Genetic Profile Overview" : "基因概况"}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-medium flex items-center">
+            <Dna className="mr-2 h-5 w-5 text-primary" />
+            {language === "en" ? "Genetic Profile Overview" : "基因概况"}
+          </CardTitle>
+          <Badge variant="outline" className="text-xs font-mono">
+            {language === "en" ? "Report ID: " : "报告编号: "}{profileData.reportId}
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid md:grid-cols-2 gap-6">
