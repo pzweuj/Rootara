@@ -12,15 +12,100 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
 import { Upload, FileText, CheckCircle, AlertCircle, Info } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function UploadReportPage() {
   const router = useRouter()
+  const { t, language } = useLanguage()
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "success" | "error">("idle")
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState("")
   const [reportName, setReportName] = useState("")
   const [source, setSource] = useState("")
   const [isDefault, setIsDefault] = useState(false)
+
+  // 添加额外的翻译项
+  const translations = {
+    en: {
+      uploadGeneticData: "Upload Genetic Data",
+      uploadNewReport: "Upload New Report",
+      uploadFromService: "Upload your genetic data file from a testing service",
+      reportName: "Report Name",
+      reportNamePlaceholder: "e.g., My Ancestry Analysis",
+      dataSource: "Data Source",
+      selectDataSource: "Select data source",
+      dragDropFile: "Drag and drop your genetic data file or click to browse",
+      supportedFormats: "Supported formats: 23andMe, AncestryDNA, WeGene, FTDNA",
+      selectFile: "Select File",
+      remove: "Remove",
+      setAsDefault: "Set as default report",
+      privateSecure: "Your genetic data is private and secure. We use industry-standard encryption to protect your information.",
+      uploading: "Uploading your genetic data...",
+      takeFewMinutes: "This may take a few minutes depending on file size",
+      uploadComplete: "Upload Complete!",
+      dataProcessing: "Your genetic data has been successfully uploaded and is now being processed.",
+      viewMyReports: "View My Reports",
+      uploadFailed: "Upload Failed",
+      tryAgain: "Try Again",
+      errorUploadingFile: "There was an error uploading your file. Please try again.",
+      cancel: "Cancel",
+      uploadReport: "Upload Report",
+      supportedDataFormats: "Supported Data Formats",
+      compatibleFormats: "Information about compatible genetic data formats",
+      rawDataFiles: "Raw data files from 23andMe are typically in a tab-separated format (.txt).",
+      downloadFrom23andMe: "Download from 23andMe: Account → Browse Raw Data → Download",
+      ancestryDataFormat: "AncestryDNA provides raw data in a tab-separated format (.txt).",
+      downloadFromAncestry: "Download from Ancestry: DNA → Settings → Download Raw DNA Data",
+      wegeneDataFormat: "WeGene DNA data is available in CSV format (.csv).",
+      downloadFromWeGene: "Download from WeGene: DNA → Manage DNA kits → Download",
+      ftdnaDataFormat: "FTDNA provides raw data in CSV format (.csv).",
+      downloadFromFTDNA: "Download from FTDNA: myDNA → Download Raw Data",
+      importantNote: "Important Note",
+      uncompressedFiles: "Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract it first. Maximum file size is 50MB.",
+    },
+    "zh-CN": {
+      uploadGeneticData: "上传基因数据",
+      uploadNewReport: "上传新报告",
+      uploadFromService: "从测试服务上传您的基因数据文件",
+      reportName: "报告名称",
+      reportNamePlaceholder: "例如：我的祖源分析",
+      dataSource: "数据来源",
+      selectDataSource: "选择数据来源",
+      dragDropFile: "拖放您的基因数据文件或点击浏览",
+      supportedFormats: "支持的格式：23andMe、AncestryDNA、WeGene、FTDNA",
+      selectFile: "选择文件",
+      remove: "移除",
+      setAsDefault: "设为默认报告",
+      privateSecure: "您的基因数据是私密且安全的。我们使用行业标准加密来保护您的信息。",
+      uploading: "正在上传您的基因数据...",
+      takeFewMinutes: "根据文件大小，这可能需要几分钟时间",
+      uploadComplete: "上传完成！",
+      dataProcessing: "您的基因数据已成功上传，正在处理中。",
+      viewMyReports: "查看我的报告",
+      uploadFailed: "上传失败",
+      tryAgain: "重试",
+      errorUploadingFile: "上传文件时出错。请重试。",
+      cancel: "取消",
+      uploadReport: "上传报告",
+      supportedDataFormats: "支持的数据格式",
+      compatibleFormats: "关于兼容基因数据格式的信息",
+      rawDataFiles: "来自23andMe的原始数据文件通常为制表符分隔格式(.txt)。",
+      downloadFrom23andMe: "从23andMe下载：账户 → 浏览原始数据 → 下载",
+      ancestryDataFormat: "AncestryDNA提供制表符分隔格式(.txt)的原始数据。",
+      downloadFromAncestry: "从Ancestry下载：DNA → 设置 → 下载原始DNA数据",
+      wegeneDataFormat: "WeGene DNA数据以CSV格式(.csv)提供。",
+      downloadFromWeGene: "从WeGene下载：DNA → 管理DNA套件 → 下载",
+      ftdnaDataFormat: "FTDNA提供CSV格式(.csv)的原始数据。",
+      downloadFromFTDNA: "从FTDNA下载：myDNA → 下载原始数据",
+      importantNote: "重要提示",
+      uncompressedFiles: "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。",
+    }
+  }
+
+  // 本地翻译函数，用于处理未在全局上下文中定义的翻译
+  const localT = (key: string) => {
+    return translations[language as keyof typeof translations]?.[key as keyof (typeof translations)[keyof typeof translations]] || key
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -32,8 +117,8 @@ export default function UploadReportPage() {
         setSource("23andMe")
       } else if (file.name.toLowerCase().includes("ancestry")) {
         setSource("AncestryDNA")
-      } else if (file.name.toLowerCase().includes("myheritage")) {
-        setSource("MyHeritage")
+      } else if (file.name.toLowerCase().includes("wegene")) {
+        setSource("WeGene")
       } else if (file.name.toLowerCase().includes("ftdna") || file.name.toLowerCase().includes("familytree")) {
         setSource("FamilyTreeDNA")
       }
@@ -72,40 +157,40 @@ export default function UploadReportPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Upload Genetic Data</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{localT("uploadGeneticData")}</h1>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Upload New Report</CardTitle>
-          <CardDescription>Upload your genetic data file from a testing service</CardDescription>
+          <CardTitle>{localT("uploadNewReport")}</CardTitle>
+          <CardDescription>{localT("uploadFromService")}</CardDescription>
         </CardHeader>
         <CardContent>
           {uploadState === "idle" && (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="report-name">Report Name</Label>
+                <Label htmlFor="report-name">{localT("reportName")}</Label>
                 <Input
                   id="report-name"
                   value={reportName}
                   onChange={(e) => setReportName(e.target.value)}
-                  placeholder="e.g., My Ancestry Analysis"
+                  placeholder={localT("reportNamePlaceholder")}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="source">Data Source</Label>
+                <Label htmlFor="source">{localT("dataSource")}</Label>
                 <Select value={source} onValueChange={setSource} required>
                   <SelectTrigger id="source">
-                    <SelectValue placeholder="Select data source" />
+                    <SelectValue placeholder={localT("selectDataSource")} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="23andMe">23andMe</SelectItem>
                     <SelectItem value="AncestryDNA">AncestryDNA</SelectItem>
-                    <SelectItem value="MyHeritage">MyHeritage</SelectItem>
+                    <SelectItem value="WeGene">WeGene</SelectItem>
                     <SelectItem value="FamilyTreeDNA">FamilyTreeDNA</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Other">{t("other")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -113,10 +198,10 @@ export default function UploadReportPage() {
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
                 <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground mb-2">
-                  Drag and drop your genetic data file or click to browse
+                  {localT("dragDropFile")}
                 </p>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Supported formats: 23andMe, AncestryDNA, MyHeritage, FTDNA
+                  {localT("supportedFormats")}
                 </p>
                 <input
                   type="file"
@@ -128,7 +213,7 @@ export default function UploadReportPage() {
                 />
                 <label htmlFor="file-upload">
                   <Button variant="outline" className="mx-auto" type="button" as="span">
-                    Select File
+                    {localT("selectFile")}
                   </Button>
                 </label>
               </div>
@@ -140,32 +225,31 @@ export default function UploadReportPage() {
                     <span className="text-sm truncate max-w-[200px]">{fileName}</span>
                   </div>
                   <Button size="sm" variant="ghost" type="button" onClick={() => setFileName("")}>
-                    Remove
+                    {localT("remove")}
                   </Button>
                 </div>
               )}
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="default" checked={isDefault} onCheckedChange={setIsDefault} />
-                <Label htmlFor="default">Set as default report</Label>
+                <Label htmlFor="default">{localT("setAsDefault")}</Label>
               </div>
 
-              <div className="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+              {/* <div className="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
                 <Info className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0" />
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Your genetic data is private and secure. We use industry-standard encryption to protect your
-                  information.
+                  {localT("privateSecure")}
                 </p>
-              </div>
+              </div> */}
             </form>
           )}
 
           {uploadState === "uploading" && (
             <div className="space-y-4">
               <div className="p-6 text-center">
-                <p className="text-sm font-medium mb-4">Uploading your genetic data...</p>
+                <p className="text-sm font-medium mb-4">{localT("uploading")}</p>
                 <Progress value={progress} className="h-2 mb-4" />
-                <p className="text-xs text-muted-foreground">This may take a few minutes depending on file size</p>
+                <p className="text-xs text-muted-foreground">{localT("takeFewMinutes")}</p>
               </div>
             </div>
           )}
@@ -174,11 +258,11 @@ export default function UploadReportPage() {
             <div className="space-y-4">
               <div className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-                <p className="text-lg font-medium mb-2">Upload Complete!</p>
+                <p className="text-lg font-medium mb-2">{localT("uploadComplete")}</p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Your genetic data has been successfully uploaded and is now being processed.
+                  {localT("dataProcessing")}
                 </p>
-                <Button onClick={() => router.push("/reports")}>View My Reports</Button>
+                <Button onClick={() => router.push("/reports")}>{localT("viewMyReports")}</Button>
               </div>
             </div>
           )}
@@ -187,12 +271,12 @@ export default function UploadReportPage() {
             <div className="space-y-4">
               <div className="p-6 text-center">
                 <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-2" />
-                <p className="text-lg font-medium mb-2">Upload Failed</p>
+                <p className="text-lg font-medium mb-2">{localT("uploadFailed")}</p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  There was an error uploading your file. Please try again.
+                  {localT("errorUploadingFile")}
                 </p>
                 <Button variant="outline" onClick={() => setUploadState("idle")}>
-                  Try Again
+                  {localT("tryAgain")}
                 </Button>
               </div>
             </div>
@@ -201,10 +285,10 @@ export default function UploadReportPage() {
         {uploadState === "idle" && (
           <CardFooter className="flex justify-between">
             <Button variant="outline" onClick={() => router.push("/reports")}>
-              Cancel
+              {localT("cancel")}
             </Button>
             <Button type="submit" onClick={handleSubmit} disabled={!fileName || !reportName || !source}>
-              Upload Report
+              {localT("uploadReport")}
             </Button>
           </CardFooter>
         )}
@@ -212,8 +296,8 @@ export default function UploadReportPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Supported Data Formats</CardTitle>
-          <CardDescription>Information about compatible genetic data formats</CardDescription>
+          <CardTitle>{localT("supportedDataFormats")}</CardTitle>
+          <CardDescription>{localT("compatibleFormats")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -221,37 +305,37 @@ export default function UploadReportPage() {
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">23andMe</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Raw data files from 23andMe are typically in a tab-separated format (.txt).
+                  {localT("rawDataFiles")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Download from 23andMe: Account → Browse Raw Data → Download
+                  {localT("downloadFrom23andMe")}
                 </p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">AncestryDNA</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  AncestryDNA provides raw data in a tab-separated format (.txt).
+                  {localT("ancestryDataFormat")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Download from Ancestry: DNA → Settings → Download Raw DNA Data
+                  {localT("downloadFromAncestry")}
                 </p>
               </div>
 
               <div className="border rounded-md p-4">
-                <h3 className="font-medium mb-2">MyHeritage</h3>
+                <h3 className="font-medium mb-2">WeGene</h3>
                 <p className="text-sm text-muted-foreground mb-2">
-                  MyHeritage DNA data is available in CSV format (.csv).
+                  {localT("wegeneDataFormat")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Download from MyHeritage: DNA → Manage DNA kits → Download
+                  {localT("downloadFromWeGene")}
                 </p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">Family Tree DNA</h3>
-                <p className="text-sm text-muted-foreground mb-2">FTDNA provides raw data in CSV format (.csv).</p>
-                <p className="text-xs text-muted-foreground">Download from FTDNA: myDNA → Download Raw Data</p>
+                <p className="text-sm text-muted-foreground mb-2">{localT("ftdnaDataFormat")}</p>
+                <p className="text-xs text-muted-foreground">{localT("downloadFromFTDNA")}</p>
               </div>
             </div>
 
@@ -259,10 +343,9 @@ export default function UploadReportPage() {
               <div className="flex items-start">
                 <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Important Note</p>
+                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">{localT("importantNote")}</p>
                   <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                    Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract
-                    it first. Maximum file size is 50MB.
+                    {localT("uncompressedFiles")}
                   </p>
                 </div>
               </div>
