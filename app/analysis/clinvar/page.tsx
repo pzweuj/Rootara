@@ -187,11 +187,11 @@ export default function ClinvarAnalysisPage() {
     },
   }
 
-  const t = (key) => {
-    return translations[language][key] || key
+  const t = (key: string) => {
+    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
   }
 
-  const getClassificationBadge = (classification) => {
+  const getClassificationBadge = (classification: string) => {
     switch (classification) {
       case "Pathogenic":
         return (
@@ -272,10 +272,12 @@ export default function ClinvarAnalysisPage() {
       (classificationFilter === "likely_benign" && variant.classification === "Likely benign") ||
       (classificationFilter === "benign" && variant.classification === "Benign")
 
-    const matchesGene = geneFilter === "all" || variant.gene === geneFilter
-
-    return matchesSearch && matchesClassification && matchesGene
+    // 移除了基因筛选条件
+    return matchesSearch && matchesClassification
   })
+
+  // 删除这一行，它是一个孤立的表达式
+  // const matchesGene = geneFilter === "all" || variant.gene === geneFilter
 
   return (
     <div className="space-y-6">
@@ -289,208 +291,180 @@ export default function ClinvarAnalysisPage() {
             <Download className="mr-2 h-4 w-4" />
             {t("exportData")}
           </Button>
-          <Button variant="outline">
-            <Share2 className="mr-2 h-4 w-4" />
-            {t("shareResults")}
-          </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">{t("overview")}</TabsTrigger>
-          <TabsTrigger value="variants">{t("variantList")}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("clinvarAnalysis")}</CardTitle>
-              <CardDescription>{t("clinvarDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 md:grid-cols-5">
-                <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-red-600 dark:text-red-400">{clinvarData.pathogenic}</div>
-                    <div className="text-sm text-red-600 dark:text-red-400">{t("pathogenicVariants")}</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                      {clinvarData.likelyPathogenic}
-                    </div>
-                    <div className="text-sm text-yellow-600 dark:text-yellow-400">{t("likelyPathogenic")}</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.uncertain}</div>
-                    <div className="text-sm text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
-                      {clinvarData.likelyBenign}
-                    </div>
-                    <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                  <CardContent className="p-4 text-center">
-                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">{clinvarData.benign}</div>
-                    <div className="text-sm text-green-600 dark:text-green-400">{t("benign")}</div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Top Pathogenic Variants</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("gene")}</TableHead>
-                      <TableHead>{t("variantId")}</TableHead>
-                      <TableHead>{t("condition")}</TableHead>
-                      <TableHead>{t("classification")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {clinvarData.variants
-                      .filter((v) => v.classification === "Pathogenic")
-                      .slice(0, 5)
-                      .map((variant) => (
-                        <TableRow key={variant.id}>
-                          <TableCell className="font-medium">{variant.gene}</TableCell>
-                          <TableCell>
-                            <a
-                              href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center text-blue-600 hover:underline"
-                            >
-                              {variant.id}
-                              <ExternalLink className="ml-1 h-3 w-3" />
-                            </a>
-                          </TableCell>
-                          <TableCell>{variant.condition}</TableCell>
-                          <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="variants" className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative w-full md:w-1/2">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t("searchVariants")}
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="w-full md:w-1/4">
-              <Select value={classificationFilter} onValueChange={setClassificationFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("classification")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allClassifications")}</SelectItem>
-                  <SelectItem value="pathogenic">{t("pathogenicVariants")}</SelectItem>
-                  <SelectItem value="likely_pathogenic">{t("likelyPathogenic")}</SelectItem>
-                  <SelectItem value="uncertain">{t("uncertainSignificance")}</SelectItem>
-                  <SelectItem value="likely_benign">{t("likelyBenign")}</SelectItem>
-                  <SelectItem value="benign">{t("benign")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full md:w-1/4">
-              <Select value={geneFilter} onValueChange={setGeneFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("gene")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allGenes")}</SelectItem>
-                  {uniqueGenes.map((gene) => (
-                    <SelectItem key={gene} value={gene}>
-                      {gene}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("clinvarAnalysis")}</CardTitle>
+          <CardDescription>{t("clinvarDescription")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-5">
+            <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-red-600 dark:text-red-400">{clinvarData.pathogenic}</div>
+                <div className="text-sm text-red-600 dark:text-red-400">{t("pathogenicVariants")}</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                  {clinvarData.likelyPathogenic}
+                </div>
+                <div className="text-sm text-yellow-600 dark:text-yellow-400">{t("likelyPathogenic")}</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.uncertain}</div>
+                <div className="text-sm text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
+                  {clinvarData.likelyBenign}
+                </div>
+                <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+              <CardContent className="p-4 text-center">
+                <div className="text-3xl font-bold text-green-600 dark:text-green-400">{clinvarData.benign}</div>
+                <div className="text-sm text-green-600 dark:text-green-400">{t("benign")}</div>
+              </CardContent>
+            </Card>
           </div>
 
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("gene")}</TableHead>
-                    <TableHead>{t("variantId")}</TableHead>
-                    <TableHead>{t("chromosome")}</TableHead>
-                    <TableHead>{t("position")}</TableHead>
-                    <TableHead>{t("condition")}</TableHead>
-                    <TableHead>{t("classification")}</TableHead>
-                    <TableHead>{t("reviewStatus")}</TableHead>
-                    <TableHead>{t("lastUpdated")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredVariants.length > 0 ? (
-                    filteredVariants.map((variant) => (
-                      <TableRow key={variant.id}>
-                        <TableCell className="font-medium">{variant.gene}</TableCell>
-                        <TableCell>
-                          <a
-                            href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-blue-600 hover:underline"
-                          >
-                            {variant.id}
-                            <ExternalLink className="ml-1 h-3 w-3" />
-                          </a>
-                        </TableCell>
-                        <TableCell>{variant.chromosome}</TableCell>
-                        <TableCell>{variant.position}</TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={variant.condition}>
-                          {variant.condition}
-                        </TableCell>
-                        <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                        <TableCell className="max-w-[150px] truncate" title={variant.reviewStatus}>
-                          {variant.reviewStatus}
-                        </TableCell>
-                        <TableCell>{variant.lastUpdated}</TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
-                        {t("noVariantsFound")}
+          <div className="mt-8">
+            <h3 className="text-lg font-medium mb-4">Top Pathogenic Variants</h3>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("gene")}</TableHead>
+                  <TableHead>{t("variantId")}</TableHead>
+                  <TableHead>{t("condition")}</TableHead>
+                  <TableHead>{t("classification")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {clinvarData.variants
+                  .filter((v) => v.classification === "Pathogenic")
+                  .slice(0, 5)
+                  .map((variant) => (
+                    <TableRow key={variant.id}>
+                      <TableCell className="font-medium">{variant.gene}</TableCell>
+                      <TableCell>
+                        <a
+                          href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-blue-600 hover:underline"
+                        >
+                          {variant.id}
+                          <ExternalLink className="ml-1 h-3 w-3" />
+                        </a>
                       </TableCell>
+                      <TableCell>{variant.condition}</TableCell>
+                      <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              {t("totalVariants")}: {clinvarData.totalVariants}
-            </p>
+                  ))}
+              </TableBody>
+            </Table>
           </div>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
+
+      <div className="mt-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <div className="relative w-full md:w-2/3">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t("searchVariants")}
+              className="pl-8"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="w-full md:w-1/3">
+            <Select value={classificationFilter} onValueChange={setClassificationFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder={t("classification")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t("allClassifications")}</SelectItem>
+                <SelectItem value="pathogenic">{t("pathogenicVariants")}</SelectItem>
+                <SelectItem value="likely_pathogenic">{t("likelyPathogenic")}</SelectItem>
+                <SelectItem value="uncertain">{t("uncertainSignificance")}</SelectItem>
+                <SelectItem value="likely_benign">{t("likelyBenign")}</SelectItem>
+                <SelectItem value="benign">{t("benign")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("gene")}</TableHead>
+                  <TableHead>{t("variantId")}</TableHead>
+                  <TableHead>{t("chromosome")}</TableHead>
+                  <TableHead>{t("position")}</TableHead>
+                  <TableHead>{t("condition")}</TableHead>
+                  <TableHead>{t("classification")}</TableHead>
+                  <TableHead>{t("reviewStatus")}</TableHead>
+                  <TableHead>{t("lastUpdated")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredVariants.length > 0 ? (
+                  filteredVariants.map((variant) => (
+                    <TableRow key={variant.id}>
+                      <TableCell className="font-medium">{variant.gene}</TableCell>
+                      <TableCell>
+                        <a
+                          href={`https://www.ncbi.nlm.nih.gov/clinvar/${variant.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center text-blue-600 hover:underline"
+                        >
+                          {variant.id}
+                          <ExternalLink className="ml-1 h-3 w-3" />
+                        </a>
+                      </TableCell>
+                      <TableCell>{variant.chromosome}</TableCell>
+                      <TableCell>{variant.position}</TableCell>
+                      <TableCell className="max-w-[200px] truncate" title={variant.condition}>
+                        {variant.condition}
+                      </TableCell>
+                      <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
+                      <TableCell className="max-w-[150px] truncate" title={variant.reviewStatus}>
+                        {variant.reviewStatus}
+                      </TableCell>
+                      <TableCell>{variant.lastUpdated}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={8} className="text-center py-4 text-muted-foreground">
+                      {t("noVariantsFound")}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-muted-foreground">
+          {t("totalVariants")}: {clinvarData.totalVariants}
+        </p>
+      </div>
     </div>
   )
 }
