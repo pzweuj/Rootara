@@ -84,7 +84,7 @@ export function Sidebar() {
       href: "/tools",
       icon: Settings,
       children: [
-        { name: t("dataSharingManagement"), href: "/tools/sharing", icon: Share2 },
+        // 移除了 Data Sharing Management 选项
         { name: t("accountSettings"), href: "/tools/settings", icon: Settings },
       ],
     },
