@@ -14,7 +14,6 @@ const haplogroups = {
     description:
       "Haplogroup H is the most common mitochondrial haplogroup in Europe. It is found in approximately 40% of the European population.",
     descriptionZh: "单倍群H是欧洲最常见的线粒体单倍群。它在欧洲人口中的比例约为40%。",
-    // 删除 distribution 数据
     phylogeneticTree: [
       { id: "L", level: 0, children: ["L0", "L1", "L2", "L3"] },
       { id: "L3", level: 1, children: ["M", "N"] },
@@ -25,20 +24,15 @@ const haplogroups = {
       { id: "H", level: 6, children: ["H1", "H2", "H3"] },
       { id: "H1", level: 7, children: ["H1a", "H1b", "H1c"] },
       { id: "H1c", level: 8, children: ["H1c1", "H1c2", "H1c3"] },
-      { id: "H1c3", level: 9, children: [] },
-    ],
+      { id: "H1c3", level: 9, children: [] }
+    ] // 删除了这里的逗号
   },
   paternal: {
     id: "R1b1b2",
     description:
       "R1b is the most common paternal haplogroup in Western Europe. In some areas, it comprises over 80% of the Y-chromosome gene pool.",
     descriptionZh: "R1b是西欧最常见的父系单倍群。在某些地区，它占Y染色体基因库的80%以上。",
-    distribution: [
-      { region: "Western Europe", regionZh: "西欧", percentage: 60 },
-      { region: "Eastern Europe", regionZh: "东欧", percentage: 30 },
-      { region: "Central Asia", regionZh: "中亚", percentage: 15 },
-      { region: "Middle East", regionZh: "中东", percentage: 10 },
-    ],
+    // 删除 distribution 数据
     phylogeneticTree: [
       { id: "A", level: 0, children: ["BT"] },
       { id: "BT", level: 1, children: ["CT"] },
@@ -107,10 +101,10 @@ export function HaplogroupDistribution() {
     const maxLevel = Math.max(...data.map((node) => node.level))
     const nodeWidth = 60
     const nodeHeight = 30
-    const horizontalSpacing = 80
-    const verticalSpacing = 40
+    const horizontalSpacing = 100  // 增加水平间距
+    const verticalSpacing = 50     // 增加垂直间距
     const totalWidth = (maxLevel + 1) * horizontalSpacing + nodeWidth
-    const totalHeight = data.length * verticalSpacing
+    const totalHeight = Math.max(data.length * verticalSpacing, 600)  // 确保最小高度
 
     // 计算每个节点的位置
     const nodePositions = {}
@@ -146,7 +140,7 @@ export function HaplogroupDistribution() {
     })
 
     return (
-      <div className="relative overflow-auto" style={{ maxHeight: "400px" }}>
+      <div className="relative">
         <div className="flex justify-center mb-4">
           <div className="flex space-x-2">
             <Button variant="outline" size="sm" onClick={() => setZoomLevel((prev) => Math.min(prev + 0.2, 2))}>
@@ -164,121 +158,120 @@ export function HaplogroupDistribution() {
           </div>
         </div>
 
-        <div
-          style={{
-            transform: `scale(${zoomLevel})`,
-            transformOrigin: "top left",
-            width: totalWidth,
-            height: totalHeight,
-            position: "relative",
-          }}
-        >
-          {/* 连接线 */}
-          {lines.map((line, index) => (
-            <svg
-              key={`line-${index}`}
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                width: totalWidth,
-                height: totalHeight,
-                overflow: "visible",
-              }}
-            >
-              <line
-                x1={line.x1}
-                y1={line.y1}
-                x2={line.x2}
-                y2={line.y2}
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeOpacity="0.5"
-              />
-            </svg>
-          ))}
-
-          {/* 节点 */}
-          {data.map((node) => {
-            const position = nodePositions[node.id]
-            if (!position) return null
-
-            const isYourHaplogroup = node.id === haplogroups[activeTab].id
-
-            return (
-              <div
-                key={node.id}
+        {/* 使用固定高度的容器并添加滚动条 */}
+        <div className="overflow-auto border rounded-md p-4" style={{ 
+          height: "400px", 
+          width: "100%"
+        }}>
+          <div
+            style={{
+              transform: `scale(${zoomLevel})`,
+              transformOrigin: "top left",
+              width: totalWidth,
+              height: totalHeight,
+              position: "relative",
+              minWidth: "800px",  // 确保最小宽度
+            }}
+          >
+            {/* 连接线 */}
+            {lines.map((line, index) => (
+              <svg
+                key={`line-${index}`}
                 style={{
                   position: "absolute",
-                  left: position.x,
-                  top: position.y,
-                  width: nodeWidth,
-                  height: nodeHeight,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: isYourHaplogroup ? "2px solid currentColor" : "1px solid currentColor",
-                  borderRadius: "4px",
-                  backgroundColor: isYourHaplogroup ? "rgba(var(--primary), 0.1)" : "transparent",
-                  fontSize: "0.75rem",
-                  fontWeight: isYourHaplogroup ? "bold" : "normal",
+                  left: 0,
+                  top: 0,
+                  width: totalWidth,
+                  height: totalHeight,
+                  overflow: "visible",
                 }}
               >
-                {node.id}
-                {isYourHaplogroup && (
-                  <div className="absolute -top-5 text-xs text-primary whitespace-nowrap">{t("yourHaplogroup")}</div>
-                )}
-              </div>
-            )
-          })}
+                <line
+                  x1={line.x1}
+                  y1={line.y1}
+                  x2={line.x2}
+                  y2={line.y2}
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeOpacity="0.5"
+                />
+              </svg>
+            ))}
+
+            {/* 节点 */}
+            {data.map((node) => {
+              const position = nodePositions[node.id]
+              if (!position) return null
+
+              const isYourHaplogroup = node.id === haplogroups[activeTab].id
+
+              return (
+                <div
+                  key={node.id}
+                  style={{
+                    position: "absolute",
+                    left: position.x,
+                    top: position.y,
+                    width: nodeWidth,
+                    height: nodeHeight,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: isYourHaplogroup ? "2px solid currentColor" : "1px solid currentColor",
+                    borderRadius: "4px",
+                    backgroundColor: isYourHaplogroup ? "rgba(var(--primary), 0.1)" : "transparent",
+                    fontSize: "0.75rem",
+                    fontWeight: isYourHaplogroup ? "bold" : "normal",
+                  }}
+                >
+                  {node.id}
+                  {isYourHaplogroup && (
+                    <div className="absolute -top-5 text-xs text-primary whitespace-nowrap">{t("yourHaplogroup")}</div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("haplogroupDistribution")}</CardTitle>
-        <CardDescription>{t("haplogroupDescription")}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "maternal" | "paternal")}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="maternal">{t("maternal")}</TabsTrigger>
-            <TabsTrigger value="paternal">{t("paternal")}</TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "maternal" | "paternal")}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="maternal">{t("maternal")}</TabsTrigger>
+          <TabsTrigger value="paternal">{t("paternal")}</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="maternal" className="space-y-4">
-            <div className="text-center py-4">
-              <div className="text-4xl font-bold text-primary mb-2">{haplogroups.maternal.id}</div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {language === "zh-CN" ? haplogroups.maternal.descriptionZh : haplogroups.maternal.description}
-              </p>
-            </div>
+        <TabsContent value="maternal" className="space-y-4">
+          <div className="text-center py-4">
+            <div className="text-4xl font-bold text-primary mb-2">{haplogroups.maternal.id}</div>
+            <p className="text-sm text-muted-foreground mb-4">
+              {language === "zh-CN" ? haplogroups.maternal.descriptionZh : haplogroups.maternal.description}
+            </p>
+          </div>
 
-            {/* 直接显示系统发生树，删除内部的Tabs */}
-            <div className="pt-4">
-              {renderPhylogeneticTree(haplogroups.maternal.phylogeneticTree)}
-            </div>
-          </TabsContent>
+          <div className="pt-4">
+            {renderPhylogeneticTree(haplogroups.maternal.phylogeneticTree)}
+          </div>
+        </TabsContent>
 
-          <TabsContent value="paternal" className="space-y-4">
-            <div className="text-center py-4">
-              <div className="text-4xl font-bold text-primary mb-2">{haplogroups.paternal.id}</div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {language === "zh-CN" ? haplogroups.paternal.descriptionZh : haplogroups.paternal.description}
-              </p>
-            </div>
+        <TabsContent value="paternal" className="space-y-4">
+          <div className="text-center py-4">
+            <div className="text-4xl font-bold text-primary mb-2">{haplogroups.paternal.id}</div>
+            <p className="text-sm text-muted-foreground mb-4">
+              {language === "zh-CN" ? haplogroups.paternal.descriptionZh : haplogroups.paternal.description}
+            </p>
+          </div>
 
-            {/* 直接显示系统发生树，删除内部的Tabs */}
-            <div className="pt-4">
-              {renderPhylogeneticTree(haplogroups.paternal.phylogeneticTree)}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+          <div className="pt-4">
+            {renderPhylogeneticTree(haplogroups.paternal.phylogeneticTree)}
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }
 

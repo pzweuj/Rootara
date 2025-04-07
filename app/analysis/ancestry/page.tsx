@@ -106,10 +106,8 @@ export default function AncestryAnalysisPage() {
                 <CardTitle>{t("haplogroups")}</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* 使用修改后的HaplogroupDistribution组件 */}
+                {/* 移除外层的滚动容器，因为已经在组件内部添加了滚动功能 */}
                 <HaplogroupDistribution />
-                
-                {/* 删除系统发生树部分，因为已经包含在HaplogroupDistribution组件中 */}
               </CardContent>
             </Card>
           </div>
