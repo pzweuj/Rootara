@@ -38,7 +38,8 @@ export default function AncestryAnalysisPage() {
       understandingResults: "了解您的结果",
       compositionDescription: "您的祖源构成估计了您的DNA中来自全球45多个人群的比例。",
       analysisDescription: "该分析基于将您的基因组与世界各地的参考人群进行比较。",
-      learnMoreMethodology: "关于分析方法，了解更多"
+      learnMoreMethodology: "关于分析方法，了解更多",
+      phylogeneticTree: "系统发生树"
     }
   }
 
@@ -99,7 +100,19 @@ export default function AncestryAnalysisPage() {
 
         {/* 更新Haplogroups选项卡内容 */}
         <TabsContent value="haplogroups" className="space-y-4">
-          <HaplogroupDistribution />
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("haplogroups")}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* 使用修改后的HaplogroupDistribution组件 */}
+                <HaplogroupDistribution />
+                
+                {/* 删除系统发生树部分，因为已经包含在HaplogroupDistribution组件中 */}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

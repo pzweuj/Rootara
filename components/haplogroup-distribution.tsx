@@ -14,12 +14,7 @@ const haplogroups = {
     description:
       "Haplogroup H is the most common mitochondrial haplogroup in Europe. It is found in approximately 40% of the European population.",
     descriptionZh: "单倍群H是欧洲最常见的线粒体单倍群。它在欧洲人口中的比例约为40%。",
-    distribution: [
-      { region: "Europe", regionZh: "欧洲", percentage: 40 },
-      { region: "Middle East", regionZh: "中东", percentage: 15 },
-      { region: "Central Asia", regionZh: "中亚", percentage: 10 },
-      { region: "North Africa", regionZh: "北非", percentage: 5 },
-    ],
+    // 删除 distribution 数据
     phylogeneticTree: [
       { id: "L", level: 0, children: ["L0", "L1", "L2", "L3"] },
       { id: "L3", level: 1, children: ["M", "N"] },
@@ -262,42 +257,10 @@ export function HaplogroupDistribution() {
               </p>
             </div>
 
-            <Tabs defaultValue="distribution">
-              <TabsList>
-                <TabsTrigger value="distribution">{t("distribution")}</TabsTrigger>
-                <TabsTrigger value="phylogeneticTree">{t("phylogeneticTree")}</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="distribution" className="pt-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">{t("region")}</h3>
-                      {haplogroups.maternal.distribution.map((item, index) => (
-                        <div key={index} className="flex justify-between mb-1">
-                          <span className="text-sm">{language === "zh-CN" ? item.regionZh : item.region}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">{t("percentage")}</h3>
-                      {haplogroups.maternal.distribution.map((item, index) => (
-                        <div key={index} className="flex items-center mb-1">
-                          <div className="w-full bg-secondary h-2 rounded-full mr-2">
-                            <div className="bg-primary h-2 rounded-full" style={{ width: `${item.percentage}%` }}></div>
-                          </div>
-                          <span className="text-sm whitespace-nowrap">{item.percentage}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="phylogeneticTree" className="pt-4">
-                {renderPhylogeneticTree(haplogroups.maternal.phylogeneticTree)}
-              </TabsContent>
-            </Tabs>
+            {/* 直接显示系统发生树，删除内部的Tabs */}
+            <div className="pt-4">
+              {renderPhylogeneticTree(haplogroups.maternal.phylogeneticTree)}
+            </div>
           </TabsContent>
 
           <TabsContent value="paternal" className="space-y-4">
@@ -308,42 +271,10 @@ export function HaplogroupDistribution() {
               </p>
             </div>
 
-            <Tabs defaultValue="distribution">
-              <TabsList>
-                <TabsTrigger value="distribution">{t("distribution")}</TabsTrigger>
-                <TabsTrigger value="phylogeneticTree">{t("phylogeneticTree")}</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="distribution" className="pt-4">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">{t("region")}</h3>
-                      {haplogroups.paternal.distribution.map((item, index) => (
-                        <div key={index} className="flex justify-between mb-1">
-                          <span className="text-sm">{language === "zh-CN" ? item.regionZh : item.region}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">{t("percentage")}</h3>
-                      {haplogroups.paternal.distribution.map((item, index) => (
-                        <div key={index} className="flex items-center mb-1">
-                          <div className="w-full bg-secondary h-2 rounded-full mr-2">
-                            <div className="bg-primary h-2 rounded-full" style={{ width: `${item.percentage}%` }}></div>
-                          </div>
-                          <span className="text-sm whitespace-nowrap">{item.percentage}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="phylogeneticTree" className="pt-4">
-                {renderPhylogeneticTree(haplogroups.paternal.phylogeneticTree)}
-              </TabsContent>
-            </Tabs>
+            {/* 直接显示系统发生树，删除内部的Tabs */}
+            <div className="pt-4">
+              {renderPhylogeneticTree(haplogroups.paternal.phylogeneticTree)}
+            </div>
           </TabsContent>
         </Tabs>
       </CardContent>
