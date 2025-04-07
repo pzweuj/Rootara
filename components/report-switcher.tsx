@@ -18,7 +18,6 @@ import {
   Search,
   Filter,
   Star,
-  Share2,
   MoreHorizontal,
   Check,
   SortAsc,
@@ -26,7 +25,7 @@ import {
   Calendar,
   Download,
   Trash2,
-  Lock,
+  // 移除 FileDown 图标导入
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
@@ -40,9 +39,7 @@ const sampleReports = [
     nameZh: "23andMe #1",
     uploadDate: "2023-05-15",
     source: "23andMe",
-    isShared: true,
     isDefault: true,
-    sharedWith: ["Dr. Sarah Johnson", "Michael Chen"],
   },
   {
     id: "RPT-3F8D1E",
@@ -50,9 +47,7 @@ const sampleReports = [
     nameZh: "我的健康筛查 #2",
     uploadDate: "2023-06-22",
     source: "AncestryDNA",
-    isShared: false,
     isDefault: false,
-    sharedWith: [],
   },
   {
     id: "RPT-5K9L2M",
@@ -60,9 +55,7 @@ const sampleReports = [
     nameZh: "微基因",
     uploadDate: "2023-07-10",
     source: "WeGene",
-    isShared: true,
     isDefault: false,
-    sharedWith: ["Genomics Research Institute"],
   },
   {
     id: "RPT-4P7Q9R",
@@ -70,9 +63,7 @@ const sampleReports = [
     nameZh: "测试名称",
     uploadDate: "2023-08-05",
     source: "FamilyTreeDNA",
-    isShared: false,
     isDefault: false,
-    sharedWith: [],
   },
 ]
 
@@ -98,7 +89,6 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState<"name" | "date" | "source">("date")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-  const [filterShared, setFilterShared] = useState<"all" | "shared" | "private">("all")
   
   // 根据defaultReportId或isDefault属性选择默认报告
   const [selectedReport, setSelectedReport] = useState(() => {
@@ -130,8 +120,6 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
       uploadNewReport: "Upload New Report",
       searchReports: "Search reports...",
       allReports: "All Reports",
-      sharedOnly: "Shared Only",
-      privateOnly: "Private Only",
       sort: "Sort",
       sortBy: "Sort by",
       name: "Name",
@@ -141,24 +129,18 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
       descending: "Descending",
       reportId: "Report ID:",
       default: "Default",
-      private: "Private",
       viewReport: "View Report",
       setAsDefault: "Set as Default",
-      manageSharing: "Manage Sharing",
-      download: "Download",
+      download: "Export",
       delete: "Delete",
-      sharedWith: "Shared with",
-      people: "people",
-      person: "person",
       noReportsFound: "No reports found matching your criteria",
+      // 移除 exportData 翻译项
     },
     "zh-CN": {
       myReports: "所有报告",
       uploadNewReport: "上传新报告",
       searchReports: "搜索报告...",
       allReports: "所有报告",
-      sharedOnly: "仅共享",
-      privateOnly: "仅私有",
       sort: "排序",
       sortBy: "排序方式",
       name: "名称",
@@ -168,16 +150,12 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
       descending: "降序",
       reportId: "报告ID：",
       default: "默认",
-      private: "私有",
       viewReport: "查看报告",
       setAsDefault: "设为默认",
-      manageSharing: "管理共享",
-      download: "下载",
+      download: "导出",
       delete: "删除",
-      sharedWith: "已共享给",
-      people: "人",
-      person: "人",
       noReportsFound: "未找到符合条件的报告",
+      // 移除 exportData 翻译项
     },
   }
 
@@ -191,11 +169,7 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
       const matchesSearch =
         report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         report.id.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesFilter =
-        filterShared === "all" ||
-        (filterShared === "shared" && report.isShared) ||
-        (filterShared === "private" && !report.isShared)
-      return matchesSearch && matchesFilter
+      return matchesSearch
     })
     .sort((a, b) => {
       if (sortBy === "name") {
@@ -229,6 +203,8 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
     // For now, we'll just update the selected report
   }
 
+  // 移除 handleExportData 函数
+  
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc")
   }
@@ -272,33 +248,6 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
               />
             </div>
             <div className="flex gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex items-center">
-                    <Filter className="mr-2 h-4 w-4" />
-                    {filterShared === "all"
-                      ? t("allReports")
-                      : filterShared === "shared"
-                        ? t("sharedOnly")
-                        : t("privateOnly")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setFilterShared("all")}>
-                    <Check className={`mr-2 h-4 w-4 ${filterShared === "all" ? "opacity-100" : "opacity-0"}`} />
-                    {t("allReports")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterShared("shared")}>
-                    <Check className={`mr-2 h-4 w-4 ${filterShared === "shared" ? "opacity-100" : "opacity-0"}`} />
-                    {t("sharedOnly")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setFilterShared("private")}>
-                    <Check className={`mr-2 h-4 w-4 ${filterShared === "private" ? "opacity-100" : "opacity-0"}`} />
-                    {t("privateOnly")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="flex items-center">
@@ -362,6 +311,7 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
                   </Badge>
                 )}
               </div>
+              {/* 移除导出按钮，只保留下拉菜单 */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm">
@@ -369,7 +319,7 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => router.push(`/reports/${selectedReport.id}`)}>
+                  <DropdownMenuItem onClick={() => router.push("/")}>
                     <FileText className="mr-2 h-4 w-4" />
                     {t("viewReport")}
                   </DropdownMenuItem>
@@ -379,10 +329,6 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
                       {t("setAsDefault")}
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={() => router.push(`/tools/sharing?report=${selectedReport.id}`)}>
-                    <Share2 className="mr-2 h-4 w-4" />
-                    {t("manageSharing")}
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Download className="mr-2 h-4 w-4" />
@@ -411,26 +357,7 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
                 </span>
               </div>
             </div>
-            <div className="mt-4">
-              <span className="text-muted-foreground">Sharing Status:</span>
-              <span className="ml-2">
-                {selectedReport.isShared ? (
-                  <Badge
-                    variant="outline"
-                    className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800"
-                  >
-                    <Share2 className="h-3 w-3 mr-1" />
-                    {t("sharedWith")} {selectedReport.sharedWith.length}{" "}
-                    {selectedReport.sharedWith.length === 1 ? t("person") : t("people")}
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-                    <Lock className="h-3 w-3 mr-1" />
-                    {t("private")}
-                  </Badge>
-                )}
-              </span>
-            </div>
+            {/* 移除了Sharing Status相关内容 */}
           </div>
 
           {/* Report list */}
@@ -463,21 +390,7 @@ export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
                       </div>
                       <div className="flex items-center ml-4">
                         <Badge className={`mr-2 ${getSourceBadgeColor(report.source)}`}>{report.source}</Badge>
-                        {report.isShared ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800"
-                          >
-                            <Share2 className="h-3 w-3" />
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
-                          >
-                            <Lock className="h-3 w-3" />
-                          </Badge>
-                        )}
+                        {/* 移除了共享状态图标 */}
                       </div>
                     </div>
                   ))
