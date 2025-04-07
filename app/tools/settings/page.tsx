@@ -8,11 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Shield, Bell, Eye, Lock, Download, Trash2 } from "lucide-react"
+import { Shield, Lock } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useLanguage } from "@/contexts/language-context"
@@ -31,19 +28,16 @@ const defaultAvatars = [
 ]
 
 export default function SettingsPage() {
-  const { settings, updateSettings, updateNotificationSettings, updatePrivacySettings } = useSettings()
+  const { settings, updateSettings } = useSettings()
   const [selectedAvatar, setSelectedAvatar] = useState(settings.avatar)
   const { language } = useLanguage()
 
-  // 添加翻译对象
+  // 移除不需要的翻译，只保留个人资料和安全设置相关的翻译
   const translations = {
     en: {
       accountSettings: "Account Settings",
       profile: "Profile",
       security: "Security",
-      preferences: "Preferences",
-      notifications: "Notifications",
-      privacy: "Privacy",
       profileSettings: "Profile Settings",
       manageAccountInfo: "Manage your account information",
       currentAvatar: "Current Avatar",
@@ -55,8 +49,6 @@ export default function SettingsPage() {
       timezone: "Timezone",
       saveProfileSettings: "Save Profile Settings",
       settingsSavedSuccess: "Account settings saved successfully",
-      notificationsSavedSuccess: "Notification settings saved successfully",
-      privacySavedSuccess: "Privacy settings saved successfully",
       // 安全设置相关
       securitySettings: "Security Settings",
       manageSecuritySettings: "Manage your account's security settings",
@@ -75,71 +67,11 @@ export default function SettingsPage() {
       regularlyBackupData: "Regularly backup your genetic data and reports",
       loginNotifications: "Login Notifications",
       receiveLoginNotifications: "Receive notifications when your account is accessed",
-      // 偏好设置相关
-      customizeExperience: "Customize your genetic dashboard experience",
-      language: "Language",
-      measurementUnits: "Measurement Units",
-      metric: "Metric (cm, kg)",
-      imperial: "Imperial (in, lb)",
-      dateFormat: "Date Format",
-      fontSize: "Font Size",
-      theme: "Theme",
-      light: "Light",
-      dark: "Dark",
-      system: "System",
-      dashboardLayout: "Dashboard Layout",
-      default: "Default",
-      compact: "Compact",
-      expanded: "Expanded",
-      savePreferences: "Save Preferences",
-      // 通知设置相关
-      notificationSettings: "Notification Settings",
-      manageNotifications: "Manage how you receive notifications",
-      notificationChannels: "Notification Channels",
-      emailNotifications: "Email Notifications",
-      pushNotifications: "Push Notifications",
-      smsNotifications: "SMS Notifications",
-      notificationTypes: "Notification Types",
-      newReportsAvailable: "New Reports Available",
-      dnaRelativeMatches: "DNA Relative Matches",
-      researchUpdates: "Research Updates",
-      securityAlerts: "Security Alerts",
-      notificationFrequency: "Notification Frequency",
-      realTime: "Real-time",
-      dailyDigest: "Daily Digest",
-      weeklySummary: "Weekly Summary",
-      quietHours: "Quiet Hours",
-      to: "to",
-      saveNotificationSettings: "Save Notification Settings",
-      // 隐私设置相关
-      privacySettings: "Privacy Settings",
-      managePrivacySettings: "Manage your privacy and data settings",
-      dataSharing: "Data Sharing",
-      shareAnalyticsData: "Share analytics data",
-      participateInResearch: "Participate in research",
-      profileVisibility: "Profile Visibility",
-      public: "Public",
-      private: "Private",
-      dataRetention: "Data Retention",
-      selectDataRetentionPeriod: "Select Data Retention Period",
-      sixMonths: "6 Months",
-      oneYear: "1 Year",
-      twoYears: "2 Years",
-      indefinite: "Indefinite",
-      dataExport: "Data Export",
-      downloadDataCopy: "Download a copy of all your genetic data and reports",
-      exportAllData: "Export All Data",
-      downloadYourData: "Download Your Data",
-      deleteMyAccount: "Delete My Account",
-      savePrivacySettings: "Save Privacy Settings",
     },
     "zh-CN": {
       accountSettings: "账户设置",
       profile: "个人资料",
       security: "安全",
-      preferences: "偏好设置",
-      notifications: "通知",
-      privacy: "隐私",
       profileSettings: "个人资料设置",
       manageAccountInfo: "管理您的账户信息",
       currentAvatar: "当前头像",
@@ -151,8 +83,6 @@ export default function SettingsPage() {
       timezone: "时区",
       saveProfileSettings: "保存个人资料设置",
       settingsSavedSuccess: "账户设置保存成功",
-      notificationsSavedSuccess: "通知设置保存成功",
-      privacySavedSuccess: "隐私设置保存成功",
       // 安全设置相关
       securitySettings: "安全设置",
       manageSecuritySettings: "管理您的账户安全设置",
@@ -171,63 +101,6 @@ export default function SettingsPage() {
       regularlyBackupData: "定期备份您的基因数据和报告",
       loginNotifications: "登录通知",
       receiveLoginNotifications: "当您的账户被访问时接收通知",
-      // 偏好设置相关
-      customizeExperience: "自定义您的基因仪表板体验",
-      language: "语言",
-      measurementUnits: "计量单位",
-      metric: "公制 (厘米, 千克)",
-      imperial: "英制 (英寸, 磅)",
-      dateFormat: "日期格式",
-      fontSize: "字体大小",
-      theme: "主题",
-      light: "浅色",
-      dark: "深色",
-      system: "系统",
-      dashboardLayout: "仪表板布局",
-      default: "默认",
-      compact: "紧凑",
-      expanded: "展开",
-      savePreferences: "保存偏好设置",
-      // 通知设置相关
-      notificationSettings: "通知设置",
-      manageNotifications: "管理您接收通知的方式",
-      notificationChannels: "通知渠道",
-      emailNotifications: "电子邮件通知",
-      pushNotifications: "推送通知",
-      smsNotifications: "短信通知",
-      notificationTypes: "通知类型",
-      newReportsAvailable: "新报告可用",
-      dnaRelativeMatches: "DNA亲缘匹配",
-      researchUpdates: "研究更新",
-      securityAlerts: "安全警报",
-      notificationFrequency: "通知频率",
-      realTime: "实时",
-      dailyDigest: "每日摘要",
-      weeklySummary: "每周总结",
-      quietHours: "安静时段",
-      to: "至",
-      saveNotificationSettings: "保存通知设置",
-      // 隐私设置相关
-      privacySettings: "隐私设置",
-      managePrivacySettings: "管理您的隐私和数据设置",
-      dataSharing: "数据共享",
-      shareAnalyticsData: "共享分析数据",
-      participateInResearch: "参与研究",
-      profileVisibility: "个人资料可见性",
-      public: "公开",
-      private: "私密",
-      dataRetention: "数据保留",
-      selectDataRetentionPeriod: "选择数据保留期限",
-      sixMonths: "6个月",
-      oneYear: "1年",
-      twoYears: "2年",
-      indefinite: "无限期",
-      dataExport: "数据导出",
-      downloadDataCopy: "下载您所有基因数据和报告的副本",
-      exportAllData: "导出所有数据",
-      downloadYourData: "下载您的数据",
-      deleteMyAccount: "删除我的账户",
-      savePrivacySettings: "保存隐私设置",
     }
   }
 
@@ -247,26 +120,13 @@ export default function SettingsPage() {
     toast.success(t("settingsSavedSuccess"))
   }
 
-  const handleSaveNotifications = () => {
-    updateNotificationSettings(settings.notifications)
-    toast.success(t("notificationsSavedSuccess"))
-  }
-
-  const handleSavePrivacy = () => {
-    updatePrivacySettings(settings.privacy)
-    toast.success(t("privacySavedSuccess"))
-  }
-
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-3xl font-bold mb-6">{t("accountSettings")}</h1>
       <Tabs defaultValue="account" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="account">{t("profile")}</TabsTrigger>
           <TabsTrigger value="security">{t("security")}</TabsTrigger>
-          <TabsTrigger value="preferences">{t("preferences")}</TabsTrigger>
-          <TabsTrigger value="notifications">{t("notifications")}</TabsTrigger>
-          <TabsTrigger value="privacy">{t("privacy")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="account">
@@ -290,7 +150,6 @@ export default function SettingsPage() {
                   </Avatar>
                 </div>
                 <Label>{t("chooseNewAvatar")}</Label>
-                {/* 头像选择部分保持不变 */}
                 <div className="flex gap-4 overflow-x-auto pb-2">
                   {defaultAvatars.map((avatar, index) => (
                     <Avatar
@@ -336,7 +195,6 @@ export default function SettingsPage() {
                   onChange={(e) => updateSettings({ phone: e.target.value })}
                 />
               </div>
-              {/* 时区选择保持不变，但标签文本使用翻译 */}
               <div className="space-y-2">
                 <Label htmlFor="timezone">{t("timezone")}</Label>
                 <Select value={settings.timezone} onValueChange={(value) => updateSettings({ timezone: value })}>
@@ -344,7 +202,32 @@ export default function SettingsPage() {
                     <SelectValue placeholder={t("timezone")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* 时区选项保持不变 */}
+                    <SelectItem value="utc-12">International Date Line West (UTC-12)</SelectItem>
+                    <SelectItem value="utc-11">Samoa Standard Time (UTC-11)</SelectItem>
+                    <SelectItem value="utc-10">Hawaii-Aleutian Standard Time (UTC-10)</SelectItem>
+                    <SelectItem value="utc-9">Alaska Standard Time (UTC-9)</SelectItem>
+                    <SelectItem value="utc-8">Pacific Time (UTC-8)</SelectItem>
+                    <SelectItem value="utc-7">Mountain Time (UTC-7)</SelectItem>
+                    <SelectItem value="utc-6">Central Time (UTC-6)</SelectItem>
+                    <SelectItem value="utc-5">Eastern Time (UTC-5)</SelectItem>
+                    <SelectItem value="utc-4">Atlantic Time (UTC-4)</SelectItem>
+                    <SelectItem value="utc-3">Argentina Standard Time (UTC-3)</SelectItem>
+                    <SelectItem value="utc-2">South Georgia Time (UTC-2)</SelectItem>
+                    <SelectItem value="utc-1">Azores Time (UTC-1)</SelectItem>
+                    <SelectItem value="utc+0">Greenwich Mean Time (UTC+0)</SelectItem>
+                    <SelectItem value="utc+1">Central European Time (UTC+1)</SelectItem>
+                    <SelectItem value="utc+2">Eastern European Time (UTC+2)</SelectItem>
+                    <SelectItem value="utc+3">Moscow Time (UTC+3)</SelectItem>
+                    <SelectItem value="utc+4">Gulf Standard Time (UTC+4)</SelectItem>
+                    <SelectItem value="utc+5">Pakistan Standard Time (UTC+5)</SelectItem>
+                    <SelectItem value="utc+5.5">Indian Standard Time (UTC+5:30)</SelectItem>
+                    <SelectItem value="utc+6">Bangladesh Standard Time (UTC+6)</SelectItem>
+                    <SelectItem value="utc+7">Indochina Time (UTC+7)</SelectItem>
+                    <SelectItem value="utc+8">China Standard Time (UTC+8)</SelectItem>
+                    <SelectItem value="utc+9">Japan Standard Time (UTC+9)</SelectItem>
+                    <SelectItem value="utc+10">Australian Eastern Standard Time (UTC+10)</SelectItem>
+                    <SelectItem value="utc+11">Solomon Islands Time (UTC+11)</SelectItem>
+                    <SelectItem value="utc+12">New Zealand Standard Time (UTC+12)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -355,8 +238,6 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* 其他标签页内容也需要类似的翻译处理 */}
-        {/* 安全设置标签页 */}
         <TabsContent value="security">
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="md:col-span-2">
@@ -387,32 +268,66 @@ export default function SettingsPage() {
               </CardFooter>
             </Card>
 
-            {/* 其余安全设置卡片也需要类似处理 */}
-            {/* ... */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lock className="mr-2 h-5 w-5" />
+                  {t("loginHistory")}
+                </CardTitle>
+                <CardDescription>{t("recentLoginActivities")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[
+                  { date: "2023-07-20", time: "14:30 UTC", ip: "192.168.1.1", location: "New York, USA" },
+                  { date: "2023-07-19", time: "09:15 UTC", ip: "10.0.0.1", location: "London, UK" },
+                  { date: "2023-07-18", time: "22:45 UTC", ip: "172.16.0.1", location: "Tokyo, Japan" },
+                ].map((login, index) => (
+                  <div key={index} className="flex justify-between items-center text-sm">
+                    <span>
+                      {login.date} {login.time}
+                    </span>
+                    <span>{login.ip}</span>
+                    <span>{login.location}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Shield className="mr-2 h-5 w-5" />
+                  {t("dataProtection")}
+                </CardTitle>
+                <CardDescription>{t("manageGeneticDataSecurity")}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">{t("enhancedDataEncryption")}</Label>
+                    <p className="text-sm text-muted-foreground">{t("applyAdditionalEncryption")}</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">{t("automaticDataBackup")}</Label>
+                    <p className="text-sm text-muted-foreground">{t("regularlyBackupData")}</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-base">{t("loginNotifications")}</Label>
+                    <p className="text-sm text-muted-foreground">{t("receiveLoginNotifications")}</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </TabsContent>
-
-        {/* 其他标签页内容也需要类似处理 */}
-        {/* ... */}
-
-        {/* 隐私设置标签页 */}
-        <TabsContent value="privacy">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Eye className="mr-2 h-5 w-5" />
-                {t("privacySettings")}
-              </CardTitle>
-              <CardDescription>{t("managePrivacySettings")}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* 隐私设置内容也需要类似处理 */}
-              {/* ... */}
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSavePrivacy}>{t("savePrivacySettings")}</Button>
-            </CardFooter>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
