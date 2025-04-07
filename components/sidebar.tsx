@@ -66,8 +66,8 @@ export function Sidebar() {
           ],
         },
         { name: t("traitInterpretation"), href: "/analysis/traits", icon: User },
-        { name: t("rawData"), href: "/analysis/raw-data", icon: Database },
         { name: "ClinVar", href: "/analysis/clinvar", icon: AlertCircle },
+        { name: t("rawData"), href: "/analysis/raw-data", icon: Database },
       ],
     },
     {
