@@ -61,7 +61,7 @@ export function TopNav() {
     const lastSegment = pathSegments[pathSegments.length - 1]
     
     // 尝试从翻译映射中获取翻译
-    const translatedSegment = pathTranslations[language][lastSegment]
+    const translatedSegment = pathTranslations[language as keyof typeof pathTranslations]?.[lastSegment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]]
     if (translatedSegment) return translatedSegment
     
     // 如果没有找到翻译，则使用首字母大写的原始段落
@@ -70,7 +70,7 @@ export function TopNav() {
 
   // 获取路径段落的翻译
   const getTranslatedSegment = (segment: string) => {
-    const translatedSegment = pathTranslations[language][segment]
+    const translatedSegment = pathTranslations[language as keyof typeof pathTranslations][segment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]]
     if (translatedSegment) return translatedSegment
     return segment.charAt(0).toUpperCase() + segment.slice(1)
   }
