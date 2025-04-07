@@ -59,14 +59,7 @@ export default function SettingsPage() {
       saveSecuritySettings: "Save Security Settings",
       loginHistory: "Login History",
       recentLoginActivities: "Recent login activities on your account",
-      dataProtection: "Data Protection",
-      manageGeneticDataSecurity: "Manage genetic data security",
-      enhancedDataEncryption: "Enhanced Data Encryption",
-      applyAdditionalEncryption: "Apply additional encryption to your genetic data",
-      automaticDataBackup: "Automatic Data Backup",
-      regularlyBackupData: "Regularly backup your genetic data and reports",
-      loginNotifications: "Login Notifications",
-      receiveLoginNotifications: "Receive notifications when your account is accessed",
+      // 移除数据保护相关的翻译
     },
     "zh-CN": {
       accountSettings: "账户设置",
@@ -93,14 +86,7 @@ export default function SettingsPage() {
       saveSecuritySettings: "保存安全设置",
       loginHistory: "登录历史",
       recentLoginActivities: "您账户的最近登录活动",
-      dataProtection: "数据保护",
-      manageGeneticDataSecurity: "管理基因数据安全",
-      enhancedDataEncryption: "增强数据加密",
-      applyAdditionalEncryption: "对您的基因数据应用额外加密",
-      automaticDataBackup: "自动数据备份",
-      regularlyBackupData: "定期备份您的基因数据和报告",
-      loginNotifications: "登录通知",
-      receiveLoginNotifications: "当您的账户被访问时接收通知",
+      // 移除数据保护相关的翻译
     }
   }
 
@@ -268,7 +254,7 @@ export default function SettingsPage() {
               </CardFooter>
             </Card>
 
-            <Card>
+            <Card className="md:col-span-2">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Lock className="mr-2 h-5 w-5" />
@@ -293,40 +279,7 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Shield className="mr-2 h-5 w-5" />
-                  {t("dataProtection")}
-                </CardTitle>
-                <CardDescription>{t("manageGeneticDataSecurity")}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">{t("enhancedDataEncryption")}</Label>
-                    <p className="text-sm text-muted-foreground">{t("applyAdditionalEncryption")}</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">{t("automaticDataBackup")}</Label>
-                    <p className="text-sm text-muted-foreground">{t("regularlyBackupData")}</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-base">{t("loginNotifications")}</Label>
-                    <p className="text-sm text-muted-foreground">{t("receiveLoginNotifications")}</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-            </Card>
+            {/* 移除数据保护卡片 */}
           </div>
         </TabsContent>
       </Tabs>
