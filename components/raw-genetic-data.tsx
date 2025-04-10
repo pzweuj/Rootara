@@ -49,13 +49,13 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   const { t, language } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedChromosome, setSelectedChromosome] = useState("all")
-  const [snpData, setSnpData] = useState(reportData[currentReportId] || [])
-  const [metadata, setMetadata] = useState(reportMetadata[currentReportId] || {})
+  const [snpData, setSnpData] = useState(reportData[currentReportId as keyof typeof reportData] || [])
+  const [metadata, setMetadata] = useState(reportMetadata[currentReportId as keyof typeof reportMetadata] || {})
 
   // 当报告ID变化时更新数据
   useEffect(() => {
-    setSnpData(reportData[currentReportId] || [])
-    setMetadata(reportMetadata[currentReportId] || {})
+    setSnpData(reportData[currentReportId as keyof typeof reportData] || [])
+    setMetadata(reportMetadata[currentReportId as keyof typeof reportMetadata] || {})
     setSearchQuery("") // 重置搜索
     setSelectedChromosome("all") // 重置染色体筛选
   }, [currentReportId])
@@ -127,8 +127,8 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
             <SelectContent>
               <SelectItem value="all">{t("allChromosomes") || "所有染色体"}</SelectItem>
               {chromosomes.map((chr) => (
-                <SelectItem key={chr} value={chr}>
-                  {t("chromosome") || "染色体"} {chr}
+                <SelectItem key={chr as string} value={chr as string}>
+                  {`${t("chromosome") || "染色体"} ${chr}`}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -151,7 +151,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
               </TableHeader>
               <TableBody>
                 {filteredData.length > 0 ? (
-                  filteredData.map((snp) => (
+                  filteredData.map((snp: { rsid: string; chromosome: string; position: string; genotype: string }) => (
                     <TableRow key={snp.rsid}>
                       <TableCell className="font-medium">{snp.rsid}</TableCell>
                       <TableCell>{snp.chromosome}</TableCell>
