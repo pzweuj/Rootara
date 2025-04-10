@@ -70,9 +70,10 @@ const sampleReports = [
 // 添加接口定义
 interface ReportSwitcherProps {
   defaultReportId?: string;
+  onReportChange?: (reportId: string) => void;
 }
 
-export function ReportSwitcher({ defaultReportId }: ReportSwitcherProps = {}) {
+export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitcherProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()

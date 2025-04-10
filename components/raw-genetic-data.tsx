@@ -1,36 +1,72 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Copy } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useLanguage } from "@/contexts/language-context"
 
-// Sample SNP data
-const sampleSnpData = [
-  { rsid: "rs4477212", chromosome: "1", position: "82154", genotype: "AA" },
-  { rsid: "rs3094315", chromosome: "1", position: "752566", genotype: "AG" },
-  { rsid: "rs3131972", chromosome: "1", position: "752721", genotype: "GG" },
-  { rsid: "rs12124819", chromosome: "1", position: "776546", genotype: "AA" },
-  { rsid: "rs11240777", chromosome: "1", position: "798959", genotype: "GG" },
-  // ... 其他数据省略
-]
-
-interface RawGeneticDataProps {
-  t: (key: string) => string
+// 为不同报告定义不同的示例数据
+const reportData = {
+  "RPT-5K9L2M": [
+    { rsid: "rs4477212", chromosome: "1", position: "82154", genotype: "AA" },
+    { rsid: "rs3094315", chromosome: "1", position: "752566", genotype: "AG" },
+    { rsid: "rs3131972", chromosome: "1", position: "752721", genotype: "GG" },
+    { rsid: "rs12124819", chromosome: "1", position: "776546", genotype: "AA" },
+    { rsid: "rs11240777", chromosome: "1", position: "798959", genotype: "GG" },
+  ],
+  "RPT-6L9M3N": [
+    { rsid: "rs6681049", chromosome: "1", position: "800007", genotype: "CT" },
+    { rsid: "rs4970383", chromosome: "1", position: "838555", genotype: "CC" },
+    { rsid: "rs4475691", chromosome: "1", position: "846808", genotype: "CT" },
+    { rsid: "rs7537756", chromosome: "1", position: "854250", genotype: "AG" },
+    { rsid: "rs13302982", chromosome: "1", position: "861808", genotype: "GG" },
+  ],
+  // 可以添加更多报告的数据
 }
 
-export function RawGeneticData({ t }: RawGeneticDataProps) {
+// 为不同报告定义不同的元数据
+const reportMetadata = {
+  "RPT-5K9L2M": {
+    totalSNPs: "635,287",
+    fileFormat: "23andMe v4",
+    uploadDate: "2023年5月15日",
+  },
+  "RPT-6L9M3N": {
+    totalSNPs: "548,123",
+    fileFormat: "AncestryDNA v2",
+    uploadDate: "2023年6月20日",
+  },
+  // 可以添加更多报告的元数据
+}
+
+interface RawGeneticDataProps {
+  currentReportId: string;
+}
+
+export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
+  const { t, language } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedChromosome, setSelectedChromosome] = useState("all")
+  const [snpData, setSnpData] = useState(reportData[currentReportId] || [])
+  const [metadata, setMetadata] = useState(reportMetadata[currentReportId] || {})
 
-  const filteredData = sampleSnpData.filter((snp) => {
+  // 当报告ID变化时更新数据
+  useEffect(() => {
+    setSnpData(reportData[currentReportId] || [])
+    setMetadata(reportMetadata[currentReportId] || {})
+    setSearchQuery("") // 重置搜索
+    setSelectedChromosome("all") // 重置染色体筛选
+  }, [currentReportId])
+
+  const filteredData = snpData.filter((snp) => {
     const matchesSearch = snp.rsid.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesChromosome = selectedChromosome === "all" || snp.chromosome === selectedChromosome
     return matchesSearch && matchesChromosome
   })
 
-  const chromosomes = Array.from(new Set(sampleSnpData.map((snp) => snp.chromosome))).sort(
+  const chromosomes = Array.from(new Set(snpData.map((snp) => snp.chromosome))).sort(
     (a, b) => Number.parseInt(a) - Number.parseInt(b),
   )
 
@@ -51,22 +87,22 @@ export function RawGeneticData({ t }: RawGeneticDataProps) {
       
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>{t("rawDataOverview") || "数据摘要"}</CardTitle>
+          <CardTitle>{t("rawDataOverview") || `报告 ${currentReportId} 的原始数据`}</CardTitle>
           <CardDescription>{t("dataOverview") || "您的基因数据文件概览"}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground">{t("total_snps") || "SNP总数"}</span>
-              <span className="text-2xl font-bold">635,287</span>
+              <span className="text-sm text-muted-foreground">{t("totalSnps") || "SNP总数"}</span>
+              <span className="text-2xl font-bold">{metadata.totalSNPs}</span>
             </div>
             <div className="flex flex-col space-y-1">
               <span className="text-sm text-muted-foreground">{t("fileFormat") || "文件格式"}</span>
-              <span className="text-2xl font-bold">23andMe v4</span>
+              <span className="text-2xl font-bold">{metadata.fileFormat}</span>
             </div>
             <div className="flex flex-col space-y-1">
               <span className="text-sm text-muted-foreground">{t("uploadDate") || "上传日期"}</span>
-              <span className="text-2xl font-bold">2023年5月15日</span>
+              <span className="text-2xl font-bold">{metadata.uploadDate}</span>
             </div>
           </div>
         </CardContent>
@@ -113,19 +149,27 @@ export function RawGeneticData({ t }: RawGeneticDataProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((snp) => (
-                  <TableRow key={snp.rsid}>
-                    <TableCell className="font-medium">{snp.rsid}</TableCell>
-                    <TableCell>{snp.chromosome}</TableCell>
-                    <TableCell>{snp.position}</TableCell>
-                    <TableCell>{snp.genotype}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => handleCopyRsid(snp.rsid)}>
-                        <Copy className="h-4 w-4" />
-                      </Button>
+                {filteredData.length > 0 ? (
+                  filteredData.map((snp) => (
+                    <TableRow key={snp.rsid}>
+                      <TableCell className="font-medium">{snp.rsid}</TableCell>
+                      <TableCell>{snp.chromosome}</TableCell>
+                      <TableCell>{snp.position}</TableCell>
+                      <TableCell>{snp.genotype}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="icon" onClick={() => handleCopyRsid(snp.rsid)}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      {t("noDataFound") || "未找到匹配的数据"}
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           </div>
@@ -134,7 +178,7 @@ export function RawGeneticData({ t }: RawGeneticDataProps) {
 
       <div className="flex justify-between items-center mt-4">
         <p className="text-sm text-muted-foreground">
-          {t("showing") || "显示"} {filteredData.length} {t("of") || "/"} {sampleSnpData.length} SNPs
+          {t("showing") || "显示"} {filteredData.length} {t("of") || "/"} {snpData.length} SNPs
         </p>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
