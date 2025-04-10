@@ -23,12 +23,12 @@ export default function ReportsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">{t("myReports")}</h1>
-        <div>
+        {/* <div>
           <Button variant="outline" size="sm" onClick={handleExport}>
             <FileDown className="mr-2 h-4 w-4" />
             {t("exportData") || "导出数据"}
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* 设置 WeGene 报告为默认报告，并添加报告切换回调 */}

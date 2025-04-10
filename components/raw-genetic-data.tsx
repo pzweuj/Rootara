@@ -94,15 +94,15 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground">{t("totalSnps") || "SNP总数"}</span>
+              <span className="text-sm text-muted-foreground">{t("totalSnps")}</span>
               <span className="text-2xl font-bold">{metadata.totalSNPs}</span>
             </div>
             <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground">{t("fileFormat") || "文件格式"}</span>
+              <span className="text-sm text-muted-foreground">{t("fileFormat")}</span>
               <span className="text-2xl font-bold">{metadata.fileFormat}</span>
             </div>
             <div className="flex flex-col space-y-1">
-              <span className="text-sm text-muted-foreground">{t("uploadDate") || "上传日期"}</span>
+              <span className="text-sm text-muted-foreground">{t("uploadDate")}</span>
               <span className="text-2xl font-bold">{metadata.uploadDate}</span>
             </div>
           </div>
