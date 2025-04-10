@@ -86,9 +86,10 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
       <h2 className="text-2xl font-bold tracking-tight mb-4">{t("rawData") || "原始基因数据"}</h2>
       
       <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>{t("rawDataOverview") || `报告 ${currentReportId} 的原始数据`}</CardTitle>
-          <CardDescription>{t("dataOverview") || "您的基因数据文件概览"}</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-base font-medium">
+            {currentReportId}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

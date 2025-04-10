@@ -200,6 +200,10 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
   const handleSelectReport = (report: typeof sampleReports[0]) => {
     setSelectedReport(report)
+    // 添加对 onReportChange 回调的调用
+    if (onReportChange) {
+      onReportChange(report.id)
+    }
     // In a real app, this would navigate to the report or update the context
     // For now, we'll just update the selected report
   }

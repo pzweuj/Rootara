@@ -48,6 +48,7 @@ const translations = {
     geneticVariants: "Genetic variants related to health conditions",
     physicalAndBehavioral: "Physical and behavioral genetic traits",
     pathogenicVariants: "Pathogenic Variants",
+    exportData: "Export Data", // 添加导出数据的英文翻译
   },
   "zh-CN": {
     dashboard: "仪表盘",
@@ -60,7 +61,7 @@ const translations = {
     ancestryAnalysis: "祖源分析",
     healthRisks: "健康风险",
     traitInterpretation: "特征解读",
-    rawData: "原始数据",
+    rawData: "报告原始数据",
     clinvar: "ClinVar 分析",
     dataSharingManagement: "数据共享管理",
     accountSettings: "账户设置",
@@ -83,6 +84,7 @@ const translations = {
     geneticVariants: "与健康状况相关的基因变异",
     physicalAndBehavioral: "身体和行为的基因特征",
     pathogenicVariants: "致病变异",
+    exportData: "导出数据", // 添加导出数据的中文翻译
   },
 }
 
