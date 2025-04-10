@@ -109,7 +109,7 @@ export default function TraitsPage() {
     return matchesSearch && matchesCategory
   })
 
-  const getConfidenceBadge = (confidence) => {
+  const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
     const styles = {
       high: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
       medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
@@ -184,7 +184,7 @@ export default function TraitsPage() {
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <CardTitle className="text-lg">{trait.name}</CardTitle>
-                {getConfidenceBadge(trait.confidence)}
+                {getConfidenceBadge(trait.confidence as "high" | "medium" | "low")}
               </div>
             </CardHeader>
             <CardContent>
