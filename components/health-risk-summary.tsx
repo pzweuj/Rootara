@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const healthRisks = [
   { name: "Type 2 Diabetes", nameZh: "2型糖尿病", risk: "Average", riskZh: "一般", level: 50, variants: 3 },
@@ -23,6 +24,7 @@ const healthRisks = [
 
 export function HealthRiskSummary() {
   const { language } = useLanguage()
+  const router = useRouter()
 
   const translations = {
     en: {
@@ -89,7 +91,11 @@ export function HealthRiskSummary() {
               </p>
             </div>
           ))}
-          <Button className="w-full mt-2" variant="outline">
+          <Button 
+            className="w-full mt-2" 
+            variant="outline"
+            onClick={() => router.push("/analysis/health")}
+          >
             {t("viewDetailedHealthReport")}
           </Button>
         </div>

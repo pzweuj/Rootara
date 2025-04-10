@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Eye, Coffee, Sun, Moon, Droplet } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 
 const traits = [
   {
@@ -65,6 +66,7 @@ const traits = [
 
 export function TraitHighlights() {
   const { language } = useLanguage()
+  const router = useRouter()
 
   const translations = {
     en: {
@@ -131,7 +133,11 @@ export function TraitHighlights() {
               </div>
             </div>
           ))}
-          <Button className="w-full" variant="outline">
+          <Button 
+            className="w-full" 
+            variant="outline" 
+            onClick={() => router.push("/analysis/traits")}
+          >
             {t("viewAllTraits")}
           </Button>
         </div>
