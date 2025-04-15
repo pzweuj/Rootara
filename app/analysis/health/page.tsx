@@ -5,7 +5,7 @@ import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { AlertCircle, AlertTriangle, CheckCircle, Info, Download, Share2, ExternalLink } from "lucide-react"
+import { AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink } from "lucide-react"
 import { HealthRiskSummary } from "@/components/health-risk-summary"
 import { useLanguage } from "@/contexts/language-context"
 
