@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Download, Share2, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { TraitHighlights } from "@/components/trait-highlights"
+import { useLanguage } from "@/contexts/language-context"
 
 const traitCategories = [
   { id: "appearance", name: "Physical Appearance" },
@@ -100,13 +101,14 @@ const allTraits = [
 ]
 
 export default function TraitsPage() {
+  const { t, language } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedConfidence, setSelectedConfidence] = useState("all")
 
   const filteredTraits = allTraits.filter((trait) => {
     const matchesSearch = trait.name.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || trait.category === selectedCategory
-    return matchesSearch && matchesCategory
+    const matchesConfidence = selectedConfidence === "all" || trait.confidence === selectedConfidence
+    return matchesSearch && matchesConfidence
   })
 
   const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
@@ -124,38 +126,12 @@ export default function TraitsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Trait Interpretation</h1>
-          <p className="text-muted-foreground">Explore how your genetics influence your traits</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            Export Data
-          </Button>
-          <Button variant="outline">
-            <Share2 className="mr-2 h-4 w-4" />
-            Share Results
-          </Button>
-        </div>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Trait Highlights</CardTitle>
-          <CardDescription>Notable genetic traits based on your DNA</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <TraitHighlights />
-        </CardContent>
-      </Card>
 
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative w-full md:w-1/3">
+        <div className="relative w-full md:w-1/2">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search traits..."
+            placeholder={language === "en" ? "Search traits..." : "搜索特征..."}
             className="pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -163,17 +139,15 @@ export default function TraitsPage() {
         </div>
         <Tabs
           defaultValue="all"
-          className="w-full md:w-2/3"
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
+          className="w-full md:w-1/2"
+          value={selectedConfidence}
+          onValueChange={setSelectedConfidence}
         >
-          <TabsList className="w-full">
-            <TabsTrigger value="all">All Traits</TabsTrigger>
-            {traitCategories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id}>
-                {category.name}
-              </TabsTrigger>
-            ))}
+          <TabsList className="w-full grid grid-cols-4">
+            <TabsTrigger value="all">{language === "en" ? "All Confidence" : "所有可信度"}</TabsTrigger>
+            <TabsTrigger value="high">{language === "en" ? "High confidence" : "高可信度"}</TabsTrigger>
+            <TabsTrigger value="medium">{language === "en" ? "Medium confidence" : "中等可信度"}</TabsTrigger>
+            <TabsTrigger value="low">{language === "en" ? "Low confidence" : "低可信度"}</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
