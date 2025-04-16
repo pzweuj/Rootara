@@ -25,3 +25,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+tools/database/Rootara.grch37.core.vcf.gz
+.cursorrules
