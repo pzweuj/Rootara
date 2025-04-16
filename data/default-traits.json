@@ -1,0 +1,292 @@
+[
+  {
+    "id": "eye-color",
+    "name": {
+      "en": "Eye Color",
+      "zh-CN": "眼睛颜色"
+    },
+    "result": {
+      "en": "Brown",
+      "zh-CN": "棕色"
+    },
+    "description": {
+      "en": "You have genetic markers associated with brown eyes.",
+      "zh-CN": "您的基因标记与棕色眼睛相关。"
+    },
+    "icon": "Eye",
+    "confidence": "high",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "appearance",
+    "rsids": ["rs12913832", "rs1800407", "rs16891982"],
+    "referenceGenotypes": ["GG", "CC", "CC"],
+    "yourGenotypes": ["GG", "CC", "CC"],
+    "formula": "SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0)",
+    "scoreThresholds": {
+      "Brown": 12,
+      "Green": 8,
+      "Blue": 0
+    }
+  },
+  {
+    "id": "hair-type",
+    "name": {
+      "en": "Hair Type",
+      "zh-CN": "头发类型"
+    },
+    "result": {
+      "en": "Straight",
+      "zh-CN": "直发"
+    },
+    "description": {
+      "en": "Your genetic profile indicates straight hair texture.",
+      "zh-CN": "您的基因特征表明您有直发纹理。"
+    },
+    "icon": "Scissors",
+    "confidence": "high",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "appearance",
+    "rsids": ["rs3827760", "rs11803731"],
+    "referenceGenotypes": ["AA", "GG"],
+    "yourGenotypes": ["AA", "GG"],
+    "formula": "SCORE(rs3827760:AA=10,AG=5,GG=0; rs11803731:GG=5,GA=3,AA=0)",
+    "scoreThresholds": {
+      "Straight": 12,
+      "Wavy": 8,
+      "Curly": 0
+    }
+  },
+  {
+    "id": "bitter-taste",
+    "name": {
+      "en": "Bitter Taste Perception",
+      "zh-CN": "苦味感知"
+    },
+    "result": {
+      "en": "Taster",
+      "zh-CN": "能尝出"
+    },
+    "description": {
+      "en": "You can likely taste bitter compounds like PTC.",
+      "zh-CN": "您可能能够品尝出如PTC等苦味化合物。"
+    },
+    "icon": "Utensils",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "sensory",
+    "rsids": ["rs713598", "rs1726866", "rs10246939"],
+    "referenceGenotypes": ["CC", "AA", "TT"],
+    "yourGenotypes": ["CG", "AG", "CT"],
+    "formula": "SCORE(rs713598:CC=10,CG=5,GG=0; rs1726866:AA=10,AG=5,GG=0; rs10246939:TT=10,CT=5,CC=0)",
+    "scoreThresholds": {
+      "Strong Taster": 25,
+      "Taster": 15,
+      "Non-taster": 0
+    }
+  },
+  {
+    "id": "caffeine-metabolism",
+    "name": {
+      "en": "Caffeine Metabolism",
+      "zh-CN": "咖啡因代谢"
+    },
+    "result": {
+      "en": "Slow Metabolizer",
+      "zh-CN": "代谢缓慢"
+    },
+    "description": {
+      "en": "You may be more sensitive to caffeine's effects.",
+      "zh-CN": "您可能对咖啡因的影响更敏感。"
+    },
+    "icon": "Coffee",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "nutrition",
+    "rsids": ["rs762551", "rs2472297"],
+    "referenceGenotypes": ["AA", "CC"],
+    "yourGenotypes": ["AC", "CT"],
+    "formula": "SCORE(rs762551:AA=10,AC=5,CC=0; rs2472297:CC=5,CT=3,TT=0)",
+    "scoreThresholds": {
+      "Fast Metabolizer": 12,
+      "Normal Metabolizer": 8,
+      "Slow Metabolizer": 0
+    }
+  },
+  {
+    "id": "lactose-tolerance",
+    "name": {
+      "en": "Lactose Tolerance",
+      "zh-CN": "乳糖耐受性"
+    },
+    "result": {
+      "en": "Tolerant",
+      "zh-CN": "耐受"
+    },
+    "description": {
+      "en": "You likely maintain the ability to digest lactose into adulthood.",
+      "zh-CN": "您可能保持了成年后消化乳糖的能力。"
+    },
+    "icon": "Droplet",
+    "confidence": "high",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "nutrition",
+    "rsids": ["rs4988235", "rs182549"],
+    "referenceGenotypes": ["TT", "TT"],
+    "yourGenotypes": ["CT", "CT"],
+    "formula": "SCORE(rs4988235:TT=10,CT=5,CC=0; rs182549:TT=5,CT=3,CC=0)",
+    "scoreThresholds": {
+      "Highly Tolerant": 12,
+      "Tolerant": 8,
+      "Intolerant": 0
+    }
+  },
+  {
+    "id": "alcohol-flush",
+    "name": {
+      "en": "Alcohol Flush Reaction",
+      "zh-CN": "酒精潮红反应"
+    },
+    "result": {
+      "en": "Unlikely",
+      "zh-CN": "不太可能"
+    },
+    "description": {
+      "en": "You are unlikely to experience facial flushing after alcohol consumption.",
+      "zh-CN": "您在饮酒后不太可能出现面部潮红。"
+    },
+    "icon": "Wine",
+    "confidence": "high",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "nutrition",
+    "rsids": ["rs671", "rs1229984"],
+    "referenceGenotypes": ["GG", "CC"],
+    "yourGenotypes": ["GG", "CC"],
+    "formula": "SCORE(rs671:GG=10,GA=5,AA=0; rs1229984:CC=5,CT=3,TT=0)",
+    "scoreThresholds": {
+      "Very Unlikely": 12,
+      "Unlikely": 8,
+      "Likely": 0
+    }
+  },
+  {
+    "id": "sleep-depth",
+    "name": {
+      "en": "Sleep Depth",
+      "zh-CN": "睡眠深度"
+    },
+    "result": {
+      "en": "Light Sleeper",
+      "zh-CN": "浅睡眠"
+    },
+    "description": {
+      "en": "Your genetic profile suggests you may be a lighter sleeper.",
+      "zh-CN": "您的基因特征表明您可能是浅睡眠者。"
+    },
+    "icon": "Moon",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "sleep",
+    "rsids": ["rs73598374", "rs5751876"],
+    "referenceGenotypes": ["CC", "TT"],
+    "yourGenotypes": ["CT", "TC"],
+    "formula": "SCORE(rs73598374:CC=10,CT=5,TT=0; rs5751876:TT=5,TC=3,CC=0)",
+    "scoreThresholds": {
+      "Deep Sleeper": 12,
+      "Average Sleeper": 8,
+      "Light Sleeper": 0
+    }
+  },
+  {
+    "id": "chronotype",
+    "name": {
+      "en": "Chronotype",
+      "zh-CN": "生理时钟类型"
+    },
+    "result": {
+      "en": "Night Owl",
+      "zh-CN": "夜猫子"
+    },
+    "description": {
+      "en": "Your genetic profile suggests you may naturally prefer staying up late.",
+      "zh-CN": "您的基因特征表明您可能天生喜欢熬夜。"
+    },
+    "icon": "Clock",
+    "confidence": "high",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "sleep",
+    "rsids": ["rs1801260", "rs228697"],
+    "referenceGenotypes": ["CC", "GG"],
+    "yourGenotypes": ["CC", "GG"],
+    "formula": "SCORE(rs1801260:CC=10,CT=5,TT=0; rs228697:GG=5,GC=3,CC=0)",
+    "scoreThresholds": {
+      "Night Owl": 12,
+      "Intermediate": 8,
+      "Morning Person": 0
+    }
+  },
+  {
+    "id": "memory-performance",
+    "name": {
+      "en": "Memory Performance",
+      "zh-CN": "记忆表现"
+    },
+    "result": {
+      "en": "Typical",
+      "zh-CN": "一般"
+    },
+    "description": {
+      "en": "Your genetic markers suggest typical memory performance.",
+      "zh-CN": "您的基因标记表明您的记忆表现一般。"
+    },
+    "icon": "Brain",
+    "confidence": "low",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "cognitive",
+    "rsids": ["rs6265", "rs17070145"],
+    "referenceGenotypes": ["GG", "CC"],
+    "yourGenotypes": ["AG", "CT"],
+    "formula": "SCORE(rs6265:GG=0,AG=5,AA=10; rs17070145:CC=0,CT=5,TT=10)",
+    "scoreThresholds": {
+      "Enhanced": 15,
+      "Typical": 5,
+      "Reduced": 0
+    }
+  },
+  {
+    "id": "perfect-pitch",
+    "name": {
+      "en": "Perfect Pitch",
+      "zh-CN": "绝对音感"
+    },
+    "result": {
+      "en": "Unlikely",
+      "zh-CN": "不太可能"
+    },
+    "description": {
+      "en": "Your genetic profile suggests you are unlikely to have perfect pitch.",
+      "zh-CN": "您的基因特征表明您不太可能拥有绝对音感。"
+    },
+    "icon": "Music",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2023-01-01T00:00:00Z",
+    "category": "sensory",
+    "rsids": ["rs9854612", "rs4148254"],
+    "referenceGenotypes": ["TT", "GG"],
+    "yourGenotypes": ["CT", "GA"],
+    "formula": "SCORE(rs9854612:TT=10,CT=5,CC=0; rs4148254:GG=5,GA=3,AA=0)",
+    "scoreThresholds": {
+      "Very Likely": 12,
+      "Somewhat Likely": 8,
+      "Unlikely": 0
+    }
+  }
+]

@@ -52,25 +52,31 @@ export function TopNav() {
       traits: "特征分析",
       "raw-data": "原始数据",
       clinvar: "临床变异",
-    }
+    },
   }
 
   // 获取当前页面标题
   const getPageTitle = () => {
     if (pathSegments.length === 0) return t("home")
     const lastSegment = pathSegments[pathSegments.length - 1]
-    
+
     // 尝试从翻译映射中获取翻译
-    const translatedSegment = pathTranslations[language as keyof typeof pathTranslations]?.[lastSegment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]]
+    const translatedSegment =
+      pathTranslations[language as keyof typeof pathTranslations]?.[
+        lastSegment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]
+      ]
     if (translatedSegment) return translatedSegment
-    
+
     // 如果没有找到翻译，则使用首字母大写的原始段落
     return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1)
   }
 
   // 获取路径段落的翻译
   const getTranslatedSegment = (segment: string) => {
-    const translatedSegment = pathTranslations[language as keyof typeof pathTranslations][segment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]]
+    const translatedSegment =
+      pathTranslations[language as keyof typeof pathTranslations][
+        segment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]
+      ]
     if (translatedSegment) return translatedSegment
     return segment.charAt(0).toUpperCase() + segment.slice(1)
   }
@@ -94,12 +100,12 @@ export function TopNav() {
             ))}
           </nav>
         </div>
-        
+
         {/* 移动端显示当前页面标题 */}
         <div className="md:hidden">
           <h1 className="text-lg font-semibold">{getPageTitle()}</h1>
         </div>
-        
+
         {/* 右侧按钮组 - 在所有屏幕尺寸下都显示 */}
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
@@ -140,4 +146,3 @@ export function TopNav() {
     </header>
   )
 }
-

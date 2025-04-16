@@ -16,7 +16,6 @@ import {
 import {
   FileText,
   Search,
-  Filter,
   Star,
   MoreHorizontal,
   Check,
@@ -69,48 +68,50 @@ const sampleReports = [
 
 // 添加接口定义
 interface ReportSwitcherProps {
-  defaultReportId?: string;
-  onReportChange?: (reportId: string) => void;
+  defaultReportId?: string
+  onReportChange?: (reportId: string) => void
 }
 
 export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitcherProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()
-  
+
   // 初始化报告数据，如果提供了默认报告ID，则更新isDefault属性
-  const initialReports = defaultReportId 
-    ? sampleReports.map(report => ({
+  const initialReports = defaultReportId
+    ? sampleReports.map((report) => ({
         ...report,
-        isDefault: report.id === defaultReportId
+        isDefault: report.id === defaultReportId,
       }))
     : sampleReports
-  
+
   const [reports, setReports] = useState(initialReports)
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState<"name" | "date" | "source">("date")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
-  
+
   // 根据defaultReportId或isDefault属性选择默认报告
   const [selectedReport, setSelectedReport] = useState(() => {
     if (defaultReportId) {
-      const report = reports.find(r => r.id === defaultReportId)
+      const report = reports.find((r) => r.id === defaultReportId)
       if (report) return report
     }
-    return reports.find(r => r.isDefault) || reports[0]
+    return reports.find((r) => r.isDefault) || reports[0]
   })
 
   // 当defaultReportId变化时更新选中的报告
   useEffect(() => {
     if (defaultReportId) {
-      const report = reports.find(r => r.id === defaultReportId)
+      const report = reports.find((r) => r.id === defaultReportId)
       if (report) {
         setSelectedReport(report)
         // 更新所有报告的isDefault属性
-        setReports(reports.map(r => ({
-          ...r,
-          isDefault: r.id === defaultReportId
-        })))
+        setReports(
+          reports.map((r) => ({
+            ...r,
+            isDefault: r.id === defaultReportId,
+          })),
+        )
       }
     }
   }, [defaultReportId])
@@ -160,7 +161,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     },
   }
 
-  const t = (key: keyof typeof translations['en']) => {
+  const t = (key: keyof (typeof translations)["en"]) => {
     return translations[language][key] || key
   }
 
@@ -198,7 +199,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     }
   }
 
-  const handleSelectReport = (report: typeof sampleReports[0]) => {
+  const handleSelectReport = (report: (typeof sampleReports)[0]) => {
     setSelectedReport(report)
     // 添加对 onReportChange 回调的调用
     if (onReportChange) {
@@ -209,7 +210,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   }
 
   // 移除 handleExportData 函数
-  
+
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc")
   }
@@ -410,4 +411,3 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     </Card>
   )
 }
-

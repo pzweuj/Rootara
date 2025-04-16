@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -10,8 +12,6 @@ import {
   Dna,
   Heart,
   User,
-  Database,
-  Share2,
   Settings,
   HelpCircle,
   Menu,
@@ -90,63 +90,72 @@ export function Sidebar() {
     }))
   }
 
-  const NavItem = ({ 
-    item, 
-    level = 0, 
-    isBottom = false 
-  }: { 
+  const NavItem = ({
+    item,
+    level = 0,
+    isBottom = false,
+  }: {
     item: {
-      name: string;
-      href: string;
-      icon?: React.ComponentType<{ className?: string }>;
+      name: string
+      href: string
+      icon?: React.ComponentType<{ className?: string }>
       children?: Array<{
-        name: string;
-        href: string;
-        icon?: React.ComponentType<{ className?: string }>;
+        name: string
+        href: string
+        icon?: React.ComponentType<{ className?: string }>
         children?: Array<{
-          name: string;
-          href: string;
-        }>;
-      }>;
-    };
-    level?: number;
-    isBottom?: boolean;
+          name: string
+          href: string
+        }>
+      }>
+    }
+    level?: number
+    isBottom?: boolean
   }) => {
     const hasChildren = item.children && item.children.length > 0
-    
+
     // 特殊处理子菜单项的活动状态
-    let isActive = false;
-    
+    let isActive = false
+
     if (level === 0) {
       // 父菜单项的活动状态判断 - 确保每个表达式都返回布尔值
-      isActive = (pathname === item.href) ? true :
-        ((item.href !== "/" && pathname.startsWith(item.href + "/")) ? true :
-        (item.children && item.children.some((child: { href: string; children?: Array<{ href: string }> }) =>
-          (pathname === child.href) || 
-          (child.href !== "/" && pathname.startsWith(child.href + "/")) ||
-          (child.children && child.children.some(grandchild => 
-            (pathname === grandchild.href) || 
-            (grandchild.href !== "/" && pathname.startsWith(grandchild.href + "/"))
-          ))
-        )) ? true : false);
+      isActive =
+        pathname === item.href
+          ? true
+          : item.href !== "/" && pathname.startsWith(item.href + "/")
+            ? true
+            : item.children &&
+                item.children.some(
+                  (child: { href: string; children?: Array<{ href: string }> }) =>
+                    pathname === child.href ||
+                    (child.href !== "/" && pathname.startsWith(child.href + "/")) ||
+                    (child.children &&
+                      child.children.some(
+                        (grandchild) =>
+                          pathname === grandchild.href ||
+                          (grandchild.href !== "/" && pathname.startsWith(grandchild.href + "/")),
+                      )),
+                )
+              ? true
+              : false
     } else {
       // 子菜单项的活动状态判断 - 完全重写这部分逻辑
-      
+
       // 精确匹配路径
-      isActive = pathname === item.href;
-      
+      isActive = pathname === item.href
+
       // 特殊情况：如果是根路径且不是精确匹配，则不激活
       if (item.href === "/" && pathname !== "/") {
-        isActive = false;
+        isActive = false
       }
-      
+
       // 特殊情况：如果当前路径以该项的路径开头，且该项不是"/reports"，则激活
       // 这样可以处理子路径的情况，但排除了"/reports"和"/reports/upload"的冲突
       if (!isActive && item.href !== "/" && item.href !== "/reports" && pathname.startsWith(item.href + "/")) {
-        isActive = true;
+        isActive = true
       }
     }
-    
+
     const isOpen = openItems[item.name]
 
     if (hasChildren) {
@@ -295,4 +304,3 @@ export function Sidebar() {
     </>
   )
 }
-

@@ -1,5 +1,7 @@
+"use client"
+
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -42,7 +44,7 @@ const reportMetadata = {
 }
 
 interface RawGeneticDataProps {
-  currentReportId: string;
+  currentReportId: string
 }
 
 export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
@@ -84,12 +86,10 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold tracking-tight mb-4">{t("rawData") || "原始基因数据"}</h2>
-      
+
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-base font-medium">
-            {currentReportId}
-          </CardTitle>
+          <CardTitle className="text-base font-medium">{currentReportId}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

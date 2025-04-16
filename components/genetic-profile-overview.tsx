@@ -39,9 +39,11 @@ export function GeneticProfileOverview() {
 
   // Get region name based on current language
   const getRegionName = (region: string) => {
-    return (language === 'en' || language === 'zh-CN' 
-      ? regionTranslations[language as keyof typeof regionTranslations][region as keyof (typeof regionTranslations)['en']] 
-      : region)
+    return language === "en" || language === "zh-CN"
+      ? regionTranslations[language as keyof typeof regionTranslations][
+          region as keyof (typeof regionTranslations)["en"]
+        ]
+      : region
   }
 
   return (
@@ -53,7 +55,8 @@ export function GeneticProfileOverview() {
             {language === "en" ? "Genetic Profile Overview" : "基因概况"}
           </CardTitle>
           <Badge variant="outline" className="text-xs font-mono">
-            {language === "en" ? "Report ID: " : "报告编号: "}{profileData.reportId}
+            {language === "en" ? "Report ID: " : "报告编号: "}
+            {profileData.reportId}
           </Badge>
         </div>
       </CardHeader>
@@ -142,7 +145,9 @@ export function GeneticProfileOverview() {
                 <CardContent className="p-4">
                   <div className="flex items-center mb-2">
                     <Dna className="h-5 w-5 mr-2 text-green-500" />
-                    <span className="text-sm font-medium">{language === "en" ? "Last updated" : "Clinvar致病位点"}</span>
+                    <span className="text-sm font-medium">
+                      {language === "en" ? "Last updated" : "Clinvar致病位点"}
+                    </span>
                   </div>
                   <p className="text-xs font-medium">{profileData.clinvarPathogenic}</p>
                 </CardContent>
@@ -154,4 +159,3 @@ export function GeneticProfileOverview() {
     </Card>
   )
 }
-

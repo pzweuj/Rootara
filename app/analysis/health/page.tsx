@@ -11,139 +11,139 @@ import { useLanguage } from "@/contexts/language-context"
 
 export default function HealthRisksPage() {
   const { language } = useLanguage()
-  
+
   // 中英文文本映射
   const texts = {
     title: {
       en: "Health Risks",
-      zh: "健康风险"
+      zh: "健康风险",
     },
     subtitle: {
       en: "Explore your genetic health predispositions",
-      zh: "探索您的基因健康倾向"
+      zh: "探索您的基因健康倾向",
     },
     notice: {
       title: {
         en: "Important Health Notice",
-        zh: "重要健康提示"
+        zh: "重要健康提示",
       },
       content: {
         en: "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
-        zh: "基因检测不是诊断工具。在根据这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。"
-      }
+        zh: "基因检测不是诊断工具。在根据这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
+      },
     },
     tabs: {
       overview: {
         en: "Overview",
-        zh: "概览"
+        zh: "概览",
       },
       hereditary: {
         en: "Hereditary Diseases",
-        zh: "遗传疾病"
+        zh: "遗传疾病",
       },
       drugs: {
         en: "Drug Responses",
-        zh: "药物反应"
+        zh: "药物反应",
       },
       carrier: {
         en: "Carrier Status",
-        zh: "携带者状态"
-      }
+        zh: "携带者状态",
+      },
     },
     understanding: {
       title: {
         en: "Understanding Health Risks",
-        zh: "了解健康风险"
+        zh: "了解健康风险",
       },
       description: {
         en: "Your genetic health risks are calculated based on specific genetic variants associated with various conditions.",
-        zh: "您的基因健康风险是根据与各种疾病相关的特定基因变异计算的。"
+        zh: "您的基因健康风险是根据与各种疾病相关的特定基因变异计算的。",
       },
       risks: {
         elevated: {
           en: "Elevated Risk",
-          zh: "风险升高"
+          zh: "风险升高",
         },
         slightlyElevated: {
           en: "Slightly Elevated Risk",
-          zh: "略微升高风险"
+          zh: "略微升高风险",
         },
         average: {
           en: "Average Risk",
-          zh: "平均风险"
+          zh: "平均风险",
         },
         reduced: {
           en: "Reduced Risk",
-          zh: "风险降低"
-        }
-      }
+          zh: "风险降低",
+        },
+      },
     },
     hereditary: {
       title: {
         en: "Hereditary Disease Risk Factors",
-        zh: "遗传疾病风险因素"
+        zh: "遗传疾病风险因素",
       },
       description: {
         en: "Genetic variants associated with hereditary conditions",
-        zh: "与遗传性疾病相关的基因变异"
+        zh: "与遗传性疾病相关的基因变异",
       },
       geneticVariants: {
         en: "Genetic Variants:",
-        zh: "基因变异:"
+        zh: "基因变异:",
       },
       gene: {
         en: "Gene",
-        zh: "基因"
+        zh: "基因",
       },
       variant: {
         en: "Variant",
-        zh: "变异"
+        zh: "变异",
       },
       genotype: {
         en: "Your Genotype",
-        zh: "您的基因型"
+        zh: "您的基因型",
       },
       risk: {
         en: "Risk",
-        zh: "风险"
-      }
+        zh: "风险",
+      },
     },
     drugs: {
       title: {
         en: "Drug Response Genetics",
-        zh: "药物反应基因学"
+        zh: "药物反应基因学",
       },
       description: {
         en: "How your genetics may affect your response to medications",
-        zh: "您的基因如何影响您对药物的反应"
+        zh: "您的基因如何影响您对药物的反应",
       },
       relevantGenes: {
         en: "Relevant Genes:",
-        zh: "相关基因:"
-      }
+        zh: "相关基因:",
+      },
     },
     carrier: {
       title: {
         en: "Carrier Status",
-        zh: "携带者状态"
+        zh: "携带者状态",
       },
       description: {
         en: "Genetic variants that could be passed to your children",
-        zh: "可能传递给您子女的基因变异"
+        zh: "可能传递给您子女的基因变异",
       },
       gene: {
         en: "Gene:",
-        zh: "基因:"
+        zh: "基因:",
       },
       variants: {
         en: "Variants:",
-        zh: "变异:"
-      }
+        zh: "变异:",
+      },
     },
     learnMore: {
       en: "Learn More",
-      zh: "了解更多"
-    }
+      zh: "了解更多",
+    },
   }
 
   return (
@@ -185,7 +185,9 @@ export default function HealthRisksPage() {
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">{texts.understanding.title[language === "en" ? "en" : "zh"]}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {texts.understanding.title[language === "en" ? "en" : "zh"]}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-sm text-muted-foreground">
@@ -194,19 +196,27 @@ export default function HealthRisksPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <AlertCircle className="h-4 w-4 text-red-500" />
-                      <span className="text-sm">{texts.understanding.risks.elevated[language === "en" ? "en" : "zh"]}</span>
+                      <span className="text-sm">
+                        {texts.understanding.risks.elevated[language === "en" ? "en" : "zh"]}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                      <span className="text-sm">{texts.understanding.risks.slightlyElevated[language === "en" ? "en" : "zh"]}</span>
+                      <span className="text-sm">
+                        {texts.understanding.risks.slightlyElevated[language === "en" ? "en" : "zh"]}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Info className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm">{texts.understanding.risks.average[language === "en" ? "en" : "zh"]}</span>
+                      <span className="text-sm">
+                        {texts.understanding.risks.average[language === "en" ? "en" : "zh"]}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      <span className="text-sm">{texts.understanding.risks.reduced[language === "en" ? "en" : "zh"]}</span>
+                      <span className="text-sm">
+                        {texts.understanding.risks.reduced[language === "en" ? "en" : "zh"]}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -236,7 +246,7 @@ export default function HealthRisksPage() {
                       { gene: "KCNJ11", variant: "rs5219", status: "CT" },
                     ],
                     description: "Your genetic risk for Type 2 Diabetes is similar to the average population.",
-                    descriptionZh: "您的2型糖尿病基因风险与平均人群相似。"
+                    descriptionZh: "您的2型糖尿病基因风险与平均人群相似。",
                   },
                   {
                     name: "Coronary Heart Disease",
@@ -249,8 +259,9 @@ export default function HealthRisksPage() {
                       { gene: "9p21", variant: "rs10757278", status: "GG" },
                       { gene: "PCSK9", variant: "rs11591147", status: "GT" },
                     ],
-                    description: "You have some genetic variants that may slightly increase your risk for coronary heart disease.",
-                    descriptionZh: "您有一些可能略微增加冠心病风险的基因变异。"
+                    description:
+                      "You have some genetic variants that may slightly increase your risk for coronary heart disease.",
+                    descriptionZh: "您有一些可能略微增加冠心病风险的基因变异。",
                   },
                   {
                     name: "Alzheimer's Disease",
@@ -264,16 +275,14 @@ export default function HealthRisksPage() {
                       { gene: "APOE", variant: "rs7412", status: "CT" },
                     ],
                     description: "Your genetic profile suggests a reduced risk for late-onset Alzheimer's Disease.",
-                    descriptionZh: "您的基因特征表明晚发性阿尔茨海默病的风险降低。"
+                    descriptionZh: "您的基因特征表明晚发性阿尔茨海默病的风险降低。",
                   },
                 ].map((condition) => (
                   <div key={condition.name} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center">
                         <condition.icon className={`h-5 w-5 ${condition.iconColor} mr-2`} />
-                        <h3 className="text-lg font-medium">
-                          {language === "en" ? condition.name : condition.nameZh}
-                        </h3>
+                        <h3 className="text-lg font-medium">{language === "en" ? condition.name : condition.nameZh}</h3>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -293,7 +302,9 @@ export default function HealthRisksPage() {
                       {language === "en" ? condition.description : condition.descriptionZh}
                     </p>
                     <div className="space-y-2">
-                      <div className="text-sm font-medium">{texts.hereditary.geneticVariants[language === "en" ? "en" : "zh"]}</div>
+                      <div className="text-sm font-medium">
+                        {texts.hereditary.geneticVariants[language === "en" ? "en" : "zh"]}
+                      </div>
                       <div className="grid grid-cols-3 gap-2 text-sm">
                         <div className="font-medium">{texts.hereditary.gene[language === "en" ? "en" : "zh"]}</div>
                         <div className="font-medium">{texts.hereditary.variant[language === "en" ? "en" : "zh"]}</div>
@@ -338,7 +349,7 @@ export default function HealthRisksPage() {
                     iconColor: "text-yellow-500",
                     genes: ["CYP2C9", "VKORC1"],
                     description: "You may be more sensitive to warfarin and might require a lower dose.",
-                    descriptionZh: "您可能对华法林更敏感，可能需要较低剂量。"
+                    descriptionZh: "您可能对华法林更敏感，可能需要较低剂量。",
                   },
                   {
                     drug: "Clopidogrel (Plavix)",
@@ -349,7 +360,7 @@ export default function HealthRisksPage() {
                     iconColor: "text-red-500",
                     genes: ["CYP2C19"],
                     description: "You may have reduced response to clopidogrel due to your CYP2C19 genotype.",
-                    descriptionZh: "由于您的CYP2C19基因型，您对氯吡格雷的反应可能降低。"
+                    descriptionZh: "由于您的CYP2C19基因型，您对氯吡格雷的反应可能降低。",
                   },
                   {
                     drug: "Simvastatin",
@@ -360,7 +371,7 @@ export default function HealthRisksPage() {
                     iconColor: "text-green-500",
                     genes: ["SLCO1B1"],
                     description: "You are likely to have a normal response to simvastatin.",
-                    descriptionZh: "您可能对辛伐他汀有正常反应。"
+                    descriptionZh: "您可能对辛伐他汀有正常反应。",
                   },
                 ].map((drug) => (
                   <div key={drug.drug} className="border rounded-lg p-4">
@@ -385,7 +396,8 @@ export default function HealthRisksPage() {
                       {language === "en" ? drug.description : drug.descriptionZh}
                     </p>
                     <div className="text-sm">
-                      <span className="font-medium">{texts.drugs.relevantGenes[language === "en" ? "en" : "zh"]}</span> {drug.genes.join(", ")}
+                      <span className="font-medium">{texts.drugs.relevantGenes[language === "en" ? "en" : "zh"]}</span>{" "}
+                      {drug.genes.join(", ")}
                     </div>
                     <div className="mt-4 flex justify-end">
                       <Button variant="outline" size="sm">
@@ -420,7 +432,7 @@ export default function HealthRisksPage() {
                     variants: "0 variants detected",
                     variantsZh: "未检测到变异",
                     description: "No variants associated with Cystic Fibrosis were detected in your genome.",
-                    descriptionZh: "在您的基因组中未检测到与囊性纤维化相关的变异。"
+                    descriptionZh: "在您的基因组中未检测到与囊性纤维化相关的变异。",
                   },
                   {
                     condition: "Sickle Cell Anemia",
@@ -433,7 +445,7 @@ export default function HealthRisksPage() {
                     variants: "0 variants detected",
                     variantsZh: "未检测到变异",
                     description: "No variants associated with Sickle Cell Anemia were detected in your genome.",
-                    descriptionZh: "在您的基因组中未检测到与镰状细胞贫血相关的变异。"
+                    descriptionZh: "在您的基因组中未检测到与镰状细胞贫血相关的变异。",
                   },
                   {
                     condition: "Tay-Sachs Disease",
@@ -445,15 +457,19 @@ export default function HealthRisksPage() {
                     gene: "HEXA",
                     variants: "1 variant detected",
                     variantsZh: "检测到1个变异",
-                    description: "You are a carrier for one variant associated with Tay-Sachs Disease. This means you have one copy of a genetic variant that can cause this condition. If your partner is also a carrier, there is a 25% chance your child could inherit the condition.",
-                    descriptionZh: "您是泰-萨克斯病相关变异的携带者。这意味着您有一个可能导致该疾病的基因变异副本。如果您的伴侣也是携带者，您的孩子有25%的几率继承该疾病。"
+                    description:
+                      "You are a carrier for one variant associated with Tay-Sachs Disease. This means you have one copy of a genetic variant that can cause this condition. If your partner is also a carrier, there is a 25% chance your child could inherit the condition.",
+                    descriptionZh:
+                      "您是泰-萨克斯病相关变异的携带者。这意味着您有一个可能导致该疾病的基因变异副本。如果您的伴侣也是携带者，您的孩子有25%的几率继承该疾病。",
                   },
                 ].map((condition) => (
                   <div key={condition.condition} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center">
                         <condition.icon className={`h-5 w-5 ${condition.iconColor} mr-2`} />
-                        <h3 className="text-lg font-medium">{language === "en" ? condition.condition : condition.conditionZh}</h3>
+                        <h3 className="text-lg font-medium">
+                          {language === "en" ? condition.condition : condition.conditionZh}
+                        </h3>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -470,10 +486,12 @@ export default function HealthRisksPage() {
                     </p>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div>
-                        <span className="font-medium">{texts.carrier.gene[language === "en" ? "en" : "zh"]}</span> {condition.gene}
+                        <span className="font-medium">{texts.carrier.gene[language === "en" ? "en" : "zh"]}</span>{" "}
+                        {condition.gene}
                       </div>
                       <div>
-                        <span className="font-medium">{texts.carrier.variants[language === "en" ? "en" : "zh"]}</span> {language === "en" ? condition.variants : condition.variantsZh}
+                        <span className="font-medium">{texts.carrier.variants[language === "en" ? "en" : "zh"]}</span>{" "}
+                        {language === "en" ? condition.variants : condition.variantsZh}
                       </div>
                     </div>
                     <div className="mt-4 flex justify-end">
@@ -492,4 +510,3 @@ export default function HealthRisksPage() {
     </div>
   )
 }
-

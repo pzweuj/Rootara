@@ -53,4 +53,3 @@ export function DateRangePicker({ className }: React.HTMLAttributes<HTMLDivEleme
     </div>
   )
 }
-

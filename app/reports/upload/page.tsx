@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
-import { Upload, FileText, CheckCircle, AlertCircle, Info } from "lucide-react"
+import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 
@@ -39,7 +39,8 @@ export default function UploadReportPage() {
       selectFile: "Select File",
       remove: "Remove",
       setAsDefault: "Set as default report",
-      privateSecure: "Your genetic data is private and secure. We use industry-standard encryption to protect your information.",
+      privateSecure:
+        "Your genetic data is private and secure. We use industry-standard encryption to protect your information.",
       uploading: "Uploading your genetic data...",
       takeFewMinutes: "This may take a few minutes depending on file size",
       uploadComplete: "Upload Complete!",
@@ -61,7 +62,8 @@ export default function UploadReportPage() {
       ftdnaDataFormat: "FTDNA provides raw data in CSV format (.csv).",
       downloadFromFTDNA: "Download from FTDNA: myDNA → Download Raw Data",
       importantNote: "Important Note",
-      uncompressedFiles: "Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract it first. Maximum file size is 50MB.",
+      uncompressedFiles:
+        "Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract it first. Maximum file size is 50MB.",
     },
     "zh-CN": {
       uploadGeneticData: "上传基因数据",
@@ -99,12 +101,16 @@ export default function UploadReportPage() {
       downloadFromFTDNA: "从FTDNA下载：myDNA → 下载原始数据",
       importantNote: "重要提示",
       uncompressedFiles: "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。",
-    }
+    },
   }
 
   // 本地翻译函数，用于处理未在全局上下文中定义的翻译
   const localT = (key: string) => {
-    return translations[language as keyof typeof translations]?.[key as keyof (typeof translations)[keyof typeof translations]] || key
+    return (
+      translations[language as keyof typeof translations]?.[
+        key as keyof (typeof translations)[keyof typeof translations]
+      ] || key
+    )
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -197,12 +203,8 @@ export default function UploadReportPage() {
 
               <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
                 <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground mb-2">
-                  {localT("dragDropFile")}
-                </p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  {localT("supportedFormats")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">{localT("dragDropFile")}</p>
+                <p className="text-xs text-muted-foreground mb-4">{localT("supportedFormats")}</p>
                 <input
                   type="file"
                   id="file-upload"
@@ -231,10 +233,10 @@ export default function UploadReportPage() {
               )}
 
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="default" 
-                  checked={isDefault} 
-                  onCheckedChange={(checked: boolean) => setIsDefault(checked)} 
+                <Checkbox
+                  id="default"
+                  checked={isDefault}
+                  onCheckedChange={(checked: boolean) => setIsDefault(checked)}
                 />
                 <Label htmlFor="default">{localT("setAsDefault")}</Label>
               </div>
@@ -263,9 +265,7 @@ export default function UploadReportPage() {
               <div className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
                 <p className="text-lg font-medium mb-2">{localT("uploadComplete")}</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {localT("dataProcessing")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-4">{localT("dataProcessing")}</p>
                 <Button onClick={() => router.push("/reports")}>{localT("viewMyReports")}</Button>
               </div>
             </div>
@@ -276,9 +276,7 @@ export default function UploadReportPage() {
               <div className="p-6 text-center">
                 <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-2" />
                 <p className="text-lg font-medium mb-2">{localT("uploadFailed")}</p>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {localT("errorUploadingFile")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-4">{localT("errorUploadingFile")}</p>
                 <Button variant="outline" onClick={() => setUploadState("idle")}>
                   {localT("tryAgain")}
                 </Button>
@@ -308,32 +306,20 @@ export default function UploadReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">23andMe</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {localT("rawDataFiles")}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {localT("downloadFrom23andMe")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">{localT("rawDataFiles")}</p>
+                <p className="text-xs text-muted-foreground">{localT("downloadFrom23andMe")}</p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">AncestryDNA</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {localT("ancestryDataFormat")}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {localT("downloadFromAncestry")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">{localT("ancestryDataFormat")}</p>
+                <p className="text-xs text-muted-foreground">{localT("downloadFromAncestry")}</p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">WeGene</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  {localT("wegeneDataFormat")}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {localT("downloadFromWeGene")}
-                </p>
+                <p className="text-sm text-muted-foreground mb-2">{localT("wegeneDataFormat")}</p>
+                <p className="text-xs text-muted-foreground">{localT("downloadFromWeGene")}</p>
               </div>
 
               <div className="border rounded-md p-4">
@@ -348,9 +334,7 @@ export default function UploadReportPage() {
                 <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">{localT("importantNote")}</p>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                    {localT("uncompressedFiles")}
-                  </p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-400">{localT("uncompressedFiles")}</p>
                 </div>
               </div>
             </div>
@@ -360,4 +344,3 @@ export default function UploadReportPage() {
     </div>
   )
 }
-

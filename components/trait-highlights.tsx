@@ -86,7 +86,9 @@ export function TraitHighlights() {
   }
 
   const t = (key: string) => {
-    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    return (
+      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    )
   }
 
   const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
@@ -133,11 +135,7 @@ export function TraitHighlights() {
               </div>
             </div>
           ))}
-          <Button 
-            className="w-full" 
-            variant="outline" 
-            onClick={() => router.push("/analysis/traits")}
-          >
+          <Button className="w-full" variant="outline" onClick={() => router.push("/analysis/traits")}>
             {t("viewAllTraits")}
           </Button>
         </div>
@@ -145,4 +143,3 @@ export function TraitHighlights() {
     </Card>
   )
 }
-

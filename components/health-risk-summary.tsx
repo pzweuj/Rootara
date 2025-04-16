@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
@@ -39,8 +38,10 @@ export function HealthRiskSummary() {
     },
   }
 
-  const t = (key: keyof typeof translations[typeof language]) => {
-    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+  const t = (key: keyof (typeof translations)[typeof language]) => {
+    return (
+      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    )
   }
 
   const getRiskIcon = (risk: string) => {
@@ -81,8 +82,8 @@ export function HealthRiskSummary() {
                 <span className="text-sm">{language === "zh-CN" ? risk.riskZh : risk.risk}</span>
               </div>
               <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                <div 
-                  className={`h-full ${getRiskColor(risk.level)} rounded-full transition-all duration-300`} 
+                <div
+                  className={`h-full ${getRiskColor(risk.level)} rounded-full transition-all duration-300`}
                   style={{ width: `${risk.level}%` }}
                 ></div>
               </div>
@@ -91,11 +92,7 @@ export function HealthRiskSummary() {
               </p>
             </div>
           ))}
-          <Button 
-            className="w-full mt-2" 
-            variant="outline"
-            onClick={() => router.push("/analysis/health")}
-          >
+          <Button className="w-full mt-2" variant="outline" onClick={() => router.push("/analysis/health")}>
             {t("viewDetailedHealthReport")}
           </Button>
         </div>
@@ -103,4 +100,3 @@ export function HealthRiskSummary() {
     </Card>
   )
 }
-

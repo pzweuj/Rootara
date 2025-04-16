@@ -80,7 +80,7 @@ export function ClinvarSummary() {
     },
   }
 
-  const t = (key: keyof typeof translations[typeof language]) => {
+  const t = (key: keyof (typeof translations)[typeof language]) => {
     return translations[language][key] || key
   }
 
@@ -169,4 +169,3 @@ export function ClinvarSummary() {
     </Card>
   )
 }
-

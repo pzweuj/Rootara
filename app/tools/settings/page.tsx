@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Shield, Lock } from "lucide-react"
+import { Lock } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useLanguage } from "@/contexts/language-context"
@@ -87,11 +87,11 @@ export default function SettingsPage() {
       loginHistory: "登录历史",
       recentLoginActivities: "您账户的最近登录活动",
       // 移除数据保护相关的翻译
-    }
+    },
   }
 
   // 翻译函数
-  const t = (key: keyof typeof translations['en']) => {
+  const t = (key: keyof (typeof translations)["en"]) => {
     return translations[language][key] || key
   }
 
@@ -286,4 +286,3 @@ export default function SettingsPage() {
     </div>
   )
 }
-

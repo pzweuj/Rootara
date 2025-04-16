@@ -39,5 +39,8 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  generator: 'pzweuj'
-};
+  generator: "pzweuj",
+}
+
+
+import './globals.css'

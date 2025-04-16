@@ -2,13 +2,11 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Download, Share2, Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink } from "lucide-react"
+import { Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 // 模拟 ClinVar 数据
@@ -188,7 +186,9 @@ export default function ClinvarAnalysisPage() {
   }
 
   const t = (key: string) => {
-    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    return (
+      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    )
   }
 
   const getClassificationBadge = (classification: string) => {
@@ -283,8 +283,8 @@ export default function ClinvarAnalysisPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         {/* <div> */}
-          {/* <h1 className="text-3xl font-bold tracking-tight">{t("clinvarAnalysis")}</h1> */}
-          {/* <p className="text-muted-foreground">{t("clinicalVariants")}</p> */}
+        {/* <h1 className="text-3xl font-bold tracking-tight">{t("clinvarAnalysis")}</h1> */}
+        {/* <p className="text-muted-foreground">{t("clinicalVariants")}</p> */}
         {/* </div> */}
         {/* <div className="flex gap-2">
           <Button variant="outline">
@@ -323,9 +323,7 @@ export default function ClinvarAnalysisPage() {
             </Card>
             <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">
-                  {clinvarData.likelyBenign}
-                </div>
+                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">{clinvarData.likelyBenign}</div>
                 <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
               </CardContent>
             </Card>
@@ -403,7 +401,7 @@ export default function ClinvarAnalysisPage() {
             </Select>
           </div>
         </div>
-        
+
         <Card>
           <CardContent className="p-0">
             <Table>
@@ -464,4 +462,3 @@ export default function ClinvarAnalysisPage() {
     </div>
   )
 }
-

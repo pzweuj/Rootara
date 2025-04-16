@@ -3,8 +3,6 @@
 import { useState } from "react"
 import { ReportSwitcher } from "@/components/report-switcher"
 import { useLanguage } from "@/contexts/language-context"
-import { Button } from "@/components/ui/button"
-import { FileDown } from "lucide-react"
 import { RawGeneticData } from "@/components/raw-genetic-data"
 
 export default function ReportsPage() {
@@ -39,4 +37,3 @@ export default function ReportsPage() {
     </div>
   )
 }
-

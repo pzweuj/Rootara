@@ -3,7 +3,7 @@
 import { useSidebar } from "@/components/sidebar-context"
 import { TopNav } from "@/components/top-nav"
 import { cn } from "@/lib/utils"
-import React from "react"
+import type React from "react"
 
 export function MainContent({ children }: { children: React.ReactNode }) {
   const { isCollapsed } = useSidebar()

@@ -9,11 +9,11 @@ import { ClinvarSummary } from "@/components/clinvar-summary"
 import { useLanguage } from "@/contexts/language-context"
 
 export default function Dashboard() {
-  const { t } = useLanguage();
-  
+  const { t } = useLanguage()
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">{t('geneticDashboard')}</h1>
+      <h1 className="text-3xl font-bold tracking-tight">{t("geneticDashboard")}</h1>
 
       {/* <ReportSwitcher /> */}
 
@@ -36,4 +36,3 @@ export default function Dashboard() {
     </div>
   )
 }
-
