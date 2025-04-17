@@ -84,6 +84,180 @@ const iconMapping: Record<string, React.ComponentType<{ className?: string }>> =
   Plus: Plus,
 }
 
+// 修改 fetchGenotypeData 函数，增强其功能
+const fetchGenotypeData = (rsid: string) => {
+  // 这里应该是从基因报告中获取数据的实际逻辑
+  // 目前使用模拟数据进行演示
+  const mockGenotypes = {
+    rs12913832: { reference: "GG", user: "AG" },
+    rs1800407: { reference: "CC", user: "CT" },
+    rs16891982: { reference: "CC", user: "CC" },
+    rs1393350: { reference: "GG", user: "AG" },
+    rs4778138: { reference: "GG", user: "AG" },
+    rs683: { reference: "CC", user: "CT" },
+    rs3827760: { reference: "AA", user: "AG" },
+    rs11803731: { reference: "GG", user: "AG" },
+    rs713598: { reference: "CC", user: "CG" },
+    rs1726866: { reference: "AA", user: "AG" },
+    rs10246939: { reference: "TT", user: "CT" },
+    rs762551: { reference: "AA", user: "AC" },
+    rs2472297: { reference: "CC", user: "CT" },
+    rs4988235: { reference: "TT", user: "CT" },
+    rs182549: { reference: "TT", user: "CT" },
+    rs671: { reference: "GG", user: "GG" },
+    rs1229984: { reference: "CC", user: "CC" },
+    rs73598374: { reference: "CC", user: "CT" },
+    rs5751876: { reference: "TT", user: "TC" },
+    rs1801260: { reference: "CC", user: "CC" },
+    rs228697: { reference: "GG", user: "GG" },
+    rs6265: { reference: "GG", user: "AG" },
+    rs17070145: { reference: "CC", user: "CT" },
+    rs9854612: { reference: "TT", user: "CT" },
+    rs4148254: { reference: "GG", user: "GA" },
+  }
+
+  if (mockGenotypes[rsid]) {
+    return mockGenotypes[rsid]
+  }
+
+  // 如果找不到数据，返回空值
+  return { reference: "", user: "" }
+}
+
+// 添加计算特征分数的函数
+const calculateTraitScore = (trait: Partial<Trait>): number => {
+  if (!trait.formula || !trait.rsids || !trait.yourGenotypes) return 0
+
+  try {
+    // 解析SCORE公式
+    if (trait.formula.startsWith("SCORE(") && trait.formula.endsWith(")")) {
+      const formulaContent = trait.formula.substring(6, trait.formula.length - 1)
+      const ruleGroups = formulaContent
+        .split(";")
+        .map((group) => group.trim())
+        .filter((g) => g)
+
+      let totalScore = 0
+
+      // 处理每个RSID规则组
+      for (const group of ruleGroups) {
+        if (!group) continue
+
+        const [rsidPart, scoresPart] = group.split(":").map((part) => part.trim())
+        if (!rsidPart || !scoresPart) continue
+
+        const rsid = rsidPart.trim()
+        const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
+
+        if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) continue
+
+        const userGenotype = trait.yourGenotypes[rsidIndex]
+        const scoreRules = scoresPart.split(",").map((rule) => {
+          const [genotype, scoreStr] = rule.split("=").map((r) => r.trim())
+          return { genotype, score: Number.parseInt(scoreStr, 10) }
+        })
+
+        const matchingRule = scoreRules.find((rule) => rule.genotype === userGenotype)
+        if (matchingRule) {
+          totalScore += matchingRule.score
+        }
+      }
+
+      return totalScore
+    }
+    // 解析IF条件公式
+    else if (trait.formula.startsWith("IF(") && trait.formula.endsWith(")")) {
+      const formulaContent = trait.formula.substring(3, trait.formula.length - 1)
+      const parts = formulaContent.split(",").map((part) => part.trim())
+
+      if (parts.length < 3) return 0
+
+      // 解析条件
+      const condition = parts[0]
+      const trueValue = Number.parseInt(parts[1], 10)
+      const falseValue = Number.parseInt(parts[2], 10)
+
+      // 解析条件表达式，例如 "rs123=AG"
+      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
+      const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
+
+      if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) return falseValue
+
+      const userGenotype = trait.yourGenotypes[rsidIndex]
+      return userGenotype === expectedGenotype ? trueValue : falseValue
+    }
+    // 支持组合公式：IF(condition, SCORE(...), value)
+    else if (trait.formula.includes("IF(") && trait.formula.includes("SCORE(")) {
+      // 提取IF条件
+      const ifMatch = trait.formula.match(/IF$$(.*?),(.*),(.*)$$/)
+      if (!ifMatch || ifMatch.length < 4) return 0
+
+      const condition = ifMatch[1].trim()
+      const trueExpr = ifMatch[2].trim()
+      const falseExpr = ifMatch[3].trim()
+
+      // 解析条件
+      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
+      const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
+
+      if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) {
+        // 条件不满足，返回falseExpr的值
+        return isNaN(Number(falseExpr)) ? 0 : Number(falseExpr)
+      }
+
+      const userGenotype = trait.yourGenotypes[rsidIndex]
+
+      if (userGenotype === expectedGenotype) {
+        // 条件满足，计算trueExpr
+        if (trueExpr.startsWith("SCORE(")) {
+          // 递归调用计算SCORE
+          const tempTrait = { ...trait, formula: trueExpr }
+          return calculateTraitScore(tempTrait)
+        } else {
+          return isNaN(Number(trueExpr)) ? 0 : Number(trueExpr)
+        }
+      } else {
+        // 条件不满足，返回falseExpr
+        if (falseExpr.startsWith("SCORE(")) {
+          // 递归调用计算SCORE
+          const tempTrait = { ...trait, formula: falseExpr }
+          return calculateTraitScore(tempTrait)
+        } else {
+          return isNaN(Number(falseExpr)) ? 0 : Number(falseExpr)
+        }
+      }
+    }
+
+    return 0
+  } catch (error) {
+    console.error("Error calculating trait score:", error)
+    return 0
+  }
+}
+
+// 根据分数和阈值确定结果
+const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": string } => {
+  if (!trait.scoreThresholds || Object.keys(trait.scoreThresholds).length === 0) {
+    return { en: "", "zh-CN": "" }
+  }
+
+  const score = calculateTraitScore(trait)
+
+  // 按分数阈值从高到低排序
+  const sortedThresholds = Object.entries(trait.scoreThresholds).sort((a, b) => b[1] - a[1])
+
+  // 找到第一个分数小于等于计算分数的阈值
+  for (const [result, threshold] of sortedThresholds) {
+    if (score >= threshold) {
+      return { en: result, "zh-CN": result }
+    }
+  }
+
+  // 如果没有匹配的阈值，返回分数最低的结果
+  const lowestResult = sortedThresholds[sortedThresholds.length - 1][0]
+  return { en: lowestResult, "zh-CN": lowestResult }
+}
+
 export default function TraitsPage() {
   const { t, language } = useLanguage()
   const router = useRouter()
@@ -161,11 +335,30 @@ export default function TraitsPage() {
     router.push(`/analysis/traits/${trait.id}`)
   }
 
+  // 修改 handleCreateTrait 函数，自动计算结果
   const handleCreateTrait = () => {
-    if (!newTrait.name || !newTrait.result || !newTrait.description) {
+    if (!newTrait.name || !newTrait.description) {
       toast.error(language === "en" ? "Please fill in all required fields" : "请填写所有必填字段")
       return
     }
+
+    if (!newTrait.rsids || newTrait.rsids.length === 0) {
+      toast.error(language === "en" ? "Please add at least one RSID" : "请至少添加一个RSID")
+      return
+    }
+
+    if (!newTrait.formula) {
+      toast.error(language === "en" ? "Please enter a calculation formula" : "请输入计算公式")
+      return
+    }
+
+    if (!newTrait.scoreThresholds || Object.keys(newTrait.scoreThresholds).length === 0) {
+      toast.error(language === "en" ? "Please add at least one score threshold" : "请至少添加一个分数阈值")
+      return
+    }
+
+    // 根据公式和阈值自动计算结果
+    const calculatedResult = determineResult(newTrait)
 
     // Create a new trait
     const id = `custom-${Date.now()}`
@@ -174,19 +367,14 @@ export default function TraitsPage() {
       id,
       isDefault: false,
       createdAt: new Date().toISOString(),
+      result: calculatedResult,
     }
 
-    // Set the other language fields to be the same if they're empty
+    // 设置其他语言的字段（如果为空）
     if (!createdTrait.name["zh-CN"] && language === "en") {
       createdTrait.name["zh-CN"] = createdTrait.name.en
     } else if (!createdTrait.name.en && language === "zh-CN") {
       createdTrait.name.en = createdTrait.name["zh-CN"]
-    }
-
-    if (!createdTrait.result["zh-CN"] && language === "en") {
-      createdTrait.result["zh-CN"] = createdTrait.result.en
-    } else if (!createdTrait.result.en && language === "zh-CN") {
-      createdTrait.result.en = createdTrait.result["zh-CN"]
     }
 
     if (!createdTrait.description["zh-CN"] && language === "en") {
@@ -199,7 +387,7 @@ export default function TraitsPage() {
     setTraits(updatedTraits)
     saveUserTraits(updatedTraits)
 
-    // Reset form and close dialog
+    // 重置表单并关闭对话框
     setNewTrait({
       name: { en: "", "zh-CN": "" },
       result: { en: "", "zh-CN": "" },
@@ -220,7 +408,11 @@ export default function TraitsPage() {
     setThresholdValue("")
     setIsCreateDialogOpen(false)
 
-    toast.success(language === "en" ? "Trait created successfully" : "特征创建成功")
+    toast.success(
+      language === "en"
+        ? `Trait created successfully with result: ${calculatedResult.en}`
+        : `特征创建成功，结果为：${calculatedResult["zh-CN"]}`,
+    )
   }
 
   const handleDeleteTrait = () => {
@@ -241,16 +433,22 @@ export default function TraitsPage() {
     setIsDeleteDialogOpen(true)
   }
 
+  // 修改 addRsidGenotype 函数
   const addRsidGenotype = () => {
-    if (!rsidInput || !referenceGenotypeInput || !yourGenotypeInput) return
+    if (!rsidInput) return
+
+    // 即使基因型是"--"也允许添加
+    const refGenotype = referenceGenotypeInput || "--"
+    const userGenotype = yourGenotypeInput || "--"
 
     setNewTrait({
       ...newTrait,
       rsids: [...(newTrait.rsids || []), rsidInput],
-      referenceGenotypes: [...(newTrait.referenceGenotypes || []), referenceGenotypeInput],
-      yourGenotypes: [...(newTrait.yourGenotypes || []), yourGenotypeInput],
+      referenceGenotypes: [...(newTrait.referenceGenotypes || []), refGenotype],
+      yourGenotypes: [...(newTrait.yourGenotypes || []), userGenotype],
     })
 
+    // 重置输入
     setRsidInput("")
     setReferenceGenotypeInput("")
     setYourGenotypeInput("")
@@ -298,6 +496,7 @@ export default function TraitsPage() {
     })
   }
 
+  // 修改表单部分，移除手动输入结果的字段，添加公式说明
   const translations = {
     en: {
       traits: "Traits",
@@ -329,7 +528,7 @@ export default function TraitsPage() {
       rsidsAndGenotypes: "RSIDs and Genotypes",
       formula: "Calculation Formula",
       formulaDescription:
-        "Define how to calculate the score from the genotypes (e.g., SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0))",
+        "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
       rsidPlaceholder: "e.g., rs12913832",
       genotypePlaceholder: "e.g., GG",
       add: "Add",
@@ -342,6 +541,12 @@ export default function TraitsPage() {
       thresholdsDescription: "Define the score thresholds for different results (higher scores are checked first)",
       iconSelector: "Icon Selector",
       selectIcon: "Select an icon for your trait",
+      autoFetchGenotypes: "Auto-fetch genotypes from your report",
+      manualEntry: "Manual entry",
+      rsidNotFound: "RSID not found in your report",
+      fetchingGenotypes: "Fetching genotypes...",
+      genotypesFetched: "Genotypes fetched successfully",
+      resultCalculated: "Result will be automatically calculated based on formula and thresholds",
     },
     "zh-CN": {
       traits: "特征",
@@ -373,7 +578,7 @@ export default function TraitsPage() {
       rsidsAndGenotypes: "RSID和基因型",
       formula: "计算公式",
       formulaDescription:
-        "定义如何从基因型计算分数（例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0)）",
+        "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
       rsidPlaceholder: "例如：rs12913832",
       genotypePlaceholder: "例如：GG",
       add: "添加",
@@ -386,6 +591,12 @@ export default function TraitsPage() {
       thresholdsDescription: "定义不同结果的分数阈值（先检查较高的分数）",
       iconSelector: "图标选择器",
       selectIcon: "为您的特征选择一个图标",
+      autoFetchGenotypes: "从您的报告中自动获取基因型",
+      manualEntry: "手动输入",
+      rsidNotFound: "在您的报告中找不到此RSID",
+      fetchingGenotypes: "正在获取基因型...",
+      genotypesFetched: "基因型获取成功",
+      resultCalculated: "结果将根据公式和阈值自动计算",
     },
   }
 
@@ -485,6 +696,7 @@ export default function TraitsPage() {
               {language === "en" ? "Fill in the details to create a new trait." : "填写详细信息以创建新特征。"}
             </DialogDescription>
           </DialogHeader>
+          {/* 修改对话框内容，移除结果输入框，添加公式说明 */}
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">{localT("traitName")}</Label>
@@ -495,19 +707,6 @@ export default function TraitsPage() {
                   const updatedName = { ...newTrait.name } as Record<string, string>
                   updatedName[language] = e.target.value
                   setNewTrait({ ...newTrait, name: updatedName as any })
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="result">{localT("result")}</Label>
-              <Input
-                id="result"
-                value={newTrait.result?.[language as keyof typeof newTrait.result] || ""}
-                onChange={(e) => {
-                  const updatedResult = { ...newTrait.result } as Record<string, string>
-                  updatedResult[language] = e.target.value
-                  setNewTrait({ ...newTrait, result: updatedResult as any })
                 }}
               />
             </div>
@@ -586,37 +785,46 @@ export default function TraitsPage() {
 
             <div className="space-y-2">
               <Label>{localT("rsidsAndGenotypes")}</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <Input
-                  placeholder={localT("rsidPlaceholder")}
-                  value={rsidInput}
-                  onChange={(e) => setRsidInput(e.target.value)}
-                />
-                <Input
-                  placeholder={localT("genotypePlaceholder")}
-                  value={referenceGenotypeInput}
-                  onChange={(e) => setReferenceGenotypeInput(e.target.value)}
-                />
-                <Input
-                  placeholder={localT("genotypePlaceholder")}
-                  value={yourGenotypeInput}
-                  onChange={(e) => setYourGenotypeInput(e.target.value)}
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="text-xs text-muted-foreground grid grid-cols-3 w-full">
-                  <span>{localT("rsid")}</span>
-                  <span>{localT("referenceGenotype")}</span>
-                  <span>{localT("yourGenotype")}</span>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder={localT("rsidPlaceholder")}
+                    value={rsidInput}
+                    onChange={(e) => {
+                      setRsidInput(e.target.value)
+                      // 当输入RSID时的自动获取基因型逻辑
+                      const input = e.target.value.trim()
+                      if (input.match(/^rs\d{4,}$/)) {
+                        const genotypeData = fetchGenotypeData(input)
+                        if (genotypeData.reference && genotypeData.user) {
+                          setReferenceGenotypeInput(genotypeData.reference)
+                          setYourGenotypeInput(genotypeData.user)
+                        } else {
+                          // 当查询不到位点时，显示"--"
+                          setReferenceGenotypeInput("--")
+                          setYourGenotypeInput("--")
+                        }
+                      }
+                    }}
+                  />
+                  <Button type="button" onClick={addRsidGenotype} disabled={!rsidInput}>
+                    {localT("add")}
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  onClick={addRsidGenotype}
-                  disabled={!rsidInput || !referenceGenotypeInput || !yourGenotypeInput}
-                  size="sm"
-                >
-                  {localT("add")}
-                </Button>
+
+                {/* 显示当前选择的RSID的基因型信息 */}
+                {rsidInput && (
+                  <div className="grid grid-cols-2 gap-2 p-2 bg-secondary/30 rounded-md">
+                    <div className="space-y-1">
+                      <Label className="text-xs">{localT("referenceGenotype")}</Label>
+                      <div className="text-sm font-mono">{referenceGenotypeInput || "--"}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{localT("yourGenotype")}</Label>
+                      <div className="text-sm font-mono">{yourGenotypeInput || "--"}</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Display added RSIDs and genotypes */}
@@ -631,8 +839,8 @@ export default function TraitsPage() {
                   {newTrait.rsids.map((rsid, index) => (
                     <div key={index} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center">
                       <div>{rsid}</div>
-                      <div>{newTrait.referenceGenotypes?.[index]}</div>
-                      <div>{newTrait.yourGenotypes?.[index]}</div>
+                      <div>{newTrait.referenceGenotypes?.[index] || "--"}</div>
+                      <div>{newTrait.yourGenotypes?.[index] || "--"}</div>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -658,6 +866,9 @@ export default function TraitsPage() {
               <p className="text-xs text-muted-foreground">
                 {localT("formulaDescription").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
               </p>
+              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                <p className="text-xs text-yellow-800 dark:text-yellow-200">{localT("resultCalculated")}</p>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -725,7 +936,6 @@ export default function TraitsPage() {
               onClick={handleCreateTrait}
               disabled={
                 !newTrait.name?.[language as keyof typeof newTrait.name] ||
-                !newTrait.result?.[language as keyof typeof newTrait.result] ||
                 !newTrait.description?.[language as keyof typeof newTrait.description]
               }
             >
