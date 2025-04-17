@@ -11,6 +11,10 @@ import { MainContent } from "@/components/main-content"
 
 const inter = Inter({ subsets: ["latin"] })
 
+export const metadata = {
+  generator: "pzweuj",
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -37,10 +41,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-export const metadata = {
-  generator: "pzweuj",
-}
-
-
-import './globals.css'
