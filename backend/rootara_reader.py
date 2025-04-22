@@ -19,6 +19,8 @@ df_clinvar = df[df['CLNSIG'].isin(['Pathogenic', 'Likely_pathogenic', 'Benign', 
 df_clinvar = df_clinvar[df_clinvar['Check'].isin(['HET', 'HOM'])]
 df_clinvar.to_excel('pzw_wegene_clinvar.xlsx', index = False)
 
+匹配逻辑需要改一下，不然会有很多致病位点
+
 """
 
 import gzip
@@ -83,24 +85,30 @@ def convert_genotype(row):
             elif ref == '-':
                 ref = 'D'
                 alt = 'I'
+            else:
+                alt = genotype[1] if genotype[0] == ref else genotype[0]
+                row['Alt'] = alt
         # MNV
         else:
-            return 'NA'
+            return row
     
     if not ref in genotype and not alt in genotype:
-        return 'NA'
+        return row
 
     genotype_check = genotype.count(ref)
     if genotype == '--':
-        return 'NA'
+        return row
     elif genotype_check == 2:
-        return 'WT'
+        row['Check'] = 'WT'
+        return row
     elif genotype_check == 1:
-        return 'HET'
+        row['Check'] = 'HET'
+        return row
     elif genotype_check == 0:
-        return 'HOM'
+        row['Check'] = 'HOM'
+        return row
     
-    return 'NA'
+    return row
 
 # 读取wegene结果
 def read_wegene_result(file_path, rootara_df):
@@ -126,7 +134,8 @@ def read_wegene_result(file_path, rootara_df):
     print('转换后数量：', after_count)
 
     # 基因型转换
-    df_merge.loc[:, 'Check'] = df_merge.apply(convert_genotype, axis = 1)
+    df_merge['Check'] = 'NA'
+    df_merge = df_merge.apply(convert_genotype, axis = 1)
     
     col_need = ['Chrom', 'Start', 'Ref', 'Alt', 'Gene', 'RSID_x', 'CLNSIG', 'CLNDN', 'Genotype', 'Check']
     df_merge = df_merge[col_need]
@@ -433,6 +442,15 @@ def main():
             pb_client.clear_auth_store()
 
 if __name__ == "__main__":
+
+    rootara = read_rootara_core('Rootara.core.202404.txt.gz')
+    df = read_wegene_result('pzw_wegene.txt', rootara)
+    print(df.head())
+
+    # Clinvar
+    df_clinvar = df[df['CLNSIG'].isin(['Pathogenic', 'Likely_pathogenic', 'Benign', 'Likely_benign', 'Uncertain_significance'])]
+    df_clinvar = df_clinvar[df_clinvar['Check'].isin(['HET', 'HOM'])]
+    df_clinvar.to_excel('pzw_wegene_clinvar.xlsx', index = False)
     main()
 
 
