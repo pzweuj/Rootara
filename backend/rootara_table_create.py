@@ -4,10 +4,8 @@
 # Clinvar版本：202404
 
 import argparse
-import os
 import gzip
 import requests
-import json
 from typing import List, Dict
 from tqdm import tqdm
 import concurrent.futures
