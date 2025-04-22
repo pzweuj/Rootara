@@ -45,8 +45,6 @@ export default function SettingsPage() {
       uploadCustomAvatar: "Or upload a custom avatar",
       fullName: "Full Name",
       email: "Email",
-      phoneNumber: "Phone Number",
-      timezone: "Timezone",
       saveProfileSettings: "Save Profile Settings",
       settingsSavedSuccess: "Account settings saved successfully",
       // 安全设置相关
@@ -72,8 +70,6 @@ export default function SettingsPage() {
       uploadCustomAvatar: "或上传自定义头像",
       fullName: "全名",
       email: "电子邮箱",
-      phoneNumber: "电话号码",
-      timezone: "时区",
       saveProfileSettings: "保存个人资料设置",
       settingsSavedSuccess: "账户设置保存成功",
       // 安全设置相关
@@ -100,8 +96,6 @@ export default function SettingsPage() {
       avatar: selectedAvatar,
       fullName: settings.fullName,
       email: settings.email,
-      phone: settings.phone,
-      timezone: settings.timezone,
     })
     toast.success(t("settingsSavedSuccess"))
   }
@@ -171,51 +165,6 @@ export default function SettingsPage() {
                   value={settings.email}
                   onChange={(e) => updateSettings({ email: e.target.value })}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">{t("phoneNumber")}</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={settings.phone}
-                  onChange={(e) => updateSettings({ phone: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="timezone">{t("timezone")}</Label>
-                <Select value={settings.timezone} onValueChange={(value) => updateSettings({ timezone: value })}>
-                  <SelectTrigger id="timezone">
-                    <SelectValue placeholder={t("timezone")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="utc-12">International Date Line West (UTC-12)</SelectItem>
-                    <SelectItem value="utc-11">Samoa Standard Time (UTC-11)</SelectItem>
-                    <SelectItem value="utc-10">Hawaii-Aleutian Standard Time (UTC-10)</SelectItem>
-                    <SelectItem value="utc-9">Alaska Standard Time (UTC-9)</SelectItem>
-                    <SelectItem value="utc-8">Pacific Time (UTC-8)</SelectItem>
-                    <SelectItem value="utc-7">Mountain Time (UTC-7)</SelectItem>
-                    <SelectItem value="utc-6">Central Time (UTC-6)</SelectItem>
-                    <SelectItem value="utc-5">Eastern Time (UTC-5)</SelectItem>
-                    <SelectItem value="utc-4">Atlantic Time (UTC-4)</SelectItem>
-                    <SelectItem value="utc-3">Argentina Standard Time (UTC-3)</SelectItem>
-                    <SelectItem value="utc-2">South Georgia Time (UTC-2)</SelectItem>
-                    <SelectItem value="utc-1">Azores Time (UTC-1)</SelectItem>
-                    <SelectItem value="utc+0">Greenwich Mean Time (UTC+0)</SelectItem>
-                    <SelectItem value="utc+1">Central European Time (UTC+1)</SelectItem>
-                    <SelectItem value="utc+2">Eastern European Time (UTC+2)</SelectItem>
-                    <SelectItem value="utc+3">Moscow Time (UTC+3)</SelectItem>
-                    <SelectItem value="utc+4">Gulf Standard Time (UTC+4)</SelectItem>
-                    <SelectItem value="utc+5">Pakistan Standard Time (UTC+5)</SelectItem>
-                    <SelectItem value="utc+5.5">Indian Standard Time (UTC+5:30)</SelectItem>
-                    <SelectItem value="utc+6">Bangladesh Standard Time (UTC+6)</SelectItem>
-                    <SelectItem value="utc+7">Indochina Time (UTC+7)</SelectItem>
-                    <SelectItem value="utc+8">China Standard Time (UTC+8)</SelectItem>
-                    <SelectItem value="utc+9">Japan Standard Time (UTC+9)</SelectItem>
-                    <SelectItem value="utc+10">Australian Eastern Standard Time (UTC+10)</SelectItem>
-                    <SelectItem value="utc+11">Solomon Islands Time (UTC+11)</SelectItem>
-                    <SelectItem value="utc+12">New Zealand Standard Time (UTC+12)</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
             <CardFooter>
