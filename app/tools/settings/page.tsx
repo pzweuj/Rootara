@@ -120,33 +120,36 @@ export default function SettingsPage() {
                 <Label>{t("currentAvatar")}</Label>
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={selectedAvatar} alt={settings.fullName} />
-                    <AvatarFallback>
-                      {settings.fullName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
+                    {selectedAvatar ? (
+                      <AvatarImage src={selectedAvatar} alt={settings.fullName} />
+                    ) : (
+                      <AvatarFallback className="bg-primary text-white text-2xl">
+                        {settings.fullName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
-                </div>
-                <Label>{t("chooseNewAvatar")}</Label>
-                <div className="flex gap-4 overflow-x-auto pb-2">
-                  {defaultAvatars.map((avatar, index) => (
-                    <Avatar
-                      key={index}
-                      className={`h-20 w-20 rounded-lg cursor-pointer hover:ring-2 hover:ring-primary shrink-0 ${
-                        selectedAvatar === avatar ? "ring-2 ring-primary" : ""
-                      }`}
-                      onClick={() => setSelectedAvatar(avatar)}
-                    >
-                      <AvatarImage src={avatar} alt={`Avatar ${index + 1}`} className="object-cover" />
-                      <AvatarFallback>{index + 1}</AvatarFallback>
-                    </Avatar>
-                  ))}
                 </div>
                 <div>
                   <Label htmlFor="custom-avatar">{t("uploadCustomAvatar")}</Label>
-                  <Input id="custom-avatar" type="file" accept="image/*" className="mt-1" />
+                  <Input 
+                    id="custom-avatar" 
+                    type="file" 
+                    accept="image/*" 
+                    className="mt-1"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (event) => {
+                          setSelectedAvatar(event.target?.result as string)
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }}
+                  />
                 </div>
               </div>
               <div className="space-y-2">
