@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLanguage } from "@/contexts/language-context"
 
-export default function AuthPage() {
+// 此处设定allowRegister为可选参数，默认为false
+export default function AuthPage({ allowRegister = false }: { allowRegister?: boolean }) {
   const { language } = useLanguage()
   const [fullName, setFullName] = useState("")
   
@@ -72,7 +73,13 @@ export default function AuthPage() {
               <Tabs defaultValue="login" className="space-y-4">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="login">{t("login")}</TabsTrigger>
-                  <TabsTrigger value="register">{t("register")}</TabsTrigger>
+                  <TabsTrigger 
+                    value="register" 
+                    disabled={!allowRegister}
+                    className={!allowRegister ? "opacity-50 cursor-not-allowed" : ""}
+                  >
+                    {t("register")}
+                  </TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="login" className="space-y-4">
@@ -92,29 +99,31 @@ export default function AuthPage() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="register" className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="register-email">{t("email")}</Label>
-                    <Input id="register-email" type="email" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="full-name">{t("fullName")}</Label>
-                    <Input 
-                      id="full-name" 
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password">{t("password")}</Label>
-                    <Input id="register-password" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">{t("confirmPassword")}</Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                  <Button className="w-full">{t("createAccount")}</Button>
-                </TabsContent>
+                {allowRegister && (
+                  <TabsContent value="register" className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-email">{t("email")}</Label>
+                      <Input id="register-email" type="email" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="full-name">{t("fullName")}</Label>
+                      <Input 
+                        id="full-name" 
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="register-password">{t("password")}</Label>
+                      <Input id="register-password" type="password" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">{t("confirmPassword")}</Label>
+                      <Input id="confirm-password" type="password" />
+                    </div>
+                    <Button className="w-full">{t("createAccount")}</Button>
+                  </TabsContent>
+                )}
               </Tabs>
 
               <div className="relative my-4">
