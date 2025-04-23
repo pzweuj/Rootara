@@ -28,4 +28,4 @@ next-env.d.ts
 tools/database/Rootara.grch37.core.vcf.gz
 .cursorrules
 backend/*
-!backend/script/*
+!backend/script
