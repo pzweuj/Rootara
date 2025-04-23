@@ -27,7 +27,6 @@ df_clinvar.to_excel('pzw_wegene_clinvar.xlsx', index = False)
 https://my.pgp-hms.org/public_genetic_data?data_type=23andMe
 """
 
-import os
 import sys
 import gzip
 import pandas as pd
