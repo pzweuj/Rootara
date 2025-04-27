@@ -4,9 +4,9 @@ import * as jose from "jose"
 
 // In a real app, you would use a database
 // For this example, we'll use environment variables
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com"
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "password123"
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@rootara.app"
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "rootara123"
+const JWT_SECRET = process.env.JWT_SECRET || "FPFj&WXSXV5t4v6Zr93hxxnG#R*x"
 
 export async function POST(request: Request) {
   try {
