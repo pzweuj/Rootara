@@ -292,7 +292,7 @@ export default function TraitsPage() {
       try {
         // Load default traits
         // 将默认特征数据转换为 Trait[] 类型
-        const defaultTraits = (defaultTraitsData as unknown) as Trait[]
+        const defaultTraits = defaultTraitsData as unknown as Trait[]
 
         // Load user traits from localStorage
         const savedTraits = localStorage.getItem("userTraits")
@@ -305,7 +305,7 @@ export default function TraitsPage() {
         }
       } catch (error) {
         console.error("Failed to load traits:", error)
-        setTraits((defaultTraitsData as unknown) as Trait[])
+        setTraits(defaultTraitsData as unknown as Trait[])
       }
     }
 

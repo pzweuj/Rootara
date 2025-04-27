@@ -4,6 +4,7 @@ import { LanguageSwitcher } from "./language-switcher"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ export function TopNav() {
   const pathname = usePathname()
   const pathSegments = pathname.split("/").filter(Boolean)
   const { t, language } = useLanguage()
+  const { user, logout } = useAuth()
 
   // 路径段落的翻译映射
   const pathTranslations = {
@@ -79,6 +81,12 @@ export function TopNav() {
     return segment.charAt(0).toUpperCase() + segment.slice(1)
   }
 
+  // Get user's first letter for avatar
+  const getUserInitial = () => {
+    if (!user || !user.name) return "U"
+    return user.name.charAt(0).toUpperCase()
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background w-full">
       <div className="container flex h-16 items-center justify-between px-4 md:px-6">
@@ -112,20 +120,20 @@ export function TopNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/default-avatar.png" alt="User" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarImage src="/default-avatar.png" alt={user?.name || "User"} />
+                  <AvatarFallback>{getUserInitial()}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">User</p>
-                  <p className="text-xs leading-none text-muted-foreground">user@example.com</p>
+                  <p className="text-sm font-medium leading-none">{user?.name || "User"}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>{t("logOut")}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>{t("logOut")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

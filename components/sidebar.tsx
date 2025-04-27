@@ -12,7 +12,6 @@ import {
   Dna,
   Heart,
   User,
-  Settings,
   HelpCircle,
   Menu,
   ChevronLeft,

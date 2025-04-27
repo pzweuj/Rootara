@@ -2,28 +2,23 @@
 
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Globe } from "lucide-react"
 
 export function LanguageSwitcher() {
   const { language, setLanguage, t } = useLanguage()
 
+  const toggleLanguage = () => {
+    // 在英文和简体中文之间切换
+    setLanguage(language === "en" ? "zh-CN" : "en")
+  }
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Globe className="h-5 w-5" />
-          <span className="sr-only">{t("language")}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLanguage("en")} className={language === "en" ? "bg-secondary" : ""}>
-          {t("english")}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage("zh-CN")} className={language === "zh-CN" ? "bg-secondary" : ""}>
-          {t("simplifiedChinese")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button variant="ghost" size="icon" onClick={toggleLanguage}>
+      {language === "en" ? (
+        <span className="font-bold text-sm">EN</span>
+      ) : (
+        <span className="font-bold text-sm">中</span>
+      )}
+      <span className="sr-only">{t("language")}</span>
+    </Button>
   )
 }
