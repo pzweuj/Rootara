@@ -116,8 +116,8 @@ const fetchGenotypeData = (rsid: string) => {
     rs4148254: { reference: "GG", user: "GA" },
   }
 
-  if (mockGenotypes[rsid]) {
-    return mockGenotypes[rsid]
+  if (mockGenotypes[rsid as keyof typeof mockGenotypes]) {
+    return mockGenotypes[rsid as keyof typeof mockGenotypes]
   }
 
   // 如果找不到数据，返回空值
@@ -291,7 +291,8 @@ export default function TraitsPage() {
     const loadTraits = () => {
       try {
         // Load default traits
-        const defaultTraits = defaultTraitsData as Trait[]
+        // 将默认特征数据转换为 Trait[] 类型
+        const defaultTraits = (defaultTraitsData as unknown) as Trait[]
 
         // Load user traits from localStorage
         const savedTraits = localStorage.getItem("userTraits")
@@ -304,7 +305,7 @@ export default function TraitsPage() {
         }
       } catch (error) {
         console.error("Failed to load traits:", error)
-        setTraits(defaultTraitsData as Trait[])
+        setTraits((defaultTraitsData as unknown) as Trait[])
       }
     }
 

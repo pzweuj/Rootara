@@ -108,7 +108,8 @@ export default function TraitDetailPage() {
       // First check default traits
       const defaultTrait = defaultTraitsData.find((t: any) => t.id === id)
       if (defaultTrait) {
-        setTrait(defaultTrait as Trait)
+        // 先将 defaultTrait 转换为 unknown 类型，再转换为 Trait 类型，以确保类型安全
+        setTrait(defaultTrait as unknown as Trait)
         setLoading(false)
         return
       }

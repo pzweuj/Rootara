@@ -16,7 +16,7 @@ interface LanguageContextType {
 const translations = {
   en: {
     dashboard: "Dashboard",
-    myReports: "My Reports",
+    myReports: "Reports",
     analysisModules: "Analysis Modules",
     tools: "Tools",
     helpCenter: "Help Center",
@@ -36,7 +36,7 @@ const translations = {
     profile: "Profile",
     dataSharing: "Data Sharing",
     home: "Home",
-    geneticDashboard: "My Genetic Dashboard",
+    geneticDashboard: "Genetic Dashboard",
     snpsAnalyzed: "SNPs Analyzed",
     ancestryComposition: "Ancestry Composition",
     analysisSummary: "Analysis Summary",
@@ -66,7 +66,7 @@ const translations = {
   },
   "zh-CN": {
     dashboard: "仪表盘",
-    myReports: "我的报告",
+    myReports: "报告",
     analysisModules: "分析模块",
     tools: "工具",
     helpCenter: "帮助中心",
@@ -86,7 +86,7 @@ const translations = {
     profile: "个人资料",
     dataSharing: "数据共享",
     home: "首页",
-    geneticDashboard: "我的基因",
+    geneticDashboard: "结果总览",
     snpsAnalyzed: "个SNP已分析",
     ancestryComposition: "祖源构成",
     analysisSummary: "分析摘要",

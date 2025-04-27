@@ -70,15 +70,6 @@ export function Sidebar() {
         { name: t("uploadNewReport"), href: "/reports/upload" },
       ],
     },
-    {
-      name: t("tools"),
-      href: "/tools",
-      icon: Settings,
-      children: [
-        // 移除了 Data Sharing Management 选项
-        { name: t("accountSettings"), href: "/tools/settings", icon: Settings },
-      ],
-    },
   ]
 
   const bottomNavigation = [{ name: t("helpCenter"), href: "/help", icon: HelpCircle }]
