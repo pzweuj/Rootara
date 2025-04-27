@@ -3,7 +3,6 @@ import { ThemeToggle } from "./theme-toggle"
 import { LanguageSwitcher } from "./language-switcher"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useSettings } from "@/contexts/settings-context"
 import { useLanguage } from "@/contexts/language-context"
 import {
   DropdownMenu,
@@ -20,7 +19,6 @@ import React from "react"
 export function TopNav() {
   const pathname = usePathname()
   const pathSegments = pathname.split("/").filter(Boolean)
-  const { settings } = useSettings()
   const { t, language } = useLanguage()
 
   // 路径段落的翻译映射
@@ -114,30 +112,19 @@ export function TopNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={settings.avatar} alt={settings.fullName} />
-                  <AvatarFallback>
-                    {settings.fullName
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
+                  <AvatarImage src="/default-avatar.png" alt="User" />
+                  <AvatarFallback>U</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{settings.fullName}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{settings.email}</p>
+                  <p className="text-sm font-medium leading-none">User</p>
+                  <p className="text-xs leading-none text-muted-foreground">user@example.com</p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/tools/settings">{t("profile")}</Link>
-              </DropdownMenuItem>
-              {/* <DropdownMenuItem asChild>
-                <Link href="/tools/sharing">{t("dataSharing")}</Link>
-              </DropdownMenuItem> */}
               <DropdownMenuItem>{t("logOut")}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

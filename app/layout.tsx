@@ -3,7 +3,6 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Sidebar } from "@/components/sidebar"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { SettingsProvider } from "@/contexts/settings-context"
 import { SidebarProvider } from "@/components/sidebar-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import type React from "react"
@@ -24,18 +23,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SettingsProvider>
-            <LanguageProvider>
-              <SidebarProvider>
-                <TooltipProvider delayDuration={0}>
-                  <div className="min-h-screen flex">
-                    <Sidebar />
-                    <MainContent>{children}</MainContent>
-                  </div>
-                </TooltipProvider>
-              </SidebarProvider>
-            </LanguageProvider>
-          </SettingsProvider>
+          <LanguageProvider>
+            <SidebarProvider>
+              <TooltipProvider delayDuration={0}>
+                <div className="min-h-screen flex">
+                  <Sidebar />
+                  <MainContent>{children}</MainContent>
+                </div>
+              </TooltipProvider>
+            </SidebarProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
