@@ -35,6 +35,8 @@ import {
   Flame,
   Snowflake,
   Activity,
+  Upload,
+  Download,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/contexts/language-context"
@@ -256,6 +258,121 @@ const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": string }
   // 如果没有匹配的阈值，返回分数最低的结果
   const lowestResult = sortedThresholds[sortedThresholds.length - 1][0]
   return { en: lowestResult, "zh-CN": lowestResult }
+}
+
+const translations = {
+  en: {
+    traits: "Traits",
+    searchTraits: "Search traits...",
+    allCategories: "All Categories",
+    appearance: "Appearance",
+    sensory: "Sensory",
+    nutrition: "Nutrition",
+    sleep: "Sleep",
+    cognitive: "Cognitive",
+    createNewTrait: "Create New Trait",
+    createTrait: "Create Trait",
+    traitName: "Trait Name",
+    result: "Result",
+    description: "Description",
+    icon: "Icon",
+    confidence: "Confidence",
+    category: "Category",
+    cancel: "Cancel",
+    create: "Create",
+    deleteConfirmation: "Delete Confirmation",
+    deleteTraitQuestion: "Are you sure you want to delete this trait?",
+    thisActionCannot: "This action cannot be undone.",
+    delete: "Delete",
+    rsid: "RSID",
+    referenceGenotype: "Reference Genotype",
+    yourGenotype: "Your Genotype",
+    addRsid: "Add RSID",
+    rsidsAndGenotypes: "RSIDs and Genotypes",
+    formula: "Calculation Formula",
+    formulaDescription:
+      "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
+    rsidPlaceholder: "e.g., rs12913832",
+    genotypePlaceholder: "e.g., GG",
+    add: "Add",
+    remove: "Remove",
+    scoreThresholds: "Score Thresholds",
+    thresholdName: "Result Name",
+    thresholdValue: "Minimum Score",
+    thresholdNamePlaceholder: "e.g., Brown",
+    thresholdValuePlaceholder: "e.g., 12",
+    thresholdsDescription: "Define the score thresholds for different results (higher scores are checked first)",
+    iconSelector: "Icon Selector",
+    selectIcon: "Select an icon for your trait",
+    autoFetchGenotypes: "Auto-fetch genotypes from your report",
+    manualEntry: "Manual entry",
+    rsidNotFound: "RSID not found in your report",
+    fetchingGenotypes: "Fetching genotypes...",
+    genotypesFetched: "Genotypes fetched successfully",
+    resultCalculated: "Result will be automatically calculated based on formula and thresholds",
+    importTraits: "Import Traits",
+    exportTraits: "Export Traits",
+    importSuccess: "Traits imported successfully",
+    importError: "Error importing traits",
+    noCustomTraits: "No custom traits to export",
+    exportSuccess: "Traits exported successfully",
+  },
+  "zh-CN": {
+    traits: "特征",
+    searchTraits: "搜索特征...",
+    allCategories: "所有类别",
+    appearance: "外观",
+    sensory: "感官",
+    nutrition: "营养",
+    sleep: "睡眠",
+    cognitive: "认知",
+    createNewTrait: "创建新特征",
+    createTrait: "创建特征",
+    traitName: "特征名称",
+    result: "结果",
+    description: "描述",
+    icon: "图标",
+    confidence: "可信度",
+    category: "类别",
+    cancel: "取消",
+    create: "创建",
+    deleteConfirmation: "删除确认",
+    deleteTraitQuestion: "您确定要删除这个特征吗？",
+    thisActionCannot: "此操作无法撤销。",
+    delete: "删除",
+    rsid: "RSID",
+    referenceGenotype: "参考基因型",
+    yourGenotype: "您的基因型",
+    addRsid: "添加RSID",
+    rsidsAndGenotypes: "RSID和基因型",
+    formula: "计算公式",
+    formulaDescription:
+      "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
+    rsidPlaceholder: "例如：rs12913832",
+    genotypePlaceholder: "例如：GG",
+    add: "添加",
+    remove: "移除",
+    scoreThresholds: "分数阈值",
+    thresholdName: "结果名称",
+    thresholdValue: "最小分数",
+    thresholdNamePlaceholder: "例如：棕色",
+    thresholdValuePlaceholder: "例如：12",
+    thresholdsDescription: "定义不同结果的分数阈值（先检查较高的分数）",
+    iconSelector: "图标选择器",
+    selectIcon: "为您的特征选择一个图标",
+    autoFetchGenotypes: "从您的报告中自动获取基因型",
+    manualEntry: "手动输入",
+    rsidNotFound: "在您的报告中找不到此RSID",
+    fetchingGenotypes: "正在获取基因型...",
+    genotypesFetched: "基因型获取成功",
+    resultCalculated: "结果将根据公式和阈值自动计算",
+    importTraits: "导入特征",
+    exportTraits: "导出特征",
+    importSuccess: "特征导入成功",
+    importError: "导入特征时出错",
+    noCustomTraits: "没有自定义特征可导出",
+    exportSuccess: "特征导出成功",
+  },
 }
 
 export default function TraitsPage() {
@@ -498,117 +615,78 @@ export default function TraitsPage() {
   }
 
   // 修改表单部分，移除手动输入结果的字段，添加公式说明
-  const translations = {
-    en: {
-      traits: "Traits",
-      searchTraits: "Search traits...",
-      allCategories: "All Categories",
-      appearance: "Appearance",
-      sensory: "Sensory",
-      nutrition: "Nutrition",
-      sleep: "Sleep",
-      cognitive: "Cognitive",
-      createNewTrait: "Create New Trait",
-      createTrait: "Create Trait",
-      traitName: "Trait Name",
-      result: "Result",
-      description: "Description",
-      icon: "Icon",
-      confidence: "Confidence",
-      category: "Category",
-      cancel: "Cancel",
-      create: "Create",
-      deleteConfirmation: "Delete Confirmation",
-      deleteTraitQuestion: "Are you sure you want to delete this trait?",
-      thisActionCannot: "This action cannot be undone.",
-      delete: "Delete",
-      rsid: "RSID",
-      referenceGenotype: "Reference Genotype",
-      yourGenotype: "Your Genotype",
-      addRsid: "Add RSID",
-      rsidsAndGenotypes: "RSIDs and Genotypes",
-      formula: "Calculation Formula",
-      formulaDescription:
-        "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
-      rsidPlaceholder: "e.g., rs12913832",
-      genotypePlaceholder: "e.g., GG",
-      add: "Add",
-      remove: "Remove",
-      scoreThresholds: "Score Thresholds",
-      thresholdName: "Result Name",
-      thresholdValue: "Minimum Score",
-      thresholdNamePlaceholder: "e.g., Brown",
-      thresholdValuePlaceholder: "e.g., 12",
-      thresholdsDescription: "Define the score thresholds for different results (higher scores are checked first)",
-      iconSelector: "Icon Selector",
-      selectIcon: "Select an icon for your trait",
-      autoFetchGenotypes: "Auto-fetch genotypes from your report",
-      manualEntry: "Manual entry",
-      rsidNotFound: "RSID not found in your report",
-      fetchingGenotypes: "Fetching genotypes...",
-      genotypesFetched: "Genotypes fetched successfully",
-      resultCalculated: "Result will be automatically calculated based on formula and thresholds",
-    },
-    "zh-CN": {
-      traits: "特征",
-      searchTraits: "搜索特征...",
-      allCategories: "所有类别",
-      appearance: "外观",
-      sensory: "感官",
-      nutrition: "营养",
-      sleep: "睡眠",
-      cognitive: "认知",
-      createNewTrait: "创建新特征",
-      createTrait: "创建特征",
-      traitName: "特征名称",
-      result: "结果",
-      description: "描述",
-      icon: "图标",
-      confidence: "可信度",
-      category: "类别",
-      cancel: "取消",
-      create: "创建",
-      deleteConfirmation: "删除确认",
-      deleteTraitQuestion: "您确定要删除这个特征吗？",
-      thisActionCannot: "此操作无法撤销。",
-      delete: "删除",
-      rsid: "RSID",
-      referenceGenotype: "参考基因型",
-      yourGenotype: "您的基因型",
-      addRsid: "添加RSID",
-      rsidsAndGenotypes: "RSID和基因型",
-      formula: "计算公式",
-      formulaDescription:
-        "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
-      rsidPlaceholder: "例如：rs12913832",
-      genotypePlaceholder: "例如：GG",
-      add: "添加",
-      remove: "移除",
-      scoreThresholds: "分数阈值",
-      thresholdName: "结果名称",
-      thresholdValue: "最小分数",
-      thresholdNamePlaceholder: "例如：棕色",
-      thresholdValuePlaceholder: "例如：12",
-      thresholdsDescription: "定义不同结果的分数阈值（先检查较高的分数）",
-      iconSelector: "图标选择器",
-      selectIcon: "为您的特征选择一个图标",
-      autoFetchGenotypes: "从您的报告中自动获取基因型",
-      manualEntry: "手动输入",
-      rsidNotFound: "在您的报告中找不到此RSID",
-      fetchingGenotypes: "正在获取基因型...",
-      genotypesFetched: "基因型获取成功",
-      resultCalculated: "结果将根据公式和阈值自动计算",
-    },
-  }
-
   const localT = (key: keyof typeof translations.en) => {
     return translations[language as keyof typeof translations][key] || key
+  }
+
+  const handleImportTraits = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) {
+      toast.error(localT("noFileSelected"))
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const jsonData = JSON.parse(e.target?.result as string)
+        if (!Array.isArray(jsonData)) {
+          throw new Error("Uploaded file does not contain an array of traits.")
+        }
+
+        // Validate each trait object
+        jsonData.forEach((trait: any) => {
+          if (
+            typeof trait.name !== "object" ||
+            typeof trait.description !== "object" ||
+            typeof trait.category !== "string" ||
+            !Array.isArray(trait.rsids) ||
+            !Array.isArray(trait.referenceGenotypes) ||
+            !Array.isArray(trait.yourGenotypes) ||
+            typeof trait.formula !== "string" ||
+            typeof trait.scoreThresholds !== "object"
+          ) {
+            throw new Error("Invalid trait format in the uploaded file.")
+          }
+        })
+
+        const importedTraits = jsonData as Trait[]
+        const updatedTraits = [...traits, ...importedTraits]
+        setTraits(updatedTraits)
+        saveUserTraits(updatedTraits)
+        toast.success(localT("importSuccess"))
+      } catch (error: any) {
+        console.error("Error importing traits:", error)
+        toast.error(`${localT("importError")}: ${error.message}`)
+      }
+    }
+
+    reader.readAsText(file)
+  }
+
+  const handleExportTraits = () => {
+    const userTraits = traits.filter((trait) => !trait.isDefault)
+    if (userTraits.length === 0) {
+      toast.warn(localT("noCustomTraits"))
+      return
+    }
+    const jsonString = JSON.stringify(userTraits, null, 2)
+    const blob = new Blob([jsonString], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "exported_traits.json"
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    toast.success(localT("exportSuccess"))
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative w-full md:w-1/2">
+        <div className="relative w-full md:w-2/5">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={localT("searchTraits")}
@@ -617,21 +695,37 @@ export default function TraitsPage() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Tabs
-          defaultValue="all"
-          className="w-full md:w-1/2"
-          value={selectedCategory}
-          onValueChange={(value) => setSelectedCategory(value as TraitCategory)}
-        >
-          <TabsList className="w-full grid grid-cols-6">
-            <TabsTrigger value="all">{localT("allCategories")}</TabsTrigger>
-            <TabsTrigger value="appearance">{localT("appearance")}</TabsTrigger>
-            <TabsTrigger value="sensory">{localT("sensory")}</TabsTrigger>
-            <TabsTrigger value="nutrition">{localT("nutrition")}</TabsTrigger>
-            <TabsTrigger value="sleep">{localT("sleep")}</TabsTrigger>
-            <TabsTrigger value="cognitive">{localT("cognitive")}</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex flex-1 gap-2">
+          <Tabs
+            defaultValue="all"
+            className="flex-1"
+            value={selectedCategory}
+            onValueChange={(value) => setSelectedCategory(value as TraitCategory)}
+          >
+            <TabsList className="w-full grid grid-cols-6">
+              <TabsTrigger value="all">{localT("allCategories")}</TabsTrigger>
+              <TabsTrigger value="appearance">{localT("appearance")}</TabsTrigger>
+              <TabsTrigger value="sensory">{localT("sensory")}</TabsTrigger>
+              <TabsTrigger value="nutrition">{localT("nutrition")}</TabsTrigger>
+              <TabsTrigger value="sleep">{localT("sleep")}</TabsTrigger>
+              <TabsTrigger value="cognitive">{localT("cognitive")}</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <div className="flex gap-2">
+            <input type="file" id="import-traits" className="hidden" accept=".json" onChange={handleImportTraits} />
+            <Button
+              variant="outline"
+              size="icon"
+              title={localT("importTraits")}
+              onClick={() => document.getElementById("import-traits")?.click()}
+            >
+              <Upload className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" title={localT("exportTraits")} onClick={handleExportTraits}>
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
