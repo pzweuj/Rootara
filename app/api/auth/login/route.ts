@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 8 * 60 * 60, // 8 hours
+      maxAge: 4 * 60 * 60, // 4 hours
     })
 
     return NextResponse.json(user)
