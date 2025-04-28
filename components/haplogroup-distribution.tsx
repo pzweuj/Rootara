@@ -1,6 +1,5 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
 
 export function HaplogroupDistribution() {
@@ -8,61 +7,36 @@ export function HaplogroupDistribution() {
 
   const translations = {
     en: {
-      haplogroupDistribution: "Haplogroup Distribution",
       maternalLineage: "Maternal Lineage (mtDNA)",
       paternalLineage: "Paternal Lineage (Y-DNA)",
-      commonHaplogroups: "Common Haplogroups",
-      understandingHaplogroups: "Understanding Haplogroups",
-      haplogroupDescription:
-        "Haplogroups are genetic populations of people who share a common ancestor on either their maternal or paternal lines.",
-      analysisDescription:
-        "This analysis traces your deep ancestry by examining specific markers in your mitochondrial DNA (mtDNA) and, if applicable, your Y-chromosome DNA.",
     },
     "zh-CN": {
-      haplogroupDistribution: "单倍群分布",
-      maternalLineage: "母系谱系 (mtDNA)",
-      paternalLineage: "父系谱系 (Y-DNA)",
-      commonHaplogroups: "常见单倍群",
-      understandingHaplogroups: "了解单倍群",
-      haplogroupDescription: "单倍群是共享母系或父系祖先的遗传人群。",
-      analysisDescription:
-        "此分析通过检查您线粒体DNA（mtDNA）中的特定标记以及（如果适用）您的Y染色体DNA来追溯您的深层祖先。",
+      maternalLineage: "母系遗传 (mtDNA)",
+      paternalLineage: "父系遗传 (Y-DNA)",
     },
   }
 
-  const t = (key: string) => {
+  const t = (key) => {
     return translations[language][key] || key
   }
 
+  // 样本数据
+  const yDnaHaplogroup = "R1b"
+  const mtDnaHaplogroup = "H"
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-medium">{t("haplogroupDistribution")}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{t("haplogroupDescription")}</p>
-        <p className="text-sm text-muted-foreground">{t("analysisDescription")}</p>
+    <div className="grid grid-cols-2 gap-4">
+      {/* 父系谱系 Y-DNA - 蓝色卡片 */}
+      <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
+        <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">{t("paternalLineage")}</h3>
+        <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{yDnaHaplogroup}</p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <h3 className="text-sm font-medium">{t("maternalLineage")}</h3>
-            <p className="text-sm">H (Common in Europe and North Africa)</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium">{t("paternalLineage")}</h3>
-            <p className="text-sm">R1b (Common in Western Europe)</p>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium">{t("commonHaplogroups")}</h3>
-          <ul className="list-disc list-inside text-sm">
-            <li>H1, H3 (European)</li>
-            <li>R1a (Eastern European, Central Asian)</li>
-            <li>O2, O3 (East Asian)</li>
-          </ul>
-        </div>
-      </CardContent>
-    </Card>
+      {/* 母系谱系 mtDNA - 红色卡片 */}
+      <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
+        <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">{t("maternalLineage")}</h3>
+        <p className="text-3xl font-bold text-red-700 dark:text-red-300">{mtDnaHaplogroup}</p>
+      </div>
+    </div>
   )
 }
