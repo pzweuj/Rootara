@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Info } from "lucide-react"
 import { AncestryMap } from "@/components/ancestry-map"
 import { HaplogroupDistribution } from "@/components/haplogroup-distribution"
@@ -22,7 +21,12 @@ export default function AncestryAnalysisPage() {
         "Your ancestry composition estimates the proportion of your DNA that comes from each of 45+ populations worldwide.",
       analysisDescription:
         "The analysis is based on comparing your genome to reference populations from around the world.",
-      learnMoreMethodology: "Learn More About Methodology",
+      admixtureTechnology: "Admixture",
+      admixtureTechDescription:
+        "Admixture analysis uses statistical methods to estimate the proportion of your genome derived from different ancestral populations. This technique compares segments of your DNA to reference panels from diverse global populations.",
+      haplogroupsExplained: "Understanding Haplogroups",
+      haplogroupsExplainedDescription:
+        "Haplogroups are genetic population groups that share a common ancestor. Y-DNA haplogroups trace paternal lineage (Chrom Y), while mtDNA haplogroups trace maternal lineage (Mitochondria). These markers remain relatively unchanged over generations, providing insights into ancient migration patterns.",
     },
     "zh-CN": {
       ancestryAnalysis: "祖源分析",
@@ -32,8 +36,12 @@ export default function AncestryAnalysisPage() {
       understandingResults: "了解您的结果",
       compositionDescription: "您的祖源构成估计了您的DNA中来自全球45多个人群的比例。",
       analysisDescription: "该分析基于将您的基因组与世界各地的参考人群进行比较。",
-      learnMoreMethodology: "关于分析方法，了解更多",
-      phylogeneticTree: "系统发生树",
+      admixtureTechnology: "Admixture算法",
+      admixtureTechDescription:
+        "Admixture算法使用统计方法来估计您的基因组中源自不同祖先人群的比例。这种技术将您DNA的片段与来自全球不同人群的参考数据集进行比较。",
+      haplogroupsExplained: "单倍群解析",
+      haplogroupsExplainedDescription:
+        "单倍群是共享共同祖先的遗传人群。Y-DNA单倍群追踪父系血统（Y染色体），而mtDNA单倍群追踪母系血统（线粒体）。这些标记在几代人中保持相对不变，提供了对古代迁徙模式的见解。",
     },
   }
 
@@ -69,9 +77,18 @@ export default function AncestryAnalysisPage() {
                   <Info className="h-5 w-5 text-primary mt-0.5" />
                   <p className="text-sm">{t("analysisDescription")}</p>
                 </div>
-                <Button variant="outline" className="w-full">
-                  {t("learnMoreMethodology")}
-                </Button>
+
+                {/* 添加 Admixture 技术介绍 */}
+                <div className="pt-2">
+                  <h3 className="text-sm font-medium mb-1">{t("admixtureTechnology")}</h3>
+                  <p className="text-sm text-muted-foreground">{t("admixtureTechDescription")}</p>
+                </div>
+
+                {/* 添加单倍群介绍 */}
+                <div className="pt-2">
+                  <h3 className="text-sm font-medium mb-1">{t("haplogroupsExplained")}</h3>
+                  <p className="text-sm text-muted-foreground">{t("haplogroupsExplainedDescription")}</p>
+                </div>
               </CardContent>
             </Card>
           </div>
