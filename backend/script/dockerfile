@@ -1,0 +1,17 @@
+# 使用轻量级的Node.js基础镜像 (Alpine版本)
+FROM node:18-alpine
+
+# 安装必要的构建工具和其他依赖，包括sqlite3
+RUN apk add --no-cache python3 py3-pip go build-base sqlite sqlite-dev
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制package.json 和 pnpm-lock.yaml 并安装依赖
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install
+
+# 如果你的Node.js应用需要sqlite3模块，请确保在这里安装Node.js的sqlite3包
+# 注意：有时可能需要构建sqlite3的本地模块，因此确保所有必要的构建工具已安装
+RUN pnpm add sqlite3
+
