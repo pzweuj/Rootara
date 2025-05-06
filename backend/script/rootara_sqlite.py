@@ -75,7 +75,8 @@ def init_sqlite_db(db_path):
             gene TEXT,
             clnsig TEXT DEFAULT null,
             clndn TEXT DEFAULT null,
-            genotype TEXT
+            genotype TEXT,
+            check TEXT
         )
         ''')
 
