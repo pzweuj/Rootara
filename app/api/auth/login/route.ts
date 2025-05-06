@@ -28,7 +28,9 @@ export async function POST(request: Request) {
     const token = await new jose.SignJWT(user).setProtectedHeader({ alg: "HS256" }).setExpirationTime("8h").sign(secret)
 
     // Set HTTP-only cookie
-    cookies().set({
+    // Set HTTP-only cookie
+    const cookieStore = await cookies()
+    cookieStore.set({
       name: "auth_token",
       value: token,
       httpOnly: true,

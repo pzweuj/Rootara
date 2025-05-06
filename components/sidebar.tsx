@@ -71,7 +71,7 @@ export function Sidebar() {
     },
   ]
 
-  const bottomNavigation = [{ name: t("helpCenter"), href: "/help", icon: HelpCircle }]
+  const bottomNavigation = [{ name: t("helpCenter"), href: "https://github.com/pzweuj/Rootara/wiki", icon: HelpCircle }]
 
   const toggleItem = (name: string) => {
     setOpenItems((prev) => ({
@@ -218,6 +218,8 @@ export function Sidebar() {
           <TooltipTrigger asChild>
             <Link
               href={item.href}
+              target={item.href.startsWith('http') ? "_blank" : undefined}
+              rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
               className={cn(
                 "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive

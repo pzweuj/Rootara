@@ -89,7 +89,7 @@ export default function LoginPage() {
           <p className="text-xl max-w-md text-center">
             {language === "en"
               ? "Discover your genetic heritage and unlock insights about your health and traits."
-              : "探索您的基因遗产，揭示有关您健康和特征的见解。"}
+              : "探索您的基因，解锁您的遗传健康和个人特征。"}
           </p>
         </div>
       </div>
