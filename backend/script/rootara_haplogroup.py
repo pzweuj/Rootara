@@ -7,11 +7,14 @@
 import os
 import sys
 import argparse
-
+import sqlite3
+import tempfile
+import pandas as pd
 
 def y_haplogroup(vcf_file, output_dir, rpt_id):
-    data_dir = '/home/clinic/clinic_backup/software/haploGrouper/data'
-    tool = '/home/clinic/clinic_backup/software/haploGrouper/haploGrouper.py'
+    base_dir = '/home/clinic/clinic_backup/software/haploGrouper'
+    data_dir = f'{base_dir}/data'
+    tool = f'{base_dir}/haploGrouper.py'
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -27,8 +30,9 @@ def y_haplogroup(vcf_file, output_dir, rpt_id):
     os.system(cmd)
 
 def mt_haplogroup(vcf_file, output_dir, rpt_id):
-    data_dir = '/home/clinic/clinic_backup/software/haploGrouper/data'
-    tool = '/home/clinic/clinic_backup/software/haploGrouper/haploGrouper.py'
+    base_dir = '/home/clinic/clinic_backup/software/haploGrouper'
+    data_dir = f'{base_dir}/data'
+    tool = f'{base_dir}/haploGrouper.py'
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -43,30 +47,51 @@ def mt_haplogroup(vcf_file, output_dir, rpt_id):
 
     os.system(cmd)
 
-def haplogroup(vcf_file, output_dir, rpt_id, method="Y"):
-    if method == "Y":
-        y_haplogroup(vcf_file, output_dir, rpt_id)
-    elif method == "MT":
-        mt_haplogroup(vcf_file, output_dir, rpt_id)
-    else:
-        print("method not support")
-        sys.exit(1)
+# 查询数据库中这个编号的报告是否已存在结果，如已存在，不重新分析
+def insert_haplogroup_to_db(rpt_id, vcf_file, db_file, force=False):
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+
+    # 检查是否已存在结果
+    cursor.execute("SELECT COUNT(*) FROM haplogroup WHERE report_id = ?", (rpt_id,))
+    count = cursor.fetchone()[0]
+
+    if count > 0 and not force:
+        print(f"报告 {rpt_id} 已存在结果，跳过分析。")
+        return
+
+    running_dir = tempfile.gettempdir()
+    y_haplogroup(vcf_file, running_dir, rpt_id)
+    mt_haplogroup(vcf_file, running_dir, rpt_id)
+    y_haplogroup_result = f"{running_dir}/{rpt_id}.YHap.txt"
+    mt_haplogroup_result = f"{running_dir}/{rpt_id}.MTHap.txt"
+
+    # 对结果进行解析
+    df_y = pd.read_csv(y_haplogroup_result, sep='\t', header=0)
+    df_mt = pd.read_csv(mt_haplogroup_result, sep='\t', header=0)
+
+    y_hap = df_y['Haplogroup'].values[0]
+    mt_hap = df_mt['Haplogroup'].values[0]
+
+    # 插入结果到数据库
+    cursor.execute("INSERT INTO haplogroup (report_id, y_hap, mt_hap) VALUES (?, ?, ?)", (rpt_id, y_hap, mt_hap))
+    conn.commit()
 
 def main():
     parser = argparse.ArgumentParser(description='分析单倍型')
     parser.add_argument('--input', type=str, help='输入VCF文件')
-    parser.add_argument('--output', type=str, help='输出文件夹')
-    parser.add_argument('--id', type=str, help='报告样本编号')
-    parser.add_argument('--method', type=str, choices=['MT', 'Y'], help='单倍群，可选MT/Y，默认为Y', default='Y')
+    parser.add_argument('--id', type=str, help='输入报告编号')
+    parser.add_argument('--db', type=str, help='数据数据库文件')
+    parser.add_argument('--force', type=bool, help='是否强制执行，默认False', default=False)
     args = parser.parse_args()
 
     # 检查是否提供了所有必需参数
-    if not all([args.input, args.output, args.id, args.method]):
+    if not all([args.input, args.id, args.db]):
         parser.print_help()
         sys.exit(1)
 
     try:
-        haplogroup(args.input, args.output, args.id, args.method)
+        insert_haplogroup_to_db(args.id, args.input, args.db, args.force)
     except Exception as e:
         print(f"Error: {e}")
         sys.exit(1)
