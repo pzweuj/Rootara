@@ -6,7 +6,7 @@ import sqlite3
 
 
 def convert_data_to_df(file_path):
-    df = pd.read_csv(file_path, sep=',', header=0)
+    df = pd.read_csv(file_path, sep=',', header=0, low_memory=False)
     return df
 
 def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
@@ -22,41 +22,44 @@ def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
     try:
         # 连接到数据库
         conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
         
-        # 如果选择替换表且表已存在，则先删除
-        if if_exists == 'replace':
-            cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+        # 重命名DataFrame的列以匹配数据库表结构
+        df_renamed = df.rename(columns={
+            'Chrom': 'chromosome',
+            'Start': 'position',
+            'Ref': 'ref',
+            'Alt': 'alt',
+            'RSID': 'rsid',
+            'gnomAD_AF': 'gnomAD_AF',
+            'Gene': 'gene',
+            'CLNSIG': 'clnsig',
+            'CLNDN': 'clndn',
+            'Genotype': 'genotype',
+            'Check': 'gt'
+        })
         
-        # 初始化表
-        cursor.execute(f'''
-        CREATE TABLE IF NOT EXISTS {table_name} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chromosome TEXT,
-            position INTEGER,
-            ref TEXT,
-            alt TEXT,
-            rsid TEXT DEFAULT null,
-            gnomAD_AF FLOAT DEFAULT null,
-            gene TEXT,
-            clnsig TEXT DEFAULT null,
-            clndn TEXT DEFAULT null,
-            genotype TEXT,
-            check TEXT
+        # 使用pandas的to_sql方法直接将DataFrame写入数据库
+        # 设置index=False避免写入DataFrame的索引列
+        df_renamed.to_sql(
+            name=table_name,
+            con=conn,
+            if_exists=if_exists,
+            index=False,
+            dtype={
+                'chromosome': 'TEXT',
+                'position': 'INTEGER',
+                'ref': 'TEXT',
+                'alt': 'TEXT',
+                'rsid': 'TEXT',
+                'gnomAD_AF': 'FLOAT',
+                'gene': 'TEXT',
+                'clnsig': 'TEXT',
+                'clndn': 'TEXT',
+                'genotype': 'TEXT',
+                'gt': 'TEXT'
+            }
         )
-        ''')
-
-        # 遍历df的每一行，将行转换为set，插入到数据库中
-        for index, row in df.iterrows():
-            # 构建SQL语句
-            sql = f"INSERT INTO {table_name} (chromosome, position, ref, alt, rsid, gnomAD_AF, gene, clnsig, clndn, genotype, check) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            values = (row['Chrom'], row['Start'], row['Ref'], row['Alt'], row['RSID'], row['gnomAD_AF'], row['Gene'], row['CLNSIG'], row['CLNDN'], row['Genotype'], row['Check'])
-
-            # 执行SQL语句
-            cursor.execute(sql, values) 
-
-        # 提交事务并关闭连接
-        conn.commit()
+        
         conn.close()
         
         print(f"成功将DataFrame转换为SQLite表 '{table_name}'，共 {len(df)} 行")
@@ -66,8 +69,28 @@ def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
         print(f"将DataFrame转换为SQLite表失败: {e}")
         return False
 
+# 流程
+def csv_to_sqlite(file_path, db_path, table_name, force=False):
+    df = convert_data_to_df(file_path)
+    if_exists = 'fail'
+    if force:
+        if_exists = 'replace'
+    dataframe_to_sqlite(df, db_path, table_name, if_exists)
 
-df = convert_data_to_df('../Test/pzw_wegene.rootara.txt')
-dataframe_to_sqlite(df, 'rootara.db', 'RPT_TEMPLATE01')
+def main():
+    parser = argparse.ArgumentParser(description='将Rootara CSV转换为SQLite数据库')
+    parser.add_argument('--input', type=str, help='输入CSV文件路径')
+    parser.add_argument('--db', type=str, help='输出数据库文件路径')
+    parser.add_argument('--id', type=str, help='数据表名称')
+    parser.add_argument('--force', type=bool, help='是否强制覆盖已存在的数据表，默认False', default=False)
+    args = parser.parse_args()
 
+    # 检查是否提供了所有必需参数
+    if not all([args.input, args.db, args.id]):
+        parser.print_help()
+        sys.exit(1)
 
+    csv_to_sqlite(file_path=args.input, db_path=args.db, table_name=args.id, force=args.force)
+
+if __name__ == '__main__':
+    main()
