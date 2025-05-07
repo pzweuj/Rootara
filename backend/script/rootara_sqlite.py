@@ -35,7 +35,7 @@ def init_sqlite_db(db_path):
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         
-        # 创建用户表
+        # 创建用户表 || 这个表暂时是摆设，没有用
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

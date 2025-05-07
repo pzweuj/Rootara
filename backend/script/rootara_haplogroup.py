@@ -10,6 +10,7 @@ import argparse
 import sqlite3
 import tempfile
 import pandas as pd
+import shutil
 
 def y_haplogroup(vcf_file, output_dir, rpt_id):
     base_dir = '/home/clinic/clinic_backup/software/haploGrouper'
@@ -76,6 +77,7 @@ def insert_haplogroup_to_db(rpt_id, vcf_file, db_file, force=False):
     # 插入结果到数据库
     cursor.execute("INSERT INTO haplogroup (report_id, y_hap, mt_hap) VALUES (?, ?, ?)", (rpt_id, y_hap, mt_hap))
     conn.commit()
+    shutil.rmtree(running_dir)
 
 def main():
     parser = argparse.ArgumentParser(description='分析单倍型')

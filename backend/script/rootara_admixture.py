@@ -10,6 +10,7 @@ import os
 import tempfile
 import sqlite3
 import argparse
+import shutil
 
 # admix运行，可能会占用较高的计算资源
 def admix_cli(input_file, rpt_id, method):
@@ -94,6 +95,7 @@ def data_to_sqlite(input_file, rpt_id, method, db_path, force=False):
     ances_dict = parse_admix_result(admix_file)
     import_result_to_db(ances_dict, rpt_id, db_path)
     print(f"报告 {rpt_id} 的祖源分析结果已导入数据库")
+    shutil.rmtree(os.path.dirname(admix_file))
 
 def main():
     parser = argparse.ArgumentParser(description='Process input file and report ID.')
