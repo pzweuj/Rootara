@@ -18,13 +18,13 @@ export default function AncestryAnalysisPage() {
       haplogroups: "Haplogroups",
       understandingResults: "Understanding Your Results",
       compositionDescription:
-        "Your ancestry composition estimates the proportion of your DNA that comes from each of 45+ populations worldwide.",
+        "Your ancestry composition estimates the proportion of your DNA that comes from each of 47 populations worldwide.",
       analysisDescription:
         "The analysis is based on comparing your genome to reference populations from around the world.",
       admixtureTechnology: "Admixture",
       admixtureTechDescription:
         "Admixture analysis uses statistical methods to estimate the proportion of your genome derived from different ancestral populations. This technique compares segments of your DNA to reference panels from diverse global populations.",
-      haplogroupsExplained: "Understanding Haplogroups",
+      haplogroupsExplained: "Haplogroups",
       haplogroupsExplainedDescription:
         "Haplogroups are genetic population groups that share a common ancestor. Y-DNA haplogroups trace paternal lineage (Chrom Y), while mtDNA haplogroups trace maternal lineage (Mitochondria). These markers remain relatively unchanged over generations, providing insights into ancient migration patterns.",
     },
@@ -34,7 +34,7 @@ export default function AncestryAnalysisPage() {
       ancestryComposition: "祖源构成",
       haplogroups: "单倍群",
       understandingResults: "了解您的结果",
-      compositionDescription: "您的祖源构成估计了您的DNA中来自全球45多个人群的比例。",
+      compositionDescription: "您的祖源构成估计了您的DNA中来自全球47个人群的比例。",
       analysisDescription: "该分析基于将您的基因组与世界各地的参考人群进行比较。",
       admixtureTechnology: "Admixture算法",
       admixtureTechDescription:

@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,12 +12,12 @@ import { Progress } from "@/components/ui/progress"
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
-import { useAuth } from "@/contexts/auth-context" // 导入 useAuth 钩子
+// 移除 useAuth 导入
 
 export default function UploadReportPage() {
   const router = useRouter()
   const { t, language } = useLanguage()
-  const { user } = useAuth() // 获取当前用户信息
+  // 移除 useAuth 相关代码
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "success" | "error">("idle")
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState("")
@@ -27,9 +26,44 @@ export default function UploadReportPage() {
   const [source, setSource] = useState("")
   const [isDefault, setIsDefault] = useState(false)
   const [errorMessage, setErrorMessage] = useState("") // 存储错误信息
+  const [userId, setUserId] = useState("guest") // 添加用户ID状态，默认为guest
 
   // 文件大小限制（50MB）
   const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
+
+  // 添加环境变量配置
+  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
+  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
+  const USER_API_URL = API_BASE_URL + '/user/id'; // 添加用户ID API地址
+
+  // 在组件加载时获取用户ID
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch(USER_API_URL, {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'x-api-key': API_KEY // 使用提供的API密钥
+          },
+          body: '' // 空请求体
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.user_id) {
+            setUserId(data.user_id);
+          }
+        } else {
+          console.error('获取用户ID失败');
+        }
+      } catch (error) {
+        console.error('获取用户ID出错:', error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   // 添加额外的翻译项
   const translations = {
@@ -159,9 +193,6 @@ export default function UploadReportPage() {
     }
   }
 
-  // 在文件顶部添加环境变量配置
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://0.0.0.0:8000';
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -183,24 +214,25 @@ export default function UploadReportPage() {
         }
         return prev + 5
       })
-    }, 200)
+    }, 3000)
 
     try {
       // 准备请求数据
       const requestData = {
-        user_id: user?.email || "guest", // 使用用户邮箱作为ID
+        user_id: userId, // 使用获取到的用户ID
         input_data: fileContent,
         source_from: source,
         report_name: reportName,
         default_report: isDefault
       }
 
-      // 使用环境变量构建API URL
+      // 使用新的API端点和API_KEY
       const response = await fetch(`${API_BASE_URL}/report/create`, {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY // 添加API密钥到请求头
         },
         body: JSON.stringify(requestData)
       })
