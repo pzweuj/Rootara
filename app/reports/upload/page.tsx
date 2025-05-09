@@ -13,16 +13,23 @@ import { Progress } from "@/components/ui/progress"
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
+import { useAuth } from "@/contexts/auth-context" // 导入 useAuth 钩子
 
 export default function UploadReportPage() {
   const router = useRouter()
   const { t, language } = useLanguage()
+  const { user } = useAuth() // 获取当前用户信息
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "success" | "error">("idle")
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState("")
+  const [fileContent, setFileContent] = useState("") // 存储文件内容
   const [reportName, setReportName] = useState("")
   const [source, setSource] = useState("")
   const [isDefault, setIsDefault] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("") // 存储错误信息
+
+  // 文件大小限制（50MB）
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
 
   // 添加额外的翻译项
   const translations = {
@@ -35,7 +42,7 @@ export default function UploadReportPage() {
       dataSource: "Data Source",
       selectDataSource: "Select data source",
       dragDropFile: "Drag and drop your genetic data file or click to browse",
-      supportedFormats: "Supported formats: 23andMe, AncestryDNA, WeGene, FTDNA",
+      supportedFormats: "Supported formats: 23andMe, AncestryDNA, WeGene",
       selectFile: "Select File",
       remove: "Remove",
       setAsDefault: "Set as default report",
@@ -49,6 +56,7 @@ export default function UploadReportPage() {
       uploadFailed: "Upload Failed",
       tryAgain: "Try Again",
       errorUploadingFile: "There was an error uploading your file. Please try again.",
+      fileTooLarge: "File is too large. Maximum file size is 50MB.", // 新增
       cancel: "Cancel",
       uploadReport: "Upload Report",
       supportedDataFormats: "Supported Data Formats",
@@ -57,7 +65,7 @@ export default function UploadReportPage() {
       downloadFrom23andMe: "Download from 23andMe: Account → Browse Raw Data → Download",
       ancestryDataFormat: "AncestryDNA provides raw data in a tab-separated format (.txt).",
       downloadFromAncestry: "Download from Ancestry: DNA → Settings → Download Raw DNA Data",
-      wegeneDataFormat: "WeGene DNA data is available in CSV format (.csv).",
+      wegeneDataFormat: "WeGene DNA data is available in txt format (.txt).",
       downloadFromWeGene: "Download from WeGene: DNA → Manage DNA kits → Download",
       ftdnaDataFormat: "FTDNA provides raw data in CSV format (.csv).",
       downloadFromFTDNA: "Download from FTDNA: myDNA → Download Raw Data",
@@ -74,7 +82,7 @@ export default function UploadReportPage() {
       dataSource: "数据来源",
       selectDataSource: "选择数据来源",
       dragDropFile: "拖放您的基因数据文件或点击浏览",
-      supportedFormats: "支持的格式：23andMe、AncestryDNA、WeGene、FTDNA",
+      supportedFormats: "支持的格式：23andMe、AncestryDNA、WeGene",
       selectFile: "选择文件",
       remove: "移除",
       setAsDefault: "设为默认报告",
@@ -87,6 +95,7 @@ export default function UploadReportPage() {
       uploadFailed: "上传失败",
       tryAgain: "重试",
       errorUploadingFile: "上传文件时出错。请重试。",
+      fileTooLarge: "文件太大。最大文件大小为50MB。", // 新增
       cancel: "取消",
       uploadReport: "上传报告",
       supportedDataFormats: "支持的数据格式",
@@ -95,7 +104,7 @@ export default function UploadReportPage() {
       downloadFrom23andMe: "从23andMe下载：账户 → 浏览原始数据 → 下载",
       ancestryDataFormat: "AncestryDNA提供制表符分隔格式(.txt)的原始数据。",
       downloadFromAncestry: "从Ancestry下载：DNA → 设置 → 下载原始DNA数据",
-      wegeneDataFormat: "WeGene DNA数据以CSV格式(.csv)提供。",
+      wegeneDataFormat: "WeGene DNA数据以txt格式(.txt)提供。",
       downloadFromWeGene: "从WeGene下载：DNA → 管理DNA套件 → 下载",
       ftdnaDataFormat: "FTDNA提供CSV格式(.csv)的原始数据。",
       downloadFromFTDNA: "从FTDNA下载：myDNA → 下载原始数据",
@@ -116,17 +125,32 @@ export default function UploadReportPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
+      
+      // 检查文件大小
+      if (file.size > MAX_FILE_SIZE) {
+        setErrorMessage(localT("fileTooLarge"))
+        setUploadState("error")
+        return
+      }
+      
       setFileName(file.name)
+
+      // 读取文件内容
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setFileContent(event.target.result as string)
+        }
+      }
+      reader.readAsText(file) // 读取为文本
 
       // Auto-detect source based on file name (simplified example)
       if (file.name.toLowerCase().includes("23andme")) {
-        setSource("23andMe")
+        setSource("23andme")
       } else if (file.name.toLowerCase().includes("ancestry")) {
-        setSource("AncestryDNA")
+        setSource("ancestry")
       } else if (file.name.toLowerCase().includes("wegene")) {
-        setSource("WeGene")
-      } else if (file.name.toLowerCase().includes("ftdna") || file.name.toLowerCase().includes("familytree")) {
-        setSource("FamilyTreeDNA")
+        setSource("wegene")
       }
 
       // Auto-generate report name based on file name
@@ -135,29 +159,67 @@ export default function UploadReportPage() {
     }
   }
 
-  const simulateUpload = () => {
-    if (!fileName) {
+  // 在文件顶部添加环境变量配置
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://0.0.0.0:8000';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!fileName || !reportName || !source || !fileContent) {
       return
     }
 
     setUploadState("uploading")
     setProgress(0)
+    setErrorMessage("")
 
-    const interval = setInterval(() => {
+    // 创建进度动画
+    const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setUploadState("success")
-          return 100
+        // 最多到90%，剩下的10%在API成功后完成
+        if (prev >= 90) {
+          clearInterval(progressInterval)
+          return 90
         }
         return prev + 5
       })
     }, 200)
-  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    simulateUpload()
+    try {
+      // 准备请求数据
+      const requestData = {
+        user_id: user?.email || "guest", // 使用用户邮箱作为ID
+        input_data: fileContent,
+        source_from: source,
+        report_name: reportName,
+        default_report: isDefault
+      }
+
+      // 使用环境变量构建API URL
+      const response = await fetch(`${API_BASE_URL}/report/create`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      })
+
+      // 处理响应
+      if (response.ok) {
+        clearInterval(progressInterval)
+        setProgress(100)
+        setUploadState("success")
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "上传失败")
+      }
+    } catch (error) {
+      clearInterval(progressInterval)
+      setUploadState("error")
+      setErrorMessage(error instanceof Error ? error.message : "上传过程中发生错误")
+      console.error("Upload error:", error)
+    }
   }
 
   return (
@@ -192,16 +254,59 @@ export default function UploadReportPage() {
                     <SelectValue placeholder={localT("selectDataSource")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="23andMe">23andMe</SelectItem>
-                    <SelectItem value="AncestryDNA">AncestryDNA</SelectItem>
-                    <SelectItem value="WeGene">WeGene</SelectItem>
-                    <SelectItem value="FamilyTreeDNA">FamilyTreeDNA</SelectItem>
-                    <SelectItem value="Other">{localT("other")}</SelectItem>
+                    <SelectItem value="23andme">23andMe</SelectItem>
+                    <SelectItem value="ancestry">AncestryDNA</SelectItem>
+                    <SelectItem value="wegene">WeGene</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center">
+              <div 
+                className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center"
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                onDrop={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  
+                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const file = e.dataTransfer.files[0]
+                    
+                    // 检查文件大小
+                    if (file.size > MAX_FILE_SIZE) {
+                      setErrorMessage(localT("fileTooLarge"))
+                      setUploadState("error")
+                      return
+                    }
+                    
+                    setFileName(file.name)
+                    
+                    // 读取文件内容
+                    const reader = new FileReader()
+                    reader.onload = (event) => {
+                      if (event.target?.result) {
+                        setFileContent(event.target.result as string)
+                      }
+                    }
+                    reader.readAsText(file) // 读取为文本
+                    
+                    // Auto-detect source based on file name (simplified example)
+                    if (file.name.toLowerCase().includes("23andme")) {
+                      setSource("23andme")
+                    } else if (file.name.toLowerCase().includes("ancestry")) {
+                      setSource("ancestry")
+                    } else if (file.name.toLowerCase().includes("wegene")) {
+                      setSource("wegene")
+                    }
+                    
+                    // Auto-generate report name based on file name
+                    const baseName = file.name.split(".")[0].replace(/[_-]/g, " ")
+                    setReportName(baseName)
+                  }
+                }}
+              >
                 <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground mb-2">{localT("dragDropFile")}</p>
                 <p className="text-xs text-muted-foreground mb-4">{localT("supportedFormats")}</p>
@@ -214,7 +319,15 @@ export default function UploadReportPage() {
                   required
                 />
                 <label htmlFor="file-upload">
-                  <Button variant="outline" className="mx-auto" type="button">
+                  <Button 
+                    variant="outline" 
+                    className="mx-auto" 
+                    type="button"
+                    onClick={() => {
+                      // 手动触发文件输入框的点击事件
+                      document.getElementById("file-upload")?.click()
+                    }}
+                  >
                     {localT("selectFile")}
                   </Button>
                 </label>
@@ -276,7 +389,9 @@ export default function UploadReportPage() {
               <div className="p-6 text-center">
                 <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-2" />
                 <p className="text-lg font-medium mb-2">{localT("uploadFailed")}</p>
-                <p className="text-sm text-muted-foreground mb-4">{localT("errorUploadingFile")}</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {errorMessage || localT("errorUploadingFile")}
+                </p>
                 <Button variant="outline" onClick={() => setUploadState("idle")}>
                   {localT("tryAgain")}
                 </Button>
@@ -296,6 +411,7 @@ export default function UploadReportPage() {
         )}
       </Card>
 
+      {/* 支持的数据格式卡片保持不变 */}
       <Card>
         <CardHeader>
           <CardTitle>{localT("supportedDataFormats")}</CardTitle>
@@ -322,11 +438,11 @@ export default function UploadReportPage() {
                 <p className="text-xs text-muted-foreground">{localT("downloadFromWeGene")}</p>
               </div>
 
-              <div className="border rounded-md p-4">
+              {/* <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">Family Tree DNA</h3>
                 <p className="text-sm text-muted-foreground mb-2">{localT("ftdnaDataFormat")}</p>
                 <p className="text-xs text-muted-foreground">{localT("downloadFromFTDNA")}</p>
-              </div>
+              </div> */}
             </div>
 
             <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
