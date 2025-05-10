@@ -29,6 +29,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
+import { toast } from "@/components/ui/use-toast";
 
 // 定义报告接口
 interface Report {
@@ -64,7 +65,67 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
   // 添加环境变量配置
   const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
+  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
+
+  // 处理报告导出
+  const handleExportReport = async (reportId: string) => {
+    try {
+      // 显示加载状态或通知（可选）
+      // toast({
+      //   title: "正在导出报告...",
+      //   description: "请稍候...",
+      //   duration: 3000,
+      // });
+
+      // 调用API导出原始数据
+      const response = await fetch(`${API_BASE_URL}/report/${reportId}/rawdata`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: ''  // 空请求体，按照API要求
+      });
+
+      if (!response.ok) {
+        throw new Error(`导出失败: ${response.status}`);
+      }
+
+      // 获取响应数据
+      const data = await response.blob();
+      
+      // 创建下载链接
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `report-${reportId}-rawdata.txt`);
+      document.body.appendChild(link);
+      
+      // 触发下载
+      link.click();
+      
+      // 清理
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(link);
+
+      // 显示成功通知
+      // toast({
+      //   title: "导出成功",
+      //   description: "文件已下载",
+      //   duration: 3000,
+      // });
+    } catch (error) {
+      console.error("导出报告时出错:", error);
+      
+      // 显示错误通知
+      toast({
+        title: "Export ERROR",
+        description: error instanceof Error ? error.message : "未知错误",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
   
   // 从API获取报告数据
   useEffect(() => {
@@ -447,7 +508,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleExportReport(selectedReport.id)}>
                       <Download className="mr-2 h-4 w-4" />
                       {t("download")}
                     </DropdownMenuItem>
