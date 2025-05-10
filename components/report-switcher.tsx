@@ -268,38 +268,57 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     return translations[language][key] || key
   }
 
-  // 设置默认报告
+  // 处理设置默认报告
   const handleSetDefault = async (reportId: string) => {
     try {
-      // 这里应该调用API来设置默认报告
-      // 示例API调用（实际实现需要根据您的API规范）
-      // const response = await fetch('http://localhost:7777/report/set-default', {
-      //   method: 'POST',
-      //   headers: {
-      //     'accept': 'application/json',
-      //     'x-api-key': 'rootara_api_key_default_001',
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ reportId })
-      // })
-      
-      // 临时更新本地状态
-      setReports(
-        reports.map((report) => ({
-          ...report,
-          isDefault: report.id === reportId,
-        })),
-      )
+      // 显示加载状态或通知（可选）
+      // toast({
+      //   title: t("settingDefault"),
+      //   description: t("pleaseWait"),
+      //   duration: 2000,
+      // });
 
-      const newDefault = reports.find((r) => r.id === reportId)
-      if (newDefault) {
-        setSelectedReport(newDefault)
+      // 调用API设置默认报告
+      const response = await fetch(`${API_BASE_URL}/report/default?report_id=${reportId}`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'x-api-key': API_KEY
+        },
+        body: '' // 空请求体，按照API要求
+      });
+
+      if (!response.ok) {
+        throw new Error(`设置默认报告失败: ${response.status}`);
       }
-    } catch (err) {
-      console.error('设置默认报告失败:', err)
-      // 可以添加错误处理逻辑
+
+      // 获取响应数据
+      const data = await response.json();
+      
+      // 更新本地报告列表，将选中的报告设为默认
+      setReports(reports.map(report => ({
+        ...report,
+        isDefault: report.id === reportId
+      })));
+
+      // 显示成功通知
+      toast({
+        title: "设置成功",
+        description: "报告已设为默认",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("设置默认报告时出错:", error);
+      
+      // 显示错误通知
+      toast({
+        title: "设置失败",
+        description: error instanceof Error ? error.message : "未知错误",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
-  }
+  };
 
   const handleSelectReport = (report: Report) => {
     setSelectedReport(report)
