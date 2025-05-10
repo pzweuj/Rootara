@@ -58,11 +58,13 @@ const translations = {
     position: "Position",
     genotype: "Genotype",
     actions: "Actions",
+    other_link: "Links",
     noDataFound: "No matching data found",
     showing: "Showing",
     of: "of",
     previous: "Previous",
     next: "Next",
+    loading: "Loading...",
   },
   "zh-CN": {
     dashboard: "仪表盘",
@@ -108,11 +110,13 @@ const translations = {
     position: "位置",
     genotype: "基因型",
     actions: "操作",
+    other_link: "链接",
     noDataFound: "未找到匹配的数据",
     showing: "显示",
     of: "/",
     previous: "上一页",
     next: "下一页",
+    loading: "加载中...",
   },
 }
 
