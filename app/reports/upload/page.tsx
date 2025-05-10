@@ -44,18 +44,23 @@ export default function UploadReportPage() {
           method: 'POST',
           headers: {
             'accept': 'application/json',
+            'Content-Type': 'application/json',
             'x-api-key': API_KEY // 使用提供的API密钥
           },
-          body: '' // 空请求体
+          body: JSON.stringify({}) // 发送空的JSON对象作为请求体
         });
 
         if (response.ok) {
           const data = await response.json();
+          console.log('获取到的用户ID响应:', data); // 添加日志以便调试
           if (data && data.user_id) {
             setUserId(data.user_id);
+            console.log('设置用户ID为:', data.user_id); // 添加日志以便调试
           }
         } else {
-          console.error('获取用户ID失败');
+          console.error('获取用户ID失败, 状态码:', response.status);
+          const errorText = await response.text();
+          console.error('错误详情:', errorText);
         }
       } catch (error) {
         console.error('获取用户ID出错:', error);
@@ -63,7 +68,7 @@ export default function UploadReportPage() {
     };
 
     fetchUserId();
-  }, []);
+  }, [USER_API_URL, API_KEY]); // 添加依赖项
 
   // 添加额外的翻译项
   const translations = {
