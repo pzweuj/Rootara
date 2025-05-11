@@ -48,7 +48,13 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
     page_size: 15,
     total_pages: 0
   })
-  const [chromosomes, setChromosomes] = useState<string[]>([])
+  
+  // 预设染色体列表，包含chr1-chr22, chrX, chrY和MT
+  const chromosomes = [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", 
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", 
+    "21", "22", "X", "Y", "MT"
+  ];
 
   // 添加环境变量配置
   const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
@@ -64,6 +70,14 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
     try {
       console.log("发送请求，报告ID:", currentReportId);
       
+      // 构建filters对象
+      const filters: Record<string, any> = {};
+      
+      // 如果选择了特定染色体，添加到filters中
+      if (selectedChromosome !== "all") {
+        filters.chromosome = selectedChromosome;
+      }
+      
       // 修改请求体，确保所有字段都符合API要求
       const requestBody = {
         report_id: currentReportId,
@@ -72,7 +86,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
         sort_by: "",  // 使用一个可能有效的排序字段
         sort_order: "asc",
         search_term: searchQuery || "",
-        filters: {}  // 简化过滤器，先不使用染色体过滤
+        filters: filters  // 使用构建的filters对象
       };
       
       console.log("请求体:", JSON.stringify(requestBody));
@@ -135,21 +149,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
         setPagination(result.pagination);
       }
       
-      // 提取所有染色体
-      if (dataArray.length > 0 && selectedChromosome === "all") {
-        const uniqueChromosomes = Array.from(new Set(dataArray.map(snp => snp.chromosome)))
-          .filter(Boolean)
-          .sort((a, b) => {
-            // 安全处理非数字染色体名称
-            const numA = parseInt(a);
-            const numB = parseInt(b);
-            if (isNaN(numA) || isNaN(numB)) {
-              return a.localeCompare(b);
-            }
-            return numA - numB;
-          });
-        setChromosomes(uniqueChromosomes);
-      }
+      // 移除提取染色体的代码，使用预设的染色体列表
     } catch (err) {
       console.error("获取数据失败:", err);
       setError(err instanceof Error ? err.message : "未知错误");
