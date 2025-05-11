@@ -45,7 +45,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
-    page_size: 30,
+    page_size: 15,
     total_pages: 0
   })
   const [chromosomes, setChromosomes] = useState<string[]>([])
@@ -246,30 +246,25 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>rsID</TableHead>
-                    <TableHead>{t("chromosome") || "染色体"}</TableHead>
-                    <TableHead>{t("position") || "位置"}</TableHead>
-                    <TableHead>{t("genotype") || "基因型"}</TableHead>
+                    <TableHead className="text-center">rsID</TableHead>
+                    <TableHead className="text-center">{t("chromosome") || "染色体"}</TableHead>
+                    <TableHead className="text-center">{t("position") || "位置"}</TableHead>
+                    <TableHead className="text-center">{t("genotype") || "基因型"}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {snpData.length > 0 ? (
                     snpData.map((snp) => (
                       <TableRow key={snp.id}>
-                        <TableCell className="font-medium">{snp.rsid}</TableCell>
-                        <TableCell>{snp.chromosome}</TableCell>
-                        <TableCell>{snp.position}</TableCell>
-                        <TableCell>{snp.genotype}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="icon" onClick={() => handleCopyRsid(snp.rsid)}>
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
+                        <TableCell className="font-medium text-center">{snp.rsid}</TableCell>
+                        <TableCell className="text-center">{snp.chromosome}</TableCell>
+                        <TableCell className="text-center">{snp.position}</TableCell>
+                        <TableCell className="text-center">{snp.genotype}</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-4">
+                      <TableCell colSpan={4} className="text-center py-4">
                         {t("noDataFound") || "未找到匹配的数据"}
                       </TableCell>
                     </TableRow>
