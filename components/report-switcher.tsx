@@ -100,17 +100,32 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   // 更新删除报告函数
   const handleDeleteReport = async (reportId: string) => {
     try {
+      // 添加调试信息
+      console.log("执行删除操作，报告ID:", reportId);
+      
+      // 验证reportId是否有效，防止传入错误的路径
+      if (!reportId || reportId.includes('/') || reportId.includes('\\')) {
+        throw new Error(`无效的报告ID: ${reportId}`);
+      }
+      
       // 调用API删除报告
-      const response = await fetch(`${API_BASE_URL}/report/${reportId}`, {
-        method: "DELETE",
+      const response = await fetch(`${API_BASE_URL}/report/delete`, {
+        method: "POST",
         headers: {
           accept: "application/json",
+          "Content-Type": "application/json",
           "x-api-key": API_KEY,
         },
+        body: JSON.stringify({
+          report_id: reportId
+        }),
       })
 
+      // 打印响应状态
+      console.log("删除API响应状态:", response.status);
+      
       if (!response.ok) {
-        throw new Error(`Delete failed: ${response.status}`)
+        throw new Error(`删除失败: ${response.status}`)
       }
 
       // 更新报告列表
@@ -125,12 +140,6 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
         }
       }
 
-      // 显示成功通知
-      toast({
-        title: language === "zh-CN" ? "删除成功" : "Delete Successful",
-        description: language === "zh-CN" ? "报告已被删除" : "The report has been deleted",
-        duration: 3000,
-      })
     } catch (error) {
       console.error("Error deleting report:", error)
 
@@ -146,15 +155,49 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
   // 添加删除确认对话框处理函数
   const openDeleteDialog = (reportId: string) => {
-    setReportToDelete(reportId)
-    setDeleteDialogOpen(true)
+    // 验证reportId是否有效
+    if (!reportId || reportId.includes('/') || reportId.includes('\\')) {
+      toast({
+        title: language === "zh-CN" ? "错误" : "Error",
+        description: language === "zh-CN" ? "无效的报告ID" : "Invalid report ID",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+    
+    // 添加调试信息，显示将要删除的reportId
+    console.log("准备删除的报告ID:", reportId);
+    toast({
+      title: language === "zh-CN" ? "调试信息" : "Debug Info",
+      description: `报告ID: ${reportId}`,
+      duration: 5000,
+    });
+    
+    setReportToDelete(reportId);
+    setDeleteDialogOpen(true);
   }
 
   const confirmDelete = async () => {
-    if (reportToDelete) {
-      await handleDeleteReport(reportToDelete)
-      setReportToDelete(null)
-      setDeleteDialogOpen(false)
+    if (reportToDelete && !reportToDelete.includes('/') && !reportToDelete.includes('\\')) {
+      // 添加调试信息，显示确认删除的reportId
+      console.log("确认删除的报告ID:", reportToDelete);
+      toast({
+        title: language === "zh-CN" ? "调试信息" : "Debug Info",
+        description: `确认删除报告ID: ${reportToDelete}`,
+        duration: 5000,
+      });
+      
+      await handleDeleteReport(reportToDelete);
+      setReportToDelete(null);
+      setDeleteDialogOpen(false);
+    } else {
+      toast({
+        title: language === "zh-CN" ? "错误" : "Error",
+        description: language === "zh-CN" ? "无效的报告ID" : "Invalid report ID",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
   }
 
