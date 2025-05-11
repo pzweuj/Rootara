@@ -223,7 +223,9 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
               <SelectItem value="all">{t("allChromosomes") || "所有染色体"}</SelectItem>
               {chromosomes.map((chr) => (
                 <SelectItem key={chr} value={chr}>
-                  {`${t("chromosome") || "染色体"} ${chr}`}
+                  {chr === "MT" 
+                    ? (language === "zh-CN" ? "线粒体" : "Mitochondria") 
+                    : `${t("chromosome") || "染色体"} ${chr}`}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -14,6 +14,25 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu"
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
   FileText,
   Search,
   Star,
@@ -24,12 +43,12 @@ import {
   Calendar,
   Download,
   Trash2,
-  // 移除 FileDown 图标导入
+  Edit,
 } from "lucide-react"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/components/ui/use-toast"
 
 // 定义报告接口
 interface Report {
@@ -54,7 +73,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()
-  
+
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -63,61 +82,160 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [selectedReport, setSelectedReport] = useState<Report | null>(null)
 
+  // 添加删除确认对话框状态
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [reportToDelete, setReportToDelete] = useState<string | null>(null)
+
+  // 添加名称修改对话框状态
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false)
+  const [reportToRename, setReportToRename] = useState<Report | null>(null)
+  const [newReportName, setNewReportName] = useState("")
+  const [newReportNameZh, setNewReportNameZh] = useState("")
+
   // 添加环境变量配置
-  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
+  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
 
   // Define handleDeleteReport function before it's used
+  // 更新删除报告函数
   const handleDeleteReport = async (reportId: string) => {
     try {
-      // Confirm deletion
-      if (!window.confirm(language === "zh-CN" ? "确定要删除此报告吗？" : "Are you sure you want to delete this report?")) {
-        return;
-      }
-      
-      // Call API to delete report
+      // 调用API删除报告
       const response = await fetch(`${API_BASE_URL}/report/${reportId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
-        }
-      });
-      
+          accept: "application/json",
+          "x-api-key": API_KEY,
+        },
+      })
+
       if (!response.ok) {
-        throw new Error(`Delete failed: ${response.status}`);
+        throw new Error(`Delete failed: ${response.status}`)
       }
-      
-      // Update reports list
-      setReports(reports.filter(report => report.id !== reportId));
-      
-      // If deleted report was selected, select another one
+
+      // 更新报告列表
+      setReports(reports.filter((report) => report.id !== reportId))
+
+      // 如果删除的是当前选中的报告，选择另一个
       if (selectedReport && selectedReport.id === reportId) {
-        const firstReport = reports.find(r => r.id !== reportId);
-        setSelectedReport(firstReport || null);
+        const firstReport = reports.find((r) => r.id !== reportId)
+        setSelectedReport(firstReport || null)
         if (firstReport && onReportChange) {
-          onReportChange(firstReport.id);
+          onReportChange(firstReport.id)
         }
       }
-      
-      // Show success notification
+
+      // 显示成功通知
       toast({
         title: language === "zh-CN" ? "删除成功" : "Delete Successful",
         description: language === "zh-CN" ? "报告已被删除" : "The report has been deleted",
         duration: 3000,
-      });
+      })
     } catch (error) {
-      console.error("Error deleting report:", error);
-      
-      // Show error notification
+      console.error("Error deleting report:", error)
+
+      // 显示错误通知
       toast({
         title: language === "zh-CN" ? "删除失败" : "Delete Failed",
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
         duration: 5000,
-      });
+      })
     }
-  };
+  }
+
+  // 添加删除确认对话框处理函数
+  const openDeleteDialog = (reportId: string) => {
+    setReportToDelete(reportId)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (reportToDelete) {
+      await handleDeleteReport(reportToDelete)
+      setReportToDelete(null)
+      setDeleteDialogOpen(false)
+    }
+  }
+
+  // 添加重命名报告函数
+  const handleRenameReport = async () => {
+    if (!reportToRename) return
+
+    try {
+      // 调用API修改报告名称
+      const response = await fetch(`${API_BASE_URL}/report/${reportToRename.id}/rename`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          "x-api-key": API_KEY,
+        },
+        body: JSON.stringify({
+          name: newReportName,
+          nameZh: newReportName, // 修改这里，让nameZh跟随name的值
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Rename failed: ${response.status}`)
+      }
+
+      // 更新报告列表
+      setReports(
+        reports.map((report) => {
+          if (report.id === reportToRename.id) {
+            return {
+              ...report,
+              name: newReportName,
+              nameZh: newReportName, // 修改这里，让nameZh跟随name的值
+            }
+          }
+          return report
+        }),
+      )
+
+      // 如果重命名的是当前选中的报告，更新选中的报告
+      if (selectedReport && selectedReport.id === reportToRename.id) {
+        setSelectedReport({
+          ...selectedReport,
+          name: newReportName,
+          nameZh: newReportName, // 修改这里，让nameZh跟随name的值
+        })
+      }
+
+      // 显示成功通知
+      toast({
+        title: language === "zh-CN" ? "重命名成功" : "Rename Successful",
+        description: language === "zh-CN" ? "报告名称已更新" : "The report name has been updated",
+        duration: 3000,
+      })
+
+      // 关闭对话框
+      setRenameDialogOpen(false)
+      setReportToRename(null)
+      setNewReportName("")
+      setNewReportNameZh("")
+    } catch (error) {
+      console.error("Error renaming report:", error)
+
+      // 显示错误通知
+      toast({
+        title: language === "zh-CN" ? "重命名失败" : "Rename Failed",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+        duration: 5000,
+      })
+    }
+  }
+
+  // 添加打开重命名对话框函数
+  const openRenameDialog = (report: Report) => {
+    setReportToRename(report)
+    setNewReportName(report.name)
+    setNewReportNameZh(report.nameZh) // 这行可以保留，但不再需要使用
+    setRenameDialogOpen(true)
+  }
 
   // 处理报告导出
   const handleExportReport = async (reportId: string) => {
@@ -131,34 +249,34 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
       // 调用API导出原始数据
       const response = await fetch(`${API_BASE_URL}/report/${reportId}/rawdata`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
+          accept: "application/json",
+          "x-api-key": API_KEY,
         },
-        body: ''  // 空请求体，按照API要求
-      });
+        body: "", // 空请求体，按照API要求
+      })
 
       if (!response.ok) {
-        throw new Error(`导出失败: ${response.status}`);
+        throw new Error(`导出失败: ${response.status}`)
       }
 
       // 获取响应数据
-      const data = await response.blob();
-      
+      const data = await response.blob()
+
       // 创建下载链接
-      const url = window.URL.createObjectURL(data);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `report-${reportId}-rawdata.txt`);
-      document.body.appendChild(link);
-      
+      const url = window.URL.createObjectURL(data)
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `report-${reportId}-rawdata.txt`)
+      document.body.appendChild(link)
+
       // 触发下载
-      link.click();
-      
+      link.click()
+
       // 清理
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
 
       // 显示成功通知
       // toast({
@@ -167,38 +285,38 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       //   duration: 3000,
       // });
     } catch (error) {
-      console.error("导出报告时出错:", error);
-      
+      console.error("导出报告时出错:", error)
+
       // 显示错误通知
       toast({
         title: "Export ERROR",
         description: error instanceof Error ? error.message : "未知错误",
         variant: "destructive",
         duration: 5000,
-      });
+      })
     }
-  };
-  
+  }
+
   // 从API获取报告数据
   useEffect(() => {
     const fetchReports = async () => {
       try {
         setLoading(true)
-        const response = await fetch(API_BASE_URL + '/report/all', {
-          method: 'POST',
+        const response = await fetch(API_BASE_URL + "/report/all", {
+          method: "POST",
           headers: {
-            'accept': 'application/json',
-            'x-api-key': API_KEY
+            accept: "application/json",
+            "x-api-key": API_KEY,
           },
-          body: ''
+          body: "",
         })
-        
+
         if (!response.ok) {
           throw new Error(`API请求失败: ${response.status}`)
         }
-        
+
         const data = await response.json()
-        
+
         // 转换API返回的数据格式
         const formattedReports: Report[] = data.map((item: any) => ({
           id: item.id,
@@ -210,33 +328,33 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
           isDefault: item.isDefault === 1,
           user_id: item.user_id,
           extend: item.extend,
-          snpCount: item.snpCount
+          snpCount: item.snpCount,
         }))
-        
+
         setReports(formattedReports)
-        
+
         // 设置默认选中的报告
         if (defaultReportId) {
-          const defaultReport = formattedReports.find(r => r.id === defaultReportId)
+          const defaultReport = formattedReports.find((r) => r.id === defaultReportId)
           if (defaultReport) {
             setSelectedReport(defaultReport)
           } else {
-            const firstDefault = formattedReports.find(r => r.isDefault)
+            const firstDefault = formattedReports.find((r) => r.isDefault)
             setSelectedReport(firstDefault || formattedReports[0])
           }
         } else {
-          const firstDefault = formattedReports.find(r => r.isDefault)
+          const firstDefault = formattedReports.find((r) => r.isDefault)
           setSelectedReport(firstDefault || formattedReports[0])
         }
-        
+
         setLoading(false)
       } catch (err) {
-        console.error('获取报告失败:', err)
-        setError(err instanceof Error ? err.message : '获取报告数据失败')
+        console.error("获取报告失败:", err)
+        setError(err instanceof Error ? err.message : "获取报告数据失败")
         setLoading(false)
       }
     }
-    
+
     fetchReports()
   }, [defaultReportId])
 
@@ -244,24 +362,25 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const formatDateWithTimezone = (dateString: string): string => {
     try {
       // 获取环境变量中的时区，如果不存在则使用系统默认时区
-      const timezone = typeof process !== 'undefined' && process.env.TZ 
-        ? process.env.TZ 
-        : Intl.DateTimeFormat().resolvedOptions().timeZone;
-      
+      const timezone =
+        typeof process !== "undefined" && process.env.TZ
+          ? process.env.TZ
+          : Intl.DateTimeFormat().resolvedOptions().timeZone
+
       // 创建日期对象
-      const date = new Date(dateString);
-      
+      const date = new Date(dateString)
+
       // 使用Intl.DateTimeFormat格式化日期，考虑时区
-      return new Intl.DateTimeFormat('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        timeZone: timezone
-      }).format(date);
+      return new Intl.DateTimeFormat("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        timeZone: timezone,
+      }).format(date)
     } catch (error) {
-      console.error('日期格式化错误:', error);
+      console.error("日期格式化错误:", error)
       // 如果格式化失败，回退到简单格式
-      return new Date(dateString).toISOString().split('T')[0];
+      return new Date(dateString).toISOString().split("T")[0]
     }
   }
 
@@ -289,6 +408,14 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       error: "Error loading reports",
       retry: "Retry",
       snpCount: "SNP Count:",
+      rename: "Rename",
+      renameReport: "Rename Report",
+      reportName: "Report Name",
+      reportNameZh: "Report Name (Chinese)",
+      cancel: "Cancel",
+      save: "Save",
+      deleteConfirmTitle: "Delete Report",
+      deleteConfirmMessage: "Are you sure you want to delete this report? This action cannot be undone.",
     },
     "zh-CN": {
       myReports: "所有报告",
@@ -313,6 +440,14 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       error: "加载报告时出错",
       retry: "重试",
       snpCount: "SNP数量：",
+      rename: "重命名",
+      renameReport: "重命名报告",
+      reportName: "报告名称",
+      reportNameZh: "报告名称（中文）",
+      cancel: "取消",
+      save: "保存",
+      deleteConfirmTitle: "删除报告",
+      deleteConfirmMessage: "确定要删除此报告吗？此操作无法撤销。",
     },
   }
 
@@ -332,45 +467,47 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
       // 调用API设置默认报告
       const response = await fetch(`${API_BASE_URL}/report/default?report_id=${reportId}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
+          accept: "application/json",
+          "x-api-key": API_KEY,
         },
-        body: '' // 空请求体，按照API要求
-      });
+        body: "", // 空请求体，按照API要求
+      })
 
       if (!response.ok) {
-        throw new Error(`设置默认报告失败: ${response.status}`);
+        throw new Error(`设置默认报告失败: ${response.status}`)
       }
 
       // 获取响应数据
-      const data = await response.json();
-      
+      const data = await response.json()
+
       // 更新本地报告列表，将选中的报告设为默认
-      setReports(reports.map(report => ({
-        ...report,
-        isDefault: report.id === reportId
-      })));
+      setReports(
+        reports.map((report) => ({
+          ...report,
+          isDefault: report.id === reportId,
+        })),
+      )
 
       // 显示成功通知
       toast({
         title: "设置成功",
         description: "报告已设为默认",
         duration: 3000,
-      });
+      })
     } catch (error) {
-      console.error("设置默认报告时出错:", error);
-      
+      console.error("设置默认报告时出错:", error)
+
       // 显示错误通知
       toast({
         title: "设置失败",
         description: error instanceof Error ? error.message : "未知错误",
         variant: "destructive",
         duration: 5000,
-      });
+      })
     }
-  };
+  }
 
   const handleSelectReport = (report: Report) => {
     setSelectedReport(report)
@@ -443,7 +580,9 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
         <CardContent className="p-6">
           <div className="flex justify-center items-center h-40">
             <div className="text-center">
-              <p className="text-red-500 mb-4">{t("error")}: {error}</p>
+              <p className="text-red-500 mb-4">
+                {t("error")}: {error}
+              </p>
               <Button onClick={() => window.location.reload()}>{t("retry")}</Button>
             </div>
           </div>
@@ -578,16 +717,20 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                         {t("setAsDefault")}
                       </DropdownMenuItem>
                     )}
+                    <DropdownMenuItem onClick={() => openRenameDialog(selectedReport)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      {t("rename")}
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => handleExportReport(selectedReport.id)}>
                       <Download className="mr-2 h-4 w-4" />
                       {t("download")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-red-600 dark:text-red-400"
                       onClick={(e) => {
-                        e.stopPropagation(); // 防止触发报告选择
-                        handleDeleteReport(selectedReport.id);
+                        e.stopPropagation() // 防止触发报告选择
+                        openDeleteDialog(selectedReport.id)
                       }}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
@@ -652,6 +795,44 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                       <div className="flex items-center ml-4">
                         <Badge className={`mr-2 ${getSourceBadgeColor(report.source)}`}>{report.source}</Badge>
                       </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => router.push("/")}>
+                            <FileText className="mr-2 h-4 w-4" />
+                            {t("viewReport")}
+                          </DropdownMenuItem>
+                          {!report.isDefault && (
+                            <DropdownMenuItem onClick={() => handleSetDefault(report.id)}>
+                              <Star className="mr-2 h-4 w-4" />
+                              {t("setAsDefault")}
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => openRenameDialog(report)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            {t("rename")}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleExportReport(report.id)}>
+                            <Download className="mr-2 h-4 w-4" />
+                            {t("download")}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600 dark:text-red-400"
+                            onClick={(e) => {
+                              e.stopPropagation() // 防止触发报告选择
+                              openDeleteDialog(report.id)
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t("delete")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   ))
                 ) : (
@@ -662,6 +843,64 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
           </div>
         </div>
       </CardContent>
+      {/* 删除确认对话框 */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("deleteConfirmMessage")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+              {t("delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* 重命名对话框 */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("renameReport")}</DialogTitle>
+            <DialogDescription>
+              {language === "zh-CN" ? "请输入新的报告名称" : "Enter a new name for the report"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="reportName" className="text-right">
+                {t("reportName")}
+              </label>
+              <Input
+                id="reportName"
+                value={newReportName}
+                onChange={(e) => setNewReportName(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            {/* 删除以下中文名称输入字段 */}
+            {/* <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="reportNameZh" className="text-right">
+                {t("reportNameZh")}
+              </label>
+              <Input
+                id="reportNameZh"
+                value={newReportNameZh}
+                onChange={(e) => setNewReportNameZh(e.target.value)}
+                className="col-span-3"
+              />
+            </div> */}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={handleRenameReport}>{t("save")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }
