@@ -67,6 +67,58 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
   const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
 
+  // Define handleDeleteReport function before it's used
+  const handleDeleteReport = async (reportId: string) => {
+    try {
+      // Confirm deletion
+      if (!window.confirm(language === "zh-CN" ? "确定要删除此报告吗？" : "Are you sure you want to delete this report?")) {
+        return;
+      }
+      
+      // Call API to delete report
+      const response = await fetch(`${API_BASE_URL}/report/${reportId}`, {
+        method: 'DELETE',
+        headers: {
+          'accept': 'application/json',
+          'x-api-key': API_KEY
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
+      }
+      
+      // Update reports list
+      setReports(reports.filter(report => report.id !== reportId));
+      
+      // If deleted report was selected, select another one
+      if (selectedReport && selectedReport.id === reportId) {
+        const firstReport = reports.find(r => r.id !== reportId);
+        setSelectedReport(firstReport || null);
+        if (firstReport && onReportChange) {
+          onReportChange(firstReport.id);
+        }
+      }
+      
+      // Show success notification
+      toast({
+        title: language === "zh-CN" ? "删除成功" : "Delete Successful",
+        description: language === "zh-CN" ? "报告已被删除" : "The report has been deleted",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      
+      // Show error notification
+      toast({
+        title: language === "zh-CN" ? "删除失败" : "Delete Failed",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
+
   // 处理报告导出
   const handleExportReport = async (reportId: string) => {
     try {
@@ -504,7 +556,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                       variant="outline"
                       className="ml-2 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800"
                     >
-                      <Star className="h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />
+                      <Star className="h-3 w-3 ml-1 fill-yellow-500 text-yellow-500" />
                       {t("default")}
                     </Badge>
                   )}
@@ -531,7 +583,13 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                       <Download className="mr-2 h-4 w-4" />
                       {t("download")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600 dark:text-red-400">
+                    <DropdownMenuItem 
+                      className="text-red-600 dark:text-red-400"
+                      onClick={(e) => {
+                        e.stopPropagation(); // 防止触发报告选择
+                        handleDeleteReport(selectedReport.id);
+                      }}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       {t("delete")}
                     </DropdownMenuItem>
