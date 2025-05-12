@@ -316,6 +316,7 @@ const translations = {
     importError: "Error importing traits",
     noCustomTraits: "No custom traits to export",
     exportSuccess: "Traits exported successfully",
+    noFileSelected: "No file selected",
   },
   "zh-CN": {
     traits: "特征",
@@ -372,6 +373,7 @@ const translations = {
     importError: "导入特征时出错",
     noCustomTraits: "没有自定义特征可导出",
     exportSuccess: "特征导出成功",
+    noFileSelected: "未选择文件",
   },
 }
 
@@ -667,7 +669,7 @@ export default function TraitsPage() {
   const handleExportTraits = () => {
     const userTraits = traits.filter((trait) => !trait.isDefault)
     if (userTraits.length === 0) {
-      toast.warn(localT("noCustomTraits"))
+      toast.warning(localT("noCustomTraits"))
       return
     }
     const jsonString = JSON.stringify(userTraits, null, 2)
