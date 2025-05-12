@@ -264,7 +264,7 @@ const translations = {
   en: {
     traits: "Traits",
     searchTraits: "Search traits...",
-    allCategories: "All Categories",
+    allCategories: "All",
     appearance: "Appearance",
     sensory: "Sensory",
     nutrition: "Nutrition",
