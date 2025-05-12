@@ -37,6 +37,62 @@ import {
   Activity,
   Upload,
   Download,
+  Apple,
+  Baby,
+  Banana,
+  Beef,
+  Beer,
+  Book,
+  Braces,
+  Briefcase,
+  Cake,
+  Camera,
+  Car,
+  Cat,
+  ChefHat,
+  Cherry,
+  Cloud,
+  Code,
+  Compass,
+  Cookie,
+  Cpu,
+  Crown,
+  Diamond,
+  Dog,
+  Egg,
+  Fish,
+  Flower,
+  Gamepad2,
+  Gift,
+  Glasses,
+  Globe,
+  Grape,
+  Hammer,
+  HandMetal,
+  Headphones,
+  Home,
+  IceCream,
+  Landmark,
+  Lightbulb,
+  Microscope,
+  Mountain,
+  Palette,
+  Pill,
+  Pizza,
+  Plane,
+  Rocket,
+  Salad,
+  Shirt,
+  ShoppingBag,
+  Smartphone,
+  Star,
+  Stethoscope,
+  Syringe,
+  Target,
+  Tent,
+  Trophy,
+  Tv,
+  Wheat,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/contexts/language-context"
@@ -84,6 +140,62 @@ const iconMapping: Record<string, React.ComponentType<{ className?: string }>> =
   Activity: Activity,
   AlertCircle: AlertCircle,
   Plus: Plus,
+  Apple: Apple,
+  Baby: Baby,
+  Banana: Banana,
+  Beef: Beef,
+  Beer: Beer,
+  Book: Book,
+  Braces: Braces,
+  Briefcase: Briefcase,
+  Cake: Cake,
+  Camera: Camera,
+  Car: Car,
+  Cat: Cat,
+  ChefHat: ChefHat,
+  Cherry: Cherry,
+  Cloud: Cloud,
+  Code: Code,
+  Compass: Compass,
+  Cookie: Cookie,
+  Cpu: Cpu,
+  Crown: Crown,
+  Diamond: Diamond,
+  Dog: Dog,
+  Egg: Egg,
+  Fish: Fish,
+  Flower: Flower,
+  Gamepad2: Gamepad2,
+  Gift: Gift,
+  Glasses: Glasses,
+  Globe: Globe,
+  Grape: Grape,
+  Hammer: Hammer,
+  HandMetal: HandMetal,
+  Headphones: Headphones,
+  Home: Home,
+  IceCream: IceCream,
+  Landmark: Landmark,
+  Lightbulb: Lightbulb,
+  Microscope: Microscope,
+  Mountain: Mountain,
+  Palette: Palette,
+  Pill: Pill,
+  Pizza: Pizza,
+  Plane: Plane,
+  Rocket: Rocket,
+  Salad: Salad,
+  Shirt: Shirt,
+  ShoppingBag: ShoppingBag,
+  Smartphone: Smartphone,
+  Star: Star,
+  Stethoscope: Stethoscope,
+  Syringe: Syringe,
+  Target: Target,
+  Tent: Tent,
+  Trophy: Trophy,
+  Tv: Tv,
+  Wheat: Wheat,
 }
 
 // 修改 fetchGenotypeData 函数，增强其功能
@@ -270,6 +382,9 @@ const translations = {
     nutrition: "Nutrition",
     sleep: "Sleep",
     cognitive: "Cognitive",
+    internal: "Internal",
+    risk: "Risks",
+    lifestyle: "Lifestyle",
     createNewTrait: "Create New Trait",
     createTrait: "Create Trait",
     traitName: "Trait Name",
@@ -327,6 +442,9 @@ const translations = {
     nutrition: "营养",
     sleep: "睡眠",
     cognitive: "认知",
+    internal: "内在",
+    risk: "风险",
+    lifestyle: "生活",
     createNewTrait: "创建新特征",
     createTrait: "创建特征",
     traitName: "特征名称",
@@ -707,10 +825,10 @@ export default function TraitsPage() {
             <TabsList className="w-full grid grid-cols-6">
               <TabsTrigger value="all">{localT("allCategories")}</TabsTrigger>
               <TabsTrigger value="appearance">{localT("appearance")}</TabsTrigger>
-              <TabsTrigger value="sensory">{localT("sensory")}</TabsTrigger>
+              <TabsTrigger value="internal">{localT("internal")}</TabsTrigger>
               <TabsTrigger value="nutrition">{localT("nutrition")}</TabsTrigger>
-              <TabsTrigger value="sleep">{localT("sleep")}</TabsTrigger>
-              <TabsTrigger value="cognitive">{localT("cognitive")}</TabsTrigger>
+              <TabsTrigger value="risk">{localT("risk")}</TabsTrigger>
+              <TabsTrigger value="lifestyle">{localT("lifestyle")}</TabsTrigger>
             </TabsList>
           </Tabs>
           <div className="flex gap-2">
@@ -850,10 +968,10 @@ export default function TraitsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="appearance">{localT("appearance")}</SelectItem>
-                    <SelectItem value="sensory">{localT("sensory")}</SelectItem>
+                    <SelectItem value="internal">{localT("internal")}</SelectItem>
                     <SelectItem value="nutrition">{localT("nutrition")}</SelectItem>
-                    <SelectItem value="sleep">{localT("sleep")}</SelectItem>
-                    <SelectItem value="cognitive">{localT("cognitive")}</SelectItem>
+                    <SelectItem value="risk">{localT("risk")}</SelectItem>
+                    <SelectItem value="lifestyle">{localT("lifestyle")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
