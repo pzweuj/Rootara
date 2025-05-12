@@ -1,131 +1,142 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink } from "lucide-react"
+import { Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { ReportSwitcher } from "@/components/report-switcher"
+import { Button } from "@/components/ui/button"
 
-// 模拟 ClinVar 数据
-const clinvarData = {
-  totalVariants: 42,
-  pathogenic: 3,
-  likelyPathogenic: 5,
-  uncertain: 18,
-  likelyBenign: 9,
-  benign: 7,
-  variants: [
-    {
-      id: "rs28897696",
-      gene: "BRCA2",
-      chromosome: "13",
-      position: "32911110",
-      condition: "Hereditary breast and ovarian cancer syndrome",
-      classification: "Pathogenic",
-      reviewStatus: "Reviewed by expert panel",
-      lastUpdated: "2023-05-12",
-    },
-    {
-      id: "rs80357711",
-      gene: "BRCA1",
-      chromosome: "17",
-      position: "41245466",
-      condition: "Hereditary breast and ovarian cancer syndrome",
-      classification: "Likely pathogenic",
-      reviewStatus: "Criteria provided, single submitter",
-      lastUpdated: "2023-04-18",
-    },
-    {
-      id: "rs121908311",
-      gene: "APOE",
-      chromosome: "19",
-      position: "44908684",
-      condition: "Alzheimer's disease (late onset), susceptibility to",
-      classification: "Risk factor",
-      reviewStatus: "Reviewed by expert panel",
-      lastUpdated: "2023-06-22",
-    },
-    {
-      id: "rs397507444",
-      gene: "CFTR",
-      chromosome: "7",
-      position: "117188683",
-      condition: "Cystic fibrosis",
-      classification: "Pathogenic",
-      reviewStatus: "Reviewed by expert panel",
-      lastUpdated: "2023-03-05",
-    },
-    {
-      id: "rs886041500",
-      gene: "PTEN",
-      chromosome: "10",
-      position: "87933147",
-      condition: "Cowden syndrome 1",
-      classification: "Likely pathogenic",
-      reviewStatus: "Criteria provided, multiple submitters, no conflicts",
-      lastUpdated: "2023-02-14",
-    },
-    {
-      id: "rs587776649",
-      gene: "TP53",
-      chromosome: "17",
-      position: "7675088",
-      condition: "Li-Fraumeni syndrome",
-      classification: "Pathogenic",
-      reviewStatus: "Reviewed by expert panel",
-      lastUpdated: "2023-01-30",
-    },
-    {
-      id: "rs1555089353",
-      gene: "MLH1",
-      chromosome: "3",
-      position: "37038108",
-      condition: "Lynch syndrome",
-      classification: "Likely pathogenic",
-      reviewStatus: "Criteria provided, single submitter",
-      lastUpdated: "2023-07-08",
-    },
-    {
-      id: "rs1060500558",
-      gene: "MYBPC3",
-      chromosome: "11",
-      position: "47355301",
-      condition: "Hypertrophic cardiomyopathy",
-      classification: "Uncertain significance",
-      reviewStatus: "Criteria provided, single submitter",
-      lastUpdated: "2023-06-15",
-    },
-    {
-      id: "rs1554247743",
-      gene: "LDLR",
-      chromosome: "19",
-      position: "11210912",
-      condition: "Familial hypercholesterolemia",
-      classification: "Likely pathogenic",
-      reviewStatus: "Criteria provided, multiple submitters, no conflicts",
-      lastUpdated: "2023-05-27",
-    },
-    {
-      id: "rs1553118362",
-      gene: "PKD1",
-      chromosome: "16",
-      position: "2139814",
-      condition: "Polycystic kidney disease",
-      classification: "Uncertain significance",
-      reviewStatus: "Criteria provided, single submitter",
-      lastUpdated: "2023-04-03",
-    },
-  ],
+// API基础URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
+
+// API密钥
+const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
+
+// 定义ClinVar数据类型
+interface ClinVarVariant {
+  chromosome: string
+  position: number
+  ref: string
+  alt: string
+  gene: string
+  rsid: string
+  gnomAD_AF: number | string
+  clnsig: string
+  clndn: string
+  genotype: string
+  gt: string
+}
+
+interface ClinVarResponse {
+  data: Record<string, ClinVarVariant>
+  statistics: {
+    pathogenic: number
+    likely_pathogenic: number
+    benign: number
+    likely_benign: number
+    uncertain_significance: number
+  }
+}
+
+// 添加防抖函数
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }
 
 export default function ClinvarAnalysisPage() {
   const { language } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("") // 用于存储防抖后的搜索词
   const [classificationFilter, setClassificationFilter] = useState("all")
   const [geneFilter, setGeneFilter] = useState("all")
+  const [currentReportId, setCurrentReportId] = useState("RPT_TEMPLATE01")
+  const [loading, setLoading] = useState(true)
+  const [clinvarData, setClinvarData] = useState<ClinVarResponse | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [statistics, setStatistics] = useState({
+    pathogenic: 0,
+    likely_pathogenic: 0,
+    benign: 0,
+    likely_benign: 0,
+    uncertain_significance: 0
+  })
+
+  // 使用防抖处理搜索查询
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
+  // 当防抖查询变化时更新搜索结果
+  useEffect(() => {
+    setDebouncedSearchQuery(debouncedQuery);
+  }, [debouncedQuery]);
+
+  // 添加处理报告变更的函数
+  const handleReportChange = (reportId: string) => {
+    setCurrentReportId(reportId)
+    console.log("当前选择的报告ID:", reportId)
+    // 重新加载数据
+    fetchClinvarData(reportId)
+  }
+
+  // 获取ClinVar数据的函数
+  const fetchClinvarData = async (reportId: string) => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/report/clinvar`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'x-api-key': API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          report_id: reportId,
+          sort_by: "",
+          sort_order: "asc",
+          search_term: "",
+          filters: {},
+          indel: false
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`API请求失败: ${response.status}`)
+      }
+
+      const data = await response.json()
+      setClinvarData(data)
+    } catch (err) {
+      console.error("获取ClinVar数据失败:", err)
+      setError(err instanceof Error ? err.message : "获取数据失败")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 初始加载数据
+  useEffect(() => {
+    fetchClinvarData(currentReportId)
+  }, [])
 
   const translations = {
     en: {
@@ -155,6 +166,14 @@ export default function ClinvarAnalysisPage() {
       totalVariants: "Total Variants Analyzed",
       clinvarDescription:
         "ClinVar is a public database of reports of the relationships among human variations and phenotypes, with supporting evidence.",
+      loading: "Loading data...",
+      error: "Error loading data",
+      retry: "Retry",
+      page: "Page",
+      of: "of",
+      itemsPerPage: "Items per page",
+      prev: "Previous",
+      next: "Next",
     },
     "zh-CN": {
       clinvarAnalysis: "ClinVar 分析",
@@ -182,6 +201,14 @@ export default function ClinvarAnalysisPage() {
       noVariantsFound: "未找到符合条件的变异",
       totalVariants: "分析的总变异数",
       clinvarDescription: "ClinVar是一个公共数据库，报告人类变异与表型之间的关系，并提供支持证据。",
+      loading: "正在加载数据...",
+      error: "加载数据出错",
+      retry: "重试",
+      page: "页",
+      of: "共",
+      itemsPerPage: "每页显示",
+      prev: "上一页",
+      next: "下一页",
     },
   }
 
@@ -191,9 +218,29 @@ export default function ClinvarAnalysisPage() {
     )
   }
 
+  const normalizeClassification = (classification: string) => {
+    const lowerClass = classification.toLowerCase();
+    
+    // 如果包含多个分类（用/分隔），按优先级选择一个
+    if (lowerClass.includes('/')) {
+      if (lowerClass.includes('pathogenic')) return 'pathogenic';
+      if (lowerClass.includes('likely pathogenic')) return 'likely pathogenic';
+      if (lowerClass.includes('uncertain_significance') || lowerClass.includes('uncertain significance')) return 'uncertain significance';
+      if (lowerClass.includes('likely benign')) return 'likely benign';
+      if (lowerClass.includes('benign')) return 'benign';
+      return lowerClass.split('/')[0].trim(); // 如果没有匹配到优先级，返回第一个
+    }
+    
+    return lowerClass.replace(/_/g, ' ');
+  }
+
+  // 根据API返回的分类获取对应的Badge
   const getClassificationBadge = (classification: string) => {
-    switch (classification) {
-      case "Pathogenic":
+    // 将API返回的分类映射到UI显示的分类
+    const normalizedClassification = normalizeClassification(classification);
+  
+    switch (normalizedClassification) {
+      case "pathogenic":
         return (
           <Badge
             variant="outline"
@@ -203,7 +250,7 @@ export default function ClinvarAnalysisPage() {
             {t("pathogenicVariants")}
           </Badge>
         )
-      case "Likely pathogenic":
+      case "likely pathogenic":
         return (
           <Badge
             variant="outline"
@@ -213,8 +260,8 @@ export default function ClinvarAnalysisPage() {
             {t("likelyPathogenic")}
           </Badge>
         )
-      case "Uncertain significance":
-      case "Risk factor":
+      case "uncertain significance":
+      case "uncertain_significance":
         return (
           <Badge
             variant="outline"
@@ -224,7 +271,7 @@ export default function ClinvarAnalysisPage() {
             {t("uncertainSignificance")}
           </Badge>
         )
-      case "Likely benign":
+      case "likely benign":
         return (
           <Badge
             variant="outline"
@@ -234,7 +281,7 @@ export default function ClinvarAnalysisPage() {
             {t("likelyBenign")}
           </Badge>
         )
-      case "Benign":
+      case "benign":
         return (
           <Badge
             variant="outline"
@@ -253,47 +300,121 @@ export default function ClinvarAnalysisPage() {
     }
   }
 
+  // 如果正在加载，显示加载状态
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">{t("loading")}</span>
+      </div>
+    )
+  }
+
+  // 如果有错误，显示错误信息
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-64">
+        <AlertCircle className="h-8 w-8 text-red-500" />
+        <p className="mt-2 text-red-500">{t("error")}: {error}</p>
+        <button 
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          onClick={() => fetchClinvarData(currentReportId)}
+        >
+          {t("retry")}
+        </button>
+      </div>
+    )
+  }
+
+  // 如果没有数据，显示空状态
+  if (!clinvarData) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>{t("noVariantsFound")}</p>
+      </div>
+    )
+  }
+
+  // 将API返回的数据转换为数组形式，方便处理
+  const variants = Object.entries(clinvarData.data).map(([rsid, variant]) => ({
+    id: rsid,
+    ...variant,
+    // 将API返回的clnsig映射到UI显示的classification
+    classification: variant.clnsig.replace(/_/g, ' '),
+    // 将API返回的clndn映射到UI显示的condition
+    condition: variant.clndn.replace(/_/g, ' ')
+  }))
+
   // 获取所有基因的唯一列表
-  const uniqueGenes = Array.from(new Set(clinvarData.variants.map((variant) => variant.gene))).sort()
+  const uniqueGenes = Array.from(new Set(variants.map((variant) => variant.gene))).sort()
+
+  // 计算各个分类的数量
+  const calculateStatistics = () => {
+    const stats = {
+      pathogenic: 0,
+      likely_pathogenic: 0,
+      benign: 0,
+      likely_benign: 0,
+      uncertain_significance: 0
+    };
+
+    variants.forEach(variant => {
+      const normalizedClass = normalizeClassification(variant.classification);
+      
+      switch(normalizedClass) {
+        case 'pathogenic':
+          stats.pathogenic += 1;
+          break;
+        case 'likely pathogenic':
+          stats.likely_pathogenic += 1;
+          break;
+        case 'benign':
+          stats.benign += 1;
+          break;
+        case 'likely benign':
+          stats.likely_benign += 1;
+          break;
+        case 'uncertain significance':
+          stats.uncertain_significance += 1;
+          break;
+      }
+    });
+
+    return stats;
+  };
+
+  // 计算统计数据
+  const variantStatistics = calculateStatistics();
 
   // 过滤变异
-  const filteredVariants = clinvarData.variants.filter((variant) => {
+  const filteredVariants = variants.filter((variant) => {
     const matchesSearch =
-      variant.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      variant.gene.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      variant.condition.toLowerCase().includes(searchQuery.toLowerCase())
+      debouncedSearchQuery === "" || // 如果搜索词为空，显示所有结果
+      variant.id.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      variant.gene.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      variant.condition.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+
+    const normalizedClassification = normalizeClassification(variant.classification);
 
     const matchesClassification =
       classificationFilter === "all" ||
-      (classificationFilter === "pathogenic" && variant.classification === "Pathogenic") ||
-      (classificationFilter === "likely_pathogenic" && variant.classification === "Likely pathogenic") ||
-      (classificationFilter === "uncertain" &&
-        (variant.classification === "Uncertain significance" || variant.classification === "Risk factor")) ||
-      (classificationFilter === "likely_benign" && variant.classification === "Likely benign") ||
-      (classificationFilter === "benign" && variant.classification === "Benign")
+      (classificationFilter === "pathogenic" && normalizedClassification === "pathogenic") ||
+      (classificationFilter === "likely_pathogenic" && normalizedClassification === "likely pathogenic") ||
+      (classificationFilter === "uncertain" && normalizedClassification.includes("uncertain")) ||
+      (classificationFilter === "likely_benign" && normalizedClassification === "likely benign") ||
+      (classificationFilter === "benign" && normalizedClassification === "benign")
 
-    // 移除了基因筛选条件
     return matchesSearch && matchesClassification
   })
 
-  // 删除这一行，它是一个孤立的表达式
-  // const matchesGene = geneFilter === "all" || variant.gene === geneFilter
+  // 计算分页 - 获取当前页的数据
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = filteredVariants.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredVariants.length / itemsPerPage)
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        {/* <div> */}
-        {/* <h1 className="text-3xl font-bold tracking-tight">{t("clinvarAnalysis")}</h1> */}
-        {/* <p className="text-muted-foreground">{t("clinicalVariants")}</p> */}
-        {/* </div> */}
-        {/* <div className="flex gap-2">
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            {t("exportData")}
-          </Button>
-        </div> */}
-      </div>
-
       <Card>
         <CardHeader>
           <CardTitle>{t("clinvarAnalysis")}</CardTitle>
@@ -303,73 +424,36 @@ export default function ClinvarAnalysisPage() {
           <div className="grid gap-6 md:grid-cols-5">
             <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-red-600 dark:text-red-400">{clinvarData.pathogenic}</div>
+                <div className="text-3xl font-bold text-red-600 dark:text-red-400">{variantStatistics.pathogenic}</div>
                 <div className="text-sm text-red-600 dark:text-red-400">{t("pathogenicVariants")}</div>
               </CardContent>
             </Card>
             <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
               <CardContent className="p-4 text-center">
                 <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-                  {clinvarData.likelyPathogenic}
+                  {variantStatistics.likely_pathogenic}
                 </div>
                 <div className="text-sm text-yellow-600 dark:text-yellow-400">{t("likelyPathogenic")}</div>
               </CardContent>
             </Card>
             <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.uncertain}</div>
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{variantStatistics.uncertain_significance}</div>
                 <div className="text-sm text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
               </CardContent>
             </Card>
             <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">{clinvarData.likelyBenign}</div>
+                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">{variantStatistics.likely_benign}</div>
                 <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
               </CardContent>
             </Card>
             <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
               <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">{clinvarData.benign}</div>
+                <div className="text-3xl font-bold text-green-600 dark:text-green-400">{variantStatistics.benign}</div>
                 <div className="text-sm text-green-600 dark:text-green-400">{t("benign")}</div>
               </CardContent>
             </Card>
-          </div>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-medium mb-4">Top Pathogenic Variants</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("gene")}</TableHead>
-                  <TableHead>{t("variantId")}</TableHead>
-                  <TableHead>{t("condition")}</TableHead>
-                  <TableHead>{t("classification")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {clinvarData.variants
-                  .filter((v) => v.classification === "Pathogenic")
-                  .slice(0, 5)
-                  .map((variant) => (
-                    <TableRow key={variant.id}>
-                      <TableCell className="font-medium">{variant.gene}</TableCell>
-                      <TableCell>
-                        <a
-                          href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center text-blue-600 hover:underline"
-                        >
-                          {variant.id}
-                          <ExternalLink className="ml-1 h-3 w-3" />
-                        </a>
-                      </TableCell>
-                      <TableCell>{variant.condition}</TableCell>
-                      <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
           </div>
         </CardContent>
       </Card>
@@ -407,29 +491,29 @@ export default function ClinvarAnalysisPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t("gene")}</TableHead>
-                  <TableHead>{t("variantId")}</TableHead>
-                  <TableHead>{t("chromosome")}</TableHead>
-                  <TableHead>{t("position")}</TableHead>
-                  <TableHead>{t("condition")}</TableHead>
-                  <TableHead>{t("classification")}</TableHead>
-                  {/* 已删除 Review Status 和 Last Updated 列 */}
+                  <TableHead className="w-[15%]">{t("gene")}</TableHead>
+                  <TableHead className="w-[15%]">{t("variantId")}</TableHead>
+                  <TableHead className="w-[10%]">{t("chromosome")}</TableHead>
+                  <TableHead className="w-[10%]">{t("position")}</TableHead>
+                  <TableHead className="w-[30%]">{t("condition")}</TableHead>
+                  <TableHead className="w-[20%]">{t("classification")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredVariants.length > 0 ? (
-                  filteredVariants.map((variant) => (
+                {currentItems.length > 0 ? (
+                  currentItems.map((variant) => (
                     <TableRow key={variant.id}>
                       <TableCell className="font-medium">{variant.gene}</TableCell>
-                      <TableCell>
+                      <TableCell className="max-w-[150px] truncate">
                         <a
                           href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center text-blue-600 hover:underline"
+                          title={variant.id}
                         >
                           {variant.id}
-                          <ExternalLink className="ml-1 h-3 w-3" />
+                          <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
                         </a>
                       </TableCell>
                       <TableCell>{variant.chromosome}</TableCell>
@@ -438,7 +522,6 @@ export default function ClinvarAnalysisPage() {
                         {variant.condition}
                       </TableCell>
                       <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                      {/* 已删除 Review Status 和 Last Updated 单元格 */}
                     </TableRow>
                   ))
                 ) : (
@@ -452,11 +535,65 @@ export default function ClinvarAnalysisPage() {
             </Table>
           </CardContent>
         </Card>
+        
+        {/* 分页控件 */}
+        {filteredVariants.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0 mt-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-muted-foreground">
+                {t("itemsPerPage")}:
+              </span>
+              <Select
+                value={String(itemsPerPage)}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value))
+                  setCurrentPage(1)
+                }}
+              >
+                <SelectTrigger className="h-8 w-[70px]">
+                  <SelectValue placeholder={itemsPerPage} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-center space-x-6">
+              <div className="text-sm text-muted-foreground">
+                {t("page")} {currentPage} {t("of")} {Math.ceil(filteredVariants.length / itemsPerPage)}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  aria-label={t("prev")}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={currentPage === Math.ceil(filteredVariants.length / itemsPerPage)}
+                  aria-label={t("next")}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          {t("totalVariants")}: {clinvarData.totalVariants}
+          {t("totalVariants")}: {Object.keys(clinvarData.data).length}
         </p>
       </div>
     </div>
