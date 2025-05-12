@@ -49,6 +49,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { toast } from "@/components/ui/use-toast"
+import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 // 定义报告接口
 interface Report {
@@ -73,6 +74,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()
+  const { currentReportId, setCurrentReportId } = useReport() // 使用报告上下文
 
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
@@ -398,17 +400,27 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
         setReports(formattedReports)
 
         // 设置默认选中的报告
+        let reportToSelect: Report | undefined;
+        
+        // 首先检查是否有指定的defaultReportId
         if (defaultReportId) {
-          const defaultReport = formattedReports.find((r) => r.id === defaultReportId)
-          if (defaultReport) {
-            setSelectedReport(defaultReport)
-          } else {
-            const firstDefault = formattedReports.find((r) => r.isDefault)
-            setSelectedReport(firstDefault || formattedReports[0])
-          }
-        } else {
-          const firstDefault = formattedReports.find((r) => r.isDefault)
-          setSelectedReport(firstDefault || formattedReports[0])
+          reportToSelect = formattedReports.find((r) => r.id === defaultReportId);
+        }
+        
+        // 如果没有找到指定的报告，则检查全局上下文中的currentReportId
+        if (!reportToSelect && currentReportId) {
+          reportToSelect = formattedReports.find((r) => r.id === currentReportId);
+        }
+        
+        // 如果仍然没有找到，则使用默认报告或第一个报告
+        if (!reportToSelect) {
+          reportToSelect = formattedReports.find((r) => r.isDefault) || formattedReports[0];
+        }
+        
+        if (reportToSelect) {
+          setSelectedReport(reportToSelect);
+          // 更新全局上下文中的报告ID
+          setCurrentReportId(reportToSelect.id);
         }
 
         setLoading(false)
@@ -420,7 +432,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     }
 
     fetchReports()
-  }, [defaultReportId])
+  }, [defaultReportId, currentReportId, setCurrentReportId])
 
   // 根据环境变量TZ格式化日期的函数
   const formatDateWithTimezone = (dateString: string): string => {

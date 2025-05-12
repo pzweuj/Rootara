@@ -8,8 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import { ReportSwitcher } from "@/components/report-switcher"
 import { Button } from "@/components/ui/button"
+import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 // API基础URL
 const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
@@ -62,11 +62,11 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export default function ClinvarAnalysisPage() {
   const { language } = useLanguage()
+  const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("") // 用于存储防抖后的搜索词
   const [classificationFilter, setClassificationFilter] = useState("all")
   const [geneFilter, setGeneFilter] = useState("all")
-  const [currentReportId, setCurrentReportId] = useState("RPT_TEMPLATE01")
   const [loading, setLoading] = useState(true)
   const [clinvarData, setClinvarData] = useState<ClinVarResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -87,14 +87,6 @@ export default function ClinvarAnalysisPage() {
   useEffect(() => {
     setDebouncedSearchQuery(debouncedQuery);
   }, [debouncedQuery]);
-
-  // 添加处理报告变更的函数
-  const handleReportChange = (reportId: string) => {
-    setCurrentReportId(reportId)
-    console.log("当前选择的报告ID:", reportId)
-    // 重新加载数据
-    fetchClinvarData(reportId)
-  }
 
   // 获取ClinVar数据的函数
   const fetchClinvarData = async (reportId: string) => {
@@ -133,10 +125,13 @@ export default function ClinvarAnalysisPage() {
     }
   }
 
-  // 初始加载数据
+  // 当全局报告ID变化时重新加载数据
   useEffect(() => {
-    fetchClinvarData(currentReportId)
-  }, [])
+    if (currentReportId) {
+      console.log("使用全局报告ID加载数据:", currentReportId)
+      fetchClinvarData(currentReportId)
+    }
+  }, [currentReportId])
 
   const translations = {
     en: {

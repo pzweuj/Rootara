@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/components/sidebar-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import { AuthProvider } from "@/contexts/auth-context"
 import { AuthGuard } from "@/components/auth-guard"
+import { ReportProvider } from "@/contexts/report-context"
 import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -25,11 +26,13 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <LanguageProvider>
-              <SidebarProvider>
-                <TooltipProvider delayDuration={0}>
-                  <AuthGuard>{children}</AuthGuard>
-                </TooltipProvider>
-              </SidebarProvider>
+              <ReportProvider>
+                <SidebarProvider>
+                  <TooltipProvider delayDuration={0}>
+                    <AuthGuard>{children}</AuthGuard>
+                  </TooltipProvider>
+                </SidebarProvider>
+              </ReportProvider>
             </LanguageProvider>
           </AuthProvider>
         </ThemeProvider>
