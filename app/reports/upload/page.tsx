@@ -34,13 +34,12 @@ export default function UploadReportPage() {
   // 添加环境变量配置
   const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
   const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
-  const USER_API_URL = API_BASE_URL + '/user/id'; // 添加用户ID API地址
 
   // 在组件加载时获取用户ID
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const response = await fetch(USER_API_URL, {
+        const response = await fetch(`${API_BASE_URL}/user/id`, {
           method: 'POST',
           headers: {
             'accept': 'application/json',
@@ -68,7 +67,7 @@ export default function UploadReportPage() {
     };
 
     fetchUserId();
-  }, [USER_API_URL, API_KEY]); // 添加依赖项
+  }, [`${API_BASE_URL}/user/id`, API_KEY]); // 添加依赖项
 
   // 添加额外的翻译项
   const translations = {
