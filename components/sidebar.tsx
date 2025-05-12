@@ -55,7 +55,6 @@ export function Sidebar() {
       icon: BarChart2,
       children: [
         { name: t("ancestryAnalysis"), href: "/analysis/ancestry", icon: Dna },
-        { name: t("healthRisks"), href: "/analysis/health", icon: Heart },
         { name: t("traitInterpretation"), href: "/analysis/traits", icon: User },
         { name: "ClinVar", href: "/analysis/clinvar", icon: AlertCircle },
       ],
