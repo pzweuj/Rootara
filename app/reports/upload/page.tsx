@@ -219,7 +219,7 @@ export default function UploadReportPage() {
         }
         return prev + 5
       })
-    }, 3000)
+    }, 3500)
 
     try {
       // 准备请求数据

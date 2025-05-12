@@ -166,6 +166,17 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       return;
     }
     
+    // 添加模板报告保护逻辑
+    if (reportId === "RPT_TEMPLATE01") {
+      toast({
+        title: language === "zh-CN" ? "操作被拒绝" : "Operation Denied",
+        description: language === "zh-CN" ? "不能删除模板报告" : "Cannot delete template report",
+        variant: "destructive",
+        duration: 5000,
+      });
+      return;
+    }
+    
     // 添加调试信息，显示将要删除的reportId
     console.log("准备删除的报告ID:", reportId);
     toast({
@@ -180,6 +191,19 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
   const confirmDelete = async () => {
     if (reportToDelete && !reportToDelete.includes('/') && !reportToDelete.includes('\\')) {
+      // 添加模板报告保护逻辑
+      if (reportToDelete === "RPT_TEMPLATE01") {
+        toast({
+          title: language === "zh-CN" ? "操作被拒绝" : "Operation Denied",
+          description: language === "zh-CN" ? "不能删除模板报告" : "Cannot delete template report",
+          variant: "destructive",
+          duration: 5000,
+        });
+        setReportToDelete(null);
+        setDeleteDialogOpen(false);
+        return;
+      }
+      
       // 添加调试信息，显示确认删除的reportId
       console.log("确认删除的报告ID:", reportToDelete);
       toast({
@@ -202,28 +226,25 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   }
 
   // 添加重命名报告函数
+  // 添加重命名报告函数
   const handleRenameReport = async () => {
     if (!reportToRename) return
-
+  
     try {
-      // 调用API修改报告名称
-      const response = await fetch(`${API_BASE_URL}/report/${reportToRename.id}/rename`, {
+      // 调用API修改报告名称 - 使用新的API格式
+      const response = await fetch(`${API_BASE_URL}/report/rename?report_id=${reportToRename.id}&new_name=${encodeURIComponent(newReportName)}`, {
         method: "POST",
         headers: {
           accept: "application/json",
-          "Content-Type": "application/json",
           "x-api-key": API_KEY,
         },
-        body: JSON.stringify({
-          name: newReportName,
-          nameZh: newReportName, // 修改这里，让nameZh跟随name的值
-        }),
+        body: "", // 空请求体，按照API要求
       })
-
+  
       if (!response.ok) {
-        throw new Error(`Rename failed: ${response.status}`)
+        throw new Error(`重命名失败: ${response.status}`)
       }
-
+  
       // 更新报告列表
       setReports(
         reports.map((report) => {
@@ -231,29 +252,29 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
             return {
               ...report,
               name: newReportName,
-              nameZh: newReportName, // 修改这里，让nameZh跟随name的值
+              nameZh: newReportName, // 让nameZh跟随name的值
             }
           }
           return report
         }),
       )
-
+  
       // 如果重命名的是当前选中的报告，更新选中的报告
       if (selectedReport && selectedReport.id === reportToRename.id) {
         setSelectedReport({
           ...selectedReport,
           name: newReportName,
-          nameZh: newReportName, // 修改这里，让nameZh跟随name的值
+          nameZh: newReportName, // 让nameZh跟随name的值
         })
       }
-
+  
       // 显示成功通知
       toast({
         title: language === "zh-CN" ? "重命名成功" : "Rename Successful",
         description: language === "zh-CN" ? "报告名称已更新" : "The report name has been updated",
         duration: 3000,
       })
-
+  
       // 关闭对话框
       setRenameDialogOpen(false)
       setReportToRename(null)
@@ -261,7 +282,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       setNewReportNameZh("")
     } catch (error) {
       console.error("Error renaming report:", error)
-
+  
       // 显示错误通知
       toast({
         title: language === "zh-CN" ? "重命名失败" : "Rename Failed",
