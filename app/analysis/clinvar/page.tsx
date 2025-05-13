@@ -562,7 +562,13 @@ export default function ClinvarAnalysisPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("clinvarAnalysis")}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>{t("clinvarAnalysis")}</CardTitle>
+            <Badge variant="outline" className="text-xs font-mono">
+              {language === "en" ? "Report ID: " : "报告编号: "}
+              {currentReportId}
+            </Badge>
+          </div>
           <CardDescription>{t("clinvarDescription")}</CardDescription>
         </CardHeader>
         <CardContent>

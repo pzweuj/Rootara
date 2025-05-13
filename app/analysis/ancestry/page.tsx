@@ -1,13 +1,18 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Info } from "lucide-react"
 import { AncestryMap } from "@/components/ancestry-map"
 import { HaplogroupDistribution } from "@/components/haplogroup-distribution"
 import { useLanguage } from "@/contexts/language-context"
+// 假设您有一个报告上下文或者其他方式获取报告ID
+import { useReport } from "@/contexts/report-context"
 
 export default function AncestryAnalysisPage() {
   const { language } = useLanguage()
+  // 获取当前报告ID
+  const { currentReportId } = useReport()
 
   // 添加翻译对象
   const translations = {
@@ -57,6 +62,10 @@ export default function AncestryAnalysisPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t("ancestryAnalysis")}</h1>
           <p className="text-muted-foreground">{t("exploreGenetic")}</p>
         </div>
+        <Badge variant="outline" className="text-xs font-mono"> 
+          {language === "en" ? "Report ID: " : "报告编号: "} 
+          {currentReportId} 
+        </Badge>
       </div>
 
       {/* 祖源构成部分 */}
