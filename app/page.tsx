@@ -21,11 +21,11 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-        <ClinvarSummary />
+        <TraitHighlights />
       </div>
 
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-        <TraitHighlights />
+        <ClinvarSummary />
       </div>
     </div>
   )
