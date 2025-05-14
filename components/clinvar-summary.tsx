@@ -200,28 +200,36 @@ export function ClinvarSummary() {
 
   // 获取前4个变异，优先展示致病和可能致病的位点
   const getTopFindings = () => {
-    // 按照优先级排序：致病 > 可能致病 > 其他
-    const sortedVariants = [...variants].sort((a, b) => {
-      const aClass = a.classification.toLowerCase();
-      const bClass = b.classification.toLowerCase();
+    // 评估变异的分类优先级
+    const getClassificationPriority = (classification: string) => {
+      const lowerClass = classification.toLowerCase();
       
-      if (aClass.includes('pathogenic') && !aClass.includes('likely') && 
-          !(bClass.includes('pathogenic') && !bClass.includes('likely'))) {
-        return -1;
+      // 按优先级顺序评估
+      if (lowerClass.includes('pathogenic') && !lowerClass.includes('likely')) {
+        return 1; // 致病
+      } else if (lowerClass.includes('likely pathogenic') || lowerClass.includes('likely_pathogenic')) {
+        return 2; // 可能致病
+      } else if (lowerClass.includes('benign') && !lowerClass.includes('likely')) {
+        return 3; // 良性
+      } else if (lowerClass.includes('likely benign') || lowerClass.includes('likely_benign')) {
+        return 4; // 可能良性
+      } else if (lowerClass.includes('uncertain') || lowerClass.includes('significance')) {
+        return 5; // 意义未明
+      } else {
+        return 6; // 其他
       }
-      if (bClass.includes('pathogenic') && !bClass.includes('likely') && 
-          !(aClass.includes('pathogenic') && !aClass.includes('likely'))) {
-        return 1;
-      }
-      if (aClass.includes('likely pathogenic') && !bClass.includes('likely pathogenic')) {
-        return -1;
-      }
-      if (bClass.includes('likely pathogenic') && !aClass.includes('likely pathogenic')) {
-        return 1;
-      }
-      return 0;
+    };
+    
+    // 按分类优先级排序变异
+    const sortedVariants = [...variants].sort((a, b) => {
+      const aPriority = getClassificationPriority(a.classification);
+      const bPriority = getClassificationPriority(b.classification);
+      
+      // 优先级数字越小越优先
+      return aPriority - bPriority;
     });
     
+    // 返回前4个变异
     return sortedVariants.slice(0, 4);
   }
 
@@ -263,16 +271,16 @@ export function ClinvarSummary() {
             <h3 className="text-sm font-medium mb-2">{t("recentFindings")}</h3>
             <div className="space-y-2">
               {recentFindings.map((finding) => (
-                <div key={finding.id} className="border rounded-md p-2">
+                <div key={finding.rsid} className="border rounded-md p-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      {getClassificationIcon(finding.classification)}
+                      {getClassificationIcon(finding.clnsig)}
                       <span className="ml-2 font-medium text-sm">{finding.gene}</span>
                     </div>
-                    <span className="text-xs bg-secondary px-2 py-0.5 rounded-full">{finding.id}</span>
+                    <span className="text-xs bg-secondary px-2 py-0.5 rounded-full">{finding.rsid}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 truncate" title={finding.condition}>
-                    {finding.condition}
+                  <p className="text-xs text-muted-foreground mt-1 truncate" title={finding.clndn}>
+                    {finding.clndn}
                   </p>
                 </div>
               ))}
