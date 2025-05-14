@@ -211,14 +211,14 @@ export default function UploadReportPage() {
     // 创建进度动画
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        // 最多到90%，剩下的10%在API成功后完成
-        if (prev >= 90) {
+        // 最多到95%，剩下的5%在API成功后完成
+        if (prev >= 95) {
           clearInterval(progressInterval)
-          return 90
+          return 95
         }
-        return prev + 5
+        return prev + 2
       })
-    }, 3500)
+    }, 3000)
 
     try {
       // 准备请求数据
