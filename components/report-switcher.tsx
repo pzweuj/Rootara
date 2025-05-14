@@ -587,6 +587,8 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
 
   const handleSelectReport = (report: Report) => {
     setSelectedReport(report)
+    // 更新全局上下文中的报告ID
+    setCurrentReportId(report.id)
     // 添加对 onReportChange 回调的调用
     if (onReportChange) {
       onReportChange(report.id)
