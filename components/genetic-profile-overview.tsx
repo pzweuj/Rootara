@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dna, Globe, Heart, Brain } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { Badge } from "@/components/ui/badge"
+import { useReport } from "@/contexts/report-context" // 导入报告上下文
+
 
 const profileData = {
   ancestryComposition: [
@@ -19,6 +21,10 @@ const profileData = {
 }
 
 export function GeneticProfileOverview() {
+  const { currentReportId } = useReport()
+
+  profileData.reportId = currentReportId
+
   const { t, language } = useLanguage()
 
   // Translations for regions based on language
