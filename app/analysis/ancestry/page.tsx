@@ -61,6 +61,56 @@ export default function AncestryAnalysisPage() {
       ancestryProportion: "Ancestry Proportion",
       showMore: "Show More",
       showLess: "Show Less",
+      regionNames: {
+        "Kushitic": "Kushitic",
+        "North Iberian": "North Iberian",
+        "East Iberian": "East Iberian",
+        "North African": "North African",
+        "South Caucasian": "South Caucasian",
+        "North Caucasian": "North Caucasian",
+        "Paleo Balkan": "Paleo Balkan",
+        "Turkic Altai": "Turkic Altai",
+        "Proto Austronesian": "Proto Austronesian",
+        "Nilotic": "Nilotic",
+        "East Med": "East Mediterranean",
+        "Omotic": "Omotic",
+        "Munda": "Munda",
+        "North Amerind": "North Amerind",
+        "Arabic": "Arabic",
+        "East Euro": "East European",
+        "Central African": "Central African",
+        "Andean": "Andean",
+        "Indo Chinese": "Indo-Chinese",
+        "South Indian": "South Indian",
+        "NE Asian": "Northeast Asian",
+        "Volgan": "Volgan",
+        "Mongolian": "Mongolian",
+        "Siberian": "Siberian",
+        "North Sea Germanic": "North Sea Germanic",
+        "Celtic": "Celtic",
+        "West African": "West African",
+        "West Finnic": "West Finnic",
+        "Uralic": "Uralic",
+        "Sahelian": "Sahelian",
+        "NW Indian": "Northwest Indian",
+        "East African": "East African",
+        "East Asian": "East Asian",
+        "Amuro Manchurian": "Amuro-Manchurian",
+        "Scando Germanic": "Scando-Germanic",
+        "Iranian": "Iranian",
+        "South African": "South African",
+        "Amazonian": "Amazonian",
+        "Baltic": "Baltic",
+        "Malay": "Malay",
+        "Meso Amerind": "Mesoamerind",
+        "South Chinese": "South Chinese",
+        "Papuan": "Papuan",
+        "West Med": "West Mediterranean",
+        "Pamirian": "Pamirian",
+        "Central Med": "Central Mediterranean",
+        "Tibeto Burman": "Tibeto Burman"
+      },
+      
     },
     "zh-CN": {
       ancestryAnalysis: "祖源分析",
@@ -79,6 +129,55 @@ export default function AncestryAnalysisPage() {
       ancestryProportion: "祖源比例",
       showMore: "显示更多内容",
       showLess: "收起内容",
+      regionNames: {
+        "Kushitic": "库希特",
+        "North Iberian": "北伊比利亚",
+        "East Iberian": "东伊比利亚",
+        "North African": "北非",
+        "South Caucasian": "南高加索",
+        "North Caucasian": "北高加索",
+        "Paleo Balkan": "古巴尔干",
+        "Turkic Altai": "突厥阿尔泰",
+        "Proto Austronesian": "原始南岛",
+        "Nilotic": "尼罗特",
+        "East Med": "东地中海",
+        "Omotic": "奥摩",
+        "Munda": "蒙达",
+        "North Amerind": "北美原住民",
+        "Arabic": "阿拉伯",
+        "East Euro": "东欧",
+        "Central African": "中非地区",
+        "Andean": "安第斯",
+        "Indo Chinese": "法属安南",
+        "South Indian": "南印度",
+        "NE Asian": "东北亚",
+        "Volgan": "伏尔加",
+        "Mongolian": "蒙古地区",
+        "Siberian": "西伯利亚",
+        "North Sea Germanic": "北海日耳曼",
+        "Celtic": "凯尔特",
+        "West African": "西非地区",
+        "West Finnic": "西芬兰",
+        "Uralic": "乌拉尔",
+        "Sahelian": "萨赫勒",
+        "NW Indian": "西北印度",
+        "East African": "东非地区",
+        "East Asian": "东亚地区",
+        "Amuro Manchurian": "阿穆尔-满洲",
+        "Scando Germanic": "斯堪的纳维亚日耳曼",
+        "Iranian": "伊朗",
+        "South African": "南非",
+        "Amazonian": "亚马逊流域",
+        "Baltic": "波罗的海",
+        "Malay": "马来",
+        "Meso Amerind": "中美洲原住民",
+        "South Chinese": "中国华南",
+        "Papuan": "巴布亚",
+        "West Med": "西地中海",
+        "Pamirian": "帕米尔",
+        "Central Med": "中地中海",
+        "Tibeto Burman": "藏缅地区",
+      },
     },
   }
 
@@ -172,8 +271,8 @@ export default function AncestryAnalysisPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("ancestryAnalysis")}</h1>
-          <p className="text-muted-foreground">{t("exploreGenetic")}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{String(t("ancestryAnalysis"))}</h1>
+          <p className="text-muted-foreground">{String(t("exploreGenetic"))}</p>
         </div>
         <Badge variant="outline" className="text-xs font-mono"> 
           {language === "en" ? "Report ID: " : "报告编号: "} 
@@ -215,7 +314,7 @@ export default function AncestryAnalysisPage() {
               )}
               
               <div className="mt-6 relative">
-                <h4 className="text-lg font-medium mb-3">{t("ancestryProportion")}</h4>
+                <h4 className="text-lg font-medium mb-3">{String(t("ancestryProportion"))}</h4>
                 {isLoading ? (
                   <div className="py-8 flex justify-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -255,7 +354,7 @@ export default function AncestryAnalysisPage() {
                                    opacity: 0.7
                                  }} />
                             <span className="relative z-10 text-gray-600">
-                              {item.region}
+                              {translations[language].regionNames[item.region as keyof typeof translations['en']['regionNames']] || item.region}
                             </span>
                             <span className="font-medium relative z-10 text-gray-600">
                               {item.percentage}%
@@ -272,7 +371,7 @@ export default function AncestryAnalysisPage() {
                     onClick={() => setIsExpanded(!isExpanded)}
                   >
                     <span className="font-medium">
-                      {isExpanded ? t("showLess") : t("showMore")}
+                      {isExpanded ? String(t("showLess")) : String(t("showMore"))}
                     </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -298,25 +397,25 @@ export default function AncestryAnalysisPage() {
           <div>
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">{t("understandingResults")}</CardTitle>
+                <CardTitle className="text-lg">{String(t("understandingResults"))}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">{t("compositionDescription")}</p>
+                <p className="text-sm text-muted-foreground">{String(t("compositionDescription"))}</p>
                 <div className="flex items-start space-x-2">
                   <Info className="h-5 w-5 text-primary mt-0.5" />
-                  <p className="text-sm">{t("analysisDescription")}</p>
+                  <p className="text-sm">{String(t("analysisDescription"))}</p>
                 </div>
 
                 {/* 添加 Admixture 技术介绍 */}
                 <div className="pt-2">
-                  <h3 className="text-sm font-medium mb-1">{t("admixtureTechnology")}</h3>
-                  <p className="text-sm text-muted-foreground">{t("admixtureTechDescription")}</p>
+                  <h3 className="text-sm font-medium mb-1">{String(t("admixtureTechnology"))}</h3>
+                  <p className="text-sm text-muted-foreground">{String(t("admixtureTechDescription"))}</p>
                 </div>
 
                 {/* 添加单倍群介绍 */}
                 <div className="pt-2">
-                  <h3 className="text-sm font-medium mb-1">{t("haplogroupsExplained")}</h3>
-                  <p className="text-sm text-muted-foreground">{t("haplogroupsExplainedDescription")}</p>
+                  <h3 className="text-sm font-medium mb-1">{String(t("haplogroupsExplained"))}</h3>
+                  <p className="text-sm text-muted-foreground">{String(t("haplogroupsExplainedDescription"))}</p>
                 </div>
               </CardContent>
             </Card>
@@ -326,7 +425,7 @@ export default function AncestryAnalysisPage() {
 
       {/* 单倍群部分 */}
       <div>
-        <h2 className="text-2xl font-bold mb-4">{t("haplogroups")}</h2>
+        <h2 className="text-2xl font-bold mb-4">{String(t("haplogroups"))}</h2>
         <HaplogroupDistribution />
       </div>
     </div>
