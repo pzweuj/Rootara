@@ -12,10 +12,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.
 const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
 
 const profileData = {
-  totalSnps: 635287,
+  totalSnps: 0, // 初始化为0，将从API获取
   healthTraits: 127,
   clinvarPathogenic: 20,
-  reportId: "RPT-7A2B9C", 
+  reportId: "RPT_TEMPLATE01", 
 }
 
 export function GeneticProfileOverview() {
@@ -28,8 +28,43 @@ export function GeneticProfileOverview() {
     { region: "African", percentage: 10 },
   ]);
   const [loading, setLoading] = useState(false);
+  const [reportInfoLoading, setReportInfoLoading] = useState(false);
 
   profileData.reportId = currentReportId
+
+  // 从API获取报告信息
+  useEffect(() => {
+    const fetchReportInfo = async () => {
+      if (!currentReportId) return;
+      
+      setReportInfoLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/info`, { 
+          method: 'POST', 
+          headers: { 
+            'accept': 'application/json', 
+            'x-api-key': API_KEY 
+          }, 
+        });
+        
+        if (!response.ok) {
+          throw new Error('获取报告信息失败');
+        }
+        
+        const data = await response.json();
+        // 根据API返回格式，totalSnps是数组中的第7个元素（索引为6）
+        if (Array.isArray(data) && data.length >= 7) {
+          profileData.totalSnps = data[6];
+        }
+      } catch (error) {
+        console.error('获取报告信息错误:', error);
+      } finally {
+        setReportInfoLoading(false);
+      }
+    };
+    
+    fetchReportInfo();
+  }, [currentReportId]);
 
   // 从API获取祖源构成数据
   useEffect(() => {
@@ -152,7 +187,11 @@ export function GeneticProfileOverview() {
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <div className="text-2xl font-semibold mb-4">
-              {profileData.totalSnps.toLocaleString()} {language === "en" ? "SNPs Analyzed" : "个SNP已分析"}
+              {reportInfoLoading ? (
+                <span>{language === "en" ? "Loading..." : "加载中..."}</span>
+              ) : (
+                <>{profileData.totalSnps.toLocaleString()} {language === "en" ? "Variants Analyzed" : "个位点已分析"}</>
+              )}
             </div>
 
             <div className="space-y-4">
