@@ -4,52 +4,134 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dna, Globe, Heart, Brain } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { Badge } from "@/components/ui/badge"
-import { useReport } from "@/contexts/report-context" // 导入报告上下文
+import { useReport } from "@/contexts/report-context" 
+import { useEffect, useState } from "react" // 添加useState和useEffect
 
+// 添加环境变量配置
+const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
+const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
 
 const profileData = {
-  ancestryComposition: [
-    { region: "East Asian", percentage: 45 },
-    { region: "European", percentage: 30 },
-    { region: "South Asian", percentage: 15 },
-    { region: "African", percentage: 10 },
-  ],
   totalSnps: 635287,
   healthTraits: 127,
   clinvarPathogenic: 20,
-  reportId: "RPT-7A2B9C", // 添加报告编号
+  reportId: "RPT-7A2B9C", 
 }
 
 export function GeneticProfileOverview() {
   const { currentReportId } = useReport()
+  const { t, language } = useLanguage()
+  const [ancestryComposition, setAncestryComposition] = useState([
+    { region: "East Asian", percentage: 45 },
+    { region: "European", percentage: 30 },
+    { region: "South Asian", percentage: 15 },
+    { region: "African", percentage: 10 },
+  ]);
+  const [loading, setLoading] = useState(false);
 
   profileData.reportId = currentReportId
 
-  const { t, language } = useLanguage()
+  // 从API获取祖源构成数据
+  useEffect(() => {
+    const fetchAncestryData = async () => {
+      if (!currentReportId) return;
+      
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/admixture`, { 
+          method: 'POST', 
+          headers: { 
+            'accept': 'application/json', 
+            'x-api-key': API_KEY 
+          }, 
+        });
+        
+        if (!response.ok) {
+          throw new Error('获取祖源数据失败');
+        }
+        
+        const data = await response.json();
+        
+        // 将数据转换为数组格式，按百分比降序排序，并只保留前4个区域
+        const sortedData = Object.entries(data)
+          .map(([region, percentage]) => ({ region, percentage: Number(percentage) }))
+          .sort((a, b) => b.percentage - a.percentage)
+          .slice(0, 4);
+          
+        setAncestryComposition(sortedData);
+      } catch (error) {
+        console.error('获取祖源数据错误:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchAncestryData();
+  }, [currentReportId]);
 
-  // Translations for regions based on language
+  // 更新区域名称翻译对象
   const regionTranslations = {
-    en: {
-      "East Asian": "East Asian",
-      European: "European",
-      "South Asian": "South Asian",
-      African: "African",
-    },
     "zh-CN": {
-      "East Asian": "东亚",
-      European: "欧洲",
-      "South Asian": "南亚",
-      African: "非洲",
-    },
+      "Kushitic": "库希特", 
+      "North_Iberian": "北伊比利亚", 
+      "East_Iberian": "东伊比利亚", 
+      "North_African": "北非", 
+      "South_Caucasian": "南高加索", 
+      "North_Caucasian": "北高加索", 
+      "Paleo_Balkan": "古巴尔干", 
+      "Turkic_Altai": "突厥阿尔泰", 
+      "Proto_Austronesian": "原始南岛", 
+      "Nilotic": "尼罗特", 
+      "East_Med": "东地中海", 
+      "Omotic": "奥摩", 
+      "Munda": "蒙达", 
+      "North_Amerind": "北美原住民", 
+      "Arabic": "阿拉伯", 
+      "East_Euro": "东欧", 
+      "Central_African": "中非地区", 
+      "Andean": "安第斯", 
+      "Indo_Chinese": "法属安南", 
+      "South_Indian": "南印度", 
+      "NE_Asian": "东北亚", 
+      "Volgan": "伏尔加", 
+      "Mongolian": "蒙古地区", 
+      "Siberian": "西伯利亚", 
+      "North_Sea_Germanic": "北海日耳曼", 
+      "Celtic": "凯尔特", 
+      "West_African": "西非地区", 
+      "West_Finnic": "西芬兰", 
+      "Uralic": "乌拉尔", 
+      "Sahelian": "萨赫勒", 
+      "NW_Indian": "西北印度", 
+      "East_African": "东非地区", 
+      "East_Asian": "东亚地区",
+      "Amuro_Manchurian": "阿穆尔-满洲", 
+      "Scando_Germanic": "斯堪的纳维亚日耳曼", 
+      "Iranian": "伊朗", 
+      "South_African": "南非", 
+      "Amazonian": "亚马逊流域", 
+      "Baltic": "波罗的海", 
+      "Malay": "马来", 
+      "Meso_Amerind": "中美洲原住民", 
+      "South_Chinese": "中国华南", 
+      "Papuan": "巴布亚", 
+      "West_Med": "西地中海", 
+      "Pamirian": "帕米尔", 
+      "Central_Med": "中地中海", 
+      "Tibeto_Burman": "藏缅地区",
+      // 保留原有的翻译以防万一
+      "European": "欧洲",
+      "South_Asian": "南亚",
+      "African": "非洲",
+    }
   }
 
-  // Get region name based on current language
+  // 修改获取区域名称的函数
   const getRegionName = (region: string) => {
-    return language === "en" || language === "zh-CN"
-      ? regionTranslations[language as keyof typeof regionTranslations][
-          region as keyof (typeof regionTranslations)["en"]
-        ]
-      : region
+    if (language === "zh-CN" && region in regionTranslations["zh-CN"]) {
+      return regionTranslations["zh-CN"][region as keyof typeof regionTranslations["zh-CN"]];
+    }
+    return region;
   }
 
   return (
@@ -79,20 +161,24 @@ export function GeneticProfileOverview() {
                   {language === "en" ? "Ancestry Composition" : "祖源构成"}
                 </div>
                 <div className="space-y-3">
-                  {profileData.ancestryComposition.map((ancestry) => (
-                    <div key={ancestry.region} className="flex justify-between items-center">
-                      <span className="text-sm font-medium">{getRegionName(ancestry.region)}</span>
-                      <div className="flex items-center">
-                        <div className="w-32 h-3 bg-secondary rounded-full mr-2">
-                          <div
-                            className="h-3 bg-primary rounded-full"
-                            style={{ width: `${ancestry.percentage}%` }}
-                          ></div>
+                  {loading ? (
+                    <div className="text-sm">{language === "en" ? "Loading..." : "加载中..."}</div>
+                  ) : (
+                    ancestryComposition.map((ancestry) => (
+                      <div key={ancestry.region} className="flex items-center">
+                        <span className="text-sm font-medium w-28 mr-24">{getRegionName(ancestry.region)}</span>
+                        <div className="flex-1 flex items-center">
+                          <div className="w-32 h-3 bg-secondary rounded-full mr-2">
+                            <div
+                              className="h-3 bg-primary rounded-full"
+                              style={{ width: `${ancestry.percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-medium">{ancestry.percentage}%</span>
                         </div>
-                        <span className="text-sm font-medium">{ancestry.percentage}%</span>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>
