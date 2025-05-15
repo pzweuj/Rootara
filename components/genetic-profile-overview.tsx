@@ -6,6 +6,9 @@ import { useLanguage } from "@/contexts/language-context"
 import { Badge } from "@/components/ui/badge"
 import { useReport } from "@/contexts/report-context" 
 import { useEffect, useState } from "react" // 添加useState和useEffect
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { ExternalLink } from "lucide-react"
 
 // 添加环境变量配置
 const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
@@ -16,6 +19,12 @@ const profileData = {
   healthTraits: 127,
   clinvarPathogenic: 20,
   reportId: "RPT_TEMPLATE01", 
+}
+
+// 定义单倍群数据接口
+interface HaplogroupData {
+  y_hap: string
+  mt_hap: string
 }
 
 export function GeneticProfileOverview() {
@@ -29,6 +38,9 @@ export function GeneticProfileOverview() {
   ]);
   const [loading, setLoading] = useState(false);
   const [reportInfoLoading, setReportInfoLoading] = useState(false);
+  const [haplogroupData, setHaplogroupData] = useState<HaplogroupData | null>(null)
+  const [haplogroupLoading, setHaplogroupLoading] = useState(true)
+  const [haplogroupError, setHaplogroupError] = useState<string | null>(null)
 
   profileData.reportId = currentReportId
 
@@ -104,6 +116,44 @@ export function GeneticProfileOverview() {
     fetchAncestryData();
   }, [currentReportId]);
 
+  // 获取单倍群数据
+  useEffect(() => {
+    const fetchHaplogroupData = async () => {
+      if (!currentReportId) {
+        console.log("没有可用的报告ID")
+        return
+      }
+
+      setHaplogroupLoading(true)
+      setHaplogroupError(null)
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/haplogroup`, {
+          method: 'POST',
+          headers: {
+            'accept': 'application/json',
+            'x-api-key': API_KEY,
+          },
+          body: '',
+        })
+
+        if (!response.ok) {
+          throw new Error(`API请求失败: ${response.status}`)
+        }
+
+        const data = await response.json()
+        setHaplogroupData(data)
+      } catch (err) {
+        console.error("获取单倍群数据失败:", err)
+        setHaplogroupError(err instanceof Error ? err.message : "获取单倍群数据失败")
+      } finally {
+        setHaplogroupLoading(false)
+      }
+    }
+
+    fetchHaplogroupData()
+  }, [currentReportId])
+
   // 更新区域名称翻译对象
   const regionTranslations = {
     "zh-CN": {
@@ -169,6 +219,26 @@ export function GeneticProfileOverview() {
     return region;
   }
 
+  // 单倍群翻译
+  const haplogroupTranslations = {
+    en: {
+      maternalLineage: "Maternal Lineage (mtDNA)",
+      paternalLineage: "Paternal Lineage (Y-DNA)",
+      loading: "Loading...",
+      error: "Failed to load haplogroup data",
+    },
+    "zh-CN": {
+      maternalLineage: "母系遗传 (mtDNA)",
+      paternalLineage: "父系遗传 (Y-DNA)",
+      loading: "加载中...",
+      error: "加载单倍群数据失败",
+    },
+  }
+
+  const ht = (key: keyof (typeof haplogroupTranslations)[keyof typeof haplogroupTranslations]) => {
+    return haplogroupTranslations[language as keyof typeof haplogroupTranslations][key as keyof (typeof haplogroupTranslations)[typeof language]] || key
+  }
+
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader className="pb-2">
@@ -219,71 +289,53 @@ export function GeneticProfileOverview() {
                     ))
                   )}
                 </div>
+                
+                {/* 查看详情按钮 - 移动到祖源构成下方 */}
+                <div className="mt-4">
+                  <Button variant="outline" size="sm" className="gap-1" asChild>
+                    <Link href="/analysis/ancestry">
+                      {language === "en" ? "View Details" : "查看详情"}
+                      <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="pt-2">
-            <div className="text-sm text-muted-foreground mb-3">
-              {language === "en" ? "Analysis Summary" : "分析摘要"}
+            <div className="text-sm text-muted-foreground mb-3 flex justify-between items-center">
+              <span>{language === "en" ? "Haplogroups" : "单倍群"}</span>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="bg-secondary/30 border-none shadow-none">
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <Globe className="h-5 w-5 mr-2 text-blue-500" />
-                    <span className="text-sm font-medium">
-                      {language === "en" ? "4 Ancestry Regions" : "4个祖源区域"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {language === "en"
-                      ? "Your DNA indicates ancestry from 4 major global regions"
-                      : "您的DNA显示来自4个主要全球区域的祖源"}
-                  </p>
-                </CardContent>
-              </Card>
+            
+            {haplogroupLoading ? (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
+                  <p className="text-blue-700 dark:text-blue-300">{ht("loading")}</p>
+                </div>
+                <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
+                  <p className="text-red-700 dark:text-red-300">{ht("loading")}</p>
+                </div>
+              </div>
+            ) : haplogroupError ? (
+              <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800">
+                <p className="text-red-700 dark:text-red-300">{ht("error")}: {haplogroupError}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* 父系谱系 Y-DNA - 蓝色卡片 */}
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
+                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">{ht("paternalLineage")}</h3>
+                  <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{haplogroupData?.y_hap || "未知"}</p>
+                </div>
 
-              <Card className="bg-secondary/30 border-none shadow-none">
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <Heart className="h-5 w-5 mr-2 text-red-500" />
-                    <span className="text-sm font-medium">
-                      {language === "en" ? "35 Health Markers" : "35个健康标记"}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {language === "en" ? "Genetic variants related to health conditions" : "与健康状况相关的基因变异"}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-secondary/30 border-none shadow-none">
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <Brain className="h-5 w-5 mr-2 text-purple-500" />
-                    <span className="text-sm font-medium">
-                      {language === "en" ? `${profileData.healthTraits} Traits` : `${profileData.healthTraits}个特征`}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {language === "en" ? "Physical and behavioral genetic traits" : "身体和行为的基因特征"}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-secondary/30 border-none shadow-none">
-                <CardContent className="p-4">
-                  <div className="flex items-center mb-2">
-                    <Dna className="h-5 w-5 mr-2 text-green-500" />
-                    <span className="text-sm font-medium">
-                      {language === "en" ? "Last updated" : "Clinvar致病位点"}
-                    </span>
-                  </div>
-                  <p className="text-xs font-medium">{profileData.clinvarPathogenic}</p>
-                </CardContent>
-              </Card>
-            </div>
+                {/* 母系谱系 mtDNA - 红色卡片 */}
+                <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">{ht("maternalLineage")}</h3>
+                  <p className="text-3xl font-bold text-red-700 dark:text-red-300">{haplogroupData?.mt_hap || "未知"}</p>
+                </div>        
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
