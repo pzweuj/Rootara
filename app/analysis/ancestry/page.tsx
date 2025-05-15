@@ -9,16 +9,6 @@ import { useReport } from "@/contexts/report-context"
 import { useEffect, useRef, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 
-// 动态导入Leaflet (客户端渲染)
-const LeafletMap = dynamic(() => import('./map-component'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-      <p className="text-muted-foreground">地图加载中...</p>
-    </div>
-  )
-})
-
 // 添加环境变量配置
 const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
 const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
@@ -31,6 +21,16 @@ interface AncestryData {
 // 默认的空祖源数据
 const emptyAncestryData: AncestryData = {};
 
+// 动态导入Leaflet (客户端渲染)
+const LeafletMap = dynamic(() => import('./map-component'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
+      <p className="text-muted-foreground">{useLanguage().language === "en" ? "Loading map..." : "地图加载中..."}</p>
+    </div>
+  )
+})
+
 export default function AncestryAnalysisPage() {
   const { language } = useLanguage()
   // 获取当前报告ID
@@ -39,6 +39,8 @@ export default function AncestryAnalysisPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
+  // 添加一个key状态，用于控制地图组件是否重新渲染
+  const mapInstanceKey = useRef('map-instance-1').current
 
   // 添加翻译对象
   const translations = {
@@ -285,112 +287,115 @@ export default function AncestryAnalysisPage() {
         {/* <h2 className="text-2xl font-bold mb-4">{t("ancestryComposition")}</h2> */}
         <div className="grid gap-6 md:grid-cols-3">
           <div className="md:col-span-2">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-4">{language === "en" ? "Ancestry Map" : "祖源地图"}</h3>
-              
-              {isLoading ? (
-                <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-                  <p className="text-muted-foreground">{language === "en" ? "Loading ancestry data..." : "正在加载祖源数据..."}</p>
-                </div>
-              ) : error ? (
-                <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-                  <div className="text-center">
-                    <p className="text-red-500 mb-2">{language === "en" ? "Error loading data" : "数据加载失败"}</p>
-                    <p className="text-sm text-muted-foreground">{error}</p>
-                    <button 
-                      onClick={() => fetchAncestryData(currentReportId)}
-                      className="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-                    >
-                      {language === "en" ? "Retry" : "重试"}
-                    </button>
-                  </div>
-                </div>
-              ) : Object.keys(ancestryData).length === 0 ? (
-                <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-                  <p className="text-muted-foreground">{language === "en" ? "No ancestry data available" : "暂无祖源数据"}</p>
-                </div>
-              ) : (
-                <LeafletMap data={ancestryData} />
-              )}
-              
-              <div className="mt-6 relative">
-                <h4 className="text-lg font-medium mb-3">{String(t("ancestryProportion"))}</h4>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">{language === "en" ? "Ancestry Map" : "祖源地图"}</CardTitle>
+              </CardHeader>
+              <CardContent>
                 {isLoading ? (
-                  <div className="py-8 flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
+                    <p className="text-muted-foreground">{language === "en" ? "Loading ancestry data..." : "正在加载祖源数据..."}</p>
                   </div>
-                ) : error && Object.keys(ancestryData).length === 0 ? (
-                  <div className="py-8 text-center text-red-500">
-                    {language === "en" ? "Failed to load ancestry data" : "加载祖源数据失败"}
-                  </div>
-                ) : Object.keys(ancestryData).length === 0 ? (
-                  <div className="py-8 text-center text-muted-foreground">
-                    {language === "en" ? "No ancestry data available" : "暂无祖源数据"}
-                  </div>
-                ) : (
-                  <div className="space-y-2 relative">
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none transition-opacity duration-300"
-                         style={{ opacity: isExpanded ? 0 : 1 }} />
-                    
-                    <div className="max-h-[200px] overflow-y-auto transition-all duration-300"
-                         style={{ maxHeight: isExpanded ? '500px' : '200px' }}>
-                      {Object.entries(ancestryData)
-                        .map(([region, value]) => ({
-                          region: region.replace(/-/g, ' '),
-                          percentage: value.toFixed(2),
-                          value
-                        }))
-                        .sort((a, b) => b.value - a.value)
-                        .map((item, index) => (
-                          <div 
-                            key={index} 
-                            className="flex items-center justify-between py-1.5 relative"
-                          >
-                            <div className="absolute left-0 top-0 bottom-0"
-                                 style={{
-                                   backgroundColor: getColor(item.value),
-                                   width: `${item.value}%`,
-                                   maxWidth: '100%',
-                                   opacity: 0.7
-                                 }} />
-                            <span className="relative z-10 text-gray-600">
-                              {translations[language].regionNames[item.region as keyof typeof translations['en']['regionNames']] || item.region}
-                            </span>
-                            <span className="font-medium relative z-10 text-gray-600">
-                              {item.percentage}%
-                            </span>
-                          </div>
-                        ))}
+                ) : error ? (
+                  <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
+                    <div className="text-center">
+                      <p className="text-red-500 mb-2">{language === "en" ? "Error loading data" : "数据加载失败"}</p>
+                      <p className="text-sm text-muted-foreground">{error}</p>
+                      <button 
+                        onClick={() => fetchAncestryData(currentReportId)}
+                        className="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+                      >
+                        {language === "en" ? "Retry" : "重试"}
+                      </button>
                     </div>
                   </div>
+                ) : Object.keys(ancestryData).length === 0 ? (
+                  <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
+                    <p className="text-muted-foreground">{language === "en" ? "No ancestry data available" : "暂无祖源数据"}</p>
+                  </div>
+                ) : (
+                  <LeafletMap key={mapInstanceKey} data={ancestryData} />
                 )}
                 
-                {Object.keys(ancestryData).length > 0 && (
-                  <button 
-                    className="mt-4 w-full flex items-center justify-center gap-2 py-2 px-4 text-sm text-gray-600 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                  >
-                    <span className="font-medium">
-                      {isExpanded ? String(t("showLess")) : String(t("showMore"))}
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-4 w-4 transition-transform duration-300 ${
-                        isExpanded ? 'rotate-180' : ''
-                      }`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
+                <div className="mt-6 relative">
+                  <h4 className="text-lg font-medium mb-3">{String(t("ancestryProportion"))}</h4>
+                  {isLoading ? (
+                    <div className="py-8 flex justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  ) : error && Object.keys(ancestryData).length === 0 ? (
+                    <div className="py-8 text-center text-red-500">
+                      {language === "en" ? "Failed to load ancestry data" : "加载祖源数据失败"}
+                    </div>
+                  ) : Object.keys(ancestryData).length === 0 ? (
+                    <div className="py-8 text-center text-muted-foreground">
+                      {language === "en" ? "No ancestry data available" : "暂无祖源数据"}
+                    </div>
+                  ) : (
+                    <div className="space-y-2 relative">
+                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none transition-opacity duration-300"
+                           style={{ opacity: isExpanded ? 0 : 1 }} />
+                      
+                      <div className="max-h-[200px] overflow-y-auto transition-all duration-300"
+                           style={{ maxHeight: isExpanded ? '500px' : '200px' }}>
+                        {Object.entries(ancestryData)
+                          .map(([region, value]) => ({
+                            region: region.replace(/-/g, ' '),
+                            percentage: value.toFixed(2),
+                            value
+                          }))
+                          .sort((a, b) => b.value - a.value)
+                          .map((item, index) => (
+                            <div 
+                              key={index} 
+                              className="flex items-center justify-between py-1.5 relative"
+                            >
+                              <div className="absolute left-0 top-0 bottom-0"
+                                   style={{
+                                     backgroundColor: getColor(item.value),
+                                     width: `${item.value}%`,
+                                     maxWidth: '100%',
+                                     opacity: 0.7
+                                   }} />
+                              <span className="relative z-10 text-gray-600">
+                                {translations[language].regionNames[item.region as keyof typeof translations['en']['regionNames']] || item.region}
+                              </span>
+                              <span className="font-medium relative z-10 text-gray-600">
+                                {item.percentage}%
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {Object.keys(ancestryData).length > 0 && (
+                    <button 
+                      className="mt-4 w-full flex items-center justify-center gap-2 py-2 px-4 text-sm text-gray-600 hover:text-gray-800 bg-gray-50 hover:bg-gray-100 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                      onClick={() => setIsExpanded(!isExpanded)}
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
+                      <span className="font-medium">
+                        {isExpanded ? String(t("showLess")) : String(t("showMore"))}
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`h-4 w-4 transition-transform duration-300 ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           {/* 右侧卡片部分 */}
