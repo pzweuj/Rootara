@@ -623,13 +623,11 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const getSourceBadgeColor = (source: string) => {
     switch (source.toLowerCase()) {
       case "23andme":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-      case "ancestrydna":
+        return "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+      case "ancestry":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
       case "wegene":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
-      case "familytreedna":
-        return "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+        return "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
     }
