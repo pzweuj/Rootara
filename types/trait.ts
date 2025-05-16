@@ -16,7 +16,7 @@ export interface Trait {
   confidence: "high" | "medium" | "low"
   isDefault: boolean
   createdAt: string
-  category: "appearance" | "sensory" | "nutrition" | "sleep" | "cognitive"
+  category: "appearance" | "internal" | "nutrition" | "risk" | "lifestyle"
   rsids: string[]
   referenceGenotypes: string[]
   yourGenotypes: string[]
@@ -24,4 +24,4 @@ export interface Trait {
   scoreThresholds: Record<string, number>
 }
 
-export type TraitCategory = "appearance" | "sensory" | "nutrition" | "sleep" | "cognitive" | "all"
+export type TraitCategory = "appearance" | "internal" | "nutrition" | "risk" | "lifestyle" | "all"
