@@ -165,7 +165,7 @@ export function GeneticProfileOverview() {
       "North_Caucasian": "北高加索", 
       "Paleo_Balkan": "古巴尔干", 
       "Turkic_Altai": "突厥阿尔泰", 
-      "Proto_Austronesian": "原始南岛", 
+      "Proto_Austronesian": "南太平洋群岛", 
       "Nilotic": "尼罗特", 
       "East_Med": "东地中海", 
       "Omotic": "奥摩", 
