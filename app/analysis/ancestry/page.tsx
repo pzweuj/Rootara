@@ -140,7 +140,7 @@ export default function AncestryAnalysisPage() {
         "North Caucasian": "北高加索",
         "Paleo Balkan": "古巴尔干",
         "Turkic Altai": "突厥阿尔泰",
-        "Proto Austronesian": "原始南岛",
+        "Proto Austronesian": "南太平洋群岛",
         "Nilotic": "尼罗特",
         "East Med": "东地中海",
         "Omotic": "奥摩",
