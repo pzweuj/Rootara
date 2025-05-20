@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink, Loader2 } from "lucide-react"
@@ -46,6 +46,7 @@ export function ClinvarSummary() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [clinvarData, setClinvarData] = useState<ClinVarResponse | null>(null)
+  const prevReportIdRef = useRef<string | null>(null)
 
   // 获取ClinVar数据的函数
   const fetchClinvarData = async (reportId: string) => {
@@ -86,8 +87,11 @@ export function ClinvarSummary() {
 
   // 当全局报告ID变化时重新加载数据
   useEffect(() => {
-    if (currentReportId) {
+    // 只有当currentReportId存在，并且与之前的reportId不同或者是首次加载时才获取数据
+    if (currentReportId && (prevReportIdRef.current !== currentReportId || prevReportIdRef.current === null)) {
       fetchClinvarData(currentReportId)
+      // 更新ref以记录当前的reportId
+      prevReportIdRef.current = currentReportId
     }
   }, [currentReportId])
 
