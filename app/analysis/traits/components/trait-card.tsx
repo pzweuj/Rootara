@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import dynamic from "next/dynamic"
 import { AlertCircle, Trash2 } from "lucide-react"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,43 +10,32 @@ import { useLanguage } from "@/contexts/language-context"
 import { getCategoryColor, getCategoryName } from "@/lib/trait-utils"
 import type { Trait } from "@/types/trait"
 
-// Icon mapping for rendering
-const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
-  Eye: () => import("lucide-react").then((mod) => mod.Eye),
-  Coffee: () => import("lucide-react").then((mod) => mod.Coffee),
-  Moon: () => import("lucide-react").then((mod) => mod.Moon),
-  Droplet: () => import("lucide-react").then((mod) => mod.Droplet),
-  Brain: () => import("lucide-react").then((mod) => mod.Brain),
-  Scissors: () => import("lucide-react").then((mod) => mod.Scissors),
-  Utensils: () => import("lucide-react").then((mod) => mod.Utensils),
-  Wine: () => import("lucide-react").then((mod) => mod.Wine),
-  Clock: () => import("lucide-react").then((mod) => mod.Clock),
-  Music: () => import("lucide-react").then((mod) => mod.Music),
-  Heart: () => import("lucide-react").then((mod) => mod.Heart),
-  Dna: () => import("lucide-react").then((mod) => mod.Dna),
-  Leaf: () => import("lucide-react").then((mod) => mod.Leaf),
-  Zap: () => import("lucide-react").then((mod) => mod.Zap),
-  Sun: () => import("lucide-react").then((mod) => mod.Sun),
-  Smile: () => import("lucide-react").then((mod) => mod.Smile),
-  Frown: () => import("lucide-react").then((mod) => mod.Frown),
-  Thermometer: () => import("lucide-react").then((mod) => mod.Thermometer),
-  Wind: () => import("lucide-react").then((mod) => mod.Wind),
-  Umbrella: () => import("lucide-react").then((mod) => mod.Umbrella),
-  Flame: () => import("lucide-react").then((mod) => mod.Flame),
-  Snowflake: () => import("lucide-react").then((mod) => mod.Snowflake),
-  Activity: () => import("lucide-react").then((mod) => mod.Activity),
-  AlertCircle: () => import("lucide-react").then((mod) => mod.AlertCircle),
-  // Add other icons as needed
-}
+// Define icon names to be dynamically imported
+const iconNames = [
+  "Eye", "Coffee", "Moon", "Droplet", "Brain", "Scissors", "Utensils", 
+  "Wine", "Clock", "Music", "Heart", "Dna", "Leaf", "Zap", "Sun", 
+  "Smile", "Frown", "Thermometer", "Wind", "Umbrella", "Flame", 
+  "Snowflake", "Activity", "AlertCircle"
+  // 根据需要添加其他图标
+];
 
-// Dynamically import icons
-import dynamic from "next/dynamic"
+// 创建动态组件
+const dynamicIcons: Record<string, React.ComponentType<{ className?: string }>> = {};
 
-// Create dynamic components for each icon
-const dynamicIcons: Record<string, React.ComponentType<{ className?: string }>> = {}
-Object.entries(iconMapping).forEach(([name]) => {
-  dynamicIcons[name] = dynamic(() => import("lucide-react").then((mod) => mod[name as keyof typeof mod]))
-})
+iconNames.forEach((name) => {
+  // 使用类型断言确保类型正确
+  dynamicIcons[name] = dynamic(
+async (): Promise<{ default: React.ComponentType<{ className?: string }> }> => {
+      const module = await import("lucide-react");
+      const Icon = module[name as keyof typeof module];
+      // 确保返回的Icon组件符合ComponentType<{ className?: string }> 类型
+      return { 
+        default: Icon as React.ComponentType<{ className?: string }> 
+      };
+    },
+    { ssr: false }
+  ) as React.ComponentType<{ className?: string }>;
+});
 
 interface TraitCardProps {
   trait: Trait
