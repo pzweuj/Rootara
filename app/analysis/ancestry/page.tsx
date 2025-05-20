@@ -143,7 +143,7 @@ export default function AncestryAnalysisPage() {
         "Proto Austronesian": "南太平洋群岛",
         "Nilotic": "尼罗特",
         "East Med": "东地中海",
-        "Omotic": "奥摩",
+        "Omotic": "奥摩地区",
         "Munda": "蒙达",
         "North Amerind": "北美原住民",
         "Arabic": "阿拉伯",

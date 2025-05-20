@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, Coffee, Sun, Moon, Droplet } from "lucide-react"
+import { Eye, Coffee, Sun, Moon, Droplet, ExternalLink } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
 
@@ -137,6 +137,7 @@ export function TraitHighlights() {
           ))}
           <Button className="w-full" variant="outline" onClick={() => router.push("/analysis/traits")}>
             {t("viewAllTraits")}
+            <ExternalLink className="h-3 w-3" />
           </Button>
         </div>
       </CardContent>

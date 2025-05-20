@@ -168,7 +168,7 @@ export function GeneticProfileOverview() {
       "Proto_Austronesian": "南太平洋群岛", 
       "Nilotic": "尼罗特", 
       "East_Med": "东地中海", 
-      "Omotic": "奥摩", 
+      "Omotic": "奥摩地区", 
       "Munda": "蒙达", 
       "North_Amerind": "北美原住民", 
       "Arabic": "阿拉伯", 
@@ -294,7 +294,7 @@ export function GeneticProfileOverview() {
                 <div className="mt-4">
                   <Button variant="outline" size="sm" className="gap-1" asChild>
                     <Link href="/analysis/ancestry">
-                      {language === "en" ? "View Details" : "查看详情"}
+                      {language === "en" ? "Ancestry Details" : "祖源分析"}
                       <ExternalLink className="h-3 w-3" />
                     </Link>
                   </Button>
