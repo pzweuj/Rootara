@@ -4,13 +4,8 @@ import type React from "react"
 import type { Trait, TraitCategory } from "@/types/trait"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
 import {
-  Search,
   Plus,
-  Trash2,
   AlertCircle,
   Coffee,
   Moon,
@@ -35,8 +30,6 @@ import {
   Flame,
   Snowflake,
   Activity,
-  Upload,
-  Download,
   Apple,
   Baby,
   Banana,
@@ -94,24 +87,20 @@ import {
   Tv,
   Wheat,
 } from "lucide-react"
-import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
-import defaultTraitsData from "@/data/default-traits.json"
-import { getCategoryColor, getCategoryName } from "@/lib/trait-utils"
+import { loadAllTraits, saveUserTraits } from "@/lib/trait-utils"
+import { TraitFilters } from "./components/trait-filters"
+import { TraitsList } from "./components/trait-list"
+import { CreateTraitDialog } from "./components/create-trait-dialog"
+import { DeleteTraitDialog } from "./components/delete-trait-dialog"
+import { TraitImportExport } from "./components/trait-import-export"
+
+// API基础URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
+// API密钥
+const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
 
 // Icon mapping for rendering
 const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -303,7 +292,7 @@ const calculateTraitScore = (trait: Partial<Trait>): number => {
     // 支持组合公式：IF(condition, SCORE(...), value)
     else if (trait.formula.includes("IF(") && trait.formula.includes("SCORE(")) {
       // 提取IF条件
-      const ifMatch = trait.formula.match(/IF$$(.*?),(.*),(.*)$$/)
+      const ifMatch = trait.formula.match(/IF$$(.*?),\s*(.*?),\s*(.*?)$$/)
       if (!ifMatch || ifMatch.length < 4) return 0
 
       const condition = ifMatch[1].trim()
@@ -496,7 +485,7 @@ const translations = {
 }
 
 export default function TraitsPage() {
-  const { t, language } = useLanguage()
+  const { language } = useLanguage()
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<TraitCategory>("all")
@@ -504,62 +493,14 @@ export default function TraitsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [traitToDelete, setTraitToDelete] = useState<Trait | null>(null)
-  const [newTrait, setNewTrait] = useState<Partial<Trait>>({
-    name: { en: "", "zh-CN": "" },
-    result: { en: "", "zh-CN": "" },
-    description: { en: "", "zh-CN": "" },
-    icon: "AlertCircle",
-    confidence: "medium",
-    category: "appearance",
-    rsids: [],
-    referenceGenotypes: [],
-    yourGenotypes: [],
-    formula: "",
-    scoreThresholds: {},
-  })
-  const [rsidInput, setRsidInput] = useState("")
-  const [referenceGenotypeInput, setReferenceGenotypeInput] = useState("")
-  const [yourGenotypeInput, setYourGenotypeInput] = useState("")
-  const [thresholdName, setThresholdName] = useState("")
-  const [thresholdValue, setThresholdValue] = useState("")
 
-  // Load traits from localStorage and default traits on component mount
+  // Load traits on component mount
   useEffect(() => {
-    const loadTraits = () => {
-      try {
-        // Load default traits
-        // 将默认特征数据转换为 Trait[] 类型
-        const defaultTraits = defaultTraitsData as unknown as Trait[]
-
-        // Load user traits from localStorage
-        const savedTraits = localStorage.getItem("userTraits")
-        if (savedTraits) {
-          const parsedTraits = JSON.parse(savedTraits) as Trait[]
-          // Combine default traits with user traits
-          setTraits([...defaultTraits, ...parsedTraits])
-        } else {
-          setTraits(defaultTraits)
-        }
-      } catch (error) {
-        console.error("Failed to load traits:", error)
-        setTraits(defaultTraitsData as unknown as Trait[])
-      }
-    }
-
-    loadTraits()
+    const allTraits = loadAllTraits()
+    setTraits(allTraits)
   }, [])
 
-  // Save user traits to localStorage
-  const saveUserTraits = (updatedTraits: Trait[]) => {
-    try {
-      // Filter out default traits before saving
-      const userTraits = updatedTraits.filter((trait) => !trait.isDefault)
-      localStorage.setItem("userTraits", JSON.stringify(userTraits))
-    } catch (error) {
-      console.error("Failed to save traits:", error)
-    }
-  }
-
+  // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {
     const matchesSearch = trait.name[language as keyof typeof trait.name]
       .toLowerCase()
@@ -568,91 +509,26 @@ export default function TraitsPage() {
     return matchesSearch && matchesCategory
   })
 
+  // Handle trait card click - navigate to detail page
   const handleTraitClick = (trait: Trait) => {
-    // Navigate to trait detail page
     router.push(`/analysis/traits/${trait.id}`)
   }
 
-  // 修改 handleCreateTrait 函数，自动计算结果
-  const handleCreateTrait = () => {
-    if (!newTrait.name || !newTrait.description) {
-      toast.error(language === "en" ? "Please fill in all required fields" : "请填写所有必填字段")
-      return
-    }
-
-    if (!newTrait.rsids || newTrait.rsids.length === 0) {
-      toast.error(language === "en" ? "Please add at least one RSID" : "请至少添加一个RSID")
-      return
-    }
-
-    if (!newTrait.formula) {
-      toast.error(language === "en" ? "Please enter a calculation formula" : "请输入计算公式")
-      return
-    }
-
-    if (!newTrait.scoreThresholds || Object.keys(newTrait.scoreThresholds).length === 0) {
-      toast.error(language === "en" ? "Please add at least one score threshold" : "请至少添加一个分数阈值")
-      return
-    }
-
-    // 根据公式和阈值自动计算结果
-    const calculatedResult = determineResult(newTrait)
-
-    // Create a new trait
-    const id = `custom-${Date.now()}`
-    const createdTrait: Trait = {
-      ...(newTrait as any),
-      id,
-      isDefault: false,
-      createdAt: new Date().toISOString(),
-      result: calculatedResult,
-    }
-
-    // 设置其他语言的字段（如果为空）
-    if (!createdTrait.name["zh-CN"] && language === "en") {
-      createdTrait.name["zh-CN"] = createdTrait.name.en
-    } else if (!createdTrait.name.en && language === "zh-CN") {
-      createdTrait.name.en = createdTrait.name["zh-CN"]
-    }
-
-    if (!createdTrait.description["zh-CN"] && language === "en") {
-      createdTrait.description["zh-CN"] = createdTrait.description.en
-    } else if (!createdTrait.description.en && language === "zh-CN") {
-      createdTrait.description.en = createdTrait.description["zh-CN"]
-    }
-
-    const updatedTraits = [...traits, createdTrait]
+  // Handle creating a new trait
+  const handleCreateTrait = (newTrait: Trait) => {
+    const updatedTraits = [...traits, newTrait]
     setTraits(updatedTraits)
     saveUserTraits(updatedTraits)
-
-    // 重置表单并关闭对话框
-    setNewTrait({
-      name: { en: "", "zh-CN": "" },
-      result: { en: "", "zh-CN": "" },
-      description: { en: "", "zh-CN": "" },
-      icon: "AlertCircle",
-      confidence: "medium",
-      category: "appearance",
-      rsids: [],
-      referenceGenotypes: [],
-      yourGenotypes: [],
-      formula: "",
-      scoreThresholds: {},
-    })
-    setRsidInput("")
-    setReferenceGenotypeInput("")
-    setYourGenotypeInput("")
-    setThresholdName("")
-    setThresholdValue("")
     setIsCreateDialogOpen(false)
 
     toast.success(
       language === "en"
-        ? `Trait created successfully with result: ${calculatedResult.en}`
-        : `特征创建成功，结果为：${calculatedResult["zh-CN"]}`,
+        ? `Trait created successfully with result: ${newTrait.result.en}`
+        : `特征创建成功，结果为：${newTrait.result["zh-CN"]}`,
     )
   }
 
+  // Handle deleting a trait
   const handleDeleteTrait = () => {
     if (!traitToDelete) return
 
@@ -665,520 +541,51 @@ export default function TraitsPage() {
     toast.success(language === "en" ? "Trait deleted successfully" : "特征删除成功")
   }
 
+  // Open delete confirmation dialog
   const confirmDelete = (e: React.MouseEvent, trait: Trait) => {
     e.stopPropagation() // Prevent card click
     setTraitToDelete(trait)
     setIsDeleteDialogOpen(true)
   }
 
-  // 修改 addRsidGenotype 函数
-  const addRsidGenotype = () => {
-    if (!rsidInput) return
-
-    // 即使基因型是"--"也允许添加
-    const refGenotype = referenceGenotypeInput || "--"
-    const userGenotype = yourGenotypeInput || "--"
-
-    setNewTrait({
-      ...newTrait,
-      rsids: [...(newTrait.rsids || []), rsidInput],
-      referenceGenotypes: [...(newTrait.referenceGenotypes || []), refGenotype],
-      yourGenotypes: [...(newTrait.yourGenotypes || []), userGenotype],
-    })
-
-    // 重置输入
-    setRsidInput("")
-    setReferenceGenotypeInput("")
-    setYourGenotypeInput("")
-  }
-
-  const removeRsidGenotype = (index: number) => {
-    const updatedRsids = [...(newTrait.rsids || [])]
-    const updatedReferenceGenotypes = [...(newTrait.referenceGenotypes || [])]
-    const updatedYourGenotypes = [...(newTrait.yourGenotypes || [])]
-
-    updatedRsids.splice(index, 1)
-    updatedReferenceGenotypes.splice(index, 1)
-    updatedYourGenotypes.splice(index, 1)
-
-    setNewTrait({
-      ...newTrait,
-      rsids: updatedRsids,
-      referenceGenotypes: updatedReferenceGenotypes,
-      yourGenotypes: updatedYourGenotypes,
-    })
-  }
-
-  const addScoreThreshold = () => {
-    if (!thresholdName || !thresholdValue) return
-
-    const updatedThresholds = { ...(newTrait.scoreThresholds || {}) }
-    updatedThresholds[thresholdName] = Number.parseInt(thresholdValue, 10)
-
-    setNewTrait({
-      ...newTrait,
-      scoreThresholds: updatedThresholds,
-    })
-
-    setThresholdName("")
-    setThresholdValue("")
-  }
-
-  const removeScoreThreshold = (key: string) => {
-    const updatedThresholds = { ...(newTrait.scoreThresholds || {}) }
-    delete updatedThresholds[key]
-
-    setNewTrait({
-      ...newTrait,
-      scoreThresholds: updatedThresholds,
-    })
-  }
-
-  // 修改表单部分，移除手动输入结果的字段，添加公式说明
-  const localT = (key: keyof typeof translations.en) => {
-    return translations[language as keyof typeof translations][key] || key
-  }
-
-  const handleImportTraits = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) {
-      toast.error(localT("noFileSelected"))
-      return
-    }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      try {
-        const jsonData = JSON.parse(e.target?.result as string)
-        if (!Array.isArray(jsonData)) {
-          throw new Error("Uploaded file does not contain an array of traits.")
-        }
-
-        // Validate each trait object
-        jsonData.forEach((trait: any) => {
-          if (
-            typeof trait.name !== "object" ||
-            typeof trait.description !== "object" ||
-            typeof trait.category !== "string" ||
-            !Array.isArray(trait.rsids) ||
-            !Array.isArray(trait.referenceGenotypes) ||
-            !Array.isArray(trait.yourGenotypes) ||
-            typeof trait.formula !== "string" ||
-            typeof trait.scoreThresholds !== "object"
-          ) {
-            throw new Error("Invalid trait format in the uploaded file.")
-          }
-        })
-
-        const importedTraits = jsonData as Trait[]
-        const updatedTraits = [...traits, ...importedTraits]
-        setTraits(updatedTraits)
-        saveUserTraits(updatedTraits)
-        toast.success(localT("importSuccess"))
-      } catch (error: any) {
-        console.error("Error importing traits:", error)
-        toast.error(`${localT("importError")}: ${error.message}`)
-      }
-    }
-
-    reader.readAsText(file)
-  }
-
-  const handleExportTraits = () => {
-    const userTraits = traits.filter((trait) => !trait.isDefault)
-    if (userTraits.length === 0) {
-      toast.warning(localT("noCustomTraits"))
-      return
-    }
-    const jsonString = JSON.stringify(userTraits, null, 2)
-    const blob = new Blob([jsonString], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "exported_traits.json"
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-    toast.success(localT("exportSuccess"))
+  // Handle importing traits
+  const handleImportTraits = (importedTraits: Trait[]) => {
+    const updatedTraits = [...traits, ...importedTraits]
+    setTraits(updatedTraits)
+    saveUserTraits(updatedTraits)
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative w-full md:w-2/5">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={localT("searchTraits")}
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="flex flex-1 gap-2">
-          <Tabs
-            defaultValue="all"
-            className="flex-1"
-            value={selectedCategory}
-            onValueChange={(value) => setSelectedCategory(value as TraitCategory)}
-          >
-            <TabsList className="w-full grid grid-cols-6">
-              <TabsTrigger value="all">{localT("allCategories")}</TabsTrigger>
-              <TabsTrigger value="appearance">{localT("appearance")}</TabsTrigger>
-              <TabsTrigger value="internal">{localT("internal")}</TabsTrigger>
-              <TabsTrigger value="nutrition">{localT("nutrition")}</TabsTrigger>
-              <TabsTrigger value="risk">{localT("risk")}</TabsTrigger>
-              <TabsTrigger value="lifestyle">{localT("lifestyle")}</TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <div className="flex gap-2">
-            <input type="file" id="import-traits" className="hidden" accept=".json" onChange={handleImportTraits} />
-            <Button
-              variant="outline"
-              size="icon"
-              title={localT("importTraits")}
-              onClick={() => document.getElementById("import-traits")?.click()}
-            >
-              <Upload className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" title={localT("exportTraits")} onClick={handleExportTraits}>
-              <Download className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        <TraitFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+        <TraitImportExport onImport={handleImportTraits} traits={traits} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredTraits.map((trait) => {
-          const IconComponent = iconMapping[trait.icon] || AlertCircle
-          return (
-            <Card
-              key={trait.id}
-              className="relative cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => handleTraitClick(trait)}
-            >
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center">
-                    <IconComponent className="h-5 w-5 text-primary mr-2" />
-                    <CardTitle className="text-lg">{trait.name[language as keyof typeof trait.name]}</CardTitle>
-                  </div>
-                  <Badge className={getCategoryColor(trait.category)}>
-                    {getCategoryName(trait.category, language)}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <div className="text-xl font-bold mb-1">{trait.result[language as keyof typeof trait.result]}</div>
-                  <p className="text-sm text-muted-foreground">
-                    {trait.description[language as keyof typeof trait.description]}
-                  </p>
-                </div>
-              </CardContent>
-              {!trait.isDefault && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute bottom-2 right-2 text-muted-foreground hover:bg-secondary"
-                  onClick={(e) => confirmDelete(e, trait)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </Card>
-          )
-        })}
+      <TraitsList
+        traits={filteredTraits}
+        onTraitClick={handleTraitClick}
+        onDeleteClick={confirmDelete}
+        onCreateClick={() => setIsCreateDialogOpen(true)}
+      />
 
-        {/* Create New Trait Card */}
-        <Card
-          className="cursor-pointer hover:shadow-md transition-shadow border-dashed flex flex-col items-center justify-center"
-          onClick={() => setIsCreateDialogOpen(true)}
-        >
-          <CardContent className="flex flex-col items-center justify-center h-full py-8">
-            <Plus className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg font-medium text-center">{localT("createNewTrait")}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <CreateTraitDialog
+        isOpen={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onCreateTrait={handleCreateTrait}
+      />
 
-      {/* Create Trait Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{localT("createTrait")}</DialogTitle>
-            <DialogDescription>
-              {language === "en" ? "Fill in the details to create a new trait." : "填写详细信息以创建新特征。"}
-            </DialogDescription>
-          </DialogHeader>
-          {/* 修改对话框内容，移除结果输入框，添加公式说明 */}
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">{localT("traitName")}</Label>
-              <Input
-                id="name"
-                value={newTrait.name?.[language as keyof typeof newTrait.name] || ""}
-                onChange={(e) => {
-                  const updatedName = { ...newTrait.name } as Record<string, string>
-                  updatedName[language] = e.target.value
-                  setNewTrait({ ...newTrait, name: updatedName as any })
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">{localT("description")}</Label>
-              <Textarea
-                id="description"
-                value={newTrait.description?.[language as keyof typeof newTrait.description] || ""}
-                onChange={(e) => {
-                  const updatedDescription = { ...newTrait.description } as Record<string, string>
-                  updatedDescription[language] = e.target.value
-                  setNewTrait({ ...newTrait, description: updatedDescription as any })
-                }}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="confidence">{localT("confidence")}</Label>
-                <Select
-                  value={newTrait.confidence}
-                  onValueChange={(value: "high" | "medium" | "low") => setNewTrait({ ...newTrait, confidence: value })}
-                >
-                  <SelectTrigger id="confidence">
-                    <SelectValue placeholder={localT("confidence")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="low">Low</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">{localT("category")}</Label>
-                <Select
-                  value={newTrait.category}
-                  onValueChange={(value: any) => setNewTrait({ ...newTrait, category: value })}
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder={localT("category")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="appearance">{localT("appearance")}</SelectItem>
-                    <SelectItem value="internal">{localT("internal")}</SelectItem>
-                    <SelectItem value="nutrition">{localT("nutrition")}</SelectItem>
-                    <SelectItem value="risk">{localT("risk")}</SelectItem>
-                    <SelectItem value="lifestyle">{localT("lifestyle")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2 mt-4">
-              <Label>{localT("iconSelector")}</Label>
-              <div className="p-2 border rounded-md">
-                <p className="text-xs text-muted-foreground mb-2">{localT("selectIcon")}</p>
-                <div className="grid grid-cols-8 gap-2">
-                  {Object.entries(iconMapping).map(([name, Icon]) => (
-                    <Button
-                      key={name}
-                      type="button"
-                      variant={newTrait.icon === name ? "default" : "outline"}
-                      size="icon"
-                      className="h-10 w-10"
-                      onClick={() => setNewTrait({ ...newTrait, icon: name })}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>{localT("rsidsAndGenotypes")}</Label>
-              <div className="grid grid-cols-1 gap-2">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder={localT("rsidPlaceholder")}
-                    value={rsidInput}
-                    onChange={(e) => {
-                      setRsidInput(e.target.value)
-                      // 当输入RSID时的自动获取基因型逻辑
-                      const input = e.target.value.trim()
-                      if (input.match(/^rs\d{4,}$/)) {
-                        const genotypeData = fetchGenotypeData(input)
-                        if (genotypeData.reference && genotypeData.user) {
-                          setReferenceGenotypeInput(genotypeData.reference)
-                          setYourGenotypeInput(genotypeData.user)
-                        } else {
-                          // 当查询不到位点时，显示"--"
-                          setReferenceGenotypeInput("--")
-                          setYourGenotypeInput("--")
-                        }
-                      }
-                    }}
-                  />
-                  <Button type="button" onClick={addRsidGenotype} disabled={!rsidInput}>
-                    {localT("add")}
-                  </Button>
-                </div>
-
-                {/* 显示当前选择的RSID的基因型信息 */}
-                {rsidInput && (
-                  <div className="grid grid-cols-2 gap-2 p-2 bg-secondary/30 rounded-md">
-                    <div className="space-y-1">
-                      <Label className="text-xs">{localT("referenceGenotype")}</Label>
-                      <div className="text-sm font-mono">{referenceGenotypeInput || "--"}</div>
-                    </div>
-                    <div className="space-y-1">
-                      <Label className="text-xs">{localT("yourGenotype")}</Label>
-                      <div className="text-sm font-mono">{yourGenotypeInput || "--"}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Display added RSIDs and genotypes */}
-              {newTrait.rsids && newTrait.rsids.length > 0 && (
-                <div className="mt-2 border rounded-md p-2">
-                  <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 font-medium text-sm mb-1">
-                    <div>{localT("rsid")}</div>
-                    <div>{localT("referenceGenotype")}</div>
-                    <div>{localT("yourGenotype")}</div>
-                    <div></div>
-                  </div>
-                  {newTrait.rsids.map((rsid, index) => (
-                    <div key={index} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center">
-                      <div>{rsid}</div>
-                      <div>{newTrait.referenceGenotypes?.[index] || "--"}</div>
-                      <div>{newTrait.yourGenotypes?.[index] || "--"}</div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 text-red-500"
-                        onClick={() => removeRsidGenotype(index)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="formula">{localT("formula")}</Label>
-              <Textarea
-                id="formula"
-                placeholder="SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0)"
-                value={newTrait.formula || ""}
-                onChange={(e) => setNewTrait({ ...newTrait, formula: e.target.value })}
-              />
-              <p className="text-xs text-muted-foreground">
-                {localT("formulaDescription").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-              </p>
-              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-                <p className="text-xs text-yellow-800 dark:text-yellow-200">{localT("resultCalculated")}</p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>{localT("scoreThresholds")}</Label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder={localT("thresholdNamePlaceholder")}
-                  value={thresholdName}
-                  onChange={(e) => setThresholdName(e.target.value)}
-                />
-                <Input
-                  placeholder={localT("thresholdValuePlaceholder")}
-                  type="number"
-                  value={thresholdValue}
-                  onChange={(e) => setThresholdValue(e.target.value)}
-                />
-                <Button
-                  type="button"
-                  onClick={addScoreThreshold}
-                  disabled={!thresholdName || !thresholdValue}
-                  size="sm"
-                >
-                  {localT("add")}
-                </Button>
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="text-xs text-muted-foreground grid grid-cols-2 w-full">
-                  <span>{localT("thresholdName")}</span>
-                  <span>{localT("thresholdValue")}</span>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">{localT("thresholdsDescription")}</p>
-
-              {/* Display added score thresholds */}
-              {newTrait.scoreThresholds && Object.keys(newTrait.scoreThresholds).length > 0 && (
-                <div className="mt-2 border rounded-md p-2">
-                  <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-medium text-sm mb-1">
-                    <div>{localT("result")}</div>
-                    <div>{localT("thresholdValue")}</div>
-                    <div></div>
-                  </div>
-                  {Object.entries(newTrait.scoreThresholds).map(([key, value]) => (
-                    <div key={key} className="grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center">
-                      <div>{key}</div>
-                      <div>{value}</div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 text-red-500"
-                        onClick={() => removeScoreThreshold(key)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              {localT("cancel")}
-            </Button>
-            <Button
-              onClick={handleCreateTrait}
-              disabled={
-                !newTrait.name?.[language as keyof typeof newTrait.name] ||
-                !newTrait.description?.[language as keyof typeof newTrait.description]
-              }
-            >
-              {localT("create")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{localT("deleteConfirmation")}</DialogTitle>
-            <DialogDescription>
-              {localT("deleteTraitQuestion")} {localT("thisActionCannot")}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              {localT("cancel")}
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteTrait}>
-              {localT("delete")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteTraitDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        traitToDelete={traitToDelete}
+        onConfirmDelete={handleDeleteTrait}
+      />
     </div>
   )
 }
