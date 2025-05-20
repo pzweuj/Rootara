@@ -483,7 +483,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       loading: "Loading reports...",
       error: "Error loading reports",
       retry: "Retry",
-      snpCount: "SNP Count:",
+      snpCount: "Variants Count:",
       rename: "Rename",
       renameReport: "Rename Report",
       reportName: "Report Name",
@@ -515,7 +515,7 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       loading: "正在加载报告...",
       error: "加载报告时出错",
       retry: "重试",
-      snpCount: "SNP数量：",
+      snpCount: "位点数量：",
       rename: "重命名",
       renameReport: "重命名报告",
       reportName: "报告名称",
@@ -956,18 +956,6 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                 className="col-span-3"
               />
             </div>
-            {/* 删除以下中文名称输入字段 */}
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <label htmlFor="reportNameZh" className="text-right">
-                {t("reportNameZh")}
-              </label>
-              <Input
-                id="reportNameZh"
-                value={newReportNameZh}
-                onChange={(e) => setNewReportNameZh(e.target.value)}
-                className="col-span-3"
-              />
-            </div> */}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>

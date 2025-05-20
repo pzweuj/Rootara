@@ -74,7 +74,7 @@ export default function UploadReportPage() {
     en: {
       uploadGeneticData: "Upload Genetic Data",
       uploadNewReport: "Upload New Report",
-      uploadFromService: "Upload your genetic data file from a testing service",
+      uploadFromService: "Upload your genetic data file to your local server",
       reportName: "Report Name",
       reportNamePlaceholder: "e.g., My Ancestry Analysis",
       dataSource: "Data Source",
@@ -114,7 +114,7 @@ export default function UploadReportPage() {
     "zh-CN": {
       uploadGeneticData: "上传基因数据",
       uploadNewReport: "上传新报告",
-      uploadFromService: "从测试服务上传您的基因数据文件",
+      uploadFromService: "正在上传您的基因数据文件到本地服务器",
       reportName: "报告名称",
       reportNamePlaceholder: "例如：我的祖源分析",
       dataSource: "数据来源",

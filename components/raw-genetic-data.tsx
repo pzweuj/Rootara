@@ -280,7 +280,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
 
       <div className="flex justify-between items-center mt-4">
         <p className="text-sm text-muted-foreground">
-          {t("showing") || "显示"} {snpData.length} {t("of") || "/"} {pagination.total} SNPs
+          {t("showing") || "显示"} {snpData.length} {t("of") || "/"} {pagination.total} Variants
         </p>
         <div className="flex gap-2">
           <Button 
