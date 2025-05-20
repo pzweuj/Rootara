@@ -291,7 +291,7 @@ export function ClinvarSummary() {
             <span>
               {t("totalVariants")}: {Object.keys(clinvarData.data).length}
             </span>
-            <Button variant="outline" size="sm" className="gap-1" asChild>
+            <Button variant="outline" size="sm" className="gap-1 text-foreground" asChild>
               <Link href="/analysis/clinvar">
                 {t("viewDetails")}
                 <ExternalLink className="h-3 w-3" />
