@@ -212,9 +212,9 @@ export default function UploadReportPage() {
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         // 最多到95%，剩下的5%在API成功后完成
-        if (prev >= 95) {
+        if (prev >= 96) {
           clearInterval(progressInterval)
-          return 95
+          return 96
         }
         return prev + 2
       })
