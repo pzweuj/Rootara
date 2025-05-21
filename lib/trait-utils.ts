@@ -150,7 +150,7 @@ export function determineTraitResult(trait: Trait, language = "en"): string {
 export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     appearance: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    internal: "bg-purple-300 text-purple-900 dark:bg-purple-700 dark:text-purple-100",
+    internal: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200",
     nutrition: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     risk: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
     lifestyle: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
