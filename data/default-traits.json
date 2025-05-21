@@ -7,8 +7,8 @@
       "default": ""
     },
     "description": {
-      "en": "You have genetic markers associated with brown eyes.",
-      "zh-CN": "您的基因标记与棕色眼睛相关。",
+      "en": "You have genetic markers associated with your eyes' colour.",
+      "zh-CN": "您眼睛的虹膜颜色与基因相关。",
       "default": ""
     },
     "icon": "Eye",
@@ -73,7 +73,7 @@
       "zh-CN": "您的基因标记与成年后乳糖耐受性相关。",
       "default": ""
     },
-    "icon": "Stomach",
+    "icon": "Milk",
     "confidence": "high",
     "isDefault": true,
     "createdAt": "2025-05-20T09:29:29.317091",
@@ -131,8 +131,8 @@
       "default": ""
     },
     "description": {
-      "en": "You have genetic markers associated with slow caffeine metabolism, which may increase sensitivity to caffeine.",
-      "zh-CN": "您的基因标记与咖啡因代谢缓慢相关，这可能会增加对咖啡因的敏感性。",
+      "en": "You have genetic markers associated with caffeine metabolism.",
+      "zh-CN": "您的基因标记与咖啡因代谢速率相关。",
       "default": ""
     },
     "icon": "Coffee",
@@ -251,11 +251,11 @@
       "default": ""
     },
     "description": {
-      "en": "You have genetic markers associated with reduced vitamin B12 absorption, which may require dietary adjustments.",
-      "zh-CN": "您的基因标记与维生素B12吸收减少相关，可能需要调整饮食。",
+      "en": "You have genetic markers associated with vitamin B12 absorption, which may require dietary adjustments.",
+      "zh-CN": "您的基因标记与维生素B12吸收相关，可能需要调整饮食。",
       "default": ""
     },
-    "icon": "Vitamin",
+    "icon": "Microscope",
     "confidence": "medium",
     "isDefault": true,
     "createdAt": "2025-05-20T09:29:29.339807",
