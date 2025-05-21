@@ -109,12 +109,12 @@ export default function UploadReportPage() {
       downloadFromFTDNA: "Download from FTDNA: myDNA → Download Raw Data",
       importantNote: "Important Note",
       uncompressedFiles:
-        "Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract it first. Maximum file size is 50MB.",
+        "Files must be uncompressed before uploading. If your file is in a .zip or .gz format, please extract it first. Maximum file size is 50MB.\n\nRootara cannot match all the variants, but non-core variants will not affect the integrity of the original data.",
     },
     "zh-CN": {
       uploadGeneticData: "上传基因数据",
       uploadNewReport: "上传新报告",
-      uploadFromService: "正在上传您的基因数据文件到本地服务器",
+      uploadFromService: "上传您的基因数据文件到本地服务器",
       reportName: "报告名称",
       reportNamePlaceholder: "例如：我的祖源分析",
       dataSource: "数据来源",
@@ -147,7 +147,7 @@ export default function UploadReportPage() {
       ftdnaDataFormat: "FTDNA提供CSV格式(.csv)的原始数据。",
       downloadFromFTDNA: "从FTDNA下载：myDNA → 下载原始数据",
       importantNote: "重要提示",
-      uncompressedFiles: "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。",
+      uncompressedFiles: "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。\n\nRootara无法匹配所有的位点，部分非核心位点信息会丢失，但不会影响储存的原始数据的完整性。",
     },
   }
 
@@ -486,7 +486,14 @@ export default function UploadReportPage() {
                 <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">{localT("importantNote")}</p>
-                  <p className="text-sm text-yellow-700 dark:text-yellow-400">{localT("uncompressedFiles")}</p>
+                  <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                    {localT("uncompressedFiles").split('\n').map((line, index) => (
+                      <span key={index}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  </p>
                 </div>
               </div>
             </div>
