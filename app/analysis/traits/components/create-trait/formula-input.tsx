@@ -12,17 +12,18 @@ interface FormulaInputProps {
 export function FormulaInput({ formula, onChange }: FormulaInputProps) {
   const { language } = useLanguage()
 
+  // 修改translations中的formulaDescription
   const translations = {
     en: {
       formula: "Calculation Formula",
       formulaDescription:
-        "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
+        "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, true, false) for boolean results",
       resultCalculated: "Result will be automatically calculated based on formula and thresholds",
     },
     "zh-CN": {
       formula: "计算公式",
       formulaDescription:
-        "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
+        "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, true, false) 用于布尔值结果",
       resultCalculated: "结果将根据公式和阈值自动计算",
     },
   }

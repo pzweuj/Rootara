@@ -119,8 +119,26 @@ export const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": s
 
   const score = calculateTraitScore(trait)
 
+  // 分离数字阈值和布尔值阈值
+  const numericThresholds: [string, number][] = []
+  const booleanThresholds: [string, boolean][] = []
+
+  Object.entries(trait.scoreThresholds).forEach(([key, value]) => {
+    if (typeof value === "boolean") {
+      booleanThresholds.push([key, value])
+    } else {
+      numericThresholds.push([key, value])
+    }
+  })
+
+  // 如果有布尔值为true的阈值，优先返回它
+  const trueThreshold = booleanThresholds.find(([_, value]) => value === true)
+  if (trueThreshold) {
+    return { en: trueThreshold[0], "zh-CN": trueThreshold[0] }
+  }
+
   // 按分数阈值从高到低排序
-  const sortedThresholds = Object.entries(trait.scoreThresholds).sort((a, b) => b[1] - a[1])
+  const sortedThresholds = numericThresholds.sort((a, b) => b[1] - a[1])
 
   // 找到第一个分数小于等于计算分数的阈值
   for (const [result, threshold] of sortedThresholds) {
@@ -129,7 +147,13 @@ export const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": s
     }
   }
 
-  // 如果没有匹配的阈值，返回分数最低的结果
-  const lowestResult = sortedThresholds[sortedThresholds.length - 1][0]
-  return { en: lowestResult, "zh-CN": lowestResult }
+  // 如果没有匹配的阈值，返回分数最低的结果或第一个布尔值为false的结果
+  if (sortedThresholds.length > 0) {
+    const lowestResult = sortedThresholds[sortedThresholds.length - 1][0]
+    return { en: lowestResult, "zh-CN": lowestResult }
+  } else if (booleanThresholds.length > 0) {
+    return { en: booleanThresholds[0][0], "zh-CN": booleanThresholds[0][0] }
+  }
+
+  return { en: "", "zh-CN": "" }
 }

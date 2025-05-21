@@ -100,13 +100,31 @@ export function calculateTraitScore(trait: Trait): number {
 }
 
 /**
- * Determines the result for a trait based on its score
+ * Determines the result for a trait based on its score or boolean values
  */
 export function determineTraitResult(trait: Trait, language = "en"): string {
   const score = calculateTraitScore(trait)
 
+  // 分离数字阈值和布尔值阈值
+  const numericThresholds: [string, number][] = []
+  const booleanThresholds: [string, boolean][] = []
+
+  Object.entries(trait.scoreThresholds).forEach(([key, value]) => {
+    if (typeof value === "boolean") {
+      booleanThresholds.push([key, value])
+    } else {
+      numericThresholds.push([key, value])
+    }
+  })
+
+  // 如果有布尔值为true的阈值，优先返回它
+  const trueThreshold = booleanThresholds.find(([_, value]) => value === true)
+  if (trueThreshold) {
+    return trueThreshold[0]
+  }
+
   // Sort thresholds in descending order
-  const sortedThresholds = Object.entries(trait.scoreThresholds).sort((a, b) => b[1] - a[1])
+  const sortedThresholds = numericThresholds.sort((a, b) => b[1] - a[1])
 
   // Find the first threshold that the score meets or exceeds
   for (const [result, threshold] of sortedThresholds) {
@@ -115,8 +133,15 @@ export function determineTraitResult(trait: Trait, language = "en"): string {
     }
   }
 
-  // If no threshold is met (shouldn't happen with proper setup)
-  return Object.keys(trait.scoreThresholds)[0]
+  // If no threshold is met, return the lowest numeric threshold or first boolean false
+  if (sortedThresholds.length > 0) {
+    return sortedThresholds[sortedThresholds.length - 1][0]
+  } else if (booleanThresholds.length > 0) {
+    return booleanThresholds[0][0]
+  }
+
+  // If no thresholds at all (shouldn't happen with proper setup)
+  return Object.keys(trait.scoreThresholds)[0] || ""
 }
 
 /**

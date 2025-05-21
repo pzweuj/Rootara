@@ -6,37 +6,49 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Trash2 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ScoreThresholdManagerProps {
-  thresholds: Record<string, number>
-  onChange: (thresholds: Record<string, number>) => void
+  thresholds: Record<string, number | boolean>
+  onChange: (thresholds: Record<string, number | boolean>) => void
 }
 
 export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdManagerProps) {
   const { language } = useLanguage()
   const [thresholdName, setThresholdName] = useState("")
   const [thresholdValue, setThresholdValue] = useState("")
+  const [thresholdType, setThresholdType] = useState<"number" | "boolean">("number")
 
   const translations = {
     en: {
-      scoreThresholds: "Score Thresholds",
+      scoreThresholds: "Score Thresholds or Boolean Values",
       thresholdName: "Result Name",
-      thresholdValue: "Minimum Score",
+      thresholdValue: "Value",
+      thresholdType: "Type",
       thresholdNamePlaceholder: "e.g., Brown",
       thresholdValuePlaceholder: "e.g., 12",
-      thresholdsDescription: "Define the score thresholds for different results (higher scores are checked first)",
+      thresholdsDescription: "Define the score thresholds or boolean values for different results (higher scores are checked first)",
       add: "Add",
       result: "Result",
+      number: "Number",
+      boolean: "Boolean",
+      true: "True",
+      false: "False",
     },
     "zh-CN": {
-      scoreThresholds: "分数阈值",
+      scoreThresholds: "分数阈值或布尔值",
       thresholdName: "结果名称",
-      thresholdValue: "最小分数",
+      thresholdValue: "值",
+      thresholdType: "类型",
       thresholdNamePlaceholder: "例如：棕色",
       thresholdValuePlaceholder: "例如：12",
-      thresholdsDescription: "定义不同结果的分数阈值（先检查较高的分数）",
+      thresholdsDescription: "定义不同结果的分数阈值或布尔值（先检查较高的分数）",
       add: "添加",
       result: "结果",
+      number: "数字",
+      boolean: "布尔值",
+      true: "真",
+      false: "假",
     },
   }
 
@@ -46,7 +58,12 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
     if (!thresholdName || !thresholdValue) return
 
     const updatedThresholds = { ...thresholds }
-    updatedThresholds[thresholdName] = Number.parseInt(thresholdValue, 10)
+    
+    if (thresholdType === "number") {
+      updatedThresholds[thresholdName] = Number.parseInt(thresholdValue, 10)
+    } else {
+      updatedThresholds[thresholdName] = thresholdValue === "true"
+    }
 
     onChange(updatedThresholds)
 
@@ -70,12 +87,42 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           value={thresholdName}
           onChange={(e) => setThresholdName(e.target.value)}
         />
-        <Input
-          placeholder={t("thresholdValuePlaceholder")}
-          type="number"
-          value={thresholdValue}
-          onChange={(e) => setThresholdValue(e.target.value)}
-        />
+        <Select
+          value={thresholdType}
+          onValueChange={(value) => {
+            setThresholdType(value as "number" | "boolean")
+            setThresholdValue(value === "boolean" ? "true" : "")
+          }}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue placeholder={t("thresholdType")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="number">{t("number")}</SelectItem>
+            <SelectItem value="boolean">{t("boolean")}</SelectItem>
+          </SelectContent>
+        </Select>
+        {thresholdType === "number" ? (
+          <Input
+            placeholder={t("thresholdValuePlaceholder")}
+            type="number"
+            value={thresholdValue}
+            onChange={(e) => setThresholdValue(e.target.value)}
+          />
+        ) : (
+          <Select
+            value={thresholdValue}
+            onValueChange={(value) => setThresholdValue(value)}
+          >
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Value" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="true">{t("true")}</SelectItem>
+              <SelectItem value="false">{t("false")}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         <Button type="button" onClick={addScoreThreshold} disabled={!thresholdName || !thresholdValue} size="sm">
           {t("add")}
         </Button>
@@ -99,7 +146,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           {Object.entries(thresholds).map(([key, value]) => (
             <div key={key} className="grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center">
               <div>{key}</div>
-              <div>{value}</div>
+              <div>{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div>
               <Button
                 variant="ghost"
                 size="sm"

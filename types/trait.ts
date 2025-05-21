@@ -21,7 +21,7 @@ export interface Trait {
   referenceGenotypes: string[]
   yourGenotypes: string[]
   formula: string
-  scoreThresholds: Record<string, number>
+  scoreThresholds: Record<string, number | boolean>
 }
 
 export type TraitCategory = "appearance" | "internal" | "nutrition" | "risk" | "lifestyle" | "all"
