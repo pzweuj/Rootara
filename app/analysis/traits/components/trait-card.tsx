@@ -12,11 +12,19 @@ import type { Trait } from "@/types/trait"
 
 // Define icon names to be dynamically imported
 const iconNames = [
-  "Eye", "Coffee", "Moon", "Droplet", "Brain", "Scissors", "Utensils", 
-  "Wine", "Clock", "Music", "Heart", "Dna", "Leaf", "Zap", "Sun", 
-  "Smile", "Frown", "Thermometer", "Wind", "Umbrella", "Flame", 
-  "Snowflake", "Activity", "AlertCircle"
-  // 根据需要添加其他图标
+  "Plus", "AlertCircle", "Coffee", "Moon", "Brain", "Music", "Clock", "Droplet",
+  "Eye", "Scissors", "Utensils", "Wine", "Heart", "Dna", "Leaf", "Zap", "Sun",
+  "Smile", "Frown", "Thermometer", "Wind", "Umbrella", "Flame", "Snowflake",
+  "Activity", "Apple", "Baby", "Banana", "Beef", "Beer", "Book", "Braces",
+  "Briefcase", "Cake", "Camera", "Car", "Cat", "ChefHat", "Cherry", "Cloud",
+  "Code", "Compass", "Cookie", "Cpu", "Crown", "Diamond", "Dog", "Egg", "Fish",
+  "Flower", "Gamepad2", "Gift", "Glasses", "Globe", "Grape", "Hammer", "HandMetal",
+  "Headphones", "Home", "IceCream", "Landmark", "Lightbulb", "Microscope", "Mountain",
+  "Palette", "Pill", "Pizza", "Plane", "Rocket", "Salad", "Shirt", "ShoppingBag",
+  "Smartphone", "Star", "Stethoscope", "Syringe", "Target", "Tent", "Trophy",
+  "Tv", "Wheat", "AlertTriangle", "Milk", "Paw", "Pencil", "Pig", "PizzaSlice",
+  "Poo", "QuestionMark", "Ribbon", "Shield", "Shirt2", "Socks", "Star2", "Truck",
+  "Wifi",
 ];
 
 // 创建动态组件
@@ -62,7 +70,9 @@ export function TraitCard({ trait, onClick, onDeleteClick }: TraitCardProps) {
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <div className="text-xl font-bold mb-1">{trait.result[language as keyof typeof trait.result]}</div>
+          <div className="text-xl font-bold mb-1">
+            {trait.result_current?.[language as keyof typeof trait.result_current] || trait.result_current?.default}
+          </div>
           <p className="text-sm text-muted-foreground">
             {trait.description[language as keyof typeof trait.description]}
           </p>
