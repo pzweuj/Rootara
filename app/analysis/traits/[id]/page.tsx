@@ -38,33 +38,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { Badge } from "@/components/ui/badge"
 import defaultTraitsData from "@/data/default-traits.json"
 import { getCategoryColor, getCategoryName } from "@/lib/trait-utils"
-
-// Define the trait interface
-interface Trait {
-  id: string
-  name: {
-    en: string
-    "zh-CN": string
-  }
-  result: {
-    en: string
-    "zh-CN": string
-  }
-  description: {
-    en: string
-    "zh-CN": string
-  }
-  icon: string
-  confidence: "high" | "medium" | "low"
-  isDefault: boolean
-  createdAt: string
-  category: "appearance" | "sensory" | "nutrition" | "sleep" | "cognitive"
-  rsids: string[]
-  referenceGenotypes: string[]
-  yourGenotypes: string[]
-  formula: string
-  scoreThresholds: Record<string, number>
-}
+import { Trait } from "@/types/trait"
 
 // 添加图标映射对象
 const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -223,7 +197,7 @@ export default function TraitDetailPage() {
                 </div>
               )}
               <div>
-                <CardTitle className="text-2xl">{trait.name[language as keyof typeof trait.name]}</CardTitle>
+                <CardTitle className="text-2xl">{trait.name[language as keyof typeof trait.name] || trait.name.default}</CardTitle>
                 <CardDescription>{t("traitDetails")}</CardDescription>
               </div>
             </div>
@@ -239,12 +213,12 @@ export default function TraitDetailPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-lg font-medium">{t("result")}</h3>
-            <p className="text-xl">{trait.result[language as keyof typeof trait.result]}</p>
+            <p className="text-xl">{trait.result_current[language as keyof typeof trait.result_current] || trait.result_current.default}</p>
           </div>
 
           <div className="space-y-2">
             <h3 className="text-lg font-medium">{t("description")}</h3>
-            <p>{trait.description[language as keyof typeof trait.description]}</p>
+            <p>{trait.description[language as keyof typeof trait.description] || trait.description.default}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -292,8 +266,12 @@ export default function TraitDetailPage() {
                       {trait.rsids.map((rsid, index) => (
                         <tr key={index} className="border-t">
                           <td className="px-4 py-2 text-sm">{rsid}</td>
-                          <td className="px-4 py-2 text-sm font-mono">{trait.referenceGenotypes[index]}</td>
-                          <td className="px-4 py-2 text-sm font-mono">{trait.yourGenotypes[index]}</td>
+                          <td className="px-4 py-2 text-sm font-mono">
+                            {trait.referenceGenotypes[index] || '--'}
+                          </td>
+                          <td className="px-4 py-2 text-sm font-mono">
+                            {trait.yourGenotypes[index] || '--'}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -320,11 +298,22 @@ export default function TraitDetailPage() {
                         </thead>
                         <tbody>
                           {Object.entries(trait.scoreThresholds)
-                            .sort((a, b) => b[1] - a[1]) // Sort by score in descending order
+                            .sort((a, b) => {
+                              // 如果两个值都是布尔值
+                              if (typeof a[1] === 'boolean' && typeof b[1] === 'boolean') {
+                                return b[1] === a[1] ? 0 : b[1] ? -1 : 1; // true排在false前面
+                              }
+                              // 如果只有a是布尔值
+                              if (typeof a[1] === 'boolean') return -1;
+                              // 如果只有b是布尔值
+                              if (typeof b[1] === 'boolean') return 1;
+                              // 如果都是数字，按降序排序
+                              return b[1] - a[1];
+                            })
                             .map(([result, score], index) => (
                               <tr key={index} className="border-t">
                                 <td className="px-4 py-2 text-sm">{result}</td>
-                                <td className="px-4 py-2 text-sm">{score}</td>
+                                <td className="px-4 py-2 text-sm">{score.toString()}</td>
                               </tr>
                             ))}
                         </tbody>
