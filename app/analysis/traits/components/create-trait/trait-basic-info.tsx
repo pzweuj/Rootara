@@ -52,6 +52,8 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
           onChange={(e) => {
             const updatedName = { ...trait.name } as Record<string, string>
             updatedName[language] = e.target.value
+            // 同时更新default字段
+            updatedName.default = e.target.value
             onChange({ ...trait, name: updatedName as any })
           }}
         />
@@ -65,6 +67,8 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
           onChange={(e) => {
             const updatedDescription = { ...trait.description } as Record<string, string>
             updatedDescription[language] = e.target.value
+            // 同时更新default字段
+            updatedDescription.default = e.target.value
             onChange({ ...trait, description: updatedDescription as any })
           }}
         />

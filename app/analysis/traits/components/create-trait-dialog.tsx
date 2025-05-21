@@ -35,9 +35,9 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
   const { language } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [newTrait, setNewTrait] = useState<Partial<Trait>>({
-    name: { en: "", "zh-CN": "" },
-    result: { en: "", "zh-CN": "" },
-    description: { en: "", "zh-CN": "" },
+    name: { en: "", "zh-CN": "", default: "" },
+    result: { en: "", "zh-CN": "", default: "" },
+    description: { en: "", "zh-CN": "", default: "" },
     icon: "AlertCircle",
     confidence: "medium",
     category: "appearance",
@@ -46,6 +46,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
     yourGenotypes: [],
     formula: "",
     scoreThresholds: {},
+    reference: [],
   })
 
   const translations = {
@@ -156,9 +157,9 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       
       // 重置表单
       setNewTrait({
-        name: { en: "", "zh-CN": "" },
-        result: { en: "", "zh-CN": "" },
-        description: { en: "", "zh-CN": "" },
+        name: { en: "", "zh-CN": "", default: ""  },
+        result: { en: "", "zh-CN": "", default: ""  },
+        description: { en: "", "zh-CN": "", default: ""  },
         icon: "AlertCircle",
         confidence: "medium",
         category: "appearance",
@@ -167,6 +168,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
         yourGenotypes: [],
         formula: "",
         scoreThresholds: {},
+        reference: [],
       })
     } catch (error) {
       console.error('Error creating trait:', error)

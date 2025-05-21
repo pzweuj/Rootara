@@ -97,11 +97,6 @@ import { CreateTraitDialog } from "./components/create-trait-dialog"
 import { DeleteTraitDialog } from "./components/delete-trait-dialog"
 import { TraitImportExport } from "./components/trait-import-export"
 
-// API基础URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-// API密钥
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
-
 // Icon mapping for rendering
 const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
   Eye: Eye,
