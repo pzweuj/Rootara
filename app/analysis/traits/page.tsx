@@ -2,7 +2,7 @@
 
 import type React from "react"
 import type { Trait, TraitCategory } from "@/types/trait"
-
+import { Badge } from "@/components/ui/badge"
 import { useState, useEffect } from "react"
 import {
   Plus,
@@ -86,6 +86,7 @@ import {
   Trophy,
   Tv,
   Wheat,
+  AlertTriangle,
 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
@@ -96,6 +97,8 @@ import { TraitsList } from "./components/trait-list"
 import { CreateTraitDialog } from "./components/create-trait-dialog"
 import { DeleteTraitDialog } from "./components/delete-trait-dialog"
 import { TraitImportExport } from "./components/trait-import-export"
+import { Card, CardContent } from "@/components/ui/card"
+import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 // Icon mapping for rendering
 const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -182,45 +185,6 @@ const iconMapping: Record<string, React.ComponentType<{ className?: string }>> =
   Wheat: Wheat,
 }
 
-// 修改 fetchGenotypeData 函数，增强其功能
-const fetchGenotypeData = (rsid: string) => {
-  // 这里应该是从基因报告中获取数据的实际逻辑
-  // 目前使用模拟数据进行演示
-  const mockGenotypes = {
-    rs12913832: { reference: "GG", user: "AG" },
-    rs1800407: { reference: "CC", user: "CT" },
-    rs16891982: { reference: "CC", user: "CC" },
-    rs1393350: { reference: "GG", user: "AG" },
-    rs4778138: { reference: "GG", user: "AG" },
-    rs683: { reference: "CC", user: "CT" },
-    rs3827760: { reference: "AA", user: "AG" },
-    rs11803731: { reference: "GG", user: "AG" },
-    rs713598: { reference: "CC", user: "CG" },
-    rs1726866: { reference: "AA", user: "AG" },
-    rs10246939: { reference: "TT", user: "CT" },
-    rs762551: { reference: "AA", user: "AC" },
-    rs2472297: { reference: "CC", user: "CT" },
-    rs4988235: { reference: "TT", user: "CT" },
-    rs182549: { reference: "TT", user: "CT" },
-    rs671: { reference: "GG", user: "GG" },
-    rs1229984: { reference: "CC", user: "CC" },
-    rs73598374: { reference: "CC", user: "CT" },
-    rs5751876: { reference: "TT", user: "TC" },
-    rs1801260: { reference: "CC", user: "CC" },
-    rs228697: { reference: "GG", user: "GG" },
-    rs6265: { reference: "GG", user: "AG" },
-    rs17070145: { reference: "CC", user: "CT" },
-    rs9854612: { reference: "TT", user: "CT" },
-    rs4148254: { reference: "GG", user: "GA" },
-  }
-
-  if (mockGenotypes[rsid as keyof typeof mockGenotypes]) {
-    return mockGenotypes[rsid as keyof typeof mockGenotypes]
-  }
-
-  // 如果找不到数据，返回空值
-  return { reference: "", user: "" }
-}
 
 // 添加计算特征分数的函数
 const calculateTraitScore = (trait: Partial<Trait>): number => {
@@ -382,124 +346,10 @@ const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": string }
 
 const translations = {
   en: {
-    traits: "Traits",
-    searchTraits: "Search traits...",
-    allCategories: "All",
-    appearance: "Appearance",
-    sensory: "Sensory",
-    nutrition: "Nutrition",
-    sleep: "Sleep",
-    cognitive: "Cognitive",
-    internal: "Internal",
-    risk: "Risks",
-    lifestyle: "Lifestyle",
-    createNewTrait: "Create New Trait",
-    createTrait: "Create Trait",
-    traitName: "Trait Name",
-    result: "Result",
-    description: "Description",
-    icon: "Icon",
-    confidence: "Confidence",
-    category: "Category",
-    cancel: "Cancel",
-    create: "Create",
-    deleteConfirmation: "Delete Confirmation",
-    deleteTraitQuestion: "Are you sure you want to delete this trait?",
-    thisActionCannot: "This action cannot be undone.",
-    delete: "Delete",
-    rsid: "RSID",
-    referenceGenotype: "Reference Genotype",
-    yourGenotype: "Your Genotype",
-    addRsid: "Add RSID",
-    rsidsAndGenotypes: "RSIDs and Genotypes",
-    formula: "Calculation Formula",
-    formulaDescription:
-      "Define how to calculate the score. Examples: SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) or IF(rs12913832=GG, 10, 0) or IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
-    rsidPlaceholder: "e.g., rs12913832",
-    genotypePlaceholder: "e.g., GG",
-    add: "Add",
-    remove: "Remove",
-    scoreThresholds: "Score Thresholds",
-    thresholdName: "Result Name",
-    thresholdValue: "Minimum Score",
-    thresholdNamePlaceholder: "e.g., Brown",
-    thresholdValuePlaceholder: "e.g., 12",
-    thresholdsDescription: "Define the score thresholds for different results (higher scores are checked first)",
-    iconSelector: "Icon Selector",
-    selectIcon: "Select an icon for your trait",
-    autoFetchGenotypes: "Auto-fetch genotypes from your report",
-    manualEntry: "Manual entry",
-    rsidNotFound: "RSID not found in your report",
-    fetchingGenotypes: "Fetching genotypes...",
-    genotypesFetched: "Genotypes fetched successfully",
-    resultCalculated: "Result will be automatically calculated based on formula and thresholds",
-    importTraits: "Import Traits",
-    exportTraits: "Export Traits",
-    importSuccess: "Traits imported successfully",
-    importError: "Error importing traits",
-    noCustomTraits: "No custom traits to export",
-    exportSuccess: "Traits exported successfully",
-    noFileSelected: "No file selected",
+    notice: "Note: These trait analyses are based on literature and user-contributed data, not clinical-grade interpretation. Results are for informational purposes only and should not be used as medical advice."
   },
   "zh-CN": {
-    traits: "特征",
-    searchTraits: "搜索特征...",
-    allCategories: "所有类别",
-    appearance: "外观",
-    sensory: "感官",
-    nutrition: "营养",
-    sleep: "睡眠",
-    cognitive: "认知",
-    internal: "内在",
-    risk: "风险",
-    lifestyle: "生活",
-    createNewTrait: "创建新特征",
-    createTrait: "创建特征",
-    traitName: "特征名称",
-    result: "结果",
-    description: "描述",
-    icon: "图标",
-    confidence: "可信度",
-    category: "类别",
-    cancel: "取消",
-    create: "创建",
-    deleteConfirmation: "删除确认",
-    deleteTraitQuestion: "您确定要删除这个特征吗？",
-    thisActionCannot: "此操作无法撤销。",
-    delete: "删除",
-    rsid: "RSID",
-    referenceGenotype: "参考基因型",
-    yourGenotype: "您的基因型",
-    addRsid: "添加RSID",
-    rsidsAndGenotypes: "RSID和基因型",
-    formula: "计算公式",
-    formulaDescription:
-      "定义如何计算分数。例如：SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0) 或 IF(rs12913832=GG, 10, 0) 或 IF(rs12913832=GG, SCORE(rs1800407:CC=5,CT=3,TT=0), 0)",
-    rsidPlaceholder: "例如：rs12913832",
-    genotypePlaceholder: "例如：GG",
-    add: "添加",
-    remove: "移除",
-    scoreThresholds: "分数阈值",
-    thresholdName: "结果名称",
-    thresholdValue: "最小分数",
-    thresholdNamePlaceholder: "例如：棕色",
-    thresholdValuePlaceholder: "例如：12",
-    thresholdsDescription: "定义不同结果的分数阈值（先检查较高的分数）",
-    iconSelector: "图标选择器",
-    selectIcon: "为您的特征选择一个图标",
-    autoFetchGenotypes: "从您的报告中自动获取基因型",
-    manualEntry: "手动输入",
-    rsidNotFound: "在您的报告中找不到此RSID",
-    fetchingGenotypes: "正在获取基因型...",
-    genotypesFetched: "基因型获取成功",
-    resultCalculated: "结果将根据公式和阈值自动计算",
-    importTraits: "导入特征",
-    exportTraits: "导出特征",
-    importSuccess: "特征导入成功",
-    importError: "导入特征时出错",
-    noCustomTraits: "没有自定义特征可导出",
-    exportSuccess: "特征导出成功",
-    noFileSelected: "未选择文件",
+    notice: "注意：这些特征分析基于文献和用户贡献数据，非临床级别解读。结果仅供参考，不能作为医疗建议。"
   },
 }
 
@@ -574,8 +424,32 @@ export default function TraitsPage() {
     saveUserTraits(updatedTraits)
   }
 
+  const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
+
   return (
     <div className="space-y-6">
+      <div className="flex space-x-4">
+        <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 flex-[3]">
+          <CardContent className="flex items-center space-x-4 py-4">
+            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            <div>
+              <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                {translations[language === "en" ? "en" : "zh-CN"].notice}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="flex-[1] min-w-[200px] border-0 shadow-none">
+          <CardContent className="flex items-center justify-center py-4">
+            <Badge variant="outline" className="text-xs font-mono">
+              {language === "en" ? "Report ID: " : "报告编号: "}
+              {currentReportId}
+            </Badge>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="flex flex-col md:flex-row gap-4">
         <TraitFilters
           searchQuery={searchQuery}
