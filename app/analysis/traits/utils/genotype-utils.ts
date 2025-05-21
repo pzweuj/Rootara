@@ -1,39 +1,45 @@
-// 从基因报告中获取基因型数据
-export const fetchGenotypeData = (rsid: string) => {
-  // 这里应该是从基因报告中获取数据的实际逻辑
-  // 目前使用模拟数据进行演示
-  const mockGenotypes = {
-    rs12913832: { reference: "GG", user: "AG" },
-    rs1800407: { reference: "CC", user: "CT" },
-    rs16891982: { reference: "CC", user: "CC" },
-    rs1393350: { reference: "GG", user: "AG" },
-    rs4778138: { reference: "GG", user: "AG" },
-    rs683: { reference: "CC", user: "CT" },
-    rs3827760: { reference: "AA", user: "AG" },
-    rs11803731: { reference: "GG", user: "AG" },
-    rs713598: { reference: "CC", user: "CG" },
-    rs1726866: { reference: "AA", user: "AG" },
-    rs10246939: { reference: "TT", user: "CT" },
-    rs762551: { reference: "AA", user: "AC" },
-    rs2472297: { reference: "CC", user: "CT" },
-    rs4988235: { reference: "TT", user: "CT" },
-    rs182549: { reference: "TT", user: "CT" },
-    rs671: { reference: "GG", user: "GG" },
-    rs1229984: { reference: "CC", user: "CC" },
-    rs73598374: { reference: "CC", user: "CT" },
-    rs5751876: { reference: "TT", user: "TC" },
-    rs1801260: { reference: "CC", user: "CC" },
-    rs228697: { reference: "GG", user: "GG" },
-    rs6265: { reference: "GG", user: "AG" },
-    rs17070145: { reference: "CC", user: "CT" },
-    rs9854612: { reference: "TT", user: "CT" },
-    rs4148254: { reference: "GG", user: "GA" },
+// 从后端API获取基因型数据
+export const fetchGenotypeData = async (rsid: string, reportId: string) => {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
+  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}/variant/rsid`, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'x-api-key': API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        rsid: [rsid],
+        report_id: reportId
+      })
+    });
+    
+    const data = await response.json();
+    
+    // 检查是否成功获取数据
+    if (data && data[rsid]) {
+      const variantData = data[rsid];
+      
+      // 如果无法查询到位点信息
+      if (variantData.ref === null || variantData.genotype === null) {
+        return { reference: '--', user: '--' };
+      }
+      
+      // 构建reference基因型（ref + ref）
+      const reference = variantData.ref + variantData.ref;
+      // 直接使用返回的genotype作为user基因型
+      const user = variantData.genotype;
+      
+      return { reference, user };
+    }
+    
+    // 如果找不到数据，返回'--'
+    return { reference: '--', user: '--' };
+  } catch (error) {
+    console.error('Error fetching genotype data:', error);
+    return { reference: '--', user: '--' };
   }
-
-  if (mockGenotypes[rsid as keyof typeof mockGenotypes]) {
-    return mockGenotypes[rsid as keyof typeof mockGenotypes]
-  }
-
-  // 如果找不到数据，返回空值
-  return { reference: "", user: "" }
 }
