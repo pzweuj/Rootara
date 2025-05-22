@@ -56,10 +56,6 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
     "21", "22", "X", "Y", "MT"
   ];
 
-  // 添加环境变量配置
-  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
-  
   // 获取数据的函数
   const fetchData = async () => {
     if (!currentReportId) return
@@ -68,38 +64,23 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
     setError(null)
 
     try {
-      console.log("发送请求，报告ID:", currentReportId);
-      
-      // 构建filters对象
-      const filters: Record<string, any> = {};
-      
-      // 如果选择了特定染色体，添加到filters中
-      if (selectedChromosome !== "all") {
-        filters.chromosome = selectedChromosome;
-      }
-      
-      // 修改请求体，确保所有字段都符合API要求
       const requestBody = {
         report_id: currentReportId,
         page_size: pagination.page_size,
         page: pagination.page,
-        sort_by: "",  // 使用一个可能有效的排序字段
+        sort_by: "",
         sort_order: "asc",
         search_term: searchQuery || "",
-        filters: filters  // 使用构建的filters对象
+        filters: selectedChromosome !== "all" ? { chromosome: selectedChromosome } : {}
       };
-      
-      console.log("请求体:", JSON.stringify(requestBody));
-      
-      const response = await fetch(API_BASE_URL + '/report/table', {
+
+      const response = await fetch('/api/report/table', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody)
-      })
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
