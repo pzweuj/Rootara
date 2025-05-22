@@ -31,43 +31,32 @@ export default function UploadReportPage() {
   // 文件大小限制（50MB）
   const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
 
-  // 添加环境变量配置
-  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
-
   // 在组件加载时获取用户ID
   useEffect(() => {
+    // 修改fetchUserId函数
     const fetchUserId = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/user/id`, {
+        const response = await fetch('/api/user/id', {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-            'x-api-key': API_KEY // 使用提供的API密钥
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({}) // 发送空的JSON对象作为请求体
+          body: JSON.stringify({})
         });
-
+    
         if (response.ok) {
           const data = await response.json();
-          console.log('获取到的用户ID响应:', data); // 添加日志以便调试
           if (data && data.user_id) {
             setUserId(data.user_id);
-            console.log('设置用户ID为:', data.user_id); // 添加日志以便调试
           }
-        } else {
-          console.error('获取用户ID失败, 状态码:', response.status);
-          const errorText = await response.text();
-          console.error('错误详情:', errorText);
         }
       } catch (error) {
         console.error('获取用户ID出错:', error);
       }
     };
-
+    
     fetchUserId();
-  }, [`${API_BASE_URL}/user/id`, API_KEY]); // 添加依赖项
+  }, []); // 添加依赖项
 
   // 添加额外的翻译项
   const translations = {
@@ -231,16 +220,13 @@ export default function UploadReportPage() {
       }
 
       // 使用新的API端点和API_KEY
-      const response = await fetch(`${API_BASE_URL}/report/create`, {
+      const response = await fetch('/api/report/create', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY // 添加API密钥到请求头
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestData)
-      })
-
+      });
       // 处理响应
       if (response.ok) {
         clearInterval(progressInterval)
