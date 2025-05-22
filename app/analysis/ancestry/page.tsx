@@ -9,10 +9,6 @@ import { useReport } from "@/contexts/report-context"
 import { useEffect, useRef, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 
-// 添加环境变量配置
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
-
 // 定义祖源数据类型接口
 interface AncestryData {
   [key: string]: number;
@@ -189,6 +185,7 @@ export default function AncestryAnalysisPage() {
   }
 
   // 从API获取祖源数据
+  // 修改fetchAncestryData函数
   const fetchAncestryData = async (reportId: string) => {
     if (!reportId) return;
     
@@ -196,12 +193,13 @@ export default function AncestryAnalysisPage() {
     setError(null);
     
     try {
-      const response = await fetch(`${API_BASE_URL}/report/${reportId}/admixture`, {
+      // 调用我们的Next.js API路由而不是直接调用后端
+      const response = await fetch(`/api/ancestry/admixture`, {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ reportId })
       });
       
       if (!response.ok) {
@@ -209,6 +207,11 @@ export default function AncestryAnalysisPage() {
       }
       
       const data = await response.json();
+      
+      // 如果API返回了错误信息
+      if (data.error) {
+        throw new Error(data.error);
+      }
       
       // 处理API返回的数据，将下划线替换为连字符以匹配UI显示格式
       const formattedData: AncestryData = {};

@@ -9,11 +9,6 @@ interface HaplogroupData {
   mt_hap: string
 }
 
-// 添加环境变量配置
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"; // 从环境变量获取API_KEY，默认为"ddd"
-
-
 export function HaplogroupDistribution() {
   const { language } = useLanguage()
   const { currentReportId } = useReport()
@@ -51,13 +46,13 @@ export function HaplogroupDistribution() {
       setError(null)
 
       try {
-        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/haplogroup`, {
+        // 调用我们的Next.js API路由而不是直接调用后端
+        const response = await fetch(`/api/ancestry/haplogroup`, {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
-            'x-api-key': API_KEY,
+            'Content-Type': 'application/json',
           },
-          body: '',
+          body: JSON.stringify({ reportId: currentReportId }),
         })
 
         if (!response.ok) {
@@ -65,6 +60,12 @@ export function HaplogroupDistribution() {
         }
 
         const data = await response.json()
+        
+        // 如果API返回了错误信息
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         setHaplogroupData(data)
       } catch (err) {
         console.error("获取祖源数据失败:", err)

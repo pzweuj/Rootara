@@ -10,10 +10,6 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ExternalLink } from "lucide-react"
 
-// 添加环境变量配置
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
-
 const profileData = {
   totalSnps: 0, // 初始化为0，将从API获取
   healthTraits: 127,
@@ -51,12 +47,13 @@ export function GeneticProfileOverview() {
       
       setReportInfoLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/info`, { 
+        // 调用我们的Next.js API路由而不是直接调用后端
+        const response = await fetch(`/api/report/info`, { 
           method: 'POST', 
           headers: { 
-            'accept': 'application/json', 
-            'x-api-key': API_KEY 
-          }, 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ reportId: currentReportId })
         });
         
         if (!response.ok) {
@@ -64,6 +61,12 @@ export function GeneticProfileOverview() {
         }
         
         const data = await response.json();
+        
+        // 如果API返回了错误信息
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         // 根据API返回格式，totalSnps是数组中的第7个元素（索引为6）
         if (Array.isArray(data) && data.length >= 7) {
           profileData.totalSnps = data[6];
@@ -85,12 +88,13 @@ export function GeneticProfileOverview() {
       
       setLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/admixture`, { 
+        // 调用我们的Next.js API路由而不是直接调用后端
+        const response = await fetch(`/api/ancestry/admixture`, { 
           method: 'POST', 
           headers: { 
-            'accept': 'application/json', 
-            'x-api-key': API_KEY 
-          }, 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ reportId: currentReportId })
         });
         
         if (!response.ok) {
@@ -98,6 +102,11 @@ export function GeneticProfileOverview() {
         }
         
         const data = await response.json();
+        
+        // 如果API返回了错误信息
+        if (data.error) {
+          throw new Error(data.error);
+        }
         
         // 将数据转换为数组格式，按百分比降序排序，并只保留前4个区域
         const sortedData = Object.entries(data)
@@ -128,13 +137,13 @@ export function GeneticProfileOverview() {
       setHaplogroupError(null)
 
       try {
-        const response = await fetch(`${API_BASE_URL}/report/${currentReportId}/haplogroup`, {
+        // 调用我们的Next.js API路由而不是直接调用后端
+        const response = await fetch(`/api/ancestry/haplogroup`, {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
-            'x-api-key': API_KEY,
+            'Content-Type': 'application/json',
           },
-          body: '',
+          body: JSON.stringify({ reportId: currentReportId }),
         })
 
         if (!response.ok) {
@@ -142,6 +151,12 @@ export function GeneticProfileOverview() {
         }
 
         const data = await response.json()
+        
+        // 如果API返回了错误信息
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         setHaplogroupData(data)
       } catch (err) {
         console.error("获取单倍群数据失败:", err)
