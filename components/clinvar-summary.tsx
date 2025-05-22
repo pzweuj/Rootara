@@ -8,12 +8,6 @@ import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context"
 import Link from "next/link"
 
-// API基础URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-
-// API密钥
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
-
 // 定义ClinVar数据类型
 interface ClinVarVariant {
   chromosome: string
@@ -54,20 +48,14 @@ export function ClinvarSummary() {
     setError(null)
     
     try {
-      const response = await fetch(`${API_BASE_URL}/report/clinvar`, {
+      // 修改为调用新的API路由
+      const response = await fetch(`/api/report/clinvar-summary`, {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          report_id: reportId,
-          sort_by: "",
-          sort_order: "asc",
-          search_term: "",
-          filters: {},
-          indel: false
+          reportId
         })
       })
 
