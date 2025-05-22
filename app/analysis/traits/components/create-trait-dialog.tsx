@@ -20,16 +20,13 @@ import { ScoreThresholdManager } from "./create-trait/score-threshold-manager"
 import { IconSelector } from "./create-trait/icon-selector"
 import type { Trait } from "@/types/trait"
 
+// 删除API基础URL和API密钥的定义
+
 interface CreateTraitDialogProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
   onCreateTrait: (trait: Trait) => void
 }
-
-// API基础URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-// API密钥
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
 
 export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: CreateTraitDialogProps) {
   const { language } = useLanguage()
@@ -129,16 +126,13 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       setIsLoading(true)
       toast.loading(t("creatingTrait"))
       
-      // 将特征数据转换为JSON字符串
-      const data = encodeURIComponent(JSON.stringify(createdTrait))
-      
-      // 调用后端API创建特征
-      const response = await fetch(`${API_BASE_URL}/traits/add?input_data=${data}`, {
+      // 调用新的API路由创建特征
+      const response = await fetch('/api/traits/add', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
-        }
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ trait: createdTrait })
       })
       
       if (!response.ok) {

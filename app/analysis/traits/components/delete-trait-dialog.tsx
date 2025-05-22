@@ -21,11 +21,6 @@ interface DeleteTraitDialogProps {
   onConfirmDelete: () => void
 }
 
-// API基础URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-// API密钥
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
-
 export function DeleteTraitDialog({ isOpen, onOpenChange, traitToDelete, onConfirmDelete }: DeleteTraitDialogProps) {
   const { language } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
@@ -60,13 +55,13 @@ export function DeleteTraitDialog({ isOpen, onOpenChange, traitToDelete, onConfi
       setIsLoading(true)
       toast.loading(language === 'en' ? 'Deleting trait...' : '正在删除特征...')
       
-      // 调用后端API删除特征
-      const response = await fetch(`${API_BASE_URL}/traits/delete?traits_id=${traitToDelete.id}`, {
+      // 调用新的API路由
+      const response = await fetch('/api/traits/delete', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
-        }
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ traits_id: traitToDelete.id })
       })
       
       if (!response.ok) {

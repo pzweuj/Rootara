@@ -1,19 +1,14 @@
 // 从后端API获取基因型数据
 export const fetchGenotypeData = async (rsid: string, reportId: string) => {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || 'http://0.0.0.0:8000';
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001";
-  
   try {
-    const response = await fetch(`${API_BASE_URL}/variant/rsid`, {
+    const response = await fetch('/api/variant/rsid', {
       method: 'POST',
       headers: {
-        'accept': 'application/json',
-        'x-api-key': API_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        rsid: [rsid],
-        report_id: reportId
+        rsid,
+        reportId
       })
     });
     

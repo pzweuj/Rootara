@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { Upload, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
@@ -12,11 +11,6 @@ interface TraitImportExportProps {
   onImport: (traits: Trait[]) => void
   traits: Trait[]
 }
-
-// API基础URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-// API密钥
-const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
 
 export function TraitImportExport({ onImport, traits }: TraitImportExportProps) {
   const { language } = useLanguage()
@@ -75,14 +69,13 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
         }
       });
   
-      // 发送到后端API
-      const response = await fetch(`${API_BASE_URL}/traits/import?input_data=${encodeURIComponent(fileContent)}`, {
+      // 调用新的API路由
+      const response = await fetch('/api/traits/import', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
+          'Content-Type': 'application/json',
         },
-        body: ''
+        body: JSON.stringify({ input_data: fileContent })
       });
   
       if (!response.ok) {
@@ -99,41 +92,34 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
   };
 
   const handleExportTraits = async () => {
-    const userTraits = traits.filter((trait) => !trait.isDefault);
-    if (userTraits.length === 0) {
-      toast.warning(t("noCustomTraits"));
+    if (!traits || traits.length === 0) {
+      toast.error(t("noCustomTraits"));
       return;
     }
-  
+
     try {
-      const now = new Date();
-      const exportName = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}.json`;
-      
-      const response = await fetch(`${API_BASE_URL}/traits/export`, {
+      // 调用新的API路由
+      const response = await fetch('/api/traits/export', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'x-api-key': API_KEY
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userTraits)
+        body: JSON.stringify(traits)
       });
-    
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-    
-      const jsonString = await response.text();
-      
-      // 将JSON字符串保存为文件
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = exportName;
+      a.download = 'traits_export.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(url);
       
       toast.success(t("exportSuccess"));
     } catch (error: any) {
@@ -144,6 +130,10 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
 
   return (
     <div className="flex gap-2">
+      <Button variant="outline" onClick={handleExportTraits}>
+        <Download className="mr-2 h-4 w-4" />
+        {t("exportTraits")}
+      </Button>
       <input type="file" id="import-traits" className="hidden" accept=".json" onChange={handleImportTraits} />
       <Button
         variant="outline"
@@ -152,9 +142,6 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
         onClick={() => document.getElementById("import-traits")?.click()}
       >
         <Upload className="h-4 w-4" />
-      </Button>
-      <Button variant="outline" size="icon" title={t("exportTraits")} onClick={handleExportTraits}>
-        <Download className="h-4 w-4" />
       </Button>
     </div>
   )
