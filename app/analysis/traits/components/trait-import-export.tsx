@@ -130,9 +130,13 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
 
   return (
     <div className="flex gap-2">
-      <Button variant="outline" onClick={handleExportTraits}>
-        <Download className="mr-2 h-4 w-4" />
-        {t("exportTraits")}
+      <Button
+        variant="outline"
+        onClick={handleExportTraits}
+        title={t("exportTraits")}
+        size="icon"
+      >
+        <Download className="h-4 w-4" />
       </Button>
       <input type="file" id="import-traits" className="hidden" accept=".json" onChange={handleImportTraits} />
       <Button
