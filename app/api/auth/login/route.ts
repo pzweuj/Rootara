@@ -4,13 +4,17 @@ import * as jose from "jose"
 
 // In a real app, you would use a database
 // For this example, we'll use environment variables
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@rootara.app"
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "rootara123"
-const JWT_SECRET = process.env.JWT_SECRET || "FPFj&WXSXV5t4v6Zr93hxxnG#R*x"
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+const JWT_SECRET = process.env.JWT_SECRET
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json()
+
+    if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.JWT_SECRET) {
+      return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
+    }
 
     // Validate credentials
     if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
@@ -19,7 +23,8 @@ export async function POST(request: Request) {
 
     // Create user object
     const user = {
-      name: "Admin", // You can customize this or extract from email
+      // 从邮箱地址中提取用户名部分作为name
+      name: ADMIN_EMAIL?.split('@')[0] || "Admin",
       email: ADMIN_EMAIL,
     }
 
