@@ -94,14 +94,21 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   const [newReportName, setNewReportName] = useState("")
   const [newReportNameZh, setNewReportNameZh] = useState("")
 
-  // 添加环境变量配置
-  const API_BASE_URL = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-  const API_KEY = process.env.NEXT_PUBLIC_ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
-
   // Define handleDeleteReport function before it's used
   // 更新删除报告函数
   const handleDeleteReport = async (reportId: string) => {
     try {
+      const response = await fetch('/api/report/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ report_id: reportId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete report');
+      }
       // 添加调试信息
       console.log("执行删除操作，报告ID:", reportId);
       
@@ -110,19 +117,6 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
         throw new Error(`无效的报告ID: ${reportId}`);
       }
       
-      // 调用API删除报告
-      const response = await fetch(`${API_BASE_URL}/report/delete`, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          "x-api-key": API_KEY,
-        },
-        body: JSON.stringify({
-          report_id: reportId
-        }),
-      })
-
       // 打印响应状态
       console.log("删除API响应状态:", response.status);
       
@@ -228,20 +222,21 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   }
 
   // 添加重命名报告函数
-  // 添加重命名报告函数
   const handleRenameReport = async () => {
     if (!reportToRename) return
-  
+    
     try {
-      // 调用API修改报告名称 - 使用新的API格式
-      const response = await fetch(`${API_BASE_URL}/report/rename?report_id=${reportToRename.id}&new_name=${encodeURIComponent(newReportName)}`, {
-        method: "POST",
+      const response = await fetch('/api/report/rename', {
+        method: 'POST',
         headers: {
-          accept: "application/json",
-          "x-api-key": API_KEY,
+          'Content-Type': 'application/json'
         },
-        body: "", // 空请求体，按照API要求
-      })
+        body: JSON.stringify({
+          report_id: reportToRename.id,
+          new_name: newReportName,
+          new_name_zh: newReportNameZh
+        })
+      });
   
       if (!response.ok) {
         throw new Error(`重命名失败: ${response.status}`)
@@ -306,22 +301,14 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   // 处理报告导出
   const handleExportReport = async (reportId: string) => {
     try {
-      // 显示加载状态或通知（可选）
-      // toast({
-      //   title: "正在导出报告...",
-      //   description: "请稍候...",
-      //   duration: 3000,
-      // });
-
       // 调用API导出原始数据
-      const response = await fetch(`${API_BASE_URL}/report/${reportId}/rawdata`, {
-        method: "POST",
+      const response = await fetch(`/api/report/${reportId}/rawdata`, {
+        method: 'POST',
         headers: {
-          accept: "application/json",
-          "x-api-key": API_KEY,
+          'Content-Type': 'application/json'
         },
-        body: "", // 空请求体，按照API要求
-      })
+        body: JSON.stringify({})
+      });
 
       if (!response.ok) {
         throw new Error(`导出失败: ${response.status}`)
@@ -344,12 +331,6 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
       window.URL.revokeObjectURL(url)
       document.body.removeChild(link)
 
-      // 显示成功通知
-      // toast({
-      //   title: "导出成功",
-      //   description: "文件已下载",
-      //   duration: 3000,
-      // });
     } catch (error) {
       console.error("导出报告时出错:", error)
 
@@ -368,14 +349,13 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
     const fetchReports = async () => {
       try {
         setLoading(true)
-        const response = await fetch(API_BASE_URL + "/report/all", {
-          method: "POST",
+        const response = await fetch('/api/report/all', {
+          method: 'POST',
           headers: {
-            accept: "application/json",
-            "x-api-key": API_KEY,
+            'Content-Type': 'application/json'
           },
-          body: "",
-        })
+          body: JSON.stringify({})
+        });
 
         if (!response.ok) {
           throw new Error(`API请求失败: ${response.status}`)
@@ -534,22 +514,15 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   // 处理设置默认报告
   const handleSetDefault = async (reportId: string) => {
     try {
-      // 显示加载状态或通知（可选）
-      // toast({
-      //   title: t("settingDefault"),
-      //   description: t("pleaseWait"),
-      //   duration: 2000,
-      // });
 
       // 调用API设置默认报告
-      const response = await fetch(`${API_BASE_URL}/report/default?report_id=${reportId}`, {
-        method: "POST",
+      const response = await fetch('/api/report/default', {
+        method: 'POST',
         headers: {
-          accept: "application/json",
-          "x-api-key": API_KEY,
+          'Content-Type': 'application/json'
         },
-        body: "", // 空请求体，按照API要求
-      })
+        body: JSON.stringify({ report_id: reportId })
+      });
 
       if (!response.ok) {
         throw new Error(`设置默认报告失败: ${response.status}`)
