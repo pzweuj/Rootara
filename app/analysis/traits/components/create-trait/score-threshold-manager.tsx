@@ -28,7 +28,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdNamePlaceholder: "e.g., Brown",
       thresholdValuePlaceholder: "e.g., 12",
       thresholdsDescription: "Define the score thresholds or boolean values for different results (higher scores are checked first)",
-      add: "Add",
+      delete: "Delete",
       result: "Result",
       number: "Number",
       boolean: "Boolean",
@@ -43,7 +43,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdNamePlaceholder: "例如：棕色",
       thresholdValuePlaceholder: "例如：12",
       thresholdsDescription: "定义不同结果的分数阈值或布尔值（先检查较高的分数）",
-      add: "添加",
+      delete: "删除",
       result: "结果",
       number: "数字",
       boolean: "布尔值",
@@ -86,6 +86,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           placeholder={t("thresholdNamePlaceholder")}
           value={thresholdName}
           onChange={(e) => setThresholdName(e.target.value)}
+          className="w-[200px]" // Added fixed width
         />
         <Select
           value={thresholdType}
@@ -108,13 +109,14 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
             type="number"
             value={thresholdValue}
             onChange={(e) => setThresholdValue(e.target.value)}
+            className="w-[160px]" // Added fixed width
           />
         ) : (
           <Select
             value={thresholdValue}
             onValueChange={(value) => setThresholdValue(value)}
           >
-            <SelectTrigger className="w-[100px]">
+            <SelectTrigger className="w-[160px]"> {/* Increased width */}
               <SelectValue placeholder="Value" />
             </SelectTrigger>
             <SelectContent>
@@ -124,7 +126,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           </Select>
         )}
         <Button type="button" onClick={addScoreThreshold} disabled={!thresholdName || !thresholdValue} size="sm">
-          {t("add")}
+          {t("delete")}
         </Button>
       </div>
       <div className="flex justify-between items-center">
@@ -138,23 +140,25 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       {/* Display added score thresholds */}
       {Object.keys(thresholds).length > 0 && (
         <div className="mt-2 border rounded-md p-2">
-          <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-medium text-sm mb-1">
-            <div>{t("result")}</div>
-            <div>{t("thresholdValue")}</div>
-            <div></div>
+          <div className="grid grid-cols-[200px_160px_auto] gap-2 font-medium text-sm mb-1 border-b pb-1"> {/* Adjusted grid columns */}
+            <div className="px-2 text-center border-r">{t("result")}</div>
+            <div className="px-2 text-center border-r">{t("thresholdValue")}</div> {/* Added border-r */}
+            <div className="px-2 text-center">{t("delete").replace("Add", "删除")}</div> {/* Added header for delete column */}
           </div>
-          {Object.entries(thresholds).map(([key, value]) => (
-            <div key={key} className="grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center">
-              <div>{key}</div>
-              <div>{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0 text-red-500"
-                onClick={() => removeScoreThreshold(key)}
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
+          {Object.entries(thresholds).map(([key, value], index) => (
+            <div key={key} className={`grid grid-cols-[200px_160px_auto] gap-2 text-sm items-center py-1 ${index < Object.keys(thresholds).length - 1 ? 'border-b' : ''}`}> {/* Adjusted grid columns */}
+              <div className="px-2 text-center border-r">{key}</div>
+              <div className="px-2 text-center border-r">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div> {/* Added border-r */}
+              <div className="px-2 text-center"> {/* Wrapped button in a div for the column */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-red-500"
+                  onClick={() => removeScoreThreshold(key)}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </div> {/* End of new div */}
             </div>
           ))}
         </div>
