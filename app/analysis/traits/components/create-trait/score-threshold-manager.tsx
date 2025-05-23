@@ -29,6 +29,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdValuePlaceholder: "e.g., 12",
       thresholdsDescription: "Define the score thresholds or boolean values for different results (higher scores are checked first)",
       delete: "Delete",
+      add: "Add",
       result: "Result",
       number: "Number",
       boolean: "Boolean",
@@ -43,7 +44,8 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdNamePlaceholder: "例如：棕色",
       thresholdValuePlaceholder: "例如：12",
       thresholdsDescription: "定义不同结果的分数阈值或布尔值（先检查较高的分数）",
-      delete: "删除",
+      delete: "移除",
+      add: "添加",
       result: "结果",
       number: "数字",
       boolean: "布尔值",
@@ -126,7 +128,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           </Select>
         )}
         <Button type="button" onClick={addScoreThreshold} disabled={!thresholdName || !thresholdValue} size="sm">
-          {t("delete")}
+          {t("add")}
         </Button>
       </div>
       <div className="flex justify-between items-center">
@@ -139,7 +141,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
 
       {/* Display added score thresholds */}
       {Object.keys(thresholds).length > 0 && (
-        <div className="mt-2 border rounded-md p-2">
+        <div className="mt-2 border rounded-md p-2 overflow-y-auto"> {/* Changed overflow-hidden to overflow-y-auto */}
           <div className="grid grid-cols-[200px_160px_auto] gap-2 font-medium text-sm mb-1 border-b pb-1"> {/* Adjusted grid columns */}
             <div className="px-2 text-center border-r">{t("result")}</div>
             <div className="px-2 text-center border-r">{t("thresholdValue")}</div> {/* Added border-r */}

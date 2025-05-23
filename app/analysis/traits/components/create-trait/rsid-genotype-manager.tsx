@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Trash2 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import { fetchGenotypeData } from "@/app/analysis/traits/utils/genotype-utils"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
+import { fetchGenotypeData } from "@/app/analysis/traits/utils/genotype-utils"
 
 interface RsidGenotypeManagerProps {
   rsids: string[]
@@ -124,26 +124,28 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
 
         {/* 显示当前选择的RSID的基因型信息 - 仅在添加后显示 */}
         {rsids.length > 0 && (
-          <div className="mt-2 border rounded-md p-2">
-            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 font-medium text-sm mb-1">
-              <div>{t("rsid")}</div>
-              <div>{t("referenceGenotype")}</div>
-              <div>{t("yourGenotype")}</div>
-              <div></div>
+          <div className="mt-2 border rounded-md p-2 overflow-y-auto"> {/* Added overflow-y-auto */}
+            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 font-medium text-sm mb-1 border-b pb-1"> {/* Adjusted grid columns */}
+              <div className="px-2 text-center border-r">{t("rsid")}</div> {/* Added border-r */}
+              <div className="px-2 text-center border-r">{t("referenceGenotype")}</div> {/* Added border-r */}
+              <div className="px-2 text-center border-r">{t("yourGenotype")}</div> {/* Added border-r */}
+              <div className="px-2 text-center">{t("remove")}</div> {/* Added header for remove column */}
             </div>
             {rsids.map((rsid, index) => (
-              <div key={index} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center">
-                <div>{rsid}</div>
-                <div>{referenceGenotypes[index] || "--"}</div>
-                <div>{yourGenotypes[index] || "--"}</div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-red-500"
-                  onClick={() => removeRsidGenotype(index)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+              <div key={index} className={`grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < rsids.length - 1 ? 'border-b' : ''}`}> {/* Adjusted grid columns */}
+                <div className="px-2 text-center border-r">{rsid}</div> {/* Added border-r */}
+                <div className="px-2 text-center border-r">{referenceGenotypes[index] || "--"}</div> {/* Added border-r */}
+                <div className="px-2 text-center border-r">{yourGenotypes[index] || "--"}</div> {/* Added border-r */}
+                <div className="px-2 text-center"> {/* Wrapped button in a div for the column */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-red-500"
+                    onClick={() => removeRsidGenotype(index)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div> {/* End of new div */}
               </div>
             ))}
           </div>

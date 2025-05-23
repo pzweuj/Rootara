@@ -185,7 +185,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto scrollbar-thin">
         <DialogHeader>
           <DialogTitle>{t("createTrait")}</DialogTitle>
           <DialogDescription>{t("fillDetails")}</DialogDescription>
