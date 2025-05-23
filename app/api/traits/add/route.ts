@@ -5,11 +5,11 @@ const API_KEY = process.env.ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_
 
 export async function POST(request: NextRequest) {
   try {
-    const { trait } = await request.json();
+    const { traitData } = await request.json();
 
-    console.log('Received trait:', JSON.stringify(trait, null, 2));
+    console.log('Received trait:', JSON.stringify(traitData, null, 2));
     
-    if (!trait) {
+    if (!traitData) {
       return NextResponse.json(
         { error: '缺少特征数据' },
         { status: 400 }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         'x-api-key': API_KEY,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(trait)
+      body: JSON.stringify(traitData)
     });
     
     if (!response.ok) {
