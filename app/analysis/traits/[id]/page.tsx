@@ -110,6 +110,7 @@ export default function TraitDetailPage() {
     }
   }, [id])
 
+  // 在translations对象中添加可信度的翻译
   const translations = {
     en: {
       loading: "Loading trait details...",
@@ -132,6 +133,10 @@ export default function TraitDetailPage() {
       resultName: "Result",
       minimumScore: "Minimum Score",
       reference: "Reference",
+      // 添加可信度翻译
+      high: "High",
+      medium: "Medium",
+      low: "Low"
     },
     "zh-CN": {
       loading: "正在加载特征详情...",
@@ -154,6 +159,10 @@ export default function TraitDetailPage() {
       resultName: "结果",
       minimumScore: "最小分数",
       reference: "参考文献",
+      // 添加可信度翻译
+      high: "高",
+      medium: "中等",
+      low: "低"
     },
   }
 
@@ -237,7 +246,7 @@ export default function TraitDetailPage() {
                         : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
                   }
                 >
-                  {trait.confidence.charAt(0).toUpperCase() + trait.confidence.slice(1)}
+                  {t(trait.confidence as keyof typeof translations.en)}
                 </Badge>
               </div>
             </div>

@@ -26,6 +26,9 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
       nutrition: "Nutrition",
       risk: "Risk",
       lifestyle: "Lifestyle",
+      high: "High",
+      medium: "Medium",
+      low: "Low",
     },
     "zh-CN": {
       traitName: "特征名称",
@@ -37,6 +40,9 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
       nutrition: "营养",
       risk: "风险",
       lifestyle: "生活",
+      high: "高",
+      medium: "中等",
+      low: "低",
     },
   }
 
@@ -85,9 +91,9 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
               <SelectValue placeholder={t("confidence")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="high">{t("high")}</SelectItem>
+              <SelectItem value="medium">{t("medium")}</SelectItem>
+              <SelectItem value="low">{t("low")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
