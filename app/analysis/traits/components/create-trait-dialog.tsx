@@ -68,6 +68,8 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       pleaseAddThreshold: "Please add at least one score threshold",
       creatingTrait: "Creating trait...",
       errorCreatingTrait: "Error creating trait",
+      references: "References", // Added translation key
+      reference_note: "Enter comma-separated PubMed IDs (e.g., 12345678,98765432)", // Added translation key
     },
     "zh-CN": {
       createTrait: "创建特征",
@@ -80,6 +82,8 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       pleaseAddThreshold: "请至少添加一个分数阈值",
       creatingTrait: "正在创建特征...",
       errorCreatingTrait: "创建特征时出错",
+      references: "参考文献", // Added translation key
+      reference_note: "以逗号分隔的PubMed ID（例如，12345678,98765432）", // Added translation key
     },
   }
 
@@ -125,7 +129,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       rsids: newTrait.rsids,
       formula: newTrait.formula,
       scoreThresholds: newTrait.scoreThresholds,
-      reference: newTrait.reference,
+      reference: newTrait.reference, // 参考文献已经包含在这里
     }
 
     try {
@@ -168,7 +172,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
         yourGenotypes: [],
         formula: "",
         scoreThresholds: {},
-        reference: [],
+        reference: [], // 重置参考文献
       })
     } catch (error) {
       console.error('Error creating trait:', error)
@@ -213,6 +217,28 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
             thresholds={newTrait.scoreThresholds || {}}
             onChange={(scoreThresholds) => setNewTrait({ ...newTrait, scoreThresholds })}
           />
+
+          {/* References Input */}
+          <div className="space-y-2">
+            <label htmlFor="references" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {t("references")} {/* Add translation key */}
+            </label>
+            <textarea
+              id="references"
+              value={newTrait.reference?.join(', ') || ''}
+              onChange={(e) =>
+                setNewTrait({
+                  ...newTrait,
+                  reference: e.target.value
+                    .split(',')
+                    .map(id => id.trim())
+                    .filter(id => id !== '') // Filter out empty strings
+                })
+              }
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder={t("reference_note")} // Add translation key
+            />
+          </div>
         </div>
 
         <DialogFooter>
