@@ -20,8 +20,6 @@ import { ScoreThresholdManager } from "./create-trait/score-threshold-manager"
 import { IconSelector } from "./create-trait/icon-selector"
 import type { Trait } from "@/types/trait"
 
-// 删除API基础URL和API密钥的定义
-
 interface CreateTraitDialogProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
@@ -32,9 +30,21 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
   const { language } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [newTrait, setNewTrait] = useState<Partial<Trait>>({
-    name: { en: "", "zh-CN": "", default: "" },
-    result: { en: "", "zh-CN": "", default: "" },
-    description: { en: "", "zh-CN": "", default: "" },
+    name: { 
+      en: "",
+      "zh-CN": "",
+      default: "" 
+    },
+    result: { 
+      en: "",
+      "zh-CN": "",
+      default: "" 
+    },
+    description: { 
+      en: "",
+      "zh-CN": "",
+      default: "" 
+    },
     icon: "AlertCircle",
     confidence: "medium",
     category: "appearance",
@@ -76,7 +86,8 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
   const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
 
   const handleCreateTrait = async () => {
-    if (!newTrait.name || !newTrait.description) {
+    // 验证逻辑只检查default字段
+    if (!newTrait.name?.default || !newTrait.description?.default) {
       toast.error(t("pleaseAllFields"))
       return
     }
@@ -96,43 +107,38 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       return
     }
 
-    // 根据公式和阈值自动计算结果
-    const calculatedResult = determineResult(newTrait)
-
-    // 创建特征数据
-    const id = `custom-${Date.now()}`
-    const createdTrait: Trait = {
-      ...(newTrait as any),
-      id,
-      isDefault: false,
-      createdAt: new Date().toISOString(),
-      result: calculatedResult,
-    }
-
-    // 设置其他语言的字段（如果为空）
-    if (!createdTrait.name["zh-CN"] && language === "en") {
-      createdTrait.name["zh-CN"] = createdTrait.name.en
-    } else if (!createdTrait.name.en && language === "zh-CN") {
-      createdTrait.name.en = createdTrait.name["zh-CN"]
-    }
-
-    if (!createdTrait.description["zh-CN"] && language === "en") {
-      createdTrait.description["zh-CN"] = createdTrait.description.en
-    } else if (!createdTrait.description.en && language === "zh-CN") {
-      createdTrait.description.en = createdTrait.description["zh-CN"]
+    // 构建特征数据对象
+    const traitData = {
+      name: newTrait.name,
+      result: Object.keys(newTrait.scoreThresholds).reduce((acc, key) => ({
+        ...acc,
+        [key]: {
+          'en': '',
+          'zh-CN': '',
+          'default': key
+        }
+      }), {}),
+      description: newTrait.description,
+      icon: newTrait.icon,
+      confidence: newTrait.confidence,
+      category: newTrait.category,
+      rsids: newTrait.rsids,
+      formula: newTrait.formula,
+      scoreThresholds: newTrait.scoreThresholds,
+      reference: newTrait.reference,
     }
 
     try {
       setIsLoading(true)
       toast.loading(t("creatingTrait"))
       
-      // 调用新的API路由创建特征
+      // 调用API路由创建特征
       const response = await fetch('/api/traits/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ trait: createdTrait })
+        body: JSON.stringify(traitData)
       })
       
       if (!response.ok) {
@@ -142,7 +148,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       const result = await response.json()
       
       // 如果API返回了更新后的特征数据，使用它
-      const finalTrait = result.trait || createdTrait
+      const finalTrait = result.trait || traitData as Trait
       
       // 通知父组件特征已创建
       onCreateTrait(finalTrait)

@@ -6,6 +6,8 @@ const API_KEY = process.env.ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_
 export async function POST(request: NextRequest) {
   try {
     const { trait } = await request.json();
+
+    console.log('Received trait:', JSON.stringify(trait, null, 2));
     
     if (!trait) {
       return NextResponse.json(
@@ -14,12 +16,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await fetch(`${API_BASE_URL}/traits/add?input_data=${encodeURIComponent(JSON.stringify(trait))}`, {
+    const response = await fetch(`${API_BASE_URL}/traits/add`, {
       method: 'POST',
       headers: {
         'accept': 'application/json',
-        'x-api-key': API_KEY
-      }
+        'x-api-key': API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(trait)
     });
     
     if (!response.ok) {

@@ -131,6 +131,7 @@ export default function TraitDetailPage() {
       scoreThresholds: "Score Thresholds",
       resultName: "Result",
       minimumScore: "Minimum Score",
+      reference: "Reference",
     },
     "zh-CN": {
       loading: "正在加载特征详情...",
@@ -152,6 +153,7 @@ export default function TraitDetailPage() {
       scoreThresholds: "分数阈值",
       resultName: "结果",
       minimumScore: "最小分数",
+      reference: "参考文献",
     },
   }
 
@@ -321,6 +323,27 @@ export default function TraitDetailPage() {
                     </div>
                   </div>
                 )}
+
+                {trait.reference && trait.reference.length > 0 && (
+                  <div className="pt-4 border-t space-y-2"> {/* Added pt-4 border-t */}
+                    <h3 className="text-lg font-medium mb-3">{t("reference")}</h3>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      {trait.reference.map((pubmedId, index) => (
+                        <li key={index.toString()}>
+                          <a
+                            href={`https://pubmed.ncbi.nlm.nih.gov/${pubmedId}/`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:underline"
+                          >
+                            PMID: {pubmedId}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">{t("noGeneticData")}</p>
