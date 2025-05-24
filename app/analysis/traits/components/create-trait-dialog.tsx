@@ -142,7 +142,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(traitData)
+        body: JSON.stringify({ traitData: traitData })
       })
       
       if (!response.ok) {
@@ -229,10 +229,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
               onChange={(e) =>
                 setNewTrait({
                   ...newTrait,
-                  reference: e.target.value
-                    .split(',')
-                    .map(id => id.trim())
-                    .filter(id => id !== '') // Filter out empty strings
+                  reference: [e.target.value] // 将整个输入字符串作为数组的一个元素
                 })
               }
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
