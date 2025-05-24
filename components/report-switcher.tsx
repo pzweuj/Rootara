@@ -70,14 +70,17 @@ interface ReportSwitcherProps {
   onReportChange?: (reportId: string) => void
 }
 
-export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitcherProps = {}) {
+export function ReportSwitcher({
+  defaultReportId,
+  onReportChange,
+}: ReportSwitcherProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
   const { language } = useLanguage()
   const { currentReportId, setCurrentReportId } = useReport() // 使用报告上下文
 
   const [reports, setReports] = useState<Report[]>([])
-  const [loading, setLoading] = useState(true)
+  // const [loading, setLoading] = useState(true); // 移除 loading 状态
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState<"name" | "date" | "source">("date")
@@ -348,20 +351,20 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        setLoading(true)
-        const response = await fetch('/api/report/all', {
-          method: 'POST',
+        // setLoading(true); // 移除设置 loading 为 true
+        const response = await fetch("/api/report/all", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({})
+          body: JSON.stringify({}),
         });
 
         if (!response.ok) {
-          throw new Error(`API请求失败: ${response.status}`)
+          throw new Error(`API请求失败: ${response.status}`);
         }
 
-        const data = await response.json()
+        const data = await response.json();
 
         // 转换API返回的数据格式
         const formattedReports: Report[] = data.map((item: any) => ({
@@ -375,44 +378,44 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
           user_id: item.user_id,
           extend: item.extend,
           snpCount: item.snpCount,
-        }))
+        }));
 
-        setReports(formattedReports)
+        setReports(formattedReports);
 
         // 设置默认选中的报告
         let reportToSelect: Report | undefined;
-        
+
         // 首先检查是否有指定的defaultReportId
         if (defaultReportId) {
           reportToSelect = formattedReports.find((r) => r.id === defaultReportId);
         }
-        
+
         // 如果没有找到指定的报告，则检查全局上下文中的currentReportId
         if (!reportToSelect && currentReportId) {
           reportToSelect = formattedReports.find((r) => r.id === currentReportId);
         }
-        
+
         // 如果仍然没有找到，则使用默认报告或第一个报告
         if (!reportToSelect) {
           reportToSelect = formattedReports.find((r) => r.isDefault) || formattedReports[0];
         }
-        
+
         if (reportToSelect) {
           setSelectedReport(reportToSelect);
           // 更新全局上下文中的报告ID
           setCurrentReportId(reportToSelect.id);
         }
 
-        setLoading(false)
+        // setLoading(false); // 移除设置 loading 为 false
       } catch (err) {
-        console.error("获取报告失败:", err)
-        setError(err instanceof Error ? err.message : "获取报告数据失败")
-        setLoading(false)
+        console.error("获取报告失败:", err);
+        setError(err instanceof Error ? err.message : "获取报告数据失败");
+        // setLoading(false); // 移除设置 loading 为 false
       }
-    }
+    };
 
-    fetchReports()
-  }, [defaultReportId, currentReportId, setCurrentReportId])
+    fetchReports();
+  }, [defaultReportId, currentReportId, setCurrentReportId]);
 
   // 根据环境变量TZ格式化日期的函数
   const formatDateWithTimezone = (dateString: string): string => {
@@ -559,14 +562,25 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   }
 
   const handleSelectReport = (report: Report) => {
-    setSelectedReport(report)
+    // 移除临时加载状态，直接更新状态
+    setSelectedReport(report);
     // 更新全局上下文中的报告ID
-    setCurrentReportId(report.id)
+    setCurrentReportId(report.id);
     // 添加对 onReportChange 回调的调用
     if (onReportChange) {
-      onReportChange(report.id)
+      onReportChange(report.id);
     }
-    // In a real app, this would navigate to the report or update the context
+    
+    // 显示切换成功的通知，而不是加载状态
+    toast({
+      title: language === "zh-CN" ? "报告已切换" : "Report Switched",
+      description: language === "zh-CN" 
+        ? `当前查看: ${report.nameZh}` 
+        : `Now viewing: ${report.name}`,
+      duration: 2000,
+    });
+    
+    // 重要：不要在这里使用 router.push() 或其他导致页面导航的方法
   }
 
   const toggleSortOrder = () => {
@@ -607,20 +621,20 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
   }
 
   // 加载状态
-  if (loading) {
-    return (
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="flex justify-center items-center h-40">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
-              <p>{t("loading")}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+  // if (loading) {
+  //   return (
+  //     <Card className="mb-6">
+  //       <CardContent className="p-6">
+  //         <div className="flex justify-center items-center h-40">
+  //           <div className="text-center">
+  //             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-4"></div>
+  //             <p>{t("loading")}</p>
+  //           </div>
+  //         </div>
+  //       </CardContent>
+  //     </Card>
+  //   )
+  // }
 
   // 错误状态
   if (error) {
@@ -756,7 +770,18 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => router.push("/")}>
+                    <DropdownMenuItem onClick={(e) => {
+                      e.preventDefault();
+                      handleSelectReport(selectedReport);
+                      // 可以添加一个通知提示用户报告已切换
+                      toast({
+                        title: language === "zh-CN" ? "报告已切换" : "Report Switched",
+                        description: language === "zh-CN" 
+                          ? `当前查看: ${selectedReport.nameZh}` 
+                          : `Now viewing: ${selectedReport.name}`,
+                        duration: 3000,
+                      });
+                    }}>
                       <FileText className="mr-2 h-4 w-4" />
                       {t("viewReport")}
                     </DropdownMenuItem>
@@ -822,7 +847,13 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                     <div
                       key={report.id}
                       className={`flex items-center justify-between p-3 rounded-md cursor-pointer hover:bg-secondary/50 ${selectedReport?.id === report.id ? "bg-secondary" : ""}`}
-                      onClick={() => handleSelectReport(report)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        // 如果已经选中了这个报告，不做任何操作
+                        if (selectedReport?.id === report.id) return;
+                        
+                        handleSelectReport(report);
+                      }}
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center">
@@ -851,7 +882,19 @@ export function ReportSwitcher({ defaultReportId, onReportChange }: ReportSwitch
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => router.push("/")}>
+                          <DropdownMenuItem onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation(); // 阻止事件冒泡
+                            handleSelectReport(report); // 或 selectedReport，取决于上下文
+                            // 添加通知提示用户报告已切换
+                            toast({
+                              title: language === "zh-CN" ? "报告已切换" : "Report Switched",
+                              description: language === "zh-CN" 
+                                ? `当前查看: ${report.nameZh}` 
+                                : `Now viewing: ${report.name}`,
+                              duration: 3000,
+                            });
+                          }}>
                             <FileText className="mr-2 h-4 w-4" />
                             {t("viewReport")}
                           </DropdownMenuItem>
