@@ -33,18 +33,17 @@ export async function POST(request: NextRequest) {
       }
     };
 
+    // 只对需要字符串化的字段进行处理，scoreThresholds 保持对象格式
     if (traitData && traitData.name) {
       traitData.name = safeStringify(traitData.name);
     }
     if (traitData && traitData.description) {
       traitData.description = safeStringify(traitData.description);
     }
-    if (traitData && traitData.scoreThresholds) {
-      traitData.scoreThresholds = safeStringify(traitData.scoreThresholds);
-    }
     if (traitData && traitData.result) {
       traitData.result = safeStringify(traitData.result);
     }
+    // scoreThresholds 保持原始对象格式，后端期望接收对象而不是字符串
     // 处理reference字段,将包含逗号的元素拆分成多个元素
     if (traitData && traitData.reference) {
       if (Array.isArray(traitData.reference)) {
