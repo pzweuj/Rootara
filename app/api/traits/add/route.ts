@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         }, []);
       } else {
         // 如果不是数组则转换为字符串
-        traitData.reference = String(traitData.reference);
+        traitData.reference = safeStringify(traitData.reference);
       }
     }
 
