@@ -16,25 +16,34 @@ export async function POST(request: NextRequest) {
     }
 
     // 转换格式适配后端
+    // 辅助函数：安全地将对象转换为JSON字符串，避免重复序列化
+    const safeStringify = (value: any): string => {
+      if (typeof value === 'string') {
+        // 如果已经是字符串，检查是否是有效的JSON
+        try {
+          JSON.parse(value);
+          return value; // 已经是JSON字符串，直接返回
+        } catch {
+          return value; // 不是JSON字符串，直接返回原字符串
+        }
+      } else if (typeof value === 'object' && value !== null) {
+        return JSON.stringify(value); // 是对象，序列化为JSON
+      } else {
+        return String(value); // 其他类型转换为字符串
+      }
+    };
+
     if (traitData && traitData.name) {
-      traitData.name = typeof traitData.name === 'object' 
-        ? JSON.stringify(traitData.name)
-        : String(traitData.name);
+      traitData.name = safeStringify(traitData.name);
     }
     if (traitData && traitData.description) {
-      traitData.description = typeof traitData.description === 'object' 
-        ? JSON.stringify(traitData.description)
-        : String(traitData.description);
+      traitData.description = safeStringify(traitData.description);
     }
     if (traitData && traitData.scoreThresholds) {
-      traitData.scoreThresholds = typeof traitData.scoreThresholds === 'object' 
-        ? JSON.stringify(traitData.scoreThresholds)
-        : String(traitData.scoreThresholds);
+      traitData.scoreThresholds = safeStringify(traitData.scoreThresholds);
     }
     if (traitData && traitData.result) {
-      traitData.result = typeof traitData.result === 'object' 
-        ? JSON.stringify(traitData.result)
-        : String(traitData.result);
+      traitData.result = safeStringify(traitData.result);
     }
     // 处理reference字段,将包含逗号的元素拆分成多个元素
     if (traitData && traitData.reference) {
@@ -64,14 +73,14 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify(traitData)
     });
-    
+
     if (!response.ok) {
       throw new Error(`API请求失败: ${response.status} ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return NextResponse.json(data);
-    
+
   } catch (error) {
     console.error('创建特征失败:', error);
     return NextResponse.json(
