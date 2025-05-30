@@ -26,8 +26,6 @@ export async function loadAllTraits(reportId: string): Promise<Trait[]> {
   }
 }
 
-
-
 /**
  * Finds a trait by ID from backend API
  */
@@ -40,8 +38,6 @@ export async function findTraitById(id: string, reportId: string): Promise<Trait
     return null
   }
 }
-
-
 
 /**
  * Calculates the score for a trait based on genotypes

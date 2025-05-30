@@ -4,90 +4,7 @@ import type React from "react"
 import type { Trait, TraitCategory } from "@/types/trait"
 import { Badge } from "@/components/ui/badge"
 import { useState, useEffect } from "react"
-import {
-  Plus,
-  AlertCircle,
-  Coffee,
-  Moon,
-  Brain,
-  Music,
-  Clock,
-  Droplet,
-  Eye,
-  Scissors,
-  Utensils,
-  Wine,
-  Heart,
-  Dna,
-  Leaf,
-  Zap,
-  Sun,
-  Smile,
-  Frown,
-  Thermometer,
-  Wind,
-  Umbrella,
-  Flame,
-  Snowflake,
-  Activity,
-  Apple,
-  Baby,
-  Banana,
-  Beef,
-  Beer,
-  Book,
-  Braces,
-  Briefcase,
-  Cake,
-  Camera,
-  Car,
-  Cat,
-  ChefHat,
-  Cherry,
-  Cloud,
-  Code,
-  Compass,
-  Cookie,
-  Cpu,
-  Crown,
-  Diamond,
-  Dog,
-  Egg,
-  Fish,
-  Flower,
-  Gamepad2,
-  Gift,
-  Glasses,
-  Globe,
-  Grape,
-  Hammer,
-  HandMetal,
-  Headphones,
-  Home,
-  IceCream,
-  Landmark,
-  Lightbulb,
-  Microscope,
-  Mountain,
-  Palette,
-  Pill,
-  Pizza,
-  Plane,
-  Rocket,
-  Salad,
-  Shirt,
-  ShoppingBag,
-  Smartphone,
-  Star,
-  Stethoscope,
-  Syringe,
-  Target,
-  Tent,
-  Trophy,
-  Tv,
-  Wheat,
-  AlertTriangle,
-} from "lucide-react"
+import { AlertTriangle } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -99,250 +16,6 @@ import { DeleteTraitDialog } from "./components/delete-trait-dialog"
 import { TraitImportExport } from "./components/trait-import-export"
 import { Card, CardContent } from "@/components/ui/card"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
-
-// Icon mapping for rendering
-const iconMapping: Record<string, React.ComponentType<{ className?: string }>> = {
-  Eye: Eye,
-  Coffee: Coffee,
-  Moon: Moon,
-  Droplet: Droplet,
-  Brain: Brain,
-  Scissors: Scissors,
-  Utensils: Utensils,
-  Wine: Wine,
-  Clock: Clock,
-  Music: Music,
-  Heart: Heart,
-  Dna: Dna,
-  Leaf: Leaf,
-  Zap: Zap,
-  Sun: Sun,
-  Smile: Smile,
-  Frown: Frown,
-  Thermometer: Thermometer,
-  Wind: Wind,
-  Umbrella: Umbrella,
-  Flame: Flame,
-  Snowflake: Snowflake,
-  Activity: Activity,
-  AlertCircle: AlertCircle,
-  Plus: Plus,
-  Apple: Apple,
-  Baby: Baby,
-  Banana: Banana,
-  Beef: Beef,
-  Beer: Beer,
-  Book: Book,
-  Braces: Braces,
-  Briefcase: Briefcase,
-  Cake: Cake,
-  Camera: Camera,
-  Car: Car,
-  Cat: Cat,
-  ChefHat: ChefHat,
-  Cherry: Cherry,
-  Cloud: Cloud,
-  Code: Code,
-  Compass: Compass,
-  Cookie: Cookie,
-  Cpu: Cpu,
-  Crown: Crown,
-  Diamond: Diamond,
-  Dog: Dog,
-  Egg: Egg,
-  Fish: Fish,
-  Flower: Flower,
-  Gamepad2: Gamepad2,
-  Gift: Gift,
-  Glasses: Glasses,
-  Globe: Globe,
-  Grape: Grape,
-  Hammer: Hammer,
-  HandMetal: HandMetal,
-  Headphones: Headphones,
-  Home: Home,
-  IceCream: IceCream,
-  Landmark: Landmark,
-  Lightbulb: Lightbulb,
-  Microscope: Microscope,
-  Mountain: Mountain,
-  Palette: Palette,
-  Pill: Pill,
-  Pizza: Pizza,
-  Plane: Plane,
-  Rocket: Rocket,
-  Salad: Salad,
-  Shirt: Shirt,
-  ShoppingBag: ShoppingBag,
-  Smartphone: Smartphone,
-  Star: Star,
-  Stethoscope: Stethoscope,
-  Syringe: Syringe,
-  Target: Target,
-  Tent: Tent,
-  Trophy: Trophy,
-  Tv: Tv,
-  Wheat: Wheat,
-}
-
-
-// 添加计算特征分数的函数
-const calculateTraitScore = (trait: Partial<Trait>): number => {
-  if (!trait.formula || !trait.rsids || !trait.yourGenotypes) return 0
-
-  try {
-    // 解析SCORE公式
-    if (trait.formula.startsWith("SCORE(") && trait.formula.endsWith(")")) {
-      const formulaContent = trait.formula.substring(6, trait.formula.length - 1)
-      const ruleGroups = formulaContent
-        .split(";")
-        .map((group) => group.trim())
-        .filter((g) => g)
-
-      let totalScore = 0
-
-      // 处理每个RSID规则组
-      for (const group of ruleGroups) {
-        if (!group) continue
-
-        const [rsidPart, scoresPart] = group.split(":").map((part) => part.trim())
-        if (!rsidPart || !scoresPart) continue
-
-        const rsid = rsidPart.trim()
-        const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
-
-        if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) continue
-
-        const userGenotype = trait.yourGenotypes[rsidIndex]
-        const scoreRules = scoresPart.split(",").map((rule) => {
-          const [genotype, scoreStr] = rule.split("=").map((r) => r.trim())
-          return { genotype, score: Number.parseInt(scoreStr, 10) }
-        })
-
-        const matchingRule = scoreRules.find((rule) => rule.genotype === userGenotype)
-        if (matchingRule) {
-          totalScore += matchingRule.score
-        }
-      }
-
-      return totalScore
-    }
-    // 解析IF条件公式
-    else if (trait.formula.startsWith("IF(") && trait.formula.endsWith(")")) {
-      const formulaContent = trait.formula.substring(3, trait.formula.length - 1)
-      const parts = formulaContent.split(",").map((part) => part.trim())
-
-      if (parts.length < 3) return 0
-
-      // 解析条件
-      const condition = parts[0]
-      const trueValue = Number.parseInt(parts[1], 10)
-      const falseValue = Number.parseInt(parts[2], 10)
-
-      // 解析条件表达式，例如 "rs123=AG"
-      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
-      const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
-
-      if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) return falseValue
-
-      const userGenotype = trait.yourGenotypes[rsidIndex]
-      return userGenotype === expectedGenotype ? trueValue : falseValue
-    }
-    // 支持组合公式：IF(condition, SCORE(...), value)
-    else if (trait.formula.includes("IF(") && trait.formula.includes("SCORE(")) {
-      // 提取IF条件
-      const ifMatch = trait.formula.match(/IF$$(.*?),\s*(.*?),\s*(.*?)$$/)
-      if (!ifMatch || ifMatch.length < 4) return 0
-
-      const condition = ifMatch[1].trim()
-      const trueExpr = ifMatch[2].trim()
-      const falseExpr = ifMatch[3].trim()
-
-      // 解析条件
-      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
-      const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
-
-      if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) {
-        // 条件不满足，返回falseExpr的值
-        return isNaN(Number(falseExpr)) ? 0 : Number(falseExpr)
-      }
-
-      const userGenotype = trait.yourGenotypes[rsidIndex]
-
-      if (userGenotype === expectedGenotype) {
-        // 条件满足，计算trueExpr
-        if (trueExpr.startsWith("SCORE(")) {
-          // 递归调用计算SCORE
-          const tempTrait = { ...trait, formula: trueExpr }
-          return calculateTraitScore(tempTrait)
-        } else {
-          return isNaN(Number(trueExpr)) ? 0 : Number(trueExpr)
-        }
-      } else {
-        // 条件不满足，返回falseExpr
-        if (falseExpr.startsWith("SCORE(")) {
-          // 递归调用计算SCORE
-          const tempTrait = { ...trait, formula: falseExpr }
-          return calculateTraitScore(tempTrait)
-        } else {
-          return isNaN(Number(falseExpr)) ? 0 : Number(falseExpr)
-        }
-      }
-    }
-
-    return 0
-  } catch (error) {
-    console.error("Error calculating trait score:", error)
-    return 0
-  }
-}
-
-// 根据分数和阈值确定结果
-const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": string } => {
-  if (!trait.scoreThresholds || Object.keys(trait.scoreThresholds).length === 0) {
-    return { en: "", "zh-CN": "" }
-  }
-
-  const score = calculateTraitScore(trait)
-
-  // 分离数字阈值和布尔值阈值
-  const numericThresholds: [string, number][] = []
-  const booleanThresholds: [string, boolean][] = []
-
-  Object.entries(trait.scoreThresholds).forEach(([key, value]) => {
-    if (typeof value === "boolean") {
-      booleanThresholds.push([key, value])
-    } else {
-      numericThresholds.push([key, value])
-    }
-  })
-
-  // 如果有布尔值为true的阈值，优先返回它
-  const trueThreshold = booleanThresholds.find(([_, value]) => value === true)
-  if (trueThreshold) {
-    return { en: trueThreshold[0], "zh-CN": trueThreshold[0] }
-  }
-
-  // 按分数阈值从高到低排序
-  const sortedThresholds = numericThresholds.sort((a, b) => b[1] - a[1])
-
-  // 找到第一个分数小于等于计算分数的阈值
-  for (const [result, threshold] of sortedThresholds) {
-    if (score >= threshold) {
-      return { en: result, "zh-CN": result }
-    }
-  }
-
-  // 如果没有匹配的阈值，返回分数最低的结果或第一个布尔值为false的结果
-  if (sortedThresholds.length > 0) {
-    const lowestResult = sortedThresholds[sortedThresholds.length - 1][0]
-    return { en: lowestResult, "zh-CN": lowestResult }
-  } else if (booleanThresholds.length > 0) {
-    return { en: booleanThresholds[0][0], "zh-CN": booleanThresholds[0][0] }
-  }
-
-  return { en: "", "zh-CN": "" }
-}
 
 const translations = {
   en: {
@@ -364,23 +37,41 @@ export default function TraitsPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [traitToDelete, setTraitToDelete] = useState<Trait | null>(null)
 
-  // Load traits on component mount
+  // Cache management
+  const [cachedReportId, setCachedReportId] = useState<string>("")
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
+
+  // Function to refresh traits data from API
+  const refreshTraitsData = async (reportId: string) => {
+    try {
+      const allTraits = await loadAllTraits(reportId)
+      setTraits(allTraits)
+      setCachedReportId(reportId)
+    } catch (error) {
+      console.error("Failed to load traits:", error)
+      setTraits([])
+    }
+  }
+
+  // Load traits on component mount and when report ID changes
   useEffect(() => {
     const loadTraitsData = async () => {
       if (currentReportId) {
-        try {
-          const allTraits = await loadAllTraits(currentReportId)
-          setTraits(allTraits)
-        } catch (error) {
-          console.error("Failed to load traits:", error)
-          // Fallback to empty array or show error message
-          setTraits([])
+        // Case 1: Initial load
+        if (isInitialLoad) {
+          await refreshTraitsData(currentReportId)
+          setIsInitialLoad(false)
         }
+        // Case 2: Report ID changed
+        else if (currentReportId !== cachedReportId) {
+          await refreshTraitsData(currentReportId)
+        }
+        // Otherwise, use cached data (no API call needed)
       }
     }
 
     loadTraitsData()
-  }, [currentReportId])
+  }, [currentReportId, cachedReportId, isInitialLoad])
 
   // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {
@@ -397,9 +88,7 @@ export default function TraitsPage() {
   }
 
   // Handle creating a new trait
-  const handleCreateTrait = (newTrait: Trait) => {
-    const updatedTraits = [...traits, newTrait]
-    setTraits(updatedTraits)
+  const handleCreateTrait = async (newTrait: Trait) => {
     setIsCreateDialogOpen(false)
 
     toast.success(
@@ -407,18 +96,26 @@ export default function TraitsPage() {
         ? `Trait created successfully with result: ${newTrait.result.en}`
         : `特征创建成功，结果为：${newTrait.result["zh-CN"]}`,
     )
+
+    // Case 3: Refresh traits list from backend after creating a new trait
+    if (currentReportId) {
+      await refreshTraitsData(currentReportId)
+    }
   }
 
   // Handle deleting a trait
-  const handleDeleteTrait = () => {
+  const handleDeleteTrait = async () => {
     if (!traitToDelete) return
 
-    const updatedTraits = traits.filter((trait) => trait.id !== traitToDelete.id)
-    setTraits(updatedTraits)
     setIsDeleteDialogOpen(false)
     setTraitToDelete(null)
 
     toast.success(language === "en" ? "Trait deleted successfully" : "特征删除成功")
+
+    // Case 4: Refresh traits list from backend after deleting a trait
+    if (currentReportId) {
+      await refreshTraitsData(currentReportId)
+    }
   }
 
   // Open delete confirmation dialog
@@ -429,9 +126,12 @@ export default function TraitsPage() {
   }
 
   // Handle importing traits
-  const handleImportTraits = (importedTraits: Trait[]) => {
-    const updatedTraits = [...traits, ...importedTraits]
-    setTraits(updatedTraits)
+  const handleImportTraits = async (_importedTraits: Trait[]) => {
+    // Case 5: Refresh traits list from backend after importing traits
+    // Note: We refresh from backend instead of using importedTraits to ensure data consistency
+    if (currentReportId) {
+      await refreshTraitsData(currentReportId)
+    }
   }
 
   return (
