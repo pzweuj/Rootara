@@ -1,72 +1,60 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Eye, Coffee, Sun, Moon, Droplet, ExternalLink } from "lucide-react"
+import { ExternalLink } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
-
-const traits = [
-  {
-    id: 1,
-    name: "Eye Color",
-    nameZh: "眼睛颜色",
-    result: "Brown",
-    resultZh: "棕色",
-    description: "You have genetic markers associated with brown eyes.",
-    descriptionZh: "您的基因标记与棕色眼睛相关。",
-    icon: Eye,
-    confidence: "high",
-  },
-  {
-    id: 2,
-    name: "Caffeine Metabolism",
-    nameZh: "咖啡因代谢",
-    result: "Slow Metabolizer",
-    resultZh: "代谢缓慢",
-    description: "You may be more sensitive to caffeine's effects.",
-    descriptionZh: "您可能对咖啡因的影响更敏感。",
-    icon: Coffee,
-    confidence: "medium",
-  },
-  {
-    id: 3,
-    name: "Sleep Patterns",
-    nameZh: "睡眠模式",
-    result: "Night Owl",
-    resultZh: "夜猫子",
-    description: "Your genetic profile suggests you may naturally prefer staying up late.",
-    descriptionZh: "您的基因特征表明您可能天生喜欢熬夜。",
-    icon: Moon,
-    confidence: "high",
-  },
-  {
-    id: 4,
-    name: "Lactose Tolerance",
-    nameZh: "乳糖耐受性",
-    result: "Tolerant",
-    resultZh: "耐受",
-    description: "You likely maintain the ability to digest lactose into adulthood.",
-    descriptionZh: "您可能保持了成年后消化乳糖的能力。",
-    icon: Droplet,
-    confidence: "high",
-  },
-  {
-    id: 5,
-    name: "Sun Sensitivity",
-    nameZh: "阳光敏感度",
-    result: "Moderate",
-    resultZh: "中等",
-    description: "You have a moderate genetic predisposition to sunburn.",
-    descriptionZh: "您有中等程度的遗传性晒伤倾向。",
-    icon: Sun,
-    confidence: "medium",
-  },
-]
+import { useReport } from "@/contexts/report-context"
+import type { Trait } from "@/types/trait"
 
 export function TraitHighlights() {
   const { language } = useLanguage()
   const router = useRouter()
+  const { currentReportId } = useReport()
+  const [traits, setTraits] = useState<Trait[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // 随机选择特征的函数
+  const getRandomTraits = (allTraits: Trait[], count: number = 4): Trait[] => {
+    const shuffled = [...allTraits].sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, count)
+  }
+
+  // 从API加载特征数据
+  useEffect(() => {
+    const loadTraits = async () => {
+      if (!currentReportId) return
+
+      try {
+        setLoading(true)
+        const response = await fetch('/api/traits/info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ report_id: currentReportId })
+        })
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`)
+        }
+
+        const data = await response.json()
+        // 随机选择4个特征
+        const randomTraits = getRandomTraits(data, 4)
+        setTraits(randomTraits)
+      } catch (error) {
+        console.error("Failed to load traits:", error)
+        setTraits([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadTraits()
+  }, [currentReportId])
 
   const translations = {
     en: {
@@ -75,6 +63,8 @@ export function TraitHighlights() {
       highConfidence: "High confidence",
       mediumConfidence: "Medium confidence",
       lowConfidence: "Low confidence",
+      loading: "Loading traits...",
+      noTraits: "No traits available",
     },
     "zh-CN": {
       traitHighlights: "特征亮点",
@@ -82,6 +72,8 @@ export function TraitHighlights() {
       highConfidence: "高可信度",
       mediumConfidence: "中等可信度",
       lowConfidence: "低可信度",
+      loading: "正在加载特征...",
+      noTraits: "暂无特征数据",
     },
   }
 
@@ -89,6 +81,21 @@ export function TraitHighlights() {
     return (
       translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
     )
+  }
+
+  // 辅助函数：获取多语言字段的文本
+  const getLocalizedText = (field: { en: string; "zh-CN": string; default: string } | undefined, fallback: string = "N/A"): string => {
+    if (!field) return fallback
+    return field[language as keyof typeof field] || field.default || fallback
+  }
+
+  // 辅助函数：从result Record中获取第一个结果的文本
+  const getResultText = (result: Record<string, { en: string; "zh-CN": string; default: string }> | undefined): string => {
+    if (!result) return "N/A"
+    const firstKey = Object.keys(result)[0]
+    if (!firstKey) return "N/A"
+    const firstResult = result[firstKey]
+    return getLocalizedText(firstResult, "N/A")
   }
 
   const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
@@ -111,6 +118,38 @@ export function TraitHighlights() {
     )
   }
 
+  // 如果正在加载，显示加载状态
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">{t("traitHighlights")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <p className="text-muted-foreground">{t("loading")}</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // 如果没有特征数据，显示空状态
+  if (traits.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">{t("traitHighlights")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <p className="text-muted-foreground">{t("noTraits")}</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -118,19 +157,26 @@ export function TraitHighlights() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {traits.slice(0, 3).map((trait) => (
+          {traits.map((trait) => (
             <div key={trait.id} className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <trait.icon className="h-5 w-5 text-primary mr-2" />
-                  <span className="font-medium">{language === "zh-CN" ? trait.nameZh : trait.name}</span>
+                  <div className="h-5 w-5 text-primary mr-2 flex items-center justify-center">
+                    {/* 使用简单的圆点作为图标，因为API数据中的icon是字符串 */}
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  </div>
+                  <span className="font-medium">
+                    {getLocalizedText(trait.name, "Unknown Trait")}
+                  </span>
                 </div>
-                {getConfidenceBadge(trait.confidence as "high" | "medium" | "low")}
+                {getConfidenceBadge(trait.confidence)}
               </div>
               <div>
-                <p className="text-sm font-semibold">{language === "zh-CN" ? trait.resultZh : trait.result}</p>
+                <p className="text-sm font-semibold">
+                  {getLocalizedText(trait.result_current) || getResultText(trait.result)}
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  {language === "zh-CN" ? trait.descriptionZh : trait.description}
+                  {getLocalizedText(trait.description, "No description available")}
                 </p>
               </div>
             </div>
