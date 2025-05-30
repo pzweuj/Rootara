@@ -37,16 +37,56 @@ export default function TraitsPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [traitToDelete, setTraitToDelete] = useState<Trait | null>(null)
 
-  // Cache management
-  const [cachedReportId, setCachedReportId] = useState<string>("")
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
+  // Cache management using sessionStorage
+  const getCacheKey = (reportId: string) => `traits_cache_${reportId}`
+  const getTimestampKey = (reportId: string) => `traits_timestamp_${reportId}`
+
+  // Function to get cached data
+  const getCachedTraits = (reportId: string): Trait[] | null => {
+    if (typeof window === "undefined") return null
+    try {
+      const cached = sessionStorage.getItem(getCacheKey(reportId))
+      return cached ? JSON.parse(cached) : null
+    } catch (error) {
+      console.error("Failed to get cached traits:", error)
+      return null
+    }
+  }
+
+  // Function to set cached data
+  const setCachedTraits = (reportId: string, traits: Trait[]) => {
+    if (typeof window === "undefined") return
+    try {
+      sessionStorage.setItem(getCacheKey(reportId), JSON.stringify(traits))
+      sessionStorage.setItem(getTimestampKey(reportId), Date.now().toString())
+    } catch (error) {
+      console.error("Failed to cache traits:", error)
+    }
+  }
+
+  // Function to check if we need to refresh (for forced refresh scenarios)
+  const shouldForceRefresh = (reportId: string): boolean => {
+    if (typeof window === "undefined") return true
+    const forceRefreshKey = `traits_force_refresh_${reportId}`
+    const shouldRefresh = sessionStorage.getItem(forceRefreshKey) === "true"
+    if (shouldRefresh) {
+      sessionStorage.removeItem(forceRefreshKey)
+    }
+    return shouldRefresh
+  }
+
+  // Function to mark for forced refresh
+  const markForRefresh = (reportId: string) => {
+    if (typeof window === "undefined") return
+    sessionStorage.setItem(`traits_force_refresh_${reportId}`, "true")
+  }
 
   // Function to refresh traits data from API
   const refreshTraitsData = async (reportId: string) => {
     try {
       const allTraits = await loadAllTraits(reportId)
       setTraits(allTraits)
-      setCachedReportId(reportId)
+      setCachedTraits(reportId, allTraits)
     } catch (error) {
       console.error("Failed to load traits:", error)
       setTraits([])
@@ -56,22 +96,23 @@ export default function TraitsPage() {
   // Load traits on component mount and when report ID changes
   useEffect(() => {
     const loadTraitsData = async () => {
-      if (currentReportId) {
-        // Case 1: Initial load
-        if (isInitialLoad) {
-          await refreshTraitsData(currentReportId)
-          setIsInitialLoad(false)
-        }
-        // Case 2: Report ID changed
-        else if (currentReportId !== cachedReportId) {
-          await refreshTraitsData(currentReportId)
-        }
-        // Otherwise, use cached data (no API call needed)
+      if (!currentReportId) return
+
+      // Check if we have cached data
+      const cachedTraits = getCachedTraits(currentReportId)
+      const forceRefresh = shouldForceRefresh(currentReportId)
+
+      if (cachedTraits && !forceRefresh) {
+        // Use cached data
+        setTraits(cachedTraits)
+      } else {
+        // Fetch from API
+        await refreshTraitsData(currentReportId)
       }
     }
 
     loadTraitsData()
-  }, [currentReportId, cachedReportId, isInitialLoad])
+  }, [currentReportId])
 
   // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {
@@ -99,6 +140,7 @@ export default function TraitsPage() {
 
     // Case 3: Refresh traits list from backend after creating a new trait
     if (currentReportId) {
+      markForRefresh(currentReportId)
       await refreshTraitsData(currentReportId)
     }
   }
@@ -114,6 +156,7 @@ export default function TraitsPage() {
 
     // Case 4: Refresh traits list from backend after deleting a trait
     if (currentReportId) {
+      markForRefresh(currentReportId)
       await refreshTraitsData(currentReportId)
     }
   }
@@ -130,6 +173,7 @@ export default function TraitsPage() {
     // Case 5: Refresh traits list from backend after importing traits
     // Note: We refresh from backend instead of using importedTraits to ensure data consistency
     if (currentReportId) {
+      markForRefresh(currentReportId)
       await refreshTraitsData(currentReportId)
     }
   }
