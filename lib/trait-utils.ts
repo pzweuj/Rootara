@@ -27,11 +27,34 @@ export async function loadAllTraits(reportId: string): Promise<Trait[]> {
 }
 
 /**
- * Finds a trait by ID from backend API
+ * Finds a trait by ID, using cache when possible
  */
 export async function findTraitById(id: string, reportId: string): Promise<Trait | null> {
   try {
+    // First try to get from cache
+    if (typeof window !== "undefined") {
+      const cacheKey = `traits_cache_${reportId}`
+      const cached = sessionStorage.getItem(cacheKey)
+      if (cached) {
+        const cachedTraits = JSON.parse(cached) as Trait[]
+        const foundTrait = cachedTraits.find((trait) => trait.id === id)
+        if (foundTrait) {
+          return foundTrait
+        }
+      }
+    }
+
+    // If not found in cache, fetch from API
     const allTraits = await loadAllTraits(reportId)
+
+    // Cache the fetched data
+    if (typeof window !== "undefined") {
+      const cacheKey = `traits_cache_${reportId}`
+      const timestampKey = `traits_timestamp_${reportId}`
+      sessionStorage.setItem(cacheKey, JSON.stringify(allTraits))
+      sessionStorage.setItem(timestampKey, Date.now().toString())
+    }
+
     return allTraits.find((trait) => trait.id === id) || null
   } catch (error) {
     console.error("Failed to find trait by ID:", error)
