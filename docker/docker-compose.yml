@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    image: ghcr.io/pzweuj/rootara-backend:latest
+    container_name: rootara-backend
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # 前端服务
+  frontend:
+    image: ghcr.io/pzweuj/rootara:latest
+    container_name: rootara-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai                                         # Timezone setting
+      - ADMIN_EMAIL=admin@rootara.app                            # Admin user email
+      - ADMIN_PASSWORD=rootara123                                # Admin user password
+      - JWT_SECRET=rootara_jwt_secret                            # Secret key for JWT
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # API key for backend authentication
+      - ROOTARA_BACKEND_URL=http://backend:8000                  # Backend service URL
+      - NODE_ENV=production                                      # Production environment mode
+      - NEXT_TELEMETRY_DISABLED=1                                # Disable Next.js telemetry
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  default:
+    name: rootara
