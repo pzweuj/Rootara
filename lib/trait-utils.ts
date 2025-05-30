@@ -1,51 +1,47 @@
 import type { Trait } from "@/types/trait"
-import defaultTraitsData from "@/data/default-traits.json"
 
 /**
- * Loads all traits (default and user-created)
+ * Loads all traits from backend API
  */
-export function loadAllTraits(): Trait[] {
+export async function loadAllTraits(reportId: string): Promise<Trait[]> {
   try {
-    // Load default traits
-    const defaultTraits = defaultTraitsData as unknown as Trait[]
+    // Call the API to get traits data
+    const response = await fetch('/api/traits/info', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ report_id: reportId })
+    });
 
-    // Load user traits from localStorage if available
-    if (typeof window !== "undefined") {
-      const savedTraits = localStorage.getItem("userTraits")
-      if (savedTraits) {
-        const parsedTraits = JSON.parse(savedTraits) as Trait[]
-        // Combine default traits with user traits
-        return [...defaultTraits, ...parsedTraits]
-      }
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
     }
 
-    return defaultTraits
+    const data = await response.json();
+    return data as Trait[];
   } catch (error) {
     console.error("Failed to load traits:", error)
-    return defaultTraitsData as unknown as Trait[]
+    return []
   }
 }
 
+
+
 /**
- * Saves user-created traits to localStorage
+ * Finds a trait by ID from backend API
  */
-export function saveUserTraits(traits: Trait[]): void {
+export async function findTraitById(id: string, reportId: string): Promise<Trait | null> {
   try {
-    // Filter out default traits before saving
-    const userTraits = traits.filter((trait) => !trait.isDefault)
-    localStorage.setItem("userTraits", JSON.stringify(userTraits))
+    const allTraits = await loadAllTraits(reportId)
+    return allTraits.find((trait) => trait.id === id) || null
   } catch (error) {
-    console.error("Failed to save traits:", error)
+    console.error("Failed to find trait by ID:", error)
+    return null
   }
 }
 
-/**
- * Finds a trait by ID
- */
-export function findTraitById(id: string): Trait | null {
-  const allTraits = loadAllTraits()
-  return allTraits.find((trait) => trait.id === id) || null
-}
+
 
 /**
  * Calculates the score for a trait based on genotypes

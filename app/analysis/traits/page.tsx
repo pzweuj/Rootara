@@ -91,7 +91,7 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { loadAllTraits, saveUserTraits } from "@/lib/trait-utils"
+import { loadAllTraits } from "@/lib/trait-utils"
 import { TraitFilters } from "./components/trait-filters"
 import { TraitsList } from "./components/trait-list"
 import { CreateTraitDialog } from "./components/create-trait-dialog"
@@ -356,6 +356,7 @@ const translations = {
 export default function TraitsPage() {
   const { language } = useLanguage()
   const router = useRouter()
+  const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<TraitCategory>("all")
   const [traits, setTraits] = useState<Trait[]>([])
@@ -365,9 +366,21 @@ export default function TraitsPage() {
 
   // Load traits on component mount
   useEffect(() => {
-    const allTraits = loadAllTraits()
-    setTraits(allTraits)
-  }, [])
+    const loadTraitsData = async () => {
+      if (currentReportId) {
+        try {
+          const allTraits = await loadAllTraits(currentReportId)
+          setTraits(allTraits)
+        } catch (error) {
+          console.error("Failed to load traits:", error)
+          // Fallback to empty array or show error message
+          setTraits([])
+        }
+      }
+    }
+
+    loadTraitsData()
+  }, [currentReportId])
 
   // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {
@@ -387,7 +400,6 @@ export default function TraitsPage() {
   const handleCreateTrait = (newTrait: Trait) => {
     const updatedTraits = [...traits, newTrait]
     setTraits(updatedTraits)
-    saveUserTraits(updatedTraits)
     setIsCreateDialogOpen(false)
 
     toast.success(
@@ -403,7 +415,6 @@ export default function TraitsPage() {
 
     const updatedTraits = traits.filter((trait) => trait.id !== traitToDelete.id)
     setTraits(updatedTraits)
-    saveUserTraits(updatedTraits)
     setIsDeleteDialogOpen(false)
     setTraitToDelete(null)
 
@@ -421,10 +432,7 @@ export default function TraitsPage() {
   const handleImportTraits = (importedTraits: Trait[]) => {
     const updatedTraits = [...traits, ...importedTraits]
     setTraits(updatedTraits)
-    saveUserTraits(updatedTraits)
   }
-
-  const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
 
   return (
     <div className="space-y-6">
@@ -439,7 +447,7 @@ export default function TraitsPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="flex-[1] min-w-[200px] border-0 shadow-none">
           <CardContent className="flex items-center justify-center py-4">
             <Badge variant="outline" className="text-xs font-mono">

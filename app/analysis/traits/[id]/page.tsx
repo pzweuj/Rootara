@@ -36,8 +36,8 @@ import {
 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { Badge } from "@/components/ui/badge"
-import defaultTraitsData from "@/data/default-traits.json"
-import { getCategoryColor, getCategoryName } from "@/lib/trait-utils"
+import { getCategoryColor, getCategoryName, findTraitById } from "@/lib/trait-utils"
+import { useReport } from "@/contexts/report-context"
 import { Trait } from "@/types/trait"
 
 // 添加图标映射对象
@@ -72,43 +72,29 @@ export default function TraitDetailPage() {
   const { id } = useParams()
   const router = useRouter()
   const { language } = useLanguage()
+  const { currentReportId } = useReport()
   const [trait, setTrait] = useState<Trait | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadTrait = () => {
+    const loadTrait = async () => {
+      if (!id || !currentReportId) return
+
       setLoading(true)
 
-      // First check default traits
-      const defaultTrait = defaultTraitsData.find((t: any) => t.id === id)
-      if (defaultTrait) {
-        // 先将 defaultTrait 转换为 unknown 类型，再转换为 Trait 类型，以确保类型安全
-        setTrait(defaultTrait as unknown as Trait)
-        setLoading(false)
-        return
-      }
-
-      // Then check user traits from localStorage
       try {
-        const savedTraits = localStorage.getItem("userTraits")
-        if (savedTraits) {
-          const parsedTraits = JSON.parse(savedTraits) as Trait[]
-          const userTrait = parsedTraits.find((t) => t.id === id)
-          if (userTrait) {
-            setTrait(userTrait)
-          }
-        }
+        const foundTrait = await findTraitById(id as string, currentReportId)
+        setTrait(foundTrait)
       } catch (error) {
         console.error("Failed to load trait:", error)
+        setTrait(null)
       }
 
       setLoading(false)
     }
 
-    if (id) {
-      loadTrait()
-    }
-  }, [id])
+    loadTrait()
+  }, [id, currentReportId])
 
   // 在translations对象中添加可信度的翻译
   const translations = {
@@ -352,7 +338,7 @@ export default function TraitDetailPage() {
                     </ul>
                   </div>
                 )}
-              
+
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">{t("noGeneticData")}</p>
