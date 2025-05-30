@@ -54,20 +54,108 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
       }
 
       // 验证每个特征对象
-      jsonData.forEach((trait: any) => {
-        if (
-          typeof trait.name !== "object" ||
-          typeof trait.description !== "object" ||
-          typeof trait.category !== "string" ||
-          !Array.isArray(trait.rsids) ||
-          !Array.isArray(trait.referenceGenotypes) ||
-          !Array.isArray(trait.yourGenotypes) ||
-          typeof trait.formula !== "string" ||
-          typeof trait.scoreThresholds !== "object"
-        ) {
-          throw new Error("Invalid trait format in the uploaded file.");
+      jsonData.forEach((trait: any, index: number) => {
+        // 检查必需的基本属性
+        if (!trait.id || typeof trait.id !== "string") {
+          throw new Error(`Trait at index ${index}: Missing or invalid 'id' field.`);
+        }
+
+        // 验证多语言对象结构
+        const validateMultiLangObject = (obj: any, fieldName: string, isOptional = false) => {
+          if (!obj || typeof obj !== "object") {
+            if (isOptional) {
+              return; // 可选字段，跳过验证
+            }
+            throw new Error(`Trait at index ${index}: '${fieldName}' must be an object.`);
+          }
+          if (typeof obj.en !== "string" || typeof obj["zh-CN"] !== "string" || typeof obj.default !== "string") {
+            throw new Error(`Trait at index ${index}: '${fieldName}' must have 'en', 'zh-CN', and 'default' string properties.`);
+          }
+        };
+
+        // 验证必需的多语言字段
+        validateMultiLangObject(trait.name, "name");
+        validateMultiLangObject(trait.description, "description");
+
+        // result_current 是可选的，因为导出的文件可能不包含这个字段（它是动态计算的）
+        validateMultiLangObject(trait.result_current, "result_current", true);
+
+        // 验证 result 字段 - 这是一个复杂的嵌套对象结构
+        if (!trait.result || typeof trait.result !== "object") {
+          throw new Error(`Trait at index ${index}: 'result' must be an object.`);
+        }
+
+        // 验证 result 对象中的每个键都有正确的多语言结构
+        Object.entries(trait.result).forEach(([key, value]: [string, any]) => {
+          if (!value || typeof value !== "object") {
+            throw new Error(`Trait at index ${index}: 'result.${key}' must be an object.`);
+          }
+          if (typeof value.en !== "string" || typeof value["zh-CN"] !== "string" || typeof value.default !== "string") {
+            throw new Error(`Trait at index ${index}: 'result.${key}' must have 'en', 'zh-CN', and 'default' string properties.`);
+          }
+        });
+
+        // 验证其他必需字段
+        if (typeof trait.category !== "string") {
+          throw new Error(`Trait at index ${index}: 'category' must be a string.`);
+        }
+
+        if (!Array.isArray(trait.rsids)) {
+          throw new Error(`Trait at index ${index}: 'rsids' must be an array.`);
+        }
+
+        // referenceGenotypes 和 yourGenotypes 是可选的，因为导出的文件可能不包含这些字段
+        if (trait.referenceGenotypes !== undefined && !Array.isArray(trait.referenceGenotypes)) {
+          throw new Error(`Trait at index ${index}: 'referenceGenotypes' must be an array if present.`);
+        }
+
+        if (trait.yourGenotypes !== undefined && !Array.isArray(trait.yourGenotypes)) {
+          throw new Error(`Trait at index ${index}: 'yourGenotypes' must be an array if present.`);
+        }
+
+        if (typeof trait.formula !== "string") {
+          throw new Error(`Trait at index ${index}: 'formula' must be a string.`);
+        }
+
+        if (!trait.scoreThresholds || typeof trait.scoreThresholds !== "object") {
+          throw new Error(`Trait at index ${index}: 'scoreThresholds' must be an object.`);
+        }
+
+        if (typeof trait.icon !== "string") {
+          throw new Error(`Trait at index ${index}: 'icon' must be a string.`);
+        }
+
+        if (typeof trait.confidence !== "string") {
+          throw new Error(`Trait at index ${index}: 'confidence' must be a string.`);
+        }
+
+        if (typeof trait.isDefault !== "boolean") {
+          throw new Error(`Trait at index ${index}: 'isDefault' must be a boolean.`);
+        }
+
+        if (typeof trait.createdAt !== "string") {
+          throw new Error(`Trait at index ${index}: 'createdAt' must be a string.`);
+        }
+
+        if (!Array.isArray(trait.reference)) {
+          throw new Error(`Trait at index ${index}: 'reference' must be an array.`);
         }
       });
+
+      // 为导入的特征添加缺失的可选字段的默认值
+      const processedTraits = jsonData.map((trait: any) => ({
+        ...trait,
+        // 如果 result_current 不存在，创建一个默认的空对象
+        result_current: trait.result_current || {
+          en: "",
+          "zh-CN": "",
+          default: ""
+        },
+        // 如果 referenceGenotypes 不存在，创建空数组
+        referenceGenotypes: trait.referenceGenotypes || [],
+        // 如果 yourGenotypes 不存在，创建空数组
+        yourGenotypes: trait.yourGenotypes || []
+      }));
 
       // 调用新的API路由
       const response = await fetch('/api/traits/import', {
@@ -75,14 +163,14 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input_data: fileContent })
+        body: JSON.stringify({ input_data: JSON.stringify(processedTraits) })
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const importedTraits = jsonData as Trait[];
+      const importedTraits = processedTraits as Trait[];
       onImport(importedTraits);
       toast.success(t("importSuccess"));
     } catch (error: any) {

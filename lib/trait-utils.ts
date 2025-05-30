@@ -88,7 +88,7 @@ export function calculateTraitScore(trait: Trait): number {
       if (rsidIndex === -1) return
 
       // Get the user's genotype for this RSID
-      const userGenotype = trait.yourGenotypes[rsidIndex]
+      const userGenotype = trait.yourGenotypes?.[rsidIndex]
       if (!userGenotype) return
 
       // Parse the score rules

@@ -25,7 +25,7 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
         const rsid = rsidPart.trim()
         const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
 
-        if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) continue
+        if (rsidIndex === -1 || !trait.yourGenotypes?.[rsidIndex]) continue
 
         const userGenotype = trait.yourGenotypes[rsidIndex]
         const scoreRules = scoresPart.split(",").map((rule) => {
@@ -81,7 +81,7 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
         return isNaN(Number(falseExpr)) ? 0 : Number(falseExpr)
       }
 
-      const userGenotype = trait.yourGenotypes[rsidIndex]
+      const userGenotype = trait.yourGenotypes?.[rsidIndex]
 
       if (userGenotype === expectedGenotype) {
         // 条件满足，计算trueExpr

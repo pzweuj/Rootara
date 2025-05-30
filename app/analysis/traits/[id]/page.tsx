@@ -210,7 +210,7 @@ export default function TraitDetailPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-lg font-medium">{t("result")}</h3>
-            <p className="text-xl">{trait.result_current[language as keyof typeof trait.result_current] || trait.result_current.default}</p>
+            <p className="text-xl">{trait.result_current?.[language as keyof typeof trait.result_current] || trait.result_current?.default || "N/A"}</p>
           </div>
 
           <div className="space-y-2">
@@ -264,10 +264,10 @@ export default function TraitDetailPage() {
                         <tr key={index} className="border-t">
                           <td className="px-4 py-2 text-sm">{rsid}</td>
                           <td className="px-4 py-2 text-sm font-mono">
-                            {trait.referenceGenotypes[index] || '--'}
+                            {trait.referenceGenotypes?.[index] || '--'}
                           </td>
                           <td className="px-4 py-2 text-sm font-mono">
-                            {trait.yourGenotypes[index] || '--'}
+                            {trait.yourGenotypes?.[index] || '--'}
                           </td>
                         </tr>
                       ))}

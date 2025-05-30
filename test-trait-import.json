@@ -1,0 +1,45 @@
+[
+  {
+    "id": "test-trait-001",
+    "name": {
+      "en": "Test Eye Color",
+      "zh-CN": "测试眼睛颜色",
+      "default": "Test Eye Color"
+    },
+    "description": {
+      "en": "A test trait for eye color prediction",
+      "zh-CN": "用于眼睛颜色预测的测试特征",
+      "default": "A test trait for eye color prediction"
+    },
+    "icon": "Eye",
+    "confidence": "high",
+    "isDefault": false,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "category": "appearance",
+    "rsids": ["rs12913832", "rs1800407"],
+    "formula": "SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0)",
+    "scoreThresholds": {
+      "Brown": 12,
+      "Green": 8,
+      "Blue": 0
+    },
+    "result": {
+      "Brown": {
+        "default": "棕色",
+        "en": "Brown",
+        "zh-CN": "棕色"
+      },
+      "Green": {
+        "default": "绿色",
+        "en": "Green",
+        "zh-CN": "绿色"
+      },
+      "Blue": {
+        "default": "蓝色",
+        "en": "Blue",
+        "zh-CN": "蓝色"
+      }
+    },
+    "reference": ["test-reference-1", "test-reference-2"]
+  }
+]

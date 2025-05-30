@@ -5,12 +5,12 @@ export interface Trait {
     "zh-CN": string,
     default: string
   }
-  result: {
+  result: Record<string, {
     en: string
     "zh-CN": string,
     default: string
-  },
-  result_current: {
+  }>,
+  result_current?: {
     en: string
     "zh-CN": string,
     default: string
@@ -26,8 +26,8 @@ export interface Trait {
   createdAt: string
   category: "appearance" | "internal" | "nutrition" | "risk" | "lifestyle"
   rsids: string[]
-  referenceGenotypes: string[]
-  yourGenotypes: string[]
+  referenceGenotypes?: string[]
+  yourGenotypes?: string[]
   formula: string
   scoreThresholds: Record<string, number | boolean>,
   reference: string[],
