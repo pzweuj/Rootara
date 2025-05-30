@@ -48,11 +48,11 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
     try {
       const fileContent = await file.text();
       const jsonData = JSON.parse(fileContent);
-      
+
       if (!Array.isArray(jsonData)) {
         throw new Error("Uploaded file does not contain an array of traits.");
       }
-  
+
       // 验证每个特征对象
       jsonData.forEach((trait: any) => {
         if (
@@ -68,7 +68,7 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
           throw new Error("Invalid trait format in the uploaded file.");
         }
       });
-  
+
       // 调用新的API路由
       const response = await fetch('/api/traits/import', {
         method: 'POST',
@@ -77,11 +77,11 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
         },
         body: JSON.stringify({ input_data: fileContent })
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const importedTraits = jsonData as Trait[];
       onImport(importedTraits);
       toast.success(t("importSuccess"));
@@ -92,7 +92,10 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
   };
 
   const handleExportTraits = async () => {
-    if (!traits || traits.length === 0) {
+    // 过滤出非默认特征（用户创建的特征）
+    const customTraits = traits.filter((trait) => !trait.isDefault)
+
+    if (customTraits.length === 0) {
       toast.error(t("noCustomTraits"));
       return;
     }
@@ -104,23 +107,38 @@ export function TraitImportExport({ onImport, traits }: TraitImportExportProps) 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(traits)
+        body: JSON.stringify({ traits: customTraits })
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'traits_export.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      
+      // 获取文件名从响应头
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = `traits-export-${new Date().toISOString().split('T')[0]}.json`
+
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      // 获取格式化的JSON文本
+      const formattedJson = await response.text()
+
+      // 创建下载链接
+      const blob = new Blob([formattedJson], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
       toast.success(t("exportSuccess"));
     } catch (error: any) {
       console.error("Error exporting traits:", error);
