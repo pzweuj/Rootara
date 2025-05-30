@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
@@ -8,6 +9,40 @@ import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
 import { useReport } from "@/contexts/report-context"
 import type { Trait } from "@/types/trait"
+
+const iconNames = [
+  "Plus", "AlertCircle", "Coffee", "Moon", "Brain", "Music", "Clock", "Droplet",
+  "Eye", "Scissors", "Utensils", "Wine", "Heart", "Dna", "Leaf", "Zap", "Sun",
+  "Smile", "Frown", "Thermometer", "Wind", "Umbrella", "Flame", "Snowflake",
+  "Activity", "Apple", "Baby", "Banana", "Beef", "Beer", "Book", "Braces",
+  "Briefcase", "Cake", "Camera", "Car", "Cat", "ChefHat", "Cherry", "Cloud",
+  "Code", "Compass", "Cookie", "Cpu", "Crown", "Diamond", "Dog", "Egg", "Fish",
+  "Flower", "Gamepad2", "Gift", "Glasses", "Globe", "Grape", "Hammer", "HandMetal",
+  "Headphones", "Home", "IceCream", "Landmark", "Lightbulb", "Microscope", "Mountain",
+  "Palette", "Pill", "Pizza", "Plane", "Rocket", "Salad", "Shirt", "ShoppingBag",
+  "Smartphone", "Star", "Stethoscope", "Syringe", "Target", "Tent", "Trophy",
+  "Tv", "Wheat", "AlertTriangle", "Milk", "Paw", "Pencil", "Pig", "PizzaSlice",
+  "Poo", "QuestionMark", "Ribbon", "Shield", "Shirt2", "Socks", "Star2", "Truck",
+  "Wifi",
+];
+
+// 创建动态组件
+const dynamicIcons: Record<string, React.ComponentType<{ className?: string }>> = {};
+
+iconNames.forEach((name) => {
+  // 使用类型断言确保类型正确
+  dynamicIcons[name] = dynamic(
+    async (): Promise<{ default: React.ComponentType<{ className?: string }> }> => {
+      const module = await import("lucide-react");
+      const Icon = module[name as keyof typeof module];
+      // 确保返回的Icon组件符合ComponentType<{ className?: string }> 类型
+      return {
+        default: Icon as React.ComponentType<{ className?: string }>
+      };
+    },
+    { ssr: false }
+  ) as React.ComponentType<{ className?: string }>;
+});
 
 export function TraitHighlights() {
   const { language } = useLanguage()
@@ -98,6 +133,16 @@ export function TraitHighlights() {
     return getLocalizedText(firstResult, "N/A")
   }
 
+  // 辅助函数：获取图标组件
+  const getIconComponent = (iconName: string): React.ComponentType<{ className?: string }> => {
+    // 如果图标名称在动态图标中存在，返回对应的组件
+    if (dynamicIcons[iconName]) {
+      return dynamicIcons[iconName]
+    }
+    // 如果不存在，返回默认的AlertCircle图标
+    return dynamicIcons["AlertCircle"] || (() => <div className="w-2 h-2 bg-primary rounded-full" />)
+  }
+
   const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
     const styles = {
       high: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
@@ -157,30 +202,32 @@ export function TraitHighlights() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {traits.map((trait) => (
-            <div key={trait.id} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="h-5 w-5 text-primary mr-2 flex items-center justify-center">
-                    {/* 使用简单的圆点作为图标，因为API数据中的icon是字符串 */}
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+          {traits.map((trait) => {
+            const IconComponent = getIconComponent(trait.icon)
+            return (
+              <div key={trait.id} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="h-5 w-5 text-primary mr-2 flex items-center justify-center">
+                      <IconComponent className="h-4 w-4" />
+                    </div>
+                    <span className="font-medium">
+                      {getLocalizedText(trait.name, "Unknown Trait")}
+                    </span>
                   </div>
-                  <span className="font-medium">
-                    {getLocalizedText(trait.name, "Unknown Trait")}
-                  </span>
+                  {getConfidenceBadge(trait.confidence)}
                 </div>
-                {getConfidenceBadge(trait.confidence)}
+                <div>
+                  <p className="text-sm font-semibold">
+                    {getLocalizedText(trait.result_current) || getResultText(trait.result)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {getLocalizedText(trait.description, "No description available")}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold">
-                  {getLocalizedText(trait.result_current) || getResultText(trait.result)}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {getLocalizedText(trait.description, "No description available")}
-                </p>
-              </div>
-            </div>
-          ))}
+            )
+          })}
           <Button className="w-full" variant="outline" onClick={() => router.push("/analysis/traits")}>
             {t("viewAllTraits")}
             <ExternalLink className="h-3 w-3" />
