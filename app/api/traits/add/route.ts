@@ -33,35 +33,29 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // 只对需要字符串化的字段进行处理，scoreThresholds 保持对象格式
-    if (traitData && traitData.name) {
-      traitData.name = safeStringify(traitData.name);
-    }
-    if (traitData && traitData.description) {
-      traitData.description = safeStringify(traitData.description);
-    }
-    if (traitData && traitData.result) {
-      traitData.result = safeStringify(traitData.result);
-    }
-    // scoreThresholds 保持原始对象格式，后端期望接收对象而不是字符串
-    // 处理reference字段,将包含逗号的元素拆分成多个元素
-    if (traitData && traitData.reference) {
-      if (Array.isArray(traitData.reference)) {
-        traitData.reference = traitData.reference.reduce((acc: string[], item: string) => {
-          // 如果元素包含逗号,则拆分成多个元素
-          if (item.includes(',')) {
-            return [...acc, ...item.split(',').map(s => s.trim())]
-          }
-          return [...acc, item]
-        }, []);
-      } else {
-        // 如果不是数组则转换为字符串
-        traitData.reference = safeStringify(traitData.reference);
-      }
-    }
+    // 构建符合后端 TraitInput 模型的数据结构
+    const backendTraitData = {
+      name: safeStringify(traitData.name),
+      description: safeStringify(traitData.description),
+      scoreThresholds: safeStringify(traitData.scoreThresholds),
+      icon: traitData.icon || 'AlertCircle',
+      confidence: traitData.confidence || 'medium',
+      category: traitData.category || 'appearance',
+      rsids: Array.isArray(traitData.rsids) ? traitData.rsids : [],
+      formula: traitData.formula || '',
+      result: safeStringify(traitData.result),
+      reference: Array.isArray(traitData.reference) ? traitData.reference.reduce((acc: string[], item: string) => {
+        // 如果元素包含逗号,则拆分成多个元素
+        if (item.includes(',')) {
+          return [...acc, ...item.split(',').map(s => s.trim())]
+        }
+        return [...acc, item]
+      }, []) : []
+    };
 
 
-    console.log('Received trait:', JSON.stringify(traitData, null, 2));
+    console.log('Original trait data received:', JSON.stringify(traitData, null, 2));
+    console.log('Processed trait data to send to backend:', JSON.stringify(backendTraitData, null, 2));
 
     const response = await fetch(`${API_BASE_URL}/traits/add`, {
       method: 'POST',
@@ -70,11 +64,13 @@ export async function POST(request: NextRequest) {
         'x-api-key': API_KEY,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(traitData)
+      body: JSON.stringify(backendTraitData)
     });
 
     if (!response.ok) {
-      throw new Error(`API请求失败: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Backend error response:', errorText);
+      throw new Error(`API请求失败: ${response.status} ${response.statusText}. Details: ${errorText}`);
     }
 
     const data = await response.json();
