@@ -21,33 +21,39 @@ Rootara is an easy-to-deploy consumer-grade genetic data hosting platform that u
 
 ### Installation Steps
 
-#### 1. Clone the Project
-```bash
-git clone https://github.com/pzweuj/rootara.git
-cd rootara
-```
+Start Services with Docker Compose.
 
-#### 2. Start Services with Docker Compose
-```bash
-# Start all services (frontend + backend)
-docker-compose -f docker/docker-compose.yml up -d
+```yaml
+version: '3.8'
 
-# Check service status
-docker-compose -f docker/docker-compose.yml ps
+services:
+  backend:
+    image: ghcr.io/pzweuj/rootara-backend:latest
+    container_name: rootara-backend
+    command: /bin/bash /app/init.sh
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
 
-# View service logs
-docker-compose -f docker/docker-compose.yml logs -f
-```
+  frontend:
+    image: ghcr.io/pzweuj/rootara:latest
+    container_name: rootara-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai                                         # Timezone setting
+      - ADMIN_EMAIL=admin@rootara.app                            # Admin user email
+      - ADMIN_PASSWORD=rootara123                                # Admin user password
+      - JWT_SECRET=rootara_jwt_secret                            # Secret key for JWT
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # API key for backend authentication
+      - ROOTARA_BACKEND_URL=http://backend:8000                  # Backend service URL
+      - NODE_ENV=production                                      # Production environment mode
+      - NEXT_TELEMETRY_DISABLED=1                                # Disable Next.js telemetry
+    restart: unless-stopped
 
-#### 3. Access the Application
-- Open your browser and visit: http://localhost:3000
-- Default administrator account:
-  - Email: `admin@rootara.app`
-  - Password: `rootara123`
-
-#### 4. Stop Services
-```bash
-docker-compose -f docker/docker-compose.yml down
+networks:
+  default:
+    name: rootara
 ```
 
 ### Environment Variable Configuration (Optional)
@@ -71,9 +77,14 @@ environment:
 
 ### Analysis Features
 - **Ancestry Analysis**: View your ancestral geographical distribution
+
+![ancestry](public/Rootara_Ancestry.png)
+
 - **Haplogroup Analysis**: Paternal and maternal haplogroup analysis
 - **Genetic Traits**: Understand the impact of genes on personal characteristics
 - **Health Risks**: Variant interpretation based on the ClinVar database
+
+![clinvar](public/Rootara_Clinvar.png)
 
 ## Contributing
 We welcome contributions of any form of traits, which will be added to Rootara's default traits after verification.

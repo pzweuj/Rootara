@@ -19,35 +19,41 @@ Rootara 是一个易于部署的消费级基因数据托管平台，用户可自
 - **内存**：≥ 2GB RAM（在进行报告分析时，可能占用约1GB RAM）
 - **存储空间**：≥ 5GB 可用空间
 
-### 安装步骤
+### 部署步骤
 
-#### 1. 克隆项目
-```bash
-git clone https://github.com/pzweuj/rootara.git
-cd rootara
-```
+使用docker compose进行快速部署
 
-#### 2. 使用Docker Compose启动服务
-```bash
-# 启动所有服务（前端 + 后端）
-docker-compose -f docker/docker-compose.yml up -d
+```yaml
+version: '3.8'
 
-# 查看服务状态
-docker-compose -f docker/docker-compose.yml ps
+services:
+  backend:
+    image: ghcr.io/pzweuj/rootara-backend:latest
+    container_name: rootara-backend
+    command: /bin/bash /app/init.sh
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
 
-# 查看服务日志
-docker-compose -f docker/docker-compose.yml logs -f
-```
+  frontend:
+    image: ghcr.io/pzweuj/rootara:latest
+    container_name: rootara-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai                                         # 设定时区
+      - ADMIN_EMAIL=admin@rootara.app                            # 设定登录账户
+      - ADMIN_PASSWORD=rootara123                                # 设定登录密码
+      - JWT_SECRET=rootara_jwt_secret                            # JWT
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # API密钥
+      - ROOTARA_BACKEND_URL=http://backend:8000                  # 不用改
+      - NODE_ENV=production                                      # 不用改
+      - NEXT_TELEMETRY_DISABLED=1                                # 不用改
+    restart: unless-stopped
 
-#### 3. 访问应用
-- 打开浏览器访问：http://localhost:3000
-- 默认管理员账户：
-  - 邮箱：`admin@rootara.app`
-  - 密码：`rootara123`
-
-#### 4. 停止服务
-```bash
-docker-compose -f docker/docker-compose.yml down
+networks:
+  default:
+    name: rootara
 ```
 
 
@@ -72,9 +78,15 @@ environment:
 
 ### 分析功能
 - **祖源分析**：查看您的祖先地理分布
+
+![ancestry](public/Rootara_Ancestry.png)
+
+
 - **单倍群分析**：父系和母系单倍群分析
 - **遗传特征**：了解基因对个人特征的影响
 - **健康风险**：基于ClinVar数据库的变异解读
+
+![clinvar](public/Rootara_Clinvar.png)
 
 ## 贡献
 欢迎任何形式的特征贡献，核对后会加入到Rootara默认特征中。
