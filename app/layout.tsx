@@ -12,6 +12,8 @@ import type React from "react"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
+  title: "Rootara",
+  author: "pzweuj",
   generator: "pzweuj",
 }
 
