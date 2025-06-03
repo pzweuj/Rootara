@@ -1,95 +1,93 @@
 # Rootara
 
-![Rootara Logo](path/to/your/logo.png) <!-- 如果有Logo的话，请替换路径 -->
+**English | [中文](README_ZH.md)**
 
 ## 介绍
-Rootara 是一个易于部署且功能强大的基因检测分析平台，用户可自托管在自己的服务器中，确保数据安全。Rootara 支持导入23andMe、WeGene等检测服务商的个人基因数据。通过使用Docker Compose进行快速安装和配置，用户可以在本地环境中安全地执行祖源分析、疾病风险评估、遗传特征解析以及ClinVar数据库查询等多种操作。
+Rootara 是一个易于部署的消费级基因数据托管平台，用户可自部署在自己的服务器中，确保数据安全。Rootara 支持导入23andMe、WeGene等检测服务商的个人基因数据。通过使用Docker Compose进行快速安装和配置，用户可以在本地环境中安全地执行祖源分析、遗传特征解析以及ClinVar数据库查询等多种操作。
 
 ## 特性
-- **多源兼容**：支持多种格式的基因数据文件上传。
+- **多源兼容**：支持多种格式的基因数据文件上传
 - **全面分析**：
   - 祖先起源探索
-  - 基于遗传标记的健康状况预测
-  - 个性特征如眼睛颜色、皮肤敏感度等的推断
+  - 遗传特征评估
+  - 可自定义的特征内容
   - ClinVar变异解读
-- **隐私保护**：所有处理都在本地完成，确保您的个人信息不被泄露。
-- **灵活扩展**：基于微服务架构设计，方便未来添加更多功能模块。
-- **自定义内容**：用户可以在特征解读中加入自定义内容，以满足个性化需求。
+- **隐私保护**：所有处理都在本地完成，确保您的个人信息不被泄露
 
 ## 快速开始
 ### 系统要求
-- Docker >= 19.03
-- Docker Compose >= 1.25.0
+- **内存**：≥ 2GB RAM（在进行报告分析时，可能占用约1GB RAM）
+- **存储空间**：≥ 5GB 可用空间
 
 ### 安装步骤
-1. 克隆仓库到本地机器:
-   ```bash
-   git clone https://github.com/pzweuj/rootara.git
-   cd rootara
-   ```
 
-2. 使用Docker Compose启动服务:
-   ```bash
-   docker-compose up -d
-   ```
-   这将自动下载所需的Docker镜像并启动应用。
+#### 1. 克隆项目
+```bash
+git clone https://github.com/pzweuj/rootara.git
+cd rootara
+```
 
-3. 访问Web界面:
-   打开浏览器访问 `http://localhost:8080` (默认端口)，按照提示登录或注册账户后即可开始使用。
+#### 2. 使用Docker Compose启动服务
+```bash
+# 启动所有服务（前端 + 后端）
+docker-compose -f docker/docker-compose.yml up -d
 
-### 配置选项
-- 您可以通过修改 `docker-compose.yml` 文件来自定义某些设置，例如更改监听端口、增加资源限制等。
+# 查看服务状态
+docker-compose -f docker/docker-compose.yml ps
 
-## 文档
-完整的文档位于 [这里](docs/index.md) ，包括详细的安装指南、API参考及常见问题解答。
+# 查看服务日志
+docker-compose -f docker/docker-compose.yml logs -f
+```
+
+#### 3. 访问应用
+- 打开浏览器访问：http://localhost:3000
+- 默认管理员账户：
+  - 邮箱：`admin@rootara.app`
+  - 密码：`rootara123`
+
+#### 4. 停止服务
+```bash
+docker-compose -f docker/docker-compose.yml down
+```
+
+
+### 环境变量配置（可选）
+建议修改 `docker/docker-compose.yml` 文件中的环境变量：
+
+```yaml
+environment:
+  - ADMIN_EMAIL=admin@rootara.app                            # 管理员邮箱
+  - ADMIN_PASSWORD=rootara123                                # 管理员密码
+  - JWT_SECRET=rootara_jwt_secret                            # JWT密钥
+  - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # 后端API密钥
+```
+
+## 使用指南
+
+### 数据上传
+1. 登录系统后，点击"上传数据"
+2. 支持的文件格式：
+   - 23andMe 原始数据文件（.txt）
+   - WeGene 原始数据文件（.txt）
+
+### 分析功能
+- **祖源分析**：查看您的祖先地理分布
+- **单倍群分析**：父系和母系单倍群分析
+- **遗传特征**：了解基因对个人特征的影响
+- **健康风险**：基于ClinVar数据库的变异解读
 
 ## 贡献
-我们欢迎任何形式的贡献！如果您发现了bug或者有新的想法，请提交Issue或Pull Request。
-
-## 联系方式
-- Email: support@rootara.com
-- Website: https://www.rootara.com
+欢迎任何形式的特征贡献，核对后会加入到Rootara默认特征中。
 
 ## 许可证
 本项目采用AGPLv3许可证发布。请参阅 [LICENSE](LICENSE) 文件获取更多信息。
 
-## 自定义内容
-用户可以在特征解读中加入自定义内容。要了解如何添加自定义内容，请参阅 [自定义内容指南](docs/custom_content.md)。
+## 致谢
+本项目使用以下开源项目：
+- [pysam](https://pysam.readthedocs.io/en/latest/index.html) - 高性能的基因组数据处理库
+- [haplogrouper](https://gitlab.com/bio_anth_decode/haploGrouper) - 单倍群分析工具
+- [admix](https://github.com/stevenliuyi/admix) - 祖源成分分析算法
+- [pandas](https://pandas.pydata.org/) - 强大的数据分析工具
+- [FastAPI](https://fastapi.tiangolo.com/) - 现代Python Web框架
 
-外观特征：
-皮肤类型（如油性、干性或混合性）
-头发特征（颜色、质地、稀疏程度）
-眼睛颜色
-身高潜力
-体型倾向
-内在健康：
-心血管健康（心脏病风险因素）
-骨骼密度与骨质疏松症风险
-消化系统特点（乳糖不耐受等）
-免疫系统功能
-睡眠模式偏好
-压力反应及应对机制
-心理健康（情绪调节、焦虑水平等）
-营养与代谢：
-维生素吸收能力（如维生素D、B群等）
-对特定食物成分的敏感度（咖啡因、酒精等）
-减肥效率与饮食建议
-运动后恢复速度
-能量消耗率
-运动表现（最佳运动类型、力量训练 vs 有氧运动等）
-药物反应与遗传风险：
-对常用处方药的个体差异（如抗抑郁药、降压药等）
-止痛剂效果预测
-抗生素耐药性
-某些化疗药物的有效性和副作用
-癌症易感性（乳腺癌、结肠直肠癌等）
-遗传性疾病携带者状态
-阿尔茨海默病及其他神经退行性疾病的风险
-自身免疫疾病的可能性
-听力损失或视力问题的遗传倾向
-生活方式与行为习惯：
-社交互动（外向/内向倾向、对新环境适应能力等）
-行为习惯（如吸烟、饮酒倾向）
-生活方式建议（基于基因型的最佳生活习惯）
-个人性格特质（如乐观/悲观倾向、冒险精神等）
 
