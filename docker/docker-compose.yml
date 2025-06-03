@@ -5,6 +5,7 @@ services:
   backend:
     image: ghcr.io/pzweuj/rootara-backend:latest
     container_name: rootara-backend
+    command: /bin/bash /app/init.sh
     volumes:
       - ./data:/data
     restart: unless-stopped
