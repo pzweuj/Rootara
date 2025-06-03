@@ -12,12 +12,22 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json()
 
+    console.log("Login attempt for email:", email)
+    console.log("Environment check:", {
+      hasAdminEmail: !!process.env.ADMIN_EMAIL,
+      hasAdminPassword: !!process.env.ADMIN_PASSWORD,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      nodeEnv: process.env.NODE_ENV
+    })
+
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.JWT_SECRET) {
+      console.error("Missing environment variables")
       return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
     }
 
     // Validate credentials
     if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+      console.log("Invalid credentials provided")
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
@@ -30,21 +40,27 @@ export async function POST(request: Request) {
 
     // Create JWT token using jose
     const secret = new TextEncoder().encode(JWT_SECRET)
-    const token = await new jose.SignJWT(user).setProtectedHeader({ alg: "HS256" }).setExpirationTime("8h").sign(secret)
+    const token = await new jose.SignJWT(user)
+      .setProtectedHeader({ alg: "HS256" })
+      .setExpirationTime("8h")
+      .setIssuedAt()
+      .sign(secret)
 
-    // Set HTTP-only cookie
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie with improved settings for different environments
     const cookieStore = await cookies()
+    const isProduction = process.env.NODE_ENV === "production"
+
     cookieStore.set({
       name: "auth_token",
       value: token,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: isProduction,
+      sameSite: isProduction ? "strict" : "lax", // 在开发环境使用lax，生产环境使用strict
       path: "/",
-      maxAge: 4 * 60 * 60, // 4 hours
+      maxAge: 8 * 60 * 60, // 8 hours to match JWT expiration
     })
 
+    console.log("Login successful for user:", user.email)
     return NextResponse.json(user)
   } catch (error) {
     console.error("Login error:", error)

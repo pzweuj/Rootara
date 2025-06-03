@@ -52,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true)
     try {
+      console.log("Attempting login for:", email)
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -60,11 +61,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ email, password }),
       })
 
+      console.log("Login response status:", res.status)
+
       if (!res.ok) {
+        const errorData = await res.json()
+        console.error("Login failed with error:", errorData)
         return false
       }
 
       const userData = await res.json()
+      console.log("Login successful, user data:", userData)
       setUser(userData)
       return true
     } catch (error) {
@@ -76,14 +82,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = async (): Promise<void> => {
+    console.log("Starting logout process")
+
+    // 立即清除用户状态，提高响应速度
+    setUser(null)
+
     try {
-      await fetch("/api/auth/logout", {
+      // 异步清除服务器端cookie，不阻塞UI
+      const logoutPromise = fetch("/api/auth/logout", {
         method: "POST",
       })
-      setUser(null)
+
+      // 立即跳转到登录页面，不等待服务器响应
       router.push("/login")
+
+      // 等待服务器响应完成
+      await logoutPromise
+      console.log("Logout completed successfully")
     } catch (error) {
       console.error("Logout failed", error)
+      // 即使服务器端logout失败，客户端状态已经清除，用户仍然会被重定向到登录页面
     }
   }
 
