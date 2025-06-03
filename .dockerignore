@@ -88,7 +88,8 @@ dist
 
 # Gatsby文件
 .cache/
-public
+# public - 注释掉，因为Next.js需要public目录
+# public
 
 # Storybook构建输出
 .out
@@ -141,9 +142,19 @@ docs/
 .prettierrc*
 .eslintrc*
 jest.config.*
-*.config.js
-*.config.ts
-tsconfig.json
+# *.config.js - 注释掉，因为需要next.config.mjs等配置文件
+# *.config.js
+# *.config.ts
+# tsconfig.json - 注释掉，因为Next.js构建需要tsconfig.json
+# tsconfig.json
+
+# 确保包含必要的配置文件
+!next.config.mjs
+!tailwind.config.js
+!postcss.config.mjs
+!components.json
+!tsconfig.json
+!public/
 
 # 工具目录（如果不需要在生产环境中）
 tools/

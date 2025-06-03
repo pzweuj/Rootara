@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useLanguage } from "@/contexts/language-context"
+import { useLanguage } from "@/contexts/language-context";
 
 interface AncestryData {
   [key: string]: number;
@@ -13,15 +13,11 @@ interface MapComponentProps {
   data: AncestryData;
 }
 
-// 导入地区别名数据
-// 注意：在实际应用中，您可能需要调整导入路径
-const regionAliasData = require('@/public/K47_region_alias.json');
-
 const MapComponent = ({ data }: MapComponentProps) => {
   const { language } = useLanguage();
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const [regionAlias] = useState(regionAliasData);
+  const [regionAlias, setRegionAlias] = useState<any>({});
   const [initialRender, setInitialRender] = useState(true);
 
   // 使用useMemo缓存地图配置
@@ -80,7 +76,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
       style: (feature: any) => {
         const countryName = feature?.properties?.name;
         const percentage = countryPercentages.get(countryName) || 0;
-        
+
         return {
           fillColor: percentage > 0 ? getColor(percentage) : '#F5F5F5',
           weight: 1,
@@ -92,7 +88,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
       onEachFeature: (feature: any, layer: any) => {
         const countryName = feature?.properties?.name;
         const regionData = countryToRegionMap.get(countryName);
-        
+
         if (regionData) {
           layer.bindTooltip(`
             <strong>${regionData.region.replace(/-/g, ' ')}</strong><br/>
@@ -124,7 +120,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
     if (maxRegion && regionAlias[maxRegion]) {
       const targetCountries = regionAlias[maxRegion];
       const bounds: L.LatLngBounds[] = [];
-      
+
       mapRef.current.eachLayer((layer: any) => {
         if (layer.feature) {
           const countryName = layer.feature.properties?.name;
@@ -137,7 +133,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
       if (bounds.length > 0) {
         const totalBounds = L.latLngBounds(bounds[0].getSouthWest(), bounds[0].getNorthEast());
         bounds.forEach(bound => totalBounds.extend(bound));
-        
+
         mapRef.current.fitBounds(totalBounds, {
           padding: [50, 50],
           maxZoom: 5
@@ -147,12 +143,18 @@ const MapComponent = ({ data }: MapComponentProps) => {
   };
 
   useEffect(() => {
-    // 动态导入GeoJSON数据
+    // 动态导入GeoJSON数据和区域别名数据
     const loadGeoJSON = async () => {
       try {
-        // 导入地理数据
-        const worldGeoJSON = await import('@/public/countries.geo.json');
-        
+        // 导入地理数据和区域别名数据
+        const [worldGeoJSON, regionAliasModule] = await Promise.all([
+          import('@/public/countries.geo.json'),
+          import('@/public/K47_region_alias.json')
+        ]);
+
+        // 设置区域别名数据
+        setRegionAlias(regionAliasModule.default);
+
         if (mapContainerRef.current && !mapRef.current) {
           // 初始化地图
           mapRef.current = L.map(mapContainerRef.current, mapConfig);
@@ -173,19 +175,19 @@ const MapComponent = ({ data }: MapComponentProps) => {
             options: {
               position: 'topright'
             },
-            
+
             onAdd: function() {
               const div = L.DomUtil.create('div', 'leaflet-control-zoom leaflet-bar');
               div.innerHTML = `
-                <a class="leaflet-control-zoom-home" href="#" title="${language === 'en' ? 'Reset to main region' : '复位到主要区域'}" 
+                <a class="leaflet-control-zoom-home" href="#" title="${language === 'en' ? 'Reset to main region' : '复位到主要区域'}"
                    style="font-size: 18px; line-height: 26px;">⌂</a>
               `;
-              
+
               L.DomEvent.on(div, 'click', function(e) {
                 L.DomEvent.preventDefault(e);
                 resetMapView();
               });
-              
+
               return div;
             }
           });
@@ -222,7 +224,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
   }, [mapConfig, tileLayerConfig, geoJSONStyle, initialRender, language]);
 
   return (
-    <div 
+    <div
       ref={mapContainerRef}
       className="w-full h-[400px] border border-gray-200 rounded-lg overflow-hidden"
     />
