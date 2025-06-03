@@ -72,6 +72,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await res.json()
       console.log("Login successful, user data:", userData)
       setUser(userData)
+
+      // 立即验证cookie是否正确设置
+      setTimeout(async () => {
+        try {
+          console.log("Verifying cookie after login...")
+          const verifyRes = await fetch("/api/auth/me")
+          console.log("Cookie verification status:", verifyRes.status)
+          if (!verifyRes.ok) {
+            console.error("Cookie verification failed - this may cause redirect issues")
+          } else {
+            console.log("Cookie verification successful")
+          }
+        } catch (error) {
+          console.error("Cookie verification error:", error)
+        }
+      }, 100) // 短暂延迟确保cookie已设置
+
       return true
     } catch (error) {
       console.error("Login failed", error)

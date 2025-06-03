@@ -1,19 +1,32 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
     console.log("Processing logout request")
 
     // Clear the auth cookie
     const cookieStore = await cookies()
-    cookieStore.set("auth_token", "", {
+    const isProduction = process.env.NODE_ENV === "production"
+
+    const cookieOptions: any = {
+      name: "auth_token",
+      value: "",
       expires: new Date(0),
       path: "/",
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax"
-    })
+      secure: false, // 与login保持一致
+      sameSite: "lax"
+    }
+
+    // 如果是生产环境且使用HTTPS，则启用secure
+    if (isProduction && request.headers.get('x-forwarded-proto') === 'https') {
+      cookieOptions.secure = true
+      cookieOptions.sameSite = "strict"
+    }
+
+    console.log("Clearing cookie with options:", cookieOptions)
+    cookieStore.set(cookieOptions)
 
     console.log("Logout successful - cookie cleared")
     return NextResponse.json({ success: true })

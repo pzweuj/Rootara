@@ -50,15 +50,28 @@ export async function POST(request: Request) {
     const cookieStore = await cookies()
     const isProduction = process.env.NODE_ENV === "production"
 
-    cookieStore.set({
+    // 获取请求的host信息来设置正确的cookie domain
+    const host = request.headers.get('host')
+    console.log("Request host:", host)
+
+    const cookieOptions: any = {
       name: "auth_token",
       value: token,
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "strict" : "lax", // 在开发环境使用lax，生产环境使用strict
+      secure: false, // 在VPS环境中暂时禁用secure，因为可能没有HTTPS
+      sameSite: "lax", // 使用lax以确保跨域兼容性
       path: "/",
       maxAge: 8 * 60 * 60, // 8 hours to match JWT expiration
-    })
+    }
+
+    // 如果是生产环境且使用HTTPS，则启用secure
+    if (isProduction && request.headers.get('x-forwarded-proto') === 'https') {
+      cookieOptions.secure = true
+      cookieOptions.sameSite = "strict"
+    }
+
+    console.log("Setting cookie with options:", cookieOptions)
+    cookieStore.set(cookieOptions)
 
     console.log("Login successful for user:", user.email)
     return NextResponse.json(user)

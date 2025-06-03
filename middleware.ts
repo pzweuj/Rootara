@@ -46,8 +46,8 @@ export async function middleware(request: NextRequest) {
         expires: new Date(0),
         path: "/",
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "strict" : "lax"
+        secure: false, // 与login API保持一致
+        sameSite: "lax"
       })
       return response
     }
@@ -81,8 +81,8 @@ export async function middleware(request: NextRequest) {
         expires: new Date(0),
         path: "/",
         httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "strict" : "lax"
+        secure: false, // 与login API保持一致
+        sameSite: "lax"
       })
       return response
     }
