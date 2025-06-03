@@ -5,7 +5,7 @@
 ## Introduction
 Rootara is an easy-to-deploy consumer-grade genetic data hosting platform that users can self-deploy on their own servers to ensure data security. Rootara supports importing personal genetic data from testing service providers such as 23andMe and WeGene. Through quick installation and configuration using Docker Compose, users can safely perform various operations including ancestry analysis, genetic trait interpretation, and ClinVar database queries in their local environment.
 
-## ⚠️ 重要提醒
+## ⚠️ NOTICE
 
 **The current system is in a testing phase, and all genetic trait analysis results are randomly generated test data with no scientific basis or reference value. Please do not use the test results for any medical, health-related, or other important decision-making purposes.**
 
