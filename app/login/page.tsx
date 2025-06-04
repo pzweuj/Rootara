@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Dna, AlertCircle, Moon, Sun } from "lucide-react"
+import { AlertCircle, Moon, Sun } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useTheme } from "next-themes"
 
@@ -84,8 +84,11 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/90 to-primary/70 relative">
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-12">
-          <Dna className="h-20 w-20 mb-6" />
-          <h1 className="text-4xl font-bold mb-4">Rootara</h1>
+          <img
+            src="/rootara_logo_rmbg_small.svg"
+            alt="Rootara"
+            className="h-20 w-auto mb-6"
+          />
           <p className="text-xl max-w-md text-center">
             {language === "en"
               ? "Discover your genetic heritage and unlock insights about your health and traits."
@@ -130,10 +133,11 @@ export default function LoginPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <div className="flex justify-center mb-4 lg:hidden">
-              <div className="flex items-center gap-2">
-                <Dna className="h-10 w-10 text-primary" />
-                <span className="text-2xl font-bold">Rootara</span>
-              </div>
+              <img
+                src="/rootara_logo_rmbg_small.svg"
+                alt="Rootara"
+                className="h-12 w-auto"
+              />
             </div>
             <CardTitle className="text-2xl text-center">{t("welcomeBack")}</CardTitle>
             <CardDescription className="text-center">{t("enterCredentials")}</CardDescription>

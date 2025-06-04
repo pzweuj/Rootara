@@ -262,8 +262,11 @@ export function Sidebar() {
           <div className={cn("flex h-16 items-center gap-2 px-4", isCollapsed && "justify-center px-2")}>
             {!isCollapsed && (
               <Link href="/" className="flex items-center font-semibold">
-                <Dna className="h-6 w-6 mr-2 text-primary" />
-                <span className="text-lg">Rootara</span>
+                <img
+                  src="/rootara_logo_rmbg_small.svg"
+                  alt="Rootara"
+                  className="h-8 w-auto"
+                />
               </Link>
             )}
             <Button
