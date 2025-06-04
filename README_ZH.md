@@ -98,13 +98,3 @@ environment:
 
 ## 许可证
 本项目采用AGPLv3许可证发布。请参阅 [LICENSE](LICENSE) 文件获取更多信息。
-
-## 致谢
-本项目使用以下开源项目：
-- [pysam](https://pysam.readthedocs.io/en/latest/index.html) - 高性能的基因组数据处理库
-- [haplogrouper](https://gitlab.com/bio_anth_decode/haploGrouper) - 单倍群分析工具
-- [admix](https://github.com/stevenliuyi/admix) - 祖源成分分析算法
-- [pandas](https://pandas.pydata.org/) - 强大的数据分析工具
-- [FastAPI](https://fastapi.tiangolo.com/) - 现代Python Web框架
-
-
