@@ -88,6 +88,14 @@ export default function LoginPage() {
             src="/rootara_logo_rmbg_small.svg"
             alt="Rootara"
             className="h-20 w-auto mb-6"
+            onError={(e) => {
+              console.error('Local image failed to load, trying public path');
+              const img = e.currentTarget as HTMLImageElement;
+              img.src = '/rootara_logo_rmbg.png';
+              img.onerror = () => {
+                // 最终备用方案：显示文本
+              };
+            }}
           />
           <p className="text-xl max-w-md text-center">
             {language === "en"
