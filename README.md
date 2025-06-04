@@ -96,10 +96,3 @@ We welcome contributions of any form of traits, which will be added to Rootara's
 ## License
 This project is released under the AGPLv3 license. Please see the [LICENSE](LICENSE) file for more information.
 
-## Acknowledgments
-This project uses the following open source projects:
-- [pysam](https://pysam.readthedocs.io/en/latest/index.html) - High-performance genomic data processing library
-- [haplogrouper](https://gitlab.com/bio_anth_decode/haploGrouper) - Haplogroup analysis tool
-- [admix](https://github.com/stevenliuyi/admix) - Ancestry composition analysis algorithm
-- [pandas](https://pandas.pydata.org/) - Powerful data analysis tool
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
