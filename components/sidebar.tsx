@@ -219,6 +219,7 @@ export function Sidebar() {
               href={item.href}
               target={item.href.startsWith('http') ? "_blank" : undefined}
               rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
+              onClick={() => setIsMobileOpen(false)}
               className={cn(
                 "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 isActive
@@ -251,9 +252,18 @@ export function Sidebar() {
       >
         <Menu className="h-6 w-6" />
       </button>
+
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-10 bg-black/50"
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <div
         className={cn(
-          "fixed inset-y-0 z-20 flex flex-col bg-background transition-all duration-300 ease-in-out",
+          "fixed inset-y-0 z-30 flex flex-col bg-background transition-all duration-300 ease-in-out border-r border-border",
           isCollapsed ? "w-[72px]" : "w-72",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
@@ -261,11 +271,15 @@ export function Sidebar() {
         <div className="border-b border-border">
           <div className={cn("flex h-16 items-center gap-2 px-4", isCollapsed && "justify-center px-2")}>
             {!isCollapsed && (
-              <Link href="/" className="flex items-center font-semibold">
+              <Link
+                href="/"
+                className="flex items-center font-semibold"
+                onClick={() => setIsMobileOpen(false)}
+              >
                 <img
                   src="/rootara_logo_rmbg_small.svg"
                   alt="Rootara"
-                  className="h-8 w-auto"
+                  className="h-8 w-auto dark:invert"
                 />
               </Link>
             )}
