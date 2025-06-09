@@ -538,84 +538,84 @@ export default function ClinvarAnalysisPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">
       <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-        <CardContent className="flex items-start space-x-4 py-4">
-          <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-          <div>
-            <p className="font-medium text-yellow-800 dark:text-yellow-300">
+        <CardContent className="flex items-start space-x-3 sm:space-x-4 py-3 sm:py-4">
+          <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-yellow-800 dark:text-yellow-300 text-sm sm:text-base">
               {texts.notice.title[language === "en" ? "en" : "zh"]}
             </p>
-            <p className="text-sm text-yellow-700 dark:text-yellow-400">
+            <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-400 break-words">
               {texts.notice.content[language === "en" ? "en" : "zh"]}
             </p>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>{t("clinvarAnalysis")}</CardTitle>
-            <Badge variant="outline" className="text-xs font-mono">
+      <Card className="w-full overflow-hidden">
+        <CardHeader className="pb-3 sm:pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <CardTitle className="text-lg sm:text-xl">{t("clinvarAnalysis")}</CardTitle>
+            <Badge variant="outline" className="text-xs font-mono self-start sm:self-center">
               {language === "en" ? "Report ID: " : "报告编号: "}
               {currentReportId}
             </Badge>
           </div>
-          <CardDescription>{t("clinvarDescription")}</CardDescription>
+          <CardDescription className="text-sm break-words">{t("clinvarDescription")}</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-5">
+        <CardContent className="pt-0">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-red-600 dark:text-red-400">{variantStatistics.pathogenic}</div>
-                <div className="text-sm text-red-600 dark:text-red-400">{t("pathogenicVariants")}</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">{variantStatistics.pathogenic}</div>
+                <div className="text-xs sm:text-sm text-red-600 dark:text-red-400 leading-tight">{t("pathogenicVariants")}</div>
               </CardContent>
             </Card>
             <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                   {variantStatistics.likely_pathogenic}
                 </div>
-                <div className="text-sm text-yellow-600 dark:text-yellow-400">{t("likelyPathogenic")}</div>
+                <div className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400 leading-tight">{t("likelyPathogenic")}</div>
               </CardContent>
             </Card>
-            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{variantStatistics.uncertain_significance}</div>
-                <div className="text-sm text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
+            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 col-span-2 sm:col-span-1">
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{variantStatistics.uncertain_significance}</div>
+                <div className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 leading-tight">{t("uncertainSignificance")}</div>
               </CardContent>
             </Card>
             <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-teal-600 dark:text-teal-400">{variantStatistics.likely_benign}</div>
-                <div className="text-sm text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">{variantStatistics.likely_benign}</div>
+                <div className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 leading-tight">{t("likelyBenign")}</div>
               </CardContent>
             </Card>
             <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-              <CardContent className="p-4 text-center">
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">{variantStatistics.benign}</div>
-                <div className="text-sm text-green-600 dark:text-green-400">{t("benign")}</div>
+              <CardContent className="p-3 sm:p-4 text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{variantStatistics.benign}</div>
+                <div className="text-xs sm:text-sm text-green-600 dark:text-green-400 leading-tight">{t("benign")}</div>
               </CardContent>
             </Card>
           </div>
         </CardContent>
       </Card>
 
-      <div className="mt-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
-          <div className="relative w-full md:w-2/3">
+      <div className="mt-4 sm:mt-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4">
+          <div className="relative w-full sm:w-2/3">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t("searchVariants")}
-              className="pl-8"
+              className="pl-8 text-sm sm:text-base"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="w-full md:w-1/3">
+          <div className="w-full sm:w-1/3">
             <Select value={classificationFilter} onValueChange={setClassificationFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="text-sm sm:text-base">
                 <SelectValue placeholder={t("classification")} />
               </SelectTrigger>
               <SelectContent>
@@ -630,63 +630,122 @@ export default function ClinvarAnalysisPage() {
           </div>
         </div>
 
-        <Card>
+        <Card className="w-full overflow-hidden">
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[12%]">{t("gene")}</TableHead>
-                  <TableHead className="w-[15%]">{t("variantId")}</TableHead>
-                  <TableHead className="w-[8%]">{t("chromosome")}</TableHead>
-                  <TableHead className="w-[10%]">{t("position")}</TableHead>
-                  <TableHead className="w-[10%]">{t("genotype")}</TableHead>
-                  <TableHead className="w-[30%]">{t("condition")}</TableHead>
-                  <TableHead className="w-[20%]">{t("classification")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {currentItems.length > 0 ? (
-                  currentItems.map((variant) => (
-                    <TableRow key={variant.id}>
-                      <TableCell className="font-medium">{variant.gene}</TableCell>
-                      <TableCell className="max-w-[150px] truncate">
-                        <a
-                          href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center text-blue-600 hover:underline"
-                          title={variant.id}
-                        >
-                          {variant.id}
-                          <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
-                        </a>
-                      </TableCell>
-                      <TableCell>{variant.chromosome}</TableCell>
-                      <TableCell>{variant.position}</TableCell>
-                      <TableCell>{variant.gt}</TableCell>
-                      <TableCell className="max-w-[200px] truncate" title={variant.condition}>
-                        {variant.condition}
-                      </TableCell>
-                      <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+            {/* 桌面端表格视图 */}
+            <div className="hidden lg:block overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
-                      {t("noVariantsFound")}
-                    </TableCell>
+                    <TableHead className="w-[12%]">{t("gene")}</TableHead>
+                    <TableHead className="w-[15%]">{t("variantId")}</TableHead>
+                    <TableHead className="w-[8%]">{t("chromosome")}</TableHead>
+                    <TableHead className="w-[10%]">{t("position")}</TableHead>
+                    <TableHead className="w-[10%]">{t("genotype")}</TableHead>
+                    <TableHead className="w-[30%]">{t("condition")}</TableHead>
+                    <TableHead className="w-[20%]">{t("classification")}</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {currentItems.length > 0 ? (
+                    currentItems.map((variant) => (
+                      <TableRow key={variant.id}>
+                        <TableCell className="font-medium">{variant.gene}</TableCell>
+                        <TableCell className="max-w-[150px] truncate">
+                          <a
+                            href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-blue-600 hover:underline"
+                            title={variant.id}
+                          >
+                            {variant.id}
+                            <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
+                          </a>
+                        </TableCell>
+                        <TableCell>{variant.chromosome}</TableCell>
+                        <TableCell>{variant.position}</TableCell>
+                        <TableCell>{variant.gt}</TableCell>
+                        <TableCell className="max-w-[200px] truncate" title={variant.condition}>
+                          {variant.condition}
+                        </TableCell>
+                        <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
+                        {t("noVariantsFound")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* 移动端卡片视图 */}
+            <div className="lg:hidden">
+              {currentItems.length > 0 ? (
+                <div className="space-y-3 p-4">
+                  {currentItems.map((variant) => (
+                    <Card key={variant.id} className="border border-border">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <div className="font-medium text-sm">{variant.gene}</div>
+                            <a
+                              href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center text-blue-600 hover:underline text-sm"
+                              title={variant.id}
+                            >
+                              {variant.id}
+                              <ExternalLink className="ml-1 h-3 w-3 flex-shrink-0" />
+                            </a>
+                          </div>
+                          <div className="flex-shrink-0">
+                            {getClassificationBadge(variant.classification)}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-muted-foreground">{t("chromosome")}:</span>
+                            <span className="ml-1">{variant.chromosome}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">{t("position")}:</span>
+                            <span className="ml-1">{variant.position}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">{t("genotype")}:</span>
+                            <span className="ml-1">{variant.gt}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-xs">
+                          <span className="text-muted-foreground">{t("condition")}:</span>
+                          <p className="mt-1 break-words">{variant.condition}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  {t("noVariantsFound")}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
         
         {/* 分页控件 */}
         {filteredVariants.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0 mt-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">
+          <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between mt-4 px-4 sm:px-0">
+            <div className="flex items-center justify-center sm:justify-start space-x-2">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 {t("itemsPerPage")}:
               </span>
               <Select
@@ -696,7 +755,7 @@ export default function ClinvarAnalysisPage() {
                   setCurrentPage(1)
                 }}
               >
-                <SelectTrigger className="h-8 w-[70px]">
+                <SelectTrigger className="h-8 w-[60px] sm:w-[70px] text-xs sm:text-sm">
                   <SelectValue placeholder={itemsPerPage} />
                 </SelectTrigger>
                 <SelectContent>
@@ -707,29 +766,33 @@ export default function ClinvarAnalysisPage() {
                 </SelectContent>
               </Select>
             </div>
-            
-            <div className="flex items-center space-x-6">
-              <div className="text-sm text-muted-foreground">
+
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
+              <div className="text-xs sm:text-sm text-muted-foreground text-center">
                 {t("page")} {currentPage} {t("of")} {Math.ceil(filteredVariants.length / itemsPerPage)}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
-                  size="icon"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
                   aria-label={t("prev")}
+                  className="h-8 px-2 sm:px-3"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline ml-1">{t("prev")}</span>
                 </Button>
                 <Button
                   variant="outline"
-                  size="icon"
+                  size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === Math.ceil(filteredVariants.length / itemsPerPage)}
                   aria-label={t("next")}
+                  className="h-8 px-2 sm:px-3"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <span className="hidden sm:inline mr-1">{t("next")}</span>
+                  <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </div>
             </div>
@@ -737,8 +800,8 @@ export default function ClinvarAnalysisPage() {
         )}
       </div>
 
-      <div className="flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
+      <div className="flex justify-center sm:justify-between items-center px-4 sm:px-0">
+        <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
           {t("totalVariants")}: {Object.keys(clinvarData.data).length}
         </p>
       </div>
