@@ -120,3 +120,20 @@
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--border)) transparent;
 }
+
+/* Leaflet地图z-index控制 */
+.leaflet-container {
+  z-index: 10 !important;
+}
+
+.leaflet-control-container {
+  z-index: 11 !important;
+}
+
+.leaflet-popup {
+  z-index: 12 !important;
+}
+
+.leaflet-tooltip {
+  z-index: 13 !important;
+}

@@ -246,7 +246,7 @@ export function Sidebar() {
   return (
     <>
       <button
-        className="lg:hidden fixed bottom-4 left-4 z-50 p-2 bg-background rounded-md shadow-md"
+        className="lg:hidden fixed bottom-4 left-4 z-[1002] p-2 bg-background rounded-md shadow-md"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
         aria-label="Toggle sidebar"
       >
@@ -256,14 +256,14 @@ export function Sidebar() {
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-10 bg-black/50"
+          className="lg:hidden fixed inset-0 z-[1000] bg-black/50"
           onClick={() => setIsMobileOpen(false)}
           aria-hidden="true"
         />
       )}
       <div
         className={cn(
-          "fixed inset-y-0 z-30 flex flex-col bg-background transition-all duration-300 ease-in-out border-r border-border",
+          "fixed inset-y-0 z-[1001] flex flex-col bg-background transition-all duration-300 ease-in-out border-r border-border",
           isCollapsed ? "w-[72px]" : "w-72",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
