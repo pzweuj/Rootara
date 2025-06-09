@@ -41,6 +41,8 @@ services:
     command: /bin/bash /app/init.sh
     volumes:
       - ./data:/data
+    environment:
+      - ROOTARA_API_KEY=rootara_api_key_default_001              # API key for backend authentication
     restart: unless-stopped
 
   frontend:
@@ -53,7 +55,7 @@ services:
       - ADMIN_EMAIL=admin@rootara.app                            # Admin user email
       - ADMIN_PASSWORD=rootara123                                # Admin user password
       - JWT_SECRET=rootara_jwt_secret                            # Secret key for JWT
-      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # API key for backend authentication
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # Should be consistent with ROOTARA_API_KEY
       - ROOTARA_BACKEND_URL=http://backend:8000                  # Backend service URL
       - NODE_ENV=production                                      # Production environment mode
       - NEXT_TELEMETRY_DISABLED=1                                # Disable Next.js telemetry
@@ -72,7 +74,8 @@ environment:
   - ADMIN_EMAIL=admin@rootara.app                            # Administrator email
   - ADMIN_PASSWORD=rootara123                                # Administrator password
   - JWT_SECRET=rootara_jwt_secret                            # JWT secret key
-  - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # Backend API key
+  - ROOTARA_API_KEY=rootara_api_key_default_001              # API key
+  - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # Should be consistent with ROOTARA_API_KEY
 ```
 
 ## User Guide

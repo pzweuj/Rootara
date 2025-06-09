@@ -42,6 +42,8 @@ services:
     command: /bin/bash /app/init.sh
     volumes:
       - ./data:/data
+    environment:
+      - ROOTARA_API_KEY=rootara_api_key_default_001              # API密钥
     restart: unless-stopped
 
   frontend:
@@ -54,7 +56,7 @@ services:
       - ADMIN_EMAIL=admin@rootara.app                            # 设定登录账户
       - ADMIN_PASSWORD=rootara123                                # 设定登录密码
       - JWT_SECRET=rootara_jwt_secret                            # JWT
-      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # API密钥
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # 和ROOTARA_API_KEY保持一致
       - ROOTARA_BACKEND_URL=http://backend:8000                  # 不用改
       - NODE_ENV=production                                      # 不用改
       - NEXT_TELEMETRY_DISABLED=1                                # 不用改
@@ -74,7 +76,8 @@ environment:
   - ADMIN_EMAIL=admin@rootara.app                            # 管理员邮箱
   - ADMIN_PASSWORD=rootara123                                # 管理员密码
   - JWT_SECRET=rootara_jwt_secret                            # JWT密钥
-  - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # 后端API密钥
+  - ROOTARA_API_KEY=rootara_api_key_default_001              # API密钥
+  - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # 与后端API密钥保持一致
 ```
 
 ## 使用指南
