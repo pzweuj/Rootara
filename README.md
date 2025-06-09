@@ -1,6 +1,10 @@
-# Rootara
+<div align="center">
+  <img src="public/rootara_logo_rmbg_small.svg" alt="Rootara Logo" width="300">
 
-**English | [中文](README_ZH.md)**
+  <h1>Rootara - Open Source Genetic Platform</h1>
+
+  <p><strong>English | <a href="README_ZH.md">中文</a></strong></p>
+</div>
 
 ## Introduction
 Rootara is an easy-to-deploy consumer-grade genetic data hosting platform that users can self-deploy on their own servers to ensure data security. Rootara supports importing personal genetic data from testing service providers such as 23andMe and WeGene. Through quick installation and configuration using Docker Compose, users can safely perform various operations including ancestry analysis, genetic trait interpretation, and ClinVar database queries in their local environment.

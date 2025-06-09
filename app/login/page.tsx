@@ -85,11 +85,11 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-12">
           <img
-            src="/rootara_logo_rmbg_small.svg"
+            src="/rootara_logo_rmbg_small_white.svg"
             alt="Rootara"
             className="h-20 w-auto mb-6"
             onError={(e) => {
-              console.error('Local image failed to load, trying public path');
+              console.error('White logo failed to load, trying fallback');
               const img = e.currentTarget as HTMLImageElement;
               img.src = '/rootara_logo_rmbg.png';
               img.onerror = () => {
@@ -144,7 +144,7 @@ export default function LoginPage() {
               <img
                 src="/rootara_logo_rmbg_small.svg"
                 alt="Rootara"
-                className="h-12 w-auto"
+                className="h-12 w-auto dark:invert"
               />
             </div>
             <CardTitle className="text-2xl text-center">{t("welcomeBack")}</CardTitle>

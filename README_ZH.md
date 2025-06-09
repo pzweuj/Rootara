@@ -1,6 +1,10 @@
-# Rootara
+<div align="center">
+  <img src="public/rootara_logo_rmbg_small.svg" alt="Rootara Logo" width="300">
 
-**[English](README.md) | 中文**
+  <h1>Rootara - 开源基因平台</h1>
+
+  <p><strong><a href="README.md">English</a> | 中文</strong></p>
+</div>
 
 ## 介绍
 Rootara 是一个易于部署的消费级基因数据托管平台，用户可自部署在自己的服务器中，确保数据安全。Rootara 支持导入23andMe、WeGene等检测服务商的个人基因数据。通过使用Docker Compose进行快速安装和配置，用户可以在本地环境中安全地执行祖源分析、遗传特征解析以及ClinVar数据库查询等多种操作。
