@@ -19,8 +19,8 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">{t("geneticDashboard")}</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("geneticDashboard")}</h1>
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
         <GeneticProfileOverview key={`genetic-overview-${refreshKey}`} />
       </div>

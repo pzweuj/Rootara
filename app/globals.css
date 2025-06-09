@@ -78,6 +78,16 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* 确保所有元素都能正确响应 */
+  html {
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+    min-width: 320px; /* 最小宽度防止过度压缩 */
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

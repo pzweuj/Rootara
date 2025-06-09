@@ -19,8 +19,8 @@ export function MainContent({ children }: { children: React.ReactNode }) {
       )}
     >
       <TopNav />
-      <div className="container mx-auto p-6 max-w-7xl">
-        <main className="w-full">{children}</main>
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
+        <main className="w-full max-w-7xl mx-auto">{children}</main>
       </div>
     </div>
   )

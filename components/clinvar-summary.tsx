@@ -228,50 +228,52 @@ export function ClinvarSummary() {
   const recentFindings = getTopFindings();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-lg font-medium">{t("clinvarAnalysis")}</CardTitle>
+    <Card className="w-full overflow-hidden">
+      <CardHeader className="pb-3 sm:pb-6">
+        <CardTitle className="text-base sm:text-lg font-medium">{t("clinvarAnalysis")}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-            <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-red-600 dark:text-red-400">{clinvarData.statistics.pathogenic}</div>
-              <div className="text-xs text-red-600 dark:text-red-400">{t("pathogenicVariants")}</div>
+      <CardContent className="pt-0 overflow-hidden">
+        <div className="space-y-4 w-full overflow-hidden">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 w-full">
+            <div className="bg-red-50 dark:bg-red-900/20 p-2 sm:p-3 rounded-lg text-center min-w-0">
+              <div className="text-lg sm:text-xl font-bold text-red-600 dark:text-red-400">{clinvarData.statistics.pathogenic}</div>
+              <div className="text-xs text-red-600 dark:text-red-400 leading-tight break-words">{t("pathogenicVariants")}</div>
             </div>
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-2 sm:p-3 rounded-lg text-center min-w-0">
+              <div className="text-lg sm:text-xl font-bold text-yellow-600 dark:text-yellow-400">
                 {clinvarData.statistics.likely_pathogenic}
               </div>
-              <div className="text-xs text-yellow-600 dark:text-yellow-400">{t("likelyPathogenic")}</div>
+              <div className="text-xs text-yellow-600 dark:text-yellow-400 leading-tight break-words">{t("likelyPathogenic")}</div>
             </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.statistics.uncertain_significance}</div>
-              <div className="text-xs text-blue-600 dark:text-blue-400">{t("uncertainSignificance")}</div>
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-2 sm:p-3 rounded-lg text-center min-w-0 xs:col-span-2 sm:col-span-1">
+              <div className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400">{clinvarData.statistics.uncertain_significance}</div>
+              <div className="text-xs text-blue-600 dark:text-blue-400 leading-tight break-words">{t("uncertainSignificance")}</div>
             </div>
-            <div className="bg-teal-50 dark:bg-teal-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-teal-600 dark:text-teal-400">{clinvarData.statistics.likely_benign}</div>
-              <div className="text-xs text-teal-600 dark:text-teal-400">{t("likelyBenign")}</div>
+            <div className="bg-teal-50 dark:bg-teal-900/20 p-2 sm:p-3 rounded-lg text-center min-w-0">
+              <div className="text-lg sm:text-xl font-bold text-teal-600 dark:text-teal-400">{clinvarData.statistics.likely_benign}</div>
+              <div className="text-xs text-teal-600 dark:text-teal-400 leading-tight break-words">{t("likelyBenign")}</div>
             </div>
-            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-center">
-              <div className="text-xl font-bold text-green-600 dark:text-green-400">{clinvarData.statistics.benign}</div>
-              <div className="text-xs text-green-600 dark:text-green-400">{t("benign")}</div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-2 sm:p-3 rounded-lg text-center min-w-0">
+              <div className="text-lg sm:text-xl font-bold text-green-600 dark:text-green-400">{clinvarData.statistics.benign}</div>
+              <div className="text-xs text-green-600 dark:text-green-400 leading-tight break-words">{t("benign")}</div>
             </div>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-4 w-full overflow-hidden">
             <h3 className="text-sm font-medium mb-2">{t("recentFindings")}</h3>
-            <div className="space-y-2">
+            <div className="space-y-2 w-full">
               {recentFindings.map((finding) => (
-                <div key={finding.rsid} className="border rounded-md p-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {getClassificationIcon(finding.clnsig)}
-                      <span className="ml-2 font-medium text-sm">{finding.gene}</span>
+                <div key={finding.rsid} className="border rounded-md p-2 sm:p-3 w-full overflow-hidden">
+                  <div className="flex items-start justify-between gap-2 w-full">
+                    <div className="flex items-center min-w-0 flex-1 overflow-hidden">
+                      <div className="flex-shrink-0">
+                        {getClassificationIcon(finding.clnsig)}
+                      </div>
+                      <span className="ml-2 font-medium text-sm truncate">{finding.gene}</span>
                     </div>
-                    <span className="text-xs bg-secondary px-2 py-0.5 rounded-full">{finding.rsid}</span>
+                    <span className="text-xs bg-secondary px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">{finding.rsid}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 truncate" title={finding.clndn}>
+                  <p className="text-xs text-muted-foreground mt-1 truncate w-full" title={finding.clndn}>
                     {finding.clndn}
                   </p>
                 </div>
@@ -279,13 +281,13 @@ export function ClinvarSummary() {
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-sm text-muted-foreground">
-            <span>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm text-muted-foreground w-full">
+            <span className="text-xs sm:text-sm truncate">
               {t("totalVariants")}: {Object.keys(clinvarData.data).length}
             </span>
-            <Button variant="outline" size="sm" className="gap-1 text-foreground" asChild>
+            <Button variant="outline" size="sm" className="gap-1 text-foreground w-full sm:w-auto flex-shrink-0" asChild>
               <Link href="/analysis/clinvar">
-                {t("viewDetails")}
+                <span className="text-xs sm:text-sm">{t("viewDetails")}</span>
                 <ExternalLink className="h-3 w-3" />
               </Link>
             </Button>

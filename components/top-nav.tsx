@@ -89,7 +89,7 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background w-full">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="w-full flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* 桌面端显示面包屑导航 */}
         <div className="hidden md:block">
           <nav className="flex items-center space-x-2">
