@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
 import { toast } from "sonner"
-import { determineResult } from "@/app/analysis/traits/utils/trait-calculations"
 import { TraitBasicInfo } from "./create-trait/trait-basic-info"
 import { RsidGenotypeManager } from "./create-trait/rsid-genotype-manager"
 import { FormulaInput } from "./create-trait/formula-input"
@@ -185,67 +184,78 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto scrollbar-thin">
-        <DialogHeader>
-          <DialogTitle>{t("createTrait")}</DialogTitle>
-          <DialogDescription>{t("fillDetails")}</DialogDescription>
-        </DialogHeader>
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[600px] max-h-[90vh] overflow-hidden p-4 sm:p-6">
+        <div className="overflow-y-auto scrollbar-thin max-h-[calc(90vh-8rem)]">
+          <DialogHeader className="pb-2 pr-6">
+            <DialogTitle className="text-lg sm:text-xl">{t("createTrait")}</DialogTitle>
+            <DialogDescription className="text-sm">{t("fillDetails")}</DialogDescription>
+          </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <TraitBasicInfo trait={newTrait} onChange={setNewTrait} />
+          <div className="grid gap-3 sm:gap-4 py-2 sm:py-4 overflow-hidden">
+            <TraitBasicInfo trait={newTrait} onChange={setNewTrait} />
 
-          <IconSelector
-            selectedIcon={newTrait.icon || "AlertCircle"}
-            onSelectIcon={(icon) => setNewTrait({ ...newTrait, icon })}
-          />
-
-          <RsidGenotypeManager
-            rsids={newTrait.rsids || []}
-            referenceGenotypes={newTrait.referenceGenotypes || []}
-            yourGenotypes={newTrait.yourGenotypes || []}
-            onChange={(rsids, referenceGenotypes, yourGenotypes) =>
-              setNewTrait({ ...newTrait, rsids, referenceGenotypes, yourGenotypes })
-            }
-          />
-
-          <FormulaInput
-            formula={newTrait.formula || ""}
-            onChange={(formula) => setNewTrait({ ...newTrait, formula })}
-          />
-
-          <ScoreThresholdManager
-            thresholds={newTrait.scoreThresholds || {}}
-            onChange={(scoreThresholds) => setNewTrait({ ...newTrait, scoreThresholds })}
-          />
-
-          {/* References Input */}
-          <div className="space-y-2">
-            <label htmlFor="references" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              {t("references")} {/* Add translation key */}
-            </label>
-            <textarea
-              id="references"
-              value={newTrait.reference?.join(', ') || ''}
-              onChange={(e) =>
-                setNewTrait({
-                  ...newTrait,
-                  reference: [e.target.value] // 将整个输入字符串作为数组的一个元素
-                })
-              }
-              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder={t("reference_note")} // Add translation key
+            <IconSelector
+              selectedIcon={newTrait.icon || "AlertCircle"}
+              onSelectIcon={(icon) => setNewTrait({ ...newTrait, icon })}
             />
-          </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t("cancel")}
-          </Button>
-          <Button onClick={handleCreateTrait} disabled={isLoading}>
-            {isLoading ? (language === 'en' ? 'Creating...' : '创建中...') : t("create")}
-          </Button>
-        </DialogFooter>
+            <RsidGenotypeManager
+              rsids={newTrait.rsids || []}
+              referenceGenotypes={newTrait.referenceGenotypes || []}
+              yourGenotypes={newTrait.yourGenotypes || []}
+              onChange={(rsids, referenceGenotypes, yourGenotypes) =>
+                setNewTrait({ ...newTrait, rsids, referenceGenotypes, yourGenotypes })
+              }
+            />
+
+            <FormulaInput
+              formula={newTrait.formula || ""}
+              onChange={(formula) => setNewTrait({ ...newTrait, formula })}
+            />
+
+            <ScoreThresholdManager
+              thresholds={newTrait.scoreThresholds || {}}
+              onChange={(scoreThresholds) => setNewTrait({ ...newTrait, scoreThresholds })}
+            />
+
+            {/* References Input */}
+            <div className="space-y-2">
+              <label htmlFor="references" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {t("references")} {/* Add translation key */}
+              </label>
+              <textarea
+                id="references"
+                value={newTrait.reference?.join(', ') || ''}
+                onChange={(e) =>
+                  setNewTrait({
+                    ...newTrait,
+                    reference: [e.target.value] // 将整个输入字符串作为数组的一个元素
+                  })
+                }
+                className="flex min-h-[60px] sm:min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                placeholder={t("reference_note")} // Add translation key
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 pt-4 mt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={isLoading}
+              className="w-full sm:w-auto order-2 sm:order-1"
+            >
+              {t("cancel")}
+            </Button>
+            <Button
+              onClick={handleCreateTrait}
+              disabled={isLoading}
+              className="w-full sm:w-auto order-1 sm:order-2"
+            >
+              {isLoading ? (language === 'en' ? 'Creating...' : '创建中...') : t("create")}
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )

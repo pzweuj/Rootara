@@ -137,3 +137,22 @@
 .leaflet-tooltip {
   z-index: 13 !important;
 }
+
+/* 对话框内容防止溢出 */
+[data-radix-dialog-content] {
+  max-width: calc(100vw - 2rem) !important;
+  width: 100% !important;
+}
+
+/* 确保所有输入元素不会溢出 */
+input, textarea, select {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 防止长文本溢出 */
+.break-words {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}

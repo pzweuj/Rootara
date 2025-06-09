@@ -80,11 +80,11 @@ export function IconSelector({ selectedIcon, onSelectIcon }: IconSelectorProps) 
   ]
 
   return (
-    <div className="space-y-2 mt-4">
-      <Label>{t("iconSelector")}</Label>
-      <div className="p-2 border rounded-md">
+    <div className="space-y-2 mt-2 sm:mt-4">
+      <Label className="text-sm">{t("iconSelector")}</Label>
+      <div className="p-2 sm:p-3 border rounded-md">
         <p className="text-xs text-muted-foreground mb-2">{t("selectIcon")}</p>
-        <div className="grid grid-cols-8 gap-2">
+        <div className="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-10 gap-1 sm:gap-2 max-h-32 sm:max-h-40 overflow-y-auto">
           {commonIcons.map((iconName) => {
             const IconComponent = (LucideIcons as any)[iconName]
             return (
@@ -93,10 +93,10 @@ export function IconSelector({ selectedIcon, onSelectIcon }: IconSelectorProps) 
                 type="button"
                 variant={selectedIcon === iconName ? "default" : "outline"}
                 size="icon"
-                className="h-10 w-10"
+                className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
                 onClick={() => onSelectIcon(iconName)}
               >
-                {IconComponent && <IconComponent className="h-5 w-5" />}
+                {IconComponent && <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />}
               </Button>
             )
           })}

@@ -31,19 +31,20 @@ export function FormulaInput({ formula, onChange }: FormulaInputProps) {
   const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full overflow-hidden">
       <Label htmlFor="formula">{t("formula")}</Label>
       <Textarea
         id="formula"
         placeholder="SCORE(rs12913832:GG=10,GA=5,AA=0; rs1800407:CC=5,CT=3,TT=0)"
         value={formula}
         onChange={(e) => onChange(e.target.value)}
+        className="min-h-[60px] sm:min-h-[80px] resize-none w-full"
       />
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground break-words">
         {t("formulaDescription").replace(/</g, "&lt;").replace(/>/g, "&gt;")}
       </p>
       <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
-        <p className="text-xs text-yellow-800 dark:text-yellow-200">{t("resultCalculated")}</p>
+        <p className="text-xs text-yellow-800 dark:text-yellow-200 break-words">{t("resultCalculated")}</p>
       </div>
     </div>
   )

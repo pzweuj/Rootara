@@ -69,6 +69,7 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
         <Label htmlFor="description">{t("description")}</Label>
         <Textarea
           id="description"
+          className="min-h-[60px] sm:min-h-[80px] resize-none"
           value={trait.description?.[language as keyof typeof trait.description] || ""}
           onChange={(e) => {
             const updatedDescription = { ...trait.description } as Record<string, string>
@@ -80,7 +81,7 @@ export function TraitBasicInfo({ trait, onChange }: TraitBasicInfoProps) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="space-y-2">
           <Label htmlFor="confidence">{t("confidence")}</Label>
           <Select

@@ -81,14 +81,14 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full overflow-hidden">
       <Label>{t("scoreThresholds")}</Label>
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2 w-full">
         <Input
           placeholder={t("thresholdNamePlaceholder")}
           value={thresholdName}
           onChange={(e) => setThresholdName(e.target.value)}
-          className="w-[200px]" // Added fixed width
+          className="flex-1 min-w-0"
         />
         <Select
           value={thresholdType}
@@ -97,7 +97,7 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
             setThresholdValue(value === "boolean" ? "true" : "")
           }}
         >
-          <SelectTrigger className="w-[120px]">
+          <SelectTrigger className="w-full sm:w-[120px]">
             <SelectValue placeholder={t("thresholdType")} />
           </SelectTrigger>
           <SelectContent>
@@ -111,14 +111,14 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
             type="number"
             value={thresholdValue}
             onChange={(e) => setThresholdValue(e.target.value)}
-            className="w-[160px]" // Added fixed width
+            className="flex-1 sm:flex-none sm:w-[120px] min-w-0"
           />
         ) : (
           <Select
             value={thresholdValue}
             onValueChange={(value) => setThresholdValue(value)}
           >
-            <SelectTrigger className="w-[160px]"> {/* Increased width */}
+            <SelectTrigger className="w-full sm:w-[120px]">
               <SelectValue placeholder="Value" />
             </SelectTrigger>
             <SelectContent>
@@ -127,42 +127,68 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
             </SelectContent>
           </Select>
         )}
-        <Button type="button" onClick={addScoreThreshold} disabled={!thresholdName || !thresholdValue} size="sm">
+        <Button
+          type="button"
+          onClick={addScoreThreshold}
+          disabled={!thresholdName || !thresholdValue}
+          size="sm"
+          className="w-full sm:w-auto"
+        >
           {t("add")}
         </Button>
       </div>
-      <div className="flex justify-between items-center">
-        <div className="text-xs text-muted-foreground grid grid-cols-2 w-full">
-          <span>{t("thresholdName")}</span>
-          <span>{t("thresholdValue")}</span>
-        </div>
-      </div>
-      <p className="text-xs text-muted-foreground">{t("thresholdsDescription")}</p>
+      <p className="text-xs text-muted-foreground break-words">{t("thresholdsDescription")}</p>
 
       {/* Display added score thresholds */}
       {Object.keys(thresholds).length > 0 && (
-        <div className="mt-2 border rounded-md p-2 overflow-y-auto"> {/* Changed overflow-hidden to overflow-y-auto */}
-          <div className="grid grid-cols-[200px_160px_auto] gap-2 font-medium text-sm mb-1 border-b pb-1"> {/* Adjusted grid columns */}
-            <div className="px-2 text-center border-r">{t("result")}</div>
-            <div className="px-2 text-center border-r">{t("thresholdValue")}</div> {/* Added border-r */}
-            <div className="px-2 text-center">{t("delete").replace("Add", "删除")}</div> {/* Added header for delete column */}
-          </div>
-          {Object.entries(thresholds).map(([key, value], index) => (
-            <div key={key} className={`grid grid-cols-[200px_160px_auto] gap-2 text-sm items-center py-1 ${index < Object.keys(thresholds).length - 1 ? 'border-b' : ''}`}> {/* Adjusted grid columns */}
-              <div className="px-2 text-center border-r">{key}</div>
-              <div className="px-2 text-center border-r">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div> {/* Added border-r */}
-              <div className="px-2 text-center"> {/* Wrapped button in a div for the column */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-red-500"
-                  onClick={() => removeScoreThreshold(key)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div> {/* End of new div */}
+        <div className="mt-2 border rounded-md p-2 overflow-x-auto w-full">
+          {/* 桌面端表格视图 */}
+          <div className="hidden sm:block">
+            <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-medium text-sm mb-1 border-b pb-1">
+              <div className="px-2 text-center border-r">{t("result")}</div>
+              <div className="px-2 text-center border-r">{t("thresholdValue")}</div>
+              <div className="px-2 text-center">{t("delete")}</div>
             </div>
-          ))}
+            {Object.entries(thresholds).map(([key, value], index) => (
+              <div key={key} className={`grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < Object.keys(thresholds).length - 1 ? 'border-b' : ''}`}>
+                <div className="px-2 text-center border-r truncate">{key}</div>
+                <div className="px-2 text-center border-r">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div>
+                <div className="px-2 text-center">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-red-500"
+                    onClick={() => removeScoreThreshold(key)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 移动端卡片视图 */}
+          <div className="sm:hidden space-y-2">
+            {Object.entries(thresholds).map(([key, value]) => (
+              <div key={key} className="border rounded-md p-3 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-sm truncate">{key}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-red-500 flex-shrink-0"
+                    onClick={() => removeScoreThreshold(key)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+                <div className="text-xs">
+                  <span className="text-muted-foreground">{t("thresholdValue")}:</span>
+                  <span className="ml-1">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
