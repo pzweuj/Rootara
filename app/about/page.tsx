@@ -3,7 +3,8 @@
 import { useLanguage } from "@/contexts/language-context"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ExternalLink, Github, Star } from "lucide-react"
 import Link from "next/link"
 
 interface LicenseInfo {
@@ -118,6 +119,44 @@ export default function AboutPage() {
           {t("licenseInformation")}
         </p>
       </div>
+
+      {/* Project Description Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="h-5 w-5" />
+            {t("projectDescription")}
+          </CardTitle>
+          <CardDescription>
+            {t("geneticAnalysis")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-sm leading-relaxed">
+              {t("rootaraDescription")}
+            </p>
+            <div className="flex items-center gap-4">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Github className="h-3 w-3" />
+                {t("openSource")}
+              </Badge>
+              <Button asChild variant="outline" size="sm">
+                <Link
+                  href="https://github.com/pzweuj/Rootara"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  <Github className="h-4 w-4" />
+                  {t("viewOnGithub")}
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

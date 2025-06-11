@@ -12,7 +12,6 @@ import {
   Dna,
   Heart,
   User,
-  HelpCircle,
   Menu,
   ChevronLeft,
   ChevronDown,
@@ -72,7 +71,6 @@ export function Sidebar() {
   ]
 
   const bottomNavigation = [
-    { name: t("helpCenter"), href: "https://github.com/pzweuj/Rootara/wiki", icon: HelpCircle },
     { name: t("about"), href: "/about", icon: Info },
   ]
 

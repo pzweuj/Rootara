@@ -15,11 +15,12 @@ export const metadata = {
   title: "Rootara",
   author: "pzweuj",
   generator: "pzweuj",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+}
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
