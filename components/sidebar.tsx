@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ChevronRight,
   AlertCircle,
+  Info,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -70,7 +71,10 @@ export function Sidebar() {
     },
   ]
 
-  const bottomNavigation = [{ name: t("helpCenter"), href: "https://github.com/pzweuj/Rootara/wiki", icon: HelpCircle }]
+  const bottomNavigation = [
+    { name: t("helpCenter"), href: "https://github.com/pzweuj/Rootara/wiki", icon: HelpCircle },
+    { name: t("about"), href: "/about", icon: Info },
+  ]
 
   const toggleItem = (name: string) => {
     setOpenItems((prev) => ({
