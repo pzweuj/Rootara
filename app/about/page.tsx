@@ -17,6 +17,7 @@ interface LicenseInfo {
   }
   url?: string
   repository?: string
+  licenseUrl?: string
 }
 
 const openSourceLibraries: LicenseInfo[] = [
@@ -105,7 +106,71 @@ const openSourceLibraries: LicenseInfo[] = [
       "zh-CN": "用于有条件地构造 className 字符串的小工具"
     },
     repository: "https://github.com/lukeed/clsx"
-  }
+  },
+  {
+    name: "admix",
+    version: "1fd5181",
+    license: "GPL-3.0",
+    description: {
+      en: "An admixture analysis tool for Python that supports raw data from 23andme, AncestryDNA, etc.",
+      "zh-CN": "一个用于 Python 的 admixture 分析工具，支持 23andme、AncestryDNA 等原始数据。"
+    },
+    repository: "https://github.com/stevenliuyi/admix"
+  },
+  {
+    name: "haploGrouper",
+    version: "1.1",
+    license: "Apache-2.0",
+    description: {
+      en: "A software to classify haplotypes into haplogroups on the basis of a known phylogenetic tree.",
+      "zh-CN": "一个基于已知的系统发育树，将等位基因进行单倍群分组的软件。"
+    },
+    url: "https://gitlab.com/bio_anth_decode/haploGrouper"
+  },
+  {
+    name: "pandas",
+    version: "2.3.0",
+    license: "BSD-3",
+    description: {
+      en: "Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more.",
+      "zh-CN": "一个用于 Python 的数据分析和操作库，提供类似于 R 中 data.frame 对象的带标签数据结构、统计函数等。"
+    },
+    url: "https://pandas.pydata.org",
+    repository: "https://github.com/pandas-dev/pandas"
+  },
+  {
+    name: "pysam",
+    version: "0.23.3",
+    license: "MIT",
+    description: {
+      en: "Pysam is a Python package for reading, manipulating, and writing genomics data such as SAM/BAM/CRAM and VCF/BCF files. It's a lightweight wrapper of the HTSlib API, the same one that powers samtools, bcftools, and tabix.",
+      "zh-CN": "一个用于 Python 的生物学数据处理库，提供对 SAM/BAM/CRAM 和 VCF/BCF 文件的读取、操作和写入功能。"
+    },
+    repository: "https://github.com/pysam-developers/pysam"
+  },
+  {
+    name: "sqlite3",
+    version: "3.50.1",
+    license: "Custom",
+    licenseUrl: "https://github.com/sqlite/sqlite?tab=License-1-ov-file",
+    description: {
+      en: "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.",
+      "zh-CN": "SQLite 是一个 C 语言库，它实现了一个小型、快速、自包含、高可靠性、功能齐全的 SQL 数据库引擎。"
+    },
+    url: "https://www.sqlite.org",
+    repository: "https://github.com/sqlite/sqlite"
+  },
+  {
+    name: "FastAPI",
+    version: "0.115.12",
+    license: "MIT",
+    description: {
+      en: "FastAPI framework, high performance, easy to learn, fast to code, ready for production.",
+      "zh-CN": "一个用于 Python 的高性能 Web 框架，易于学习，快速开发，适用于生产环境。"
+    },
+    url: "https://fastapi.tiangolo.com",
+    repository: "https://github.com/fastapi/fastapi"
+  },
 ]
 
 export default function AboutPage() {
@@ -137,10 +202,10 @@ export default function AboutPage() {
               {t("rootaraDescription")}
             </p>
             <div className="flex items-center gap-4">
-              <Badge variant="secondary" className="flex items-center gap-1">
+              {/* <Badge variant="secondary" className="flex items-center gap-1">
                 <Github className="h-3 w-3" />
                 {t("openSource")}
-              </Badge>
+              </Badge> */}
               <Button asChild variant="outline" size="sm">
                 <Link
                   href="https://github.com/pzweuj/Rootara"
@@ -188,7 +253,20 @@ export default function AboutPage() {
                       <Badge variant="secondary">{lib.version}</Badge>
                     </td>
                     <td className="py-3 px-4">
-                      <Badge variant="outline">{lib.license}</Badge>
+                      <Badge variant="outline">
+                        {lib.licenseUrl ? (
+                          <Link 
+                            href={lib.licenseUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="hover:underline"
+                          >
+                            {lib.license}
+                          </Link>
+                        ) : (
+                          lib.license
+                        )}
+                      </Badge>
                     </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
                       {lib.description[language as keyof typeof lib.description]}
@@ -236,3 +314,7 @@ export default function AboutPage() {
     </div>
   )
 }
+
+
+
+
