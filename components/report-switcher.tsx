@@ -216,8 +216,8 @@ export function ReportSwitcher({
       setDeleteDialogOpen(false);
     } else {
       toast({
-        title: language === "zh-CN" ? "错误" : "Error",
-        description: language === "zh-CN" ? "无效的报告ID" : "Invalid report ID",
+        title: t("error"),
+        description: t("invalidReportId"),
         variant: "destructive",
         duration: 5000,
       });
@@ -285,7 +285,7 @@ export function ReportSwitcher({
   
       // 显示错误通知
       toast({
-        title: language === "zh-CN" ? "重命名失败" : "Rename Failed",
+        title: t("renameFailed"),
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
         duration: 5000,
@@ -573,10 +573,8 @@ export function ReportSwitcher({
     
     // 显示切换成功的通知，而不是加载状态
     toast({
-      title: language === "zh-CN" ? "报告已切换" : "Report Switched",
-      description: language === "zh-CN" 
-        ? `当前查看: ${report.nameZh}` 
-        : `Now viewing: ${report.name}`,
+      title: t("reportSwitched"),
+      description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
       duration: 2000,
     });
     
@@ -957,7 +955,7 @@ export function ReportSwitcher({
           <DialogHeader>
             <DialogTitle>{t("renameReport")}</DialogTitle>
             <DialogDescription>
-              {language === "zh-CN" ? "请输入新的报告名称" : "Enter a new name for the report"}
+              {t("enterNewReportName")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

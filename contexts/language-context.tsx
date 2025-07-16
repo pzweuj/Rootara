@@ -90,6 +90,7 @@ const translations = {
     reportSwitched: "Report Switched",
     nowViewing: "Now viewing",
     enterNewReportName: "Enter a new name for the report",
+    currentlyViewing: "Now viewing: ",
     // Raw Genetic Data
     mitochondria: "Mitochondria",
     // Health Risk Summary
@@ -121,9 +122,18 @@ const translations = {
     traitDeletedSuccessfully: "Trait deleted successfully",
     // ClinVar
     clinvarAnalysis: "ClinVar Analysis",
+    clinvarNoticeTitle: "Important Notice",
+    clinvarNoticeContent: "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
     // Ancestry
     ancestryMap: "Ancestry Map",
     interactiveAncestryMap: "Interactive ancestry map visualization would appear here",
+    loadingAncestryData: "Loading ancestry data...",
+    errorLoadingData: "Error loading data",
+    retry: "Retry",
+    noAncestryData: "No ancestry data available",
+    failedToLoadAncestryData: "Failed to load ancestry data",
+    // Traits
+    notice: "Note: These trait analyses are based on literature and user-contributed data, not clinical-grade interpretation. Results are for informational purposes only and should not be used as medical advice.",
   },
   "zh-CN": {
     dashboard: "仪表盘",
@@ -201,6 +211,7 @@ const translations = {
     reportSwitched: "报告已切换",
     nowViewing: "当前查看",
     enterNewReportName: "请输入新的报告名称",
+    currentlyViewing: "当前查看: ",
     // Raw Genetic Data
     mitochondria: "线粒体",
     // Health Risk Summary
@@ -232,8 +243,18 @@ const translations = {
     traitDeletedSuccessfully: "特征删除成功",
     // ClinVar
     clinvarAnalysis: "ClinVar 分析",
+    clinvarNoticeTitle: "重要提示",
+    clinvarNoticeContent: "基因检测不是诊断工具。在基于这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
     // Ancestry
     ancestryMap: "祖源地图",
+    interactiveAncestryMap: "交互式祖源地图可视化将在此处显示",
+    loadingAncestryData: "正在加载祖源数据...",
+    errorLoadingData: "数据加载失败",
+    retry: "重试",
+    noAncestryData: "暂无祖源数据",
+    failedToLoadAncestryData: "加载祖源数据失败",
+    // Traits
+    notice: "注意：这些特征分析基于文献和用户贡献的数据，不是临床级别的解读。结果仅供参考，不应用作医疗建议。",
   },
 }
 
