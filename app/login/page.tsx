@@ -12,35 +12,23 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle, Moon, Sun } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useTheme } from "next-themes"
+import { useLanguage } from "@/contexts/language-context"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [language, setLanguage] = useState<"en" | "zh-CN">("en")
   const { login, isLoading } = useAuth()
   const router = useRouter()
   const { theme, setTheme } = useTheme()
-
-  // Load language preference from localStorage on initial render
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") as "en" | "zh-CN"
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "zh-CN")) {
-      setLanguage(savedLanguage)
-    }
-  }, [])
-
-  const handleLanguageChange = (newLanguage: "en" | "zh-CN") => {
-    setLanguage(newLanguage)
-    localStorage.setItem("language", newLanguage)
-  }
+  const { language, setLanguage, t } = useLanguage()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
     if (!email || !password) {
-      setError(language === "en" ? "Please enter both email and password" : "请输入邮箱和密码")
+      setError(t("enterEmailPassword"))
       return
     }
 
@@ -48,35 +36,11 @@ export default function LoginPage() {
     if (success) {
       router.push("/")
     } else {
-      setError(language === "en" ? "Invalid email or password" : "邮箱或密码错误")
+      setError(t("invalidCredentials"))
     }
   }
 
-  // Translations
-  const translations = {
-    en: {
-      welcomeBack: "Welcome to Rootara",
-      enterCredentials: "Enter your credentials to access your genetic data",
-      email: "Email",
-      password: "Password",
-      signIn: "Sign in",
-      signingIn: "Signing in...",
-      emailPlaceholder: "name@example.com",
-    },
-    "zh-CN": {
-      welcomeBack: "欢迎使用 Rootara",
-      enterCredentials: "请输入您的凭据以访问您的基因数据",
-      email: "邮箱",
-      password: "密码",
-      signIn: "登录",
-      signingIn: "登录中...",
-      emailPlaceholder: "name@example.com",
-    },
-  }
 
-  const t = (key: keyof typeof translations.en) => {
-    return translations[language][key]
-  }
 
   return (
     <div className="min-h-screen w-full flex">
@@ -98,9 +62,7 @@ export default function LoginPage() {
             }}
           />
           <p className="text-xl max-w-md text-center">
-            {language === "en"
-              ? "Discover your genetic heritage and unlock insights about your health and traits."
-              : "探索您的基因，解锁您的遗传健康和个人特征。"}
+            {t("discoverGenetic")}
           </p>
         </div>
       </div>
@@ -111,8 +73,8 @@ export default function LoginPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => handleLanguageChange(language === "en" ? "zh-CN" : "en")}
-            title={language === "en" ? "Switch to Chinese" : "切换为英文"}
+            onClick={() => setLanguage(language === "en" ? "zh-CN" : "en")}
+            title={t("switchToChinese")}
           >
             {language === "en" ? (
               <span className="font-bold text-sm">EN</span>
@@ -124,15 +86,7 @@ export default function LoginPage() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            title={
-              theme === "dark"
-                ? language === "en"
-                  ? "Light mode"
-                  : "亮色模式"
-                : language === "en"
-                  ? "Dark mode"
-                  : "暗色模式"
-            }
+            title={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>

@@ -77,6 +77,53 @@ const translations = {
     viewOnGithub: "View on GitHub",
     openSource: "Open Source",
     geneticAnalysis: "Genetic Analysis Platform",
+    // Report Switcher
+    deleteFailed: "Delete Failed",
+    error: "Error",
+    invalidReportId: "Invalid report ID",
+    operationDenied: "Operation Denied",
+    cannotDeleteTemplate: "Cannot delete template report",
+    debugInfo: "Debug Info",
+    renameSuccessful: "Rename Successful",
+    reportNameUpdated: "The report name has been updated",
+    renameFailed: "Rename Failed",
+    reportSwitched: "Report Switched",
+    nowViewing: "Now viewing",
+    enterNewReportName: "Enter a new name for the report",
+    // Raw Genetic Data
+    mitochondria: "Mitochondria",
+    // Health Risk Summary
+    healthRiskSummary: "Health Risk Summary",
+    viewDetailedHealthReport: "View Detailed Health Report",
+    geneticVariantsAnalyzed: "genetic variants analyzed",
+    // Genetic Profile Overview
+    geneticProfileOverview: "Genetic Profile Overview",
+    reportId: "Report ID: ",
+    variantsAnalyzed: "Variants Analyzed",
+    loadingMap: "Loading map...",
+    ancestryDetails: "Ancestry Details",
+    haplogroups: "Haplogroups",
+    // Login
+    enterEmailPassword: "Please enter both email and password",
+    invalidCredentials: "Invalid email or password",
+    switchToChinese: "Switch to Chinese",
+    welcomeBack: "Welcome to Rootara",
+    enterCredentials: "Enter your credentials to access your genetic data",
+    email: "Email",
+    password: "Password",
+    signIn: "Sign in",
+    signingIn: "Signing in...",
+    emailPlaceholder: "name@example.com",
+    discoverGenetic: "Discover your genetic heritage and unlock insights about your health and traits.",
+    lightMode: "Light mode",
+    darkMode: "Dark mode",
+    // Traits
+    traitDeletedSuccessfully: "Trait deleted successfully",
+    // ClinVar
+    clinvarAnalysis: "ClinVar Analysis",
+    // Ancestry
+    ancestryMap: "Ancestry Map",
+    interactiveAncestryMap: "Interactive ancestry map visualization would appear here",
   },
   "zh-CN": {
     dashboard: "仪表盘",
@@ -141,6 +188,52 @@ const translations = {
     viewOnGithub: "在 GitHub 上查看",
     openSource: "开源项目",
     geneticAnalysis: "基因分析平台",
+    // Report Switcher
+    deleteFailed: "删除失败",
+    error: "错误",
+    invalidReportId: "无效的报告ID",
+    operationDenied: "操作被拒绝",
+    cannotDeleteTemplate: "不能删除模板报告",
+    debugInfo: "调试信息",
+    renameSuccessful: "重命名成功",
+    reportNameUpdated: "报告名称已更新",
+    renameFailed: "重命名失败",
+    reportSwitched: "报告已切换",
+    nowViewing: "当前查看",
+    enterNewReportName: "请输入新的报告名称",
+    // Raw Genetic Data
+    mitochondria: "线粒体",
+    // Health Risk Summary
+    healthRiskSummary: "健康风险摘要",
+    viewDetailedHealthReport: "查看详细健康报告",
+    geneticVariantsAnalyzed: "个基因变异已分析",
+    // Genetic Profile Overview
+    geneticProfileOverview: "基因概况",
+    reportId: "报告编号: ",
+    variantsAnalyzed: "个位点已分析",
+    loadingMap: "地图加载中...",
+    ancestryDetails: "祖源分析",
+    haplogroups: "单倍群",
+    // Login
+    enterEmailPassword: "请输入邮箱和密码",
+    invalidCredentials: "邮箱或密码错误",
+    switchToChinese: "切换为英文",
+    welcomeBack: "欢迎使用 Rootara",
+    enterCredentials: "请输入您的凭据以访问您的基因数据",
+    email: "邮箱",
+    password: "密码",
+    signIn: "登录",
+    signingIn: "登录中...",
+    emailPlaceholder: "name@example.com",
+    discoverGenetic: "探索您的基因，解锁您的遗传健康和个人特征。",
+    lightMode: "亮色模式",
+    darkMode: "暗色模式",
+    // Traits
+    traitDeletedSuccessfully: "特征删除成功",
+    // ClinVar
+    clinvarAnalysis: "ClinVar 分析",
+    // Ancestry
+    ancestryMap: "祖源地图",
   },
 }
 

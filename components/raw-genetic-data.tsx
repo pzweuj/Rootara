@@ -205,8 +205,8 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
               {chromosomes.map((chr) => (
                 <SelectItem key={chr} value={chr}>
                   {chr === "MT" 
-                    ? (language === "zh-CN" ? "线粒体" : "Mitochondria") 
-                    : `${t("chromosome") || "染色体"} ${chr}`}
+                    ? t("mitochondria")
+                    : `${t("chromosome")} ${chr}`}
                 </SelectItem>
               ))}
             </SelectContent>

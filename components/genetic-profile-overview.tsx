@@ -260,10 +260,10 @@ export function GeneticProfileOverview() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-medium flex items-center">
             <Dna className="mr-2 h-5 w-5 text-primary" />
-            {language === "en" ? "Genetic Profile Overview" : "基因概况"}
+            {t("geneticProfileOverview")}
           </CardTitle>
           <Badge variant="outline" className="text-xs font-mono">
-            {language === "en" ? "Report ID: " : "报告编号: "}
+            {t("reportId")}
             {profileData.reportId}
           </Badge>
         </div>
@@ -273,20 +273,20 @@ export function GeneticProfileOverview() {
           <div>
             <div className="text-2xl font-semibold mb-4">
               {reportInfoLoading ? (
-                <span>{language === "en" ? "Loading..." : "加载中..."}</span>
+                <span>{t("loading")}</span>
               ) : (
-                <>{profileData.totalSnps.toLocaleString()} {language === "en" ? "Variants Analyzed" : "个位点已分析"}</>
+                <>{profileData.totalSnps.toLocaleString()} {t("variantsAnalyzed")}</>
               )}
             </div>
 
             <div className="space-y-4">
               <div>
                 <div className="text-sm text-muted-foreground mb-2">
-                  {language === "en" ? "Ancestry Composition" : "祖源构成"}
+                  {t("ancestryComposition")}
                 </div>
                 <div className="space-y-3">
                   {loading ? (
-                    <div className="text-sm">{language === "en" ? "Loading..." : "加载中..."}</div>
+                    <div className="text-sm">{t("loading")}</div>
                   ) : (
                     ancestryComposition.map((ancestry) => (
                       <div key={ancestry.region} className="flex items-center">
@@ -309,7 +309,7 @@ export function GeneticProfileOverview() {
                 <div className="mt-4">
                   <Button variant="outline" size="sm" className="gap-1" asChild>
                     <Link href="/analysis/ancestry">
-                      {language === "en" ? "Ancestry Details" : "祖源分析"}
+                      {t("ancestryDetails")}
                       <ExternalLink className="h-3 w-3" />
                     </Link>
                   </Button>
@@ -320,7 +320,7 @@ export function GeneticProfileOverview() {
 
           <div className="pt-2">
             <div className="text-sm text-muted-foreground mb-3 flex justify-between items-center">
-              <span>{language === "en" ? "Haplogroups" : "单倍群"}</span>
+              <span>{t("haplogroups")}</span>
             </div>
             
             {haplogroupLoading ? (
