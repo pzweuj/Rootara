@@ -510,9 +510,7 @@ export function ReportSwitcher({
     },
   }
 
-  const t = (key: keyof (typeof translations)["en"]) => {
-    return translations[language][key] || key
-  }
+
 
   // 处理设置默认报告
   const handleSetDefault = async (reportId: string) => {
