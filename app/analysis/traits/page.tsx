@@ -152,7 +152,7 @@ export default function TraitsPage() {
     setIsDeleteDialogOpen(false)
     setTraitToDelete(null)
 
-    toast.success(language === "en" ? "Trait deleted successfully" : "特征删除成功")
+    toast.success(t("traitDeletedSuccessfully"))
 
     // Case 4: Refresh traits list from backend after deleting a trait
     if (currentReportId) {
@@ -186,7 +186,7 @@ export default function TraitsPage() {
             <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
             <div>
               <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                {translations[language === "en" ? "en" : "zh-CN"].notice}
+                {t("notice")}
               </p>
             </div>
           </CardContent>
@@ -195,7 +195,7 @@ export default function TraitsPage() {
         <Card className="flex-[1] min-w-[200px] border-0 shadow-none">
           <CardContent className="flex items-center justify-center py-4">
             <Badge variant="outline" className="text-xs font-mono">
-              {language === "en" ? "Report ID: " : "报告编号: "}
+              {t("reportId")}
               {currentReportId}
             </Badge>
           </CardContent>

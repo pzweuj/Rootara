@@ -76,7 +76,7 @@ export function ReportSwitcher({
 }: ReportSwitcherProps = {}) {
   const router = useRouter()
   const pathname = usePathname()
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const { currentReportId, setCurrentReportId } = useReport() // 使用报告上下文
 
   const [reports, setReports] = useState<Report[]>([])
@@ -144,7 +144,7 @@ export function ReportSwitcher({
 
       // 显示错误通知
       toast({
-        title: language === "zh-CN" ? "删除失败" : "Delete Failed",
+        title: t("deleteFailed"),
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
         duration: 5000,
@@ -157,8 +157,8 @@ export function ReportSwitcher({
     // 验证reportId是否有效
     if (!reportId || reportId.includes('/') || reportId.includes('\\')) {
       toast({
-        title: language === "zh-CN" ? "错误" : "Error",
-        description: language === "zh-CN" ? "无效的报告ID" : "Invalid report ID",
+        title: t("error"),
+        description: t("invalidReportId"),
         variant: "destructive",
         duration: 5000,
       });
@@ -168,8 +168,8 @@ export function ReportSwitcher({
     // 添加模板报告保护逻辑
     if (reportId === "RPT_TEMPLATE01") {
       toast({
-        title: language === "zh-CN" ? "操作被拒绝" : "Operation Denied",
-        description: language === "zh-CN" ? "不能删除模板报告" : "Cannot delete template report",
+        title: t("operationDenied"),
+        description: t("cannotDeleteTemplate"),
         variant: "destructive",
         duration: 5000,
       });
@@ -206,7 +206,7 @@ export function ReportSwitcher({
       // 添加调试信息，显示确认删除的reportId
       console.log("确认删除的报告ID:", reportToDelete);
       toast({
-        title: language === "zh-CN" ? "调试信息" : "Debug Info",
+        title: t("debugInfo"),
         description: `确认删除报告ID: ${reportToDelete}`,
         duration: 5000,
       });
@@ -216,8 +216,8 @@ export function ReportSwitcher({
       setDeleteDialogOpen(false);
     } else {
       toast({
-        title: language === "zh-CN" ? "错误" : "Error",
-        description: language === "zh-CN" ? "无效的报告ID" : "Invalid report ID",
+        title: t("error"),
+        description: t("invalidReportId"),
         variant: "destructive",
         duration: 5000,
       });
@@ -270,8 +270,8 @@ export function ReportSwitcher({
   
       // 显示成功通知
       toast({
-        title: language === "zh-CN" ? "重命名成功" : "Rename Successful",
-        description: language === "zh-CN" ? "报告名称已更新" : "The report name has been updated",
+        title: t("renameSuccessful"),
+        description: t("reportNameUpdated"),
         duration: 3000,
       })
   
@@ -285,7 +285,7 @@ export function ReportSwitcher({
   
       // 显示错误通知
       toast({
-        title: language === "zh-CN" ? "重命名失败" : "Rename Failed",
+        title: t("renameFailed"),
         description: error instanceof Error ? error.message : "Unknown error",
         variant: "destructive",
         duration: 5000,
@@ -573,10 +573,8 @@ export function ReportSwitcher({
     
     // 显示切换成功的通知，而不是加载状态
     toast({
-      title: language === "zh-CN" ? "报告已切换" : "Report Switched",
-      description: language === "zh-CN" 
-        ? `当前查看: ${report.nameZh}` 
-        : `Now viewing: ${report.name}`,
+      title: t("reportSwitched"),
+      description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
       duration: 2000,
     });
     
@@ -957,7 +955,7 @@ export function ReportSwitcher({
           <DialogHeader>
             <DialogTitle>{t("renameReport")}</DialogTitle>
             <DialogDescription>
-              {language === "zh-CN" ? "请输入新的报告名称" : "Enter a new name for the report"}
+              {t("enterNewReportName")}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

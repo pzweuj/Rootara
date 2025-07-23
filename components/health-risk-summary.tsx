@@ -22,27 +22,8 @@ const healthRisks = [
 ]
 
 export function HealthRiskSummary() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const router = useRouter()
-
-  const translations = {
-    en: {
-      healthRiskSummary: "Health Risk Summary",
-      viewDetailedHealthReport: "View Detailed Health Report",
-      geneticVariants: "genetic variants analyzed",
-    },
-    "zh-CN": {
-      healthRiskSummary: "健康风险摘要",
-      viewDetailedHealthReport: "查看详细健康报告",
-      geneticVariants: "个基因变异已分析",
-    },
-  }
-
-  const t = (key: keyof (typeof translations)[typeof language]) => {
-    return (
-      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
-    )
-  }
 
   const getRiskIcon = (risk: string) => {
     switch (risk) {

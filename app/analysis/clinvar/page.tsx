@@ -544,10 +544,10 @@ export default function ClinvarAnalysisPage() {
           <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="font-medium text-yellow-800 dark:text-yellow-300 text-sm sm:text-base">
-              {texts.notice.title[language === "en" ? "en" : "zh"]}
+              {t("clinvarNoticeTitle")}
             </p>
             <p className="text-xs sm:text-sm text-yellow-700 dark:text-yellow-400 break-words">
-              {texts.notice.content[language === "en" ? "en" : "zh"]}
+              {t("clinvarNoticeContent")}
             </p>
           </div>
         </CardContent>
@@ -558,7 +558,7 @@ export default function ClinvarAnalysisPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <CardTitle className="text-lg sm:text-xl">{t("clinvarAnalysis")}</CardTitle>
             <Badge variant="outline" className="text-xs font-mono self-start sm:self-center">
-              {language === "en" ? "Report ID: " : "报告编号: "}
+              {t("reportId")}
               {currentReportId}
             </Badge>
           </div>

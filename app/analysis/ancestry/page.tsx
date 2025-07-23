@@ -22,7 +22,7 @@ const LeafletMap = dynamic(() => import('./map-component'), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-      <p className="text-muted-foreground">{useLanguage().language === "en" ? "Loading map..." : "地图加载中..."}</p>
+      <p className="text-muted-foreground">{useLanguage().t("loadingMap")}</p>
     </div>
   )
 })
@@ -280,7 +280,7 @@ export default function AncestryAnalysisPage() {
           <p className="text-muted-foreground">{String(t("exploreGenetic"))}</p>
         </div>
         <Badge variant="outline" className="text-xs font-mono"> 
-          {language === "en" ? "Report ID: " : "报告编号: "} 
+          {t("reportId")} 
           {currentReportId} 
         </Badge>
       </div>
@@ -292,29 +292,29 @@ export default function AncestryAnalysisPage() {
           <div className="md:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">{language === "en" ? "Ancestry Map" : "祖源地图"}</CardTitle>
+                <CardTitle className="text-xl font-semibold">{t("ancestryMap")}</CardTitle>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
                   <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-                    <p className="text-muted-foreground">{language === "en" ? "Loading ancestry data..." : "正在加载祖源数据..."}</p>
+                    <p className="text-muted-foreground">{t("loadingAncestryData")}</p>
                   </div>
                 ) : error ? (
                   <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
                     <div className="text-center">
-                      <p className="text-red-500 mb-2">{language === "en" ? "Error loading data" : "数据加载失败"}</p>
+                      <p className="text-red-500 mb-2">{t("errorLoadingData")}</p>
                       <p className="text-sm text-muted-foreground">{error}</p>
                       <button 
                         onClick={() => fetchAncestryData(currentReportId)}
                         className="mt-4 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
                       >
-                        {language === "en" ? "Retry" : "重试"}
+                        {t("retry")}
                       </button>
                     </div>
                   </div>
                 ) : Object.keys(ancestryData).length === 0 ? (
                   <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-                    <p className="text-muted-foreground">{language === "en" ? "No ancestry data available" : "暂无祖源数据"}</p>
+                    <p className="text-muted-foreground">{t("noAncestryData")}</p>
                   </div>
                 ) : (
                   <LeafletMap key={mapInstanceKey} data={ancestryData} />
@@ -328,11 +328,11 @@ export default function AncestryAnalysisPage() {
                     </div>
                   ) : error && Object.keys(ancestryData).length === 0 ? (
                     <div className="py-8 text-center text-red-500">
-                      {language === "en" ? "Failed to load ancestry data" : "加载祖源数据失败"}
+                      {t("failedToLoadAncestryData")}
                     </div>
                   ) : Object.keys(ancestryData).length === 0 ? (
                     <div className="py-8 text-center text-muted-foreground">
-                      {language === "en" ? "No ancestry data available" : "暂无祖源数据"}
+                      {t("noAncestryData")}
                     </div>
                   ) : (
                     <div className="space-y-2 relative">
