@@ -64,33 +64,8 @@ const regionTranslations = {
 }
 
 export function AncestryMap() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const [selectedView, setSelectedView] = useState("global")
-
-  const translations = {
-    en: {
-      ancestryComposition: "Ancestry Composition",
-      view: "View",
-      global: "Global",
-      european: "European",
-      asian: "Asian",
-      african: "African",
-      subregions: "Subregions",
-    },
-    "zh-CN": {
-      ancestryComposition: "祖源构成",
-      view: "视图",
-      global: "全球",
-      european: "欧洲",
-      asian: "亚洲",
-      african: "非洲",
-      subregions: "子区域",
-    },
-  }
-
-  const t = (key: string) => {
-    return translations[language as keyof typeof translations][key as keyof (typeof translations)["en"]] || key
-  }
 
   // 根据语言获取区域名称
   const getRegionName = (name: string) => {

@@ -35,7 +35,7 @@ interface ClinVarResponse {
 }
 
 export function ClinvarSummary() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const { currentReportId } = useReport()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -83,46 +83,7 @@ export function ClinvarSummary() {
     }
   }, [currentReportId])
 
-  const translations = {
-    en: {
-      clinvarAnalysis: "ClinVar Analysis",
-      pathogenicVariants: "Pathogenic Variants",
-      likelyPathogenic: "Likely Pathogenic",
-      uncertainSignificance: "Uncertain Significance",
-      likelyBenign: "Likely Benign",
-      benign: "Benign",
-      recentFindings: "Findings",
-      viewDetails: "View Variants",
-      totalVariants: "Total Variants Analyzed",
-      gene: "Gene",
-      condition: "Condition",
-      classification: "Classification",
-      loading: "Loading data...",
-      error: "Error loading data",
-      noVariantsFound: "No variants found",
-    },
-    "zh-CN": {
-      clinvarAnalysis: "ClinVar 分析",
-      pathogenicVariants: "致病变异",
-      likelyPathogenic: "可能致病",
-      uncertainSignificance: "意义不明确",
-      likelyBenign: "可能良性",
-      benign: "良性",
-      recentFindings: "发现",
-      viewDetails: "查看位点",
-      totalVariants: "分析的总变异数",
-      gene: "基因",
-      condition: "疾病",
-      classification: "分类",
-      loading: "正在加载数据...",
-      error: "加载数据出错",
-      noVariantsFound: "没有找到变异",
-    },
-  }
 
-  const t = (key: keyof (typeof translations)[typeof language]) => {
-    return translations[language][key] || key
-  }
 
   const getClassificationIcon = (classification: string) => {
     const lowerClass = classification.toLowerCase();
