@@ -1,6 +1,8 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import * as jose from "jose"
+// @ts-ignore
+const { createHmac } = require('crypto')
 
 // In a real app, you would use a database
 // For this example, we'll use environment variables
@@ -25,8 +27,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
     }
 
+    // First hash the stored password with SHA-256, then apply HMAC with JWT_SECRET
+    const encoder = new TextEncoder()
+    const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
+    const storedPasswordHash = await crypto.subtle.digest('SHA-256', storedPasswordData)
+    const storedPasswordHashArray = Array.from(new Uint8Array(storedPasswordHash))
+    const storedPasswordHashHex = storedPasswordHashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    
+    // Apply HMAC with JWT_SECRET to both passwords
+    const hashedPassword = createHmac('sha256', JWT_SECRET)
+      .update(password)
+      .digest('hex')
+    
+    const hashedStoredPassword = createHmac('sha256', JWT_SECRET)
+      .update(storedPasswordHashHex)
+      .digest('hex')
+    
     // Validate credentials
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    if (email !== ADMIN_EMAIL || hashedPassword !== hashedStoredPassword) {
       console.log("Invalid credentials provided")
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
