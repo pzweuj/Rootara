@@ -27,24 +27,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
     }
 
-    // First hash the stored password with SHA-256, then apply HMAC with JWT_SECRET
+    // Hash the stored password with SHA-256 to match client-side hashing
     const encoder = new TextEncoder()
     const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
     const storedPasswordHash = await crypto.subtle.digest('SHA-256', storedPasswordData)
     const storedPasswordHashArray = Array.from(new Uint8Array(storedPasswordHash))
     const storedPasswordHashHex = storedPasswordHashArray.map(b => b.toString(16).padStart(2, '0')).join('')
     
-    // Apply HMAC with JWT_SECRET to both passwords
-    const hashedPassword = createHmac('sha256', JWT_SECRET)
-      .update(password)
+    // Client sends SHA-256 hashed password, compare directly with stored hash
+    // Apply additional HMAC for extra security
+    const clientPasswordHmac = createHmac('sha256', JWT_SECRET)
+      .update(password) // password is already SHA-256 hashed from client
       .digest('hex')
     
-    const hashedStoredPassword = createHmac('sha256', JWT_SECRET)
+    const storedPasswordHmac = createHmac('sha256', JWT_SECRET)
       .update(storedPasswordHashHex)
       .digest('hex')
     
     // Validate credentials
-    if (email !== ADMIN_EMAIL || hashedPassword !== hashedStoredPassword) {
+    if (email !== ADMIN_EMAIL || clientPasswordHmac !== storedPasswordHmac) {
       console.log("Invalid credentials provided")
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }

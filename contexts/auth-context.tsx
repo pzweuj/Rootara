@@ -54,12 +54,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Attempting login for:", email)
       
-      // Hash password on client side using SHA-256 (server will apply HMAC with JWT_SECRET)
+      // Hash password on client side for secure transmission
       const encoder = new TextEncoder()
       const data = encoder.encode(password)
       const hashBuffer = await crypto.subtle.digest('SHA-256', data)
       const hashArray = Array.from(new Uint8Array(hashBuffer))
       const hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+      
+      // Clear password from memory immediately
+      password = ""
       
       const res = await fetch("/api/auth/login", {
         method: "POST",
