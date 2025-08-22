@@ -72,9 +72,13 @@ export async function POST(request: Request) {
     const host = request.headers.get('host')
     console.log("Request host:", host)
 
-    const cookieOptions: any = {
-      name: "auth_token",
-      value: token,
+    let cookieOptions: {
+      httpOnly: boolean;
+      secure: boolean;
+      sameSite: "lax" | "strict";
+      path: string;
+      maxAge: number;
+    } = {
       httpOnly: true,
       secure: false, // 在VPS环境中暂时禁用secure，因为可能没有HTTPS
       sameSite: "lax", // 使用lax以确保跨域兼容性
@@ -89,7 +93,7 @@ export async function POST(request: Request) {
     }
 
     console.log("Setting cookie with options:", cookieOptions)
-    cookieStore.set(cookieOptions)
+    cookieStore.set("auth_token", token, cookieOptions)
 
     console.log("Login successful for user:", user.email)
     return NextResponse.json(user)
