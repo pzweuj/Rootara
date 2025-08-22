@@ -1,6 +1,6 @@
 {
   "name": "rootara",
-  "version": "0.14.3",
+  "version": "0.15.1",
   "private": true,
   "scripts": {
     "dev": "next dev",

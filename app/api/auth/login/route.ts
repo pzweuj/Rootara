@@ -15,11 +15,13 @@ export async function POST(request: Request) {
     const { email, password } = await request.json()
 
     console.log("Login attempt for email:", email)
+    console.log("Received password hash length:", password.length)
     console.log("Environment check:", {
       hasAdminEmail: !!process.env.ADMIN_EMAIL,
       hasAdminPassword: !!process.env.ADMIN_PASSWORD,
       hasJwtSecret: !!process.env.JWT_SECRET,
-      nodeEnv: process.env.NODE_ENV
+      nodeEnv: process.env.NODE_ENV,
+      adminEmail: process.env.ADMIN_EMAIL
     })
 
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.JWT_SECRET) {
@@ -43,6 +45,13 @@ export async function POST(request: Request) {
     const storedPasswordHmac = createHmac('sha256', JWT_SECRET)
       .update(storedPasswordHashHex)
       .digest('hex')
+    
+    console.log("Password validation debug:", {
+      emailMatch: email === ADMIN_EMAIL,
+      clientPasswordHmac: clientPasswordHmac.substring(0, 10) + "...",
+      storedPasswordHmac: storedPasswordHmac.substring(0, 10) + "...",
+      passwordMatch: clientPasswordHmac === storedPasswordHmac
+    })
     
     // Validate credentials
     if (email !== ADMIN_EMAIL || clientPasswordHmac !== storedPasswordHmac) {
@@ -95,6 +104,13 @@ export async function POST(request: Request) {
 
     console.log("Setting cookie with options:", cookieOptions)
     cookieStore.set("auth_token", token, cookieOptions)
+    
+    // Verify cookie was set
+    const verifyToken = cookieStore.get("auth_token")
+    console.log("Cookie verification after setting:", {
+      cookieExists: !!verifyToken,
+      tokenLength: verifyToken?.value?.length || 0
+    })
 
     console.log("Login successful for user:", user.email)
     return NextResponse.json(user)
