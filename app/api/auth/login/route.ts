@@ -11,6 +11,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 const JWT_SECRET = process.env.JWT_SECRET
 
 export async function POST(request: Request) {
+  console.log("=== LOGIN API CALLED ===")
   try {
     const { email, password } = await request.json()
 
@@ -29,21 +30,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
     }
 
-    // Hash the stored password with SHA-256 to match client-side hashing
-    const encoder = new TextEncoder()
-    const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
-    const storedPasswordHash = await crypto.subtle.digest('SHA-256', storedPasswordData)
-    const storedPasswordHashArray = Array.from(new Uint8Array(storedPasswordHash))
-    const storedPasswordHashHex = storedPasswordHashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    // Handle both SHA-256 and fallback hashing methods from client
+    let storedPasswordHash: string
     
-    // Client sends SHA-256 hashed password, compare directly with stored hash
-    // Apply additional HMAC for extra security
+    if (password.length === 64) {
+      // Client used SHA-256 (64 hex characters)
+      const encoder = new TextEncoder()
+      const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
+      const storedPasswordHashBuffer = await crypto.subtle.digest('SHA-256', storedPasswordData)
+      const storedPasswordHashArray = Array.from(new Uint8Array(storedPasswordHashBuffer))
+      storedPasswordHash = storedPasswordHashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    } else {
+      // Client used fallback method (base64 encoding)
+      storedPasswordHash = btoa(ADMIN_PASSWORD || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+    }
+    
+    console.log("Password hash comparison:", {
+      clientHashLength: password.length,
+      storedHashLength: storedPasswordHash.length,
+      hashingMethod: password.length === 64 ? 'SHA-256' : 'Fallback'
+    })
+    
+    // Apply HMAC for additional security
     const clientPasswordHmac = createHmac('sha256', JWT_SECRET)
-      .update(password) // password is already SHA-256 hashed from client
+      .update(password)
       .digest('hex')
     
     const storedPasswordHmac = createHmac('sha256', JWT_SECRET)
-      .update(storedPasswordHashHex)
+      .update(storedPasswordHash)
       .digest('hex')
     
     console.log("Password validation debug:", {
