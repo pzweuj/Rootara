@@ -53,12 +53,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     try {
       console.log("Attempting login for:", email)
+      console.log("=== CLIENT SENDING LOGIN REQUEST ===")
+      
+      // Hash password on client side for secure transmission
+      let hashedPassword: string
+      
+      if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        const encoder = new TextEncoder()
+        const data = encoder.encode(password)
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+        const hashArray = Array.from(new Uint8Array(hashBuffer))
+        hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+      } else {
+        // Fallback for environments where crypto.subtle is not available
+        console.warn("crypto.subtle not available, using simple hash fallback")
+        hashedPassword = btoa(password).replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+      }
+      
+      console.log("Hashed password length:", hashedPassword.length)
+      
+      // Clear password from memory immediately
+      password = ""
+      
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password: hashedPassword }),
       })
 
       console.log("Login response status:", res.status)

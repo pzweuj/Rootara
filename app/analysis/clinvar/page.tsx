@@ -55,7 +55,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function ClinvarAnalysisPage() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
   const [searchQuery, setSearchQuery] = useState("")
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("") // 用于存储防抖后的搜索词
@@ -126,86 +126,34 @@ export default function ClinvarAnalysisPage() {
     }
   }, [currentReportId])
 
-  const translations = {
+  // Local translations for ClinVar-specific terms not in global context
+  const localTranslations = {
     en: {
-      clinvarAnalysis: "ClinVar Analysis",
       clinicalVariants: "Clinical Variants Analysis",
       exportData: "Export Data",
       shareResults: "Share Results",
       overview: "Overview",
-      pathogenicVariants: "Pathogenic Variants",
-      likelyPathogenic: "Likely Pathogenic",
-      uncertainSignificance: "Uncertain Significance",
-      likelyBenign: "Likely Benign",
-      benign: "Benign",
       variantList: "Variant List",
-      searchVariants: "Search variants...",
-      classification: "Classification",
-      allClassifications: "All Classifications",
-      gene: "Gene",
       allGenes: "All Genes",
-      variantId: "Variant ID",
-      chromosome: "Chromosome",
-      position: "Position",
-      condition: "Condition",
       reviewStatus: "Review Status",
       lastUpdated: "Last Updated",
-      noVariantsFound: "No variants found matching your criteria",
       totalVariants: "Total variants with ClinVar annotations",
-      clinvarDescription:
-        "ClinVar is a public database of reports of the relationships among human variations and phenotypes, with supporting evidence. Rootara filtered out insertions and deletions because gene chips may not accurately detect these types.",
-      loading: "Loading data...",
-      error: "Error loading data",
-      retry: "Retry",
-      page: "Page",
-      of: "of",
-      itemsPerPage: "Items per page",
-      prev: "Previous",
-      next: "Next",
-      genotype: "Genotype",
     },
     "zh-CN": {
-      clinvarAnalysis: "ClinVar 分析",
       clinicalVariants: "临床变异分析",
       exportData: "导出数据",
       shareResults: "分享结果",
       overview: "概览",
-      pathogenicVariants: "致病变异",
-      likelyPathogenic: "可能致病",
-      uncertainSignificance: "意义不明确",
-      likelyBenign: "可能良性",
-      benign: "良性",
       variantList: "变异列表",
-      searchVariants: "搜索变异...",
-      classification: "分类",
-      allClassifications: "所有分类",
-      gene: "基因",
       allGenes: "所有基因",
-      variantId: "变异ID",
-      chromosome: "染色体",
-      position: "位置",
-      condition: "疾病",
       reviewStatus: "审查状态",
       lastUpdated: "最后更新",
-      noVariantsFound: "未找到符合条件的变异",
       totalVariants: "存在Clinvar注释的总变异数",
-      clinvarDescription: "ClinVar是一个公共数据库，报告人类变异与表型之间的关系，并提供支持证据。Rootara过滤了插入和缺失位点，因为基因芯片对该类型可能无法准确检测。",
-      loading: "正在加载数据...",
-      error: "加载数据出错",
-      retry: "重试",
-      page: "页",
-      of: "共",
-      itemsPerPage: "每页显示",
-      prev: "上一页",
-      next: "下一页",
-      genotype: "基因型",
     },
   }
 
-  const t = (key: string) => {
-    return (
-      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
-    )
+  const localT = (key: keyof (typeof localTranslations)["en"]) => {
+    return localTranslations[language][key] || key
   }
 
   const normalizeClassification = (classification: string) => {
@@ -403,139 +351,7 @@ export default function ClinvarAnalysisPage() {
   const currentItems = filteredVariants.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(filteredVariants.length / itemsPerPage)
 
-  // 中英文文本映射
-  const texts = {
-    title: {
-      en: "Health Risks",
-      zh: "健康风险",
-    },
-    subtitle: {
-      en: "Explore your genetic health predispositions",
-      zh: "探索您的基因健康倾向",
-    },
-    notice: {
-      title: {
-        en: "Important Notice",
-        zh: "重要提示",
-      },
-      content: {
-        en: "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
-        zh: "基因检测不是诊断工具。在根据这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
-      },
-    },
-    tabs: {
-      overview: {
-        en: "Overview",
-        zh: "概览",
-      },
-      hereditary: {
-        en: "Hereditary Diseases",
-        zh: "遗传疾病",
-      },
-      drugs: {
-        en: "Drug Responses",
-        zh: "药物反应",
-      },
-      carrier: {
-        en: "Carrier Status",
-        zh: "携带者状态",
-      },
-    },
-    understanding: {
-      title: {
-        en: "Understanding Health Risks",
-        zh: "了解健康风险",
-      },
-      description: {
-        en: "Your genetic health risks are calculated based on specific genetic variants associated with various conditions.",
-        zh: "您的基因健康风险是根据与各种疾病相关的特定基因变异计算的。",
-      },
-      risks: {
-        elevated: {
-          en: "Elevated Risk",
-          zh: "风险升高",
-        },
-        slightlyElevated: {
-          en: "Slightly Elevated Risk",
-          zh: "略微升高风险",
-        },
-        average: {
-          en: "Average Risk",
-          zh: "平均风险",
-        },
-        reduced: {
-          en: "Reduced Risk",
-          zh: "风险降低",
-        },
-      },
-    },
-    hereditary: {
-      title: {
-        en: "Hereditary Disease Risk Factors",
-        zh: "遗传疾病风险因素",
-      },
-      description: {
-        en: "Genetic variants associated with hereditary conditions",
-        zh: "与遗传性疾病相关的基因变异",
-      },
-      geneticVariants: {
-        en: "Genetic Variants:",
-        zh: "基因变异:",
-      },
-      gene: {
-        en: "Gene",
-        zh: "基因",
-      },
-      variant: {
-        en: "Variant",
-        zh: "变异",
-      },
-      genotype: {
-        en: "Your Genotype",
-        zh: "您的基因型",
-      },
-      risk: {
-        en: "Risk",
-        zh: "风险",
-      },
-    },
-    drugs: {
-      title: {
-        en: "Drug Response Genetics",
-        zh: "药物反应基因学",
-      },
-      description: {
-        en: "How your genetics may affect your response to medications",
-        zh: "您的基因如何影响您对药物的反应",
-      },
-      relevantGenes: {
-        en: "Relevant Genes:",
-        zh: "相关基因:",
-      },
-    },
-    carrier: {
-      title: {
-        en: "Carrier Status",
-        zh: "携带者状态",
-      },
-      description: {
-        en: "Genetic variants that could be passed to your children",
-        zh: "可能传递给您子女的基因变异",
-      },
-      gene: {
-        en: "Gene:",
-        zh: "基因:",
-      },
-      variants: {
-        en: "Variants:",
-        zh: "变异:",
-      },
-    },
-    learnMore: {
-      en: "Learn More",
-      zh: "了解更多",
-    },
-  }
+
 
   return (
     <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">

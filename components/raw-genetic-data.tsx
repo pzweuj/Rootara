@@ -183,13 +183,13 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold tracking-tight mb-4">{t("rawData") || "原始基因数据"}</h2>
+      <h2 className="text-2xl font-bold tracking-tight mb-4">{t("rawData")}</h2>
 
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <form onSubmit={handleSearch} className="relative w-full md:w-2/3">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={t("searchByRsID") || "按rsID搜索..."}
+            placeholder={t("searchByRsID")}
             className="pl-8"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -198,10 +198,10 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
         <div className="w-full md:w-1/3">
           <Select value={selectedChromosome} onValueChange={handleChromosomeChange}>
             <SelectTrigger>
-              <SelectValue placeholder={t("chromosome") || "染色体"} />
+              <SelectValue placeholder={t("chromosome")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("allChromosomes") || "所有染色体"}</SelectItem>
+              <SelectItem value="all">{t("allChromosomes")}</SelectItem>
               {chromosomes.map((chr) => (
                 <SelectItem key={chr} value={chr}>
                   {chr === "MT" 

@@ -145,7 +145,7 @@ export function ReportSwitcher({
       // 显示错误通知
       toast({
         title: t("deleteFailed"),
-        description: error instanceof Error ? error.message : "Unknown error",
+        description: error instanceof Error ? error.message : t("unknownError"),
         variant: "destructive",
         duration: 5000,
       })
@@ -179,7 +179,7 @@ export function ReportSwitcher({
     // 添加调试信息，显示将要删除的reportId
     console.log("准备删除的报告ID:", reportId);
     toast({
-      title: language === "zh-CN" ? "调试信息" : "Debug Info",
+      title: t("debugInfo"),
       description: `报告ID: ${reportId}`,
       duration: 5000,
     });
@@ -193,8 +193,8 @@ export function ReportSwitcher({
       // 添加模板报告保护逻辑
       if (reportToDelete === "RPT_TEMPLATE01") {
         toast({
-          title: language === "zh-CN" ? "操作被拒绝" : "Operation Denied",
-          description: language === "zh-CN" ? "不能删除模板报告" : "Cannot delete template report",
+          title: t("operationDenied"),
+          description: t("cannotDeleteTemplate"),
           variant: "destructive",
           duration: 5000,
         });
@@ -286,7 +286,7 @@ export function ReportSwitcher({
       // 显示错误通知
       toast({
         title: t("renameFailed"),
-        description: error instanceof Error ? error.message : "Unknown error",
+        description: error instanceof Error ? error.message : t("unknownError"),
         variant: "destructive",
         duration: 5000,
       })
@@ -339,8 +339,8 @@ export function ReportSwitcher({
 
       // 显示错误通知
       toast({
-        title: "Export ERROR",
-        description: error instanceof Error ? error.message : "未知错误",
+        title: t("exportError"),
+        description: error instanceof Error ? error.message : t("unknownErrorChinese"),
         variant: "destructive",
         duration: 5000,
       })
@@ -443,76 +443,9 @@ export function ReportSwitcher({
     }
   }
 
-  const translations = {
-    en: {
-      myReports: "All Reports",
-      uploadNewReport: "Upload New Report",
-      searchReports: "Search reports...",
-      allReports: "All Reports",
-      sort: "Sort",
-      sortBy: "Sort by",
-      name: "Name",
-      uploadDate: "Upload Date",
-      source: "Source",
-      ascending: "Ascending",
-      descending: "Descending",
-      reportId: "Report ID:",
-      default: "Default",
-      viewReport: "View Report",
-      setAsDefault: "Set as Default",
-      download: "Export",
-      delete: "Delete",
-      noReportsFound: "No reports found matching your criteria",
-      loading: "Loading reports...",
-      error: "Error loading reports",
-      retry: "Retry",
-      snpCount: "Variants Count:",
-      rename: "Rename",
-      renameReport: "Rename Report",
-      reportName: "Report Name",
-      reportNameZh: "Report Name (Chinese)",
-      cancel: "Cancel",
-      save: "Save",
-      deleteConfirmTitle: "Delete Report",
-      deleteConfirmMessage: "Are you sure you want to delete this report? This action cannot be undone.",
-    },
-    "zh-CN": {
-      myReports: "所有报告",
-      uploadNewReport: "上传新报告",
-      searchReports: "搜索报告...",
-      allReports: "所有报告",
-      sort: "排序",
-      sortBy: "排序方式",
-      name: "名称",
-      uploadDate: "上传日期",
-      source: "来源",
-      ascending: "升序",
-      descending: "降序",
-      reportId: "报告ID：",
-      default: "默认",
-      viewReport: "查看报告",
-      setAsDefault: "设为默认",
-      download: "导出",
-      delete: "删除",
-      noReportsFound: "未找到符合条件的报告",
-      loading: "正在加载报告...",
-      error: "加载报告时出错",
-      retry: "重试",
-      snpCount: "位点数量：",
-      rename: "重命名",
-      renameReport: "重命名报告",
-      reportName: "报告名称",
-      reportNameZh: "报告名称（中文）",
-      cancel: "取消",
-      save: "保存",
-      deleteConfirmTitle: "删除报告",
-      deleteConfirmMessage: "确定要删除此报告吗？此操作无法撤销。",
-    },
-  }
 
-  const t = (key: keyof (typeof translations)["en"]) => {
-    return translations[language][key] || key
-  }
+
+
 
   // 处理设置默认报告
   const handleSetDefault = async (reportId: string) => {
@@ -544,8 +477,8 @@ export function ReportSwitcher({
 
       // 显示成功通知
       toast({
-        title: "设置成功",
-        description: "报告已设为默认",
+        title: t("setDefaultSuccess"),
+        description: t("reportSetAsDefault"),
         duration: 3000,
       })
     } catch (error) {
@@ -553,8 +486,8 @@ export function ReportSwitcher({
 
       // 显示错误通知
       toast({
-        title: "设置失败",
-        description: error instanceof Error ? error.message : "未知错误",
+        title: t("setDefaultFailed"),
+        description: error instanceof Error ? error.message : t("unknownError"),
         variant: "destructive",
         duration: 5000,
       })
@@ -773,10 +706,8 @@ export function ReportSwitcher({
                       handleSelectReport(selectedReport);
                       // 可以添加一个通知提示用户报告已切换
                       toast({
-                        title: language === "zh-CN" ? "报告已切换" : "Report Switched",
-                        description: language === "zh-CN" 
-                          ? `当前查看: ${selectedReport.nameZh}` 
-                          : `Now viewing: ${selectedReport.name}`,
+                        title: t("reportSwitched"),
+                        description: `${t("currentlyViewing")}${language === "zh-CN" ? selectedReport.nameZh : selectedReport.name}`,
                         duration: 3000,
                       });
                     }}>
@@ -886,10 +817,8 @@ export function ReportSwitcher({
                             handleSelectReport(report); // 或 selectedReport，取决于上下文
                             // 添加通知提示用户报告已切换
                             toast({
-                              title: language === "zh-CN" ? "报告已切换" : "Report Switched",
-                              description: language === "zh-CN" 
-                                ? `当前查看: ${report.nameZh}` 
-                                : `Now viewing: ${report.name}`,
+                              title: t("reportSwitched"),
+                              description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
                               duration: 3000,
                             });
                           }}>

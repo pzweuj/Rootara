@@ -1,6 +1,8 @@
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import * as jose from "jose"
+// @ts-ignore
+const { createHmac } = require('crypto')
 
 // In a real app, you would use a database
 // For this example, we'll use environment variables
@@ -9,15 +11,18 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 const JWT_SECRET = process.env.JWT_SECRET
 
 export async function POST(request: Request) {
+  console.log("=== LOGIN API CALLED ===")
   try {
     const { email, password } = await request.json()
 
     console.log("Login attempt for email:", email)
+    console.log("Received password hash length:", password.length)
     console.log("Environment check:", {
       hasAdminEmail: !!process.env.ADMIN_EMAIL,
       hasAdminPassword: !!process.env.ADMIN_PASSWORD,
       hasJwtSecret: !!process.env.JWT_SECRET,
-      nodeEnv: process.env.NODE_ENV
+      nodeEnv: process.env.NODE_ENV,
+      adminEmail: process.env.ADMIN_EMAIL
     })
 
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.JWT_SECRET) {
@@ -25,8 +30,45 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing environment variables" }, { status: 500 })
     }
 
+    // Handle both SHA-256 and fallback hashing methods from client
+    let storedPasswordHash: string
+    
+    if (password.length === 64) {
+      // Client used SHA-256 (64 hex characters)
+      const encoder = new TextEncoder()
+      const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
+      const storedPasswordHashBuffer = await crypto.subtle.digest('SHA-256', storedPasswordData)
+      const storedPasswordHashArray = Array.from(new Uint8Array(storedPasswordHashBuffer))
+      storedPasswordHash = storedPasswordHashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+    } else {
+      // Client used fallback method (base64 encoding)
+      storedPasswordHash = btoa(ADMIN_PASSWORD || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+    }
+    
+    console.log("Password hash comparison:", {
+      clientHashLength: password.length,
+      storedHashLength: storedPasswordHash.length,
+      hashingMethod: password.length === 64 ? 'SHA-256' : 'Fallback'
+    })
+    
+    // Apply HMAC for additional security
+    const clientPasswordHmac = createHmac('sha256', JWT_SECRET)
+      .update(password)
+      .digest('hex')
+    
+    const storedPasswordHmac = createHmac('sha256', JWT_SECRET)
+      .update(storedPasswordHash)
+      .digest('hex')
+    
+    console.log("Password validation debug:", {
+      emailMatch: email === ADMIN_EMAIL,
+      clientPasswordHmac: clientPasswordHmac.substring(0, 10) + "...",
+      storedPasswordHmac: storedPasswordHmac.substring(0, 10) + "...",
+      passwordMatch: clientPasswordHmac === storedPasswordHmac
+    })
+    
     // Validate credentials
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    if (email !== ADMIN_EMAIL || clientPasswordHmac !== storedPasswordHmac) {
       console.log("Invalid credentials provided")
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
@@ -54,9 +96,13 @@ export async function POST(request: Request) {
     const host = request.headers.get('host')
     console.log("Request host:", host)
 
-    const cookieOptions: any = {
-      name: "auth_token",
-      value: token,
+    let cookieOptions: {
+      httpOnly: boolean;
+      secure: boolean;
+      sameSite: "lax" | "strict";
+      path: string;
+      maxAge: number;
+    } = {
       httpOnly: true,
       secure: false, // 在VPS环境中暂时禁用secure，因为可能没有HTTPS
       sameSite: "lax", // 使用lax以确保跨域兼容性
@@ -71,7 +117,14 @@ export async function POST(request: Request) {
     }
 
     console.log("Setting cookie with options:", cookieOptions)
-    cookieStore.set(cookieOptions)
+    cookieStore.set("auth_token", token, cookieOptions)
+    
+    // Verify cookie was set
+    const verifyToken = cookieStore.get("auth_token")
+    console.log("Cookie verification after setting:", {
+      cookieExists: !!verifyToken,
+      tokenLength: verifyToken?.value?.length || 0
+    })
 
     console.log("Login successful for user:", user.email)
     return NextResponse.json(user)

@@ -17,17 +17,10 @@ import { TraitImportExport } from "./components/trait-import-export"
 import { Card, CardContent } from "@/components/ui/card"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
-const translations = {
-  en: {
-    notice: "Note: These trait analyses are based on literature and user-contributed data, not clinical-grade interpretation. Results are for informational purposes only and should not be used as medical advice."
-  },
-  "zh-CN": {
-    notice: "注意：这些特征分析基于文献和用户贡献数据，非临床级别解读。结果仅供参考，不能作为医疗建议。"
-  },
-}
+
 
 export default function TraitsPage() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const router = useRouter()
   const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
   const [searchQuery, setSearchQuery] = useState("")
