@@ -12,7 +12,9 @@ interface HaplogroupData {
 export function HaplogroupDistribution() {
   const { language } = useLanguage()
   const { currentReportId } = useReport()
-  const [haplogroupData, setHaplogroupData] = useState<HaplogroupData | null>(null)
+  const [haplogroupData, setHaplogroupData] = useState<HaplogroupData | null>(
+    null
+  )
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -32,7 +34,11 @@ export function HaplogroupDistribution() {
   }
 
   const t = (key: keyof (typeof translations)[keyof typeof translations]) => {
-    return translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+    return (
+      translations[language as keyof typeof translations][
+        key as keyof (typeof translations)[typeof language]
+      ] || key
+    )
   }
 
   useEffect(() => {
@@ -48,9 +54,9 @@ export function HaplogroupDistribution() {
       try {
         // 调用我们的Next.js API路由而不是直接调用后端
         const response = await fetch(`/api/ancestry/haplogroup`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ reportId: currentReportId }),
         })
@@ -60,12 +66,12 @@ export function HaplogroupDistribution() {
         }
 
         const data = await response.json()
-        
+
         // 如果API返回了错误信息
         if (data.error) {
-          throw new Error(data.error);
+          throw new Error(data.error)
         }
-        
+
         setHaplogroupData(data)
       } catch (err) {
         console.error("获取祖源数据失败:", err)
@@ -94,7 +100,9 @@ export function HaplogroupDistribution() {
   if (error) {
     return (
       <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800">
-        <p className="text-red-700 dark:text-red-300">{t("error")}: {error}</p>
+        <p className="text-red-700 dark:text-red-300">
+          {t("error")}: {error}
+        </p>
       </div>
     )
   }
@@ -107,14 +115,22 @@ export function HaplogroupDistribution() {
     <div className="grid grid-cols-2 gap-4">
       {/* 父系谱系 Y-DNA - 蓝色卡片 */}
       <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
-        <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">{t("paternalLineage")}</h3>
-        <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">{yDnaHaplogroup}</p>
+        <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+          {t("paternalLineage")}
+        </h3>
+        <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">
+          {yDnaHaplogroup}
+        </p>
       </div>
 
       {/* 母系谱系 mtDNA - 红色卡片 */}
       <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
-        <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">{t("maternalLineage")}</h3>
-        <p className="text-3xl font-bold text-red-700 dark:text-red-300">{mtDnaHaplogroup}</p>
+        <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
+          {t("maternalLineage")}
+        </h3>
+        <p className="text-3xl font-bold text-red-700 dark:text-red-300">
+          {mtDnaHaplogroup}
+        </p>
       </div>
     </div>
   )

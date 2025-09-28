@@ -13,10 +13,19 @@ interface RsidGenotypeManagerProps {
   rsids: string[]
   referenceGenotypes: string[]
   yourGenotypes: string[]
-  onChange: (rsids: string[], referenceGenotypes: string[], yourGenotypes: string[]) => void
+  onChange: (
+    rsids: string[],
+    referenceGenotypes: string[],
+    yourGenotypes: string[]
+  ) => void
 }
 
-export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, onChange }: RsidGenotypeManagerProps) {
+export function RsidGenotypeManager({
+  rsids,
+  referenceGenotypes,
+  yourGenotypes,
+  onChange,
+}: RsidGenotypeManagerProps) {
   const { language } = useLanguage()
   const { currentReportId } = useReport()
   const [rsidInput, setRsidInput] = useState("")
@@ -33,7 +42,7 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
       rsidPlaceholder: "e.g., rs12913832",
       add: "Add",
       remove: "Remove",
-      loading: "Loading..."
+      loading: "Loading...",
     },
     "zh-CN": {
       rsidsAndGenotypes: "位点RSID",
@@ -43,65 +52,71 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
       rsidPlaceholder: "例如：rs12913832",
       add: "添加",
       remove: "移除",
-      loading: "加载中..."
+      loading: "加载中...",
     },
   }
 
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   // 获取基因型数据的函数
   const getGenotypeData = async (rsid: string) => {
-    if (!rsid.match(/^rs\d{1,}$/)) return { success: false, reference: "--", user: "--" };
-    
-    setIsLoading(true);
+    if (!rsid.match(/^rs\d{1,}$/))
+      return { success: false, reference: "--", user: "--" }
+
+    setIsLoading(true)
     try {
-      const genotypeData = await fetchGenotypeData(rsid, currentReportId);
-      setReferenceGenotypeInput(genotypeData.reference);
-      setYourGenotypeInput(genotypeData.user);
-      setIsLoading(false);
-      return { success: true, reference: genotypeData.reference, user: genotypeData.user };
+      const genotypeData = await fetchGenotypeData(rsid, currentReportId)
+      setReferenceGenotypeInput(genotypeData.reference)
+      setYourGenotypeInput(genotypeData.user)
+      setIsLoading(false)
+      return {
+        success: true,
+        reference: genotypeData.reference,
+        user: genotypeData.user,
+      }
     } catch (error) {
-      console.error("Error fetching genotype data:", error);
-      setReferenceGenotypeInput("--");
-      setYourGenotypeInput("--");
-      setIsLoading(false);
-      return { success: false, reference: "--", user: "--" };
+      console.error("Error fetching genotype data:", error)
+      setReferenceGenotypeInput("--")
+      setYourGenotypeInput("--")
+      setIsLoading(false)
+      return { success: false, reference: "--", user: "--" }
     }
-  };
+  }
 
   const addRsidGenotype = async () => {
-    if (!rsidInput) return;
-  
+    if (!rsidInput) return
+
     // 获取基因型数据
-    const result = await getGenotypeData(rsidInput);
-    
+    const result = await getGenotypeData(rsidInput)
+
     // 使用从getGenotypeData返回的值，而不是状态变量
-    const refGenotype = result.reference;
-    const userGenotype = result.user;
-  
-    const updatedRsids = [...rsids, rsidInput];
-    const updatedReferenceGenotypes = [...referenceGenotypes, refGenotype];
-    const updatedYourGenotypes = [...yourGenotypes, userGenotype];
-  
-    onChange(updatedRsids, updatedReferenceGenotypes, updatedYourGenotypes);
-  
+    const refGenotype = result.reference
+    const userGenotype = result.user
+
+    const updatedRsids = [...rsids, rsidInput]
+    const updatedReferenceGenotypes = [...referenceGenotypes, refGenotype]
+    const updatedYourGenotypes = [...yourGenotypes, userGenotype]
+
+    onChange(updatedRsids, updatedReferenceGenotypes, updatedYourGenotypes)
+
     // 重置输入
-    setRsidInput("");
-    setReferenceGenotypeInput("");
-    setYourGenotypeInput("");
-  };
+    setRsidInput("")
+    setReferenceGenotypeInput("")
+    setYourGenotypeInput("")
+  }
 
   const removeRsidGenotype = (index: number) => {
-    const updatedRsids = [...rsids];
-    const updatedReferenceGenotypes = [...referenceGenotypes];
-    const updatedYourGenotypes = [...yourGenotypes];
+    const updatedRsids = [...rsids]
+    const updatedReferenceGenotypes = [...referenceGenotypes]
+    const updatedYourGenotypes = [...yourGenotypes]
 
-    updatedRsids.splice(index, 1);
-    updatedReferenceGenotypes.splice(index, 1);
-    updatedYourGenotypes.splice(index, 1);
+    updatedRsids.splice(index, 1)
+    updatedReferenceGenotypes.splice(index, 1)
+    updatedYourGenotypes.splice(index, 1)
 
-    onChange(updatedRsids, updatedReferenceGenotypes, updatedYourGenotypes);
-  };
+    onChange(updatedRsids, updatedReferenceGenotypes, updatedYourGenotypes)
+  }
 
   return (
     <div className="space-y-2">
@@ -131,15 +146,26 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
             <div className="hidden sm:block">
               <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 font-medium text-sm mb-1 border-b pb-1">
                 <div className="px-2 text-center border-r">{t("rsid")}</div>
-                <div className="px-2 text-center border-r">{t("referenceGenotype")}</div>
-                <div className="px-2 text-center border-r">{t("yourGenotype")}</div>
+                <div className="px-2 text-center border-r">
+                  {t("referenceGenotype")}
+                </div>
+                <div className="px-2 text-center border-r">
+                  {t("yourGenotype")}
+                </div>
                 <div className="px-2 text-center">{t("remove")}</div>
               </div>
               {rsids.map((rsid, index) => (
-                <div key={index} className={`grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < rsids.length - 1 ? 'border-b' : ''}`}>
+                <div
+                  key={index}
+                  className={`grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < rsids.length - 1 ? "border-b" : ""}`}
+                >
                   <div className="px-2 text-center border-r">{rsid}</div>
-                  <div className="px-2 text-center border-r">{referenceGenotypes[index] || "--"}</div>
-                  <div className="px-2 text-center border-r">{yourGenotypes[index] || "--"}</div>
+                  <div className="px-2 text-center border-r">
+                    {referenceGenotypes[index] || "--"}
+                  </div>
+                  <div className="px-2 text-center border-r">
+                    {yourGenotypes[index] || "--"}
+                  </div>
                   <div className="px-2 text-center">
                     <Button
                       variant="ghost"
@@ -171,12 +197,20 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-muted-foreground">{t("referenceGenotype")}:</span>
-                      <span className="ml-1">{referenceGenotypes[index] || "--"}</span>
+                      <span className="text-muted-foreground">
+                        {t("referenceGenotype")}:
+                      </span>
+                      <span className="ml-1">
+                        {referenceGenotypes[index] || "--"}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{t("yourGenotype")}:</span>
-                      <span className="ml-1">{yourGenotypes[index] || "--"}</span>
+                      <span className="text-muted-foreground">
+                        {t("yourGenotype")}:
+                      </span>
+                      <span className="ml-1">
+                        {yourGenotypes[index] || "--"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -186,5 +220,5 @@ export function RsidGenotypeManager({ rsids, referenceGenotypes, yourGenotypes, 
         )}
       </div>
     </div>
-  );
+  )
 }

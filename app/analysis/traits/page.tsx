@@ -17,8 +17,6 @@ import { TraitImportExport } from "./components/trait-import-export"
 import { Card, CardContent } from "@/components/ui/card"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
-
-
 export default function TraitsPage() {
   const { language, t } = useLanguage()
   const router = useRouter()
@@ -112,7 +110,8 @@ export default function TraitsPage() {
     const matchesSearch = trait.name[language as keyof typeof trait.name]
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || trait.category === selectedCategory
+    const matchesCategory =
+      selectedCategory === "all" || trait.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
@@ -128,7 +127,7 @@ export default function TraitsPage() {
     toast.success(
       language === "en"
         ? `Trait created successfully with result: ${newTrait.result.en}`
-        : `特征创建成功，结果为：${newTrait.result["zh-CN"]}`,
+        : `特征创建成功，结果为：${newTrait.result["zh-CN"]}`
     )
 
     // Case 3: Refresh traits list from backend after creating a new trait

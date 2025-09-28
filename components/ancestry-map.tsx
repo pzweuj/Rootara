@@ -69,7 +69,9 @@ export function AncestryMap() {
 
   // 根据语言获取区域名称
   const getRegionName = (name: string) => {
-    return language === "zh-CN" ? regionTranslations[name as keyof typeof regionTranslations] || name : name
+    return language === "zh-CN"
+      ? regionTranslations[name as keyof typeof regionTranslations] || name
+      : name
   }
 
   const getColorForRegion = (region: string) => {
@@ -121,7 +123,9 @@ export function AncestryMap() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-medium">{t("ancestryComposition")}</CardTitle>
+        <CardTitle className="text-lg font-medium">
+          {t("ancestryComposition")}
+        </CardTitle>
         {/* 删除了地区切换按钮 */}
       </CardHeader>
       <CardContent>
@@ -146,7 +150,9 @@ export function AncestryMap() {
           {ancestryData.global.map((ancestry) => (
             <div key={ancestry.region}>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-medium">{getRegionName(ancestry.region)}</span>
+                <span className="text-sm font-medium">
+                  {getRegionName(ancestry.region)}
+                </span>
                 <span className="text-sm">{ancestry.percentage}%</span>
               </div>
               <div className="w-full h-2 bg-secondary rounded-full">
@@ -157,8 +163,13 @@ export function AncestryMap() {
               </div>
               <div className="pl-4 mt-1 space-y-1">
                 {ancestry.subregions.map((subregion) => (
-                  <div key={subregion.name} className="flex justify-between items-center text-xs">
-                    <span className="text-muted-foreground">{getRegionName(subregion.name)}</span>
+                  <div
+                    key={subregion.name}
+                    className="flex justify-between items-center text-xs"
+                  >
+                    <span className="text-muted-foreground">
+                      {getRegionName(subregion.name)}
+                    </span>
                     <span>{subregion.percentage}%</span>
                   </div>
                 ))}

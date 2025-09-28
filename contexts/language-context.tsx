@@ -1,6 +1,12 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode, useEffect } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  type ReactNode,
+  useEffect,
+} from "react"
 
 type Language = "en" | "zh-CN"
 
@@ -73,7 +79,8 @@ const translations = {
     license: "License",
     description: "Description",
     projectDescription: "Project Description",
-    rootaraDescription: "Rootara is an open-source genetic analysis platform that provides comprehensive genomic data interpretation, including ancestry analysis, trait interpretation, and health risk assessment.",
+    rootaraDescription:
+      "Rootara is an open-source genetic analysis platform that provides comprehensive genomic data interpretation, including ancestry analysis, trait interpretation, and health risk assessment.",
     viewOnGithub: "View on GitHub",
     openSource: "Open Source",
     geneticAnalysis: "Genetic Analysis Platform",
@@ -120,7 +127,8 @@ const translations = {
     cancel: "Cancel",
     save: "Save",
     deleteConfirmTitle: "Delete Report",
-    deleteConfirmMessage: "Are you sure you want to delete this report? This action cannot be undone.",
+    deleteConfirmMessage:
+      "Are you sure you want to delete this report? This action cannot be undone.",
     // Raw Genetic Data
     mitochondria: "Mitochondria",
     rawData: "Raw Data",
@@ -148,7 +156,8 @@ const translations = {
     signIn: "Sign in",
     signingIn: "Signing in...",
     emailPlaceholder: "name@example.com",
-    discoverGenetic: "Discover your genetic heritage and unlock insights about your health and traits.",
+    discoverGenetic:
+      "Discover your genetic heritage and unlock insights about your health and traits.",
     lightMode: "Light mode",
     darkMode: "Dark mode",
     // Traits
@@ -156,7 +165,8 @@ const translations = {
     // ClinVar
     clinvarAnalysis: "ClinVar Analysis",
     clinvarNoticeTitle: "Important Notice",
-    clinvarNoticeContent: "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
+    clinvarNoticeContent:
+      "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
     pathogenicVariants: "Pathogenic Variants",
     likelyPathogenic: "Likely Pathogenic",
     uncertainSignificance: "Uncertain Significance",
@@ -180,10 +190,12 @@ const translations = {
     itemsPerPage: "Items per page",
     prev: "Previous",
     next: "Next",
-    clinvarDescription: "ClinVar is a public database of reports of the relationships among human variations and phenotypes, with supporting evidence. Rootara filtered out insertions and deletions because gene chips may not accurately detect these types.",
+    clinvarDescription:
+      "ClinVar is a public database of reports of the relationships among human variations and phenotypes, with supporting evidence. Rootara filtered out insertions and deletions because gene chips may not accurately detect these types.",
     // Ancestry
     ancestryMap: "Ancestry Map",
-    interactiveAncestryMap: "Interactive ancestry map visualization would appear here",
+    interactiveAncestryMap:
+      "Interactive ancestry map visualization would appear here",
     loadingAncestryData: "Loading ancestry data...",
     errorLoadingData: "Error loading data",
     retry: "Retry",
@@ -198,17 +210,22 @@ const translations = {
     ancestryAnalysis: "Ancestry Analysis",
     exploreGenetic: "Explore your genetic ancestry and find DNA relatives",
     understandingResults: "Understanding Your Results",
-    compositionDescription: "Your ancestry composition estimates the proportion of your DNA that comes from each of 47 populations worldwide.",
-    analysisDescription: "The analysis is based on comparing your genome to reference populations from around the world.",
+    compositionDescription:
+      "Your ancestry composition estimates the proportion of your DNA that comes from each of 47 populations worldwide.",
+    analysisDescription:
+      "The analysis is based on comparing your genome to reference populations from around the world.",
     admixtureTechnology: "Admixture",
-    admixtureTechDescription: "Admixture analysis uses statistical methods to estimate the proportion of your genome derived from different ancestral populations. This technique compares segments of your DNA to reference panels from diverse global populations.",
+    admixtureTechDescription:
+      "Admixture analysis uses statistical methods to estimate the proportion of your genome derived from different ancestral populations. This technique compares segments of your DNA to reference panels from diverse global populations.",
     haplogroupsExplained: "Haplogroups",
-    haplogroupsExplainedDescription: "Haplogroups are genetic population groups that share a common ancestor. Y-DNA haplogroups trace paternal lineage (Chrom Y), while mtDNA haplogroups trace maternal lineage (Mitochondria). These markers remain relatively unchanged over generations, providing insights into ancient migration patterns.",
+    haplogroupsExplainedDescription:
+      "Haplogroups are genetic population groups that share a common ancestor. Y-DNA haplogroups trace paternal lineage (Chrom Y), while mtDNA haplogroups trace maternal lineage (Mitochondria). These markers remain relatively unchanged over generations, providing insights into ancient migration patterns.",
     ancestryProportion: "Ancestry Proportion",
     showMore: "Show More",
     showLess: "Show Less",
     // Traits
-    notice: "Note: These trait analyses are based on literature and user-contributed data, not clinical-grade interpretation. Results are for informational purposes only and should not be used as medical advice.",
+    notice:
+      "Note: These trait analyses are based on literature and user-contributed data, not clinical-grade interpretation. Results are for informational purposes only and should not be used as medical advice.",
   },
   "zh-CN": {
     dashboard: "仪表盘",
@@ -269,7 +286,8 @@ const translations = {
     license: "许可证",
     description: "描述",
     projectDescription: "项目描述",
-    rootaraDescription: "Rootara 是一个开源的基因分析平台，提供全面的基因组数据解读，包括祖源分析、特征解读和健康风险评估。",
+    rootaraDescription:
+      "Rootara 是一个开源的基因分析平台，提供全面的基因组数据解读，包括祖源分析、特征解读和健康风险评估。",
     viewOnGithub: "在 GitHub 上查看",
     openSource: "开源项目",
     geneticAnalysis: "基因分析平台",
@@ -352,7 +370,8 @@ const translations = {
     // ClinVar
     clinvarAnalysis: "ClinVar 分析",
     clinvarNoticeTitle: "重要提示",
-    clinvarNoticeContent: "基因检测不是诊断工具。在基于这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
+    clinvarNoticeContent:
+      "基因检测不是诊断工具。在基于这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
     pathogenicVariants: "致病变异",
     likelyPathogenic: "可能致病",
     uncertainSignificance: "意义不明确",
@@ -376,7 +395,8 @@ const translations = {
     itemsPerPage: "每页显示",
     prev: "上一页",
     next: "下一页",
-    clinvarDescription: "ClinVar是一个公共数据库，报告人类变异与表型之间的关系，并提供支持证据。Rootara过滤了插入和缺失位点，因为基因芯片对该类型可能无法准确检测。",
+    clinvarDescription:
+      "ClinVar是一个公共数据库，报告人类变异与表型之间的关系，并提供支持证据。Rootara过滤了插入和缺失位点，因为基因芯片对该类型可能无法准确检测。",
     // Ancestry
     ancestryMap: "祖源地图",
     interactiveAncestryMap: "交互式祖源地图可视化将在此处显示",
@@ -394,21 +414,27 @@ const translations = {
     ancestryAnalysis: "祖源分析",
     exploreGenetic: "探索您的遗传祖源并寻找DNA亲缘关系",
     understandingResults: "了解您的结果",
-    compositionDescription: "您的祖源构成估计了您的DNA中来自全球47个人群的比例。",
+    compositionDescription:
+      "您的祖源构成估计了您的DNA中来自全球47个人群的比例。",
     analysisDescription: "该分析基于将您的基因组与世界各地的参考人群进行比较。",
     admixtureTechnology: "Admixture算法",
-    admixtureTechDescription: "Admixture算法使用统计方法来估计您的基因组中源自不同祖先人群的比例。这种技术将您DNA的片段与来自全球不同人群的参考数据集进行比较。",
+    admixtureTechDescription:
+      "Admixture算法使用统计方法来估计您的基因组中源自不同祖先人群的比例。这种技术将您DNA的片段与来自全球不同人群的参考数据集进行比较。",
     haplogroupsExplained: "单倍群解析",
-    haplogroupsExplainedDescription: "单倍群是共享共同祖先的遗传人群。Y-DNA单倍群追踪父系血统（Y染色体），而mtDNA单倍群追踪母系血统（线粒体）。这些标记在几代人中保持相对不变，提供了对古代迁徙模式的见解。",
+    haplogroupsExplainedDescription:
+      "单倍群是共享共同祖先的遗传人群。Y-DNA单倍群追踪父系血统（Y染色体），而mtDNA单倍群追踪母系血统（线粒体）。这些标记在几代人中保持相对不变，提供了对古代迁徙模式的见解。",
     ancestryProportion: "祖源比例",
     showMore: "显示更多内容",
     showLess: "收起内容",
     // Traits
-    notice: "注意：这些特征分析基于文献和用户贡献的数据，不是临床级别的解读。结果仅供参考，不应用作医疗建议。",
+    notice:
+      "注意：这些特征分析基于文献和用户贡献的数据，不是临床级别的解读。结果仅供参考，不应用作医疗建议。",
   },
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+)
 
 export function useLanguage() {
   const context = useContext(LanguageContext)
@@ -424,7 +450,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // Load language preference from localStorage on initial render
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language") as Language
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "zh-CN")) {
+    if (
+      savedLanguage &&
+      (savedLanguage === "en" || savedLanguage === "zh-CN")
+    ) {
       setLanguageState(savedLanguage)
     }
   }, [])
@@ -438,5 +467,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     return translations[language][key] || key
   }
 
-  return <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  )
 }

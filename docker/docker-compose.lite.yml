@@ -1,0 +1,86 @@
+# Rootara 基因数据分析平台 - 轻量版本（无Redis缓存）
+#
+# 🚀 快速部署（2步完成）：
+# 1. 确保已安装 Docker 和 Docker Compose
+# 2. 运行：docker-compose -f docker-compose.lite.yml up -d
+# 3. 访问：http://localhost:3000（用户名：admin@rootara.app 密码：rootara123）
+#
+# 📊 轻量版本特性：
+# - 内存占用：约30-40MB（节省50MB）
+# - 性能：内存缓存，响应稍慢但够用
+# - 适用：内存有限的服务器，个人学习使用
+#
+# ⚠️ 需要修改的配置（如果需要）：
+# - 管理员邮箱和密码（见下方 ADMIN_EMAIL 和 ADMIN_PASSWORD）
+# - 访问端口（默认3000，见下方 ports 配置）
+# - API密钥（见下方 ROOTARA_API_KEY，前后端需保持一致）
+
+version: '3.8'
+
+services:
+  # 前端服务 - 用户访问界面
+  frontend:
+    image: ghcr.io/pzweuj/rootara:latest
+    container_name: rootara-frontend
+    ports:
+      - "3000:3000"                                              # 🔧 可修改端口：如需改为其他端口，修改前面的数字
+    environment:
+      # 🔧 管理员账号配置 - 建议修改
+      - ADMIN_EMAIL=admin@rootara.app                            # 🔧 管理员邮箱
+      - ADMIN_PASSWORD=rootara123                                # 🔧 管理员密码
+
+      # 🔧 安全配置 - 建议修改
+      - JWT_SECRET=rootara_jwt_secret                            # 🔧 JWT密钥，建议修改为随机字符串
+      - ROOTARA_BACKEND_API_KEY=rootara_api_key_default_001      # 🔧 API密钥，需与后端保持一致
+
+      # 默认配置（通常无需修改）
+      - TZ=Asia/Shanghai
+      - ROOTARA_BACKEND_URL=http://backend:8000
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # 后端服务 - API接口（无Redis版本）
+  backend:
+    image: ghcr.io/pzweuj/rootara-backend:latest
+    container_name: rootara-backend
+    command: /bin/bash /app/init.sh
+    volumes:
+      - ./data:/data                                             # 数据存储目录
+      - ./logs:/app/logs                                         # 日志存储目录
+    environment:
+      # 🔧 API密钥配置 - 需与前端保持一致
+      - ROOTARA_API_KEY=rootara_api_key_default_001              # 🔧 API密钥，需与前端保持一致
+
+      # 默认配置（通常无需修改）
+      - TZ=Asia/Shanghai
+      - LOG_LEVEL=INFO
+      - LOG_CONSOLE=true
+      - CACHE_TTL=3600
+      - DB_PATH=/data/rootara.db
+      # Redis配置为空，系统自动使用内存缓存
+      - REDIS_HOST=
+      - REDIS_PORT=
+      - REDIS_DB=
+    restart: unless-stopped
+
+volumes:
+  # 注意：轻量版本不包含redis_data卷，因为不使用Redis
+
+networks:
+  default:
+    name: rootara
+
+# 🔧 常用命令：
+# 启动：docker-compose -f docker-compose.lite.yml up -d
+# 停止：docker-compose -f docker-compose.lite.yml down
+# 查看日志：docker-compose -f docker-compose.lite.yml logs -f
+# 重启：docker-compose -f docker-compose.lite.yml restart
+#
+# 📖 轻量版本说明：
+# - 不包含Redis服务，系统自动使用内存缓存
+# - 启动更快，内存占用更低
+# - 缓存在容器重启后会丢失（对个人使用影响不大）
+# - 适合内存有限的环境和个人学习使用

@@ -21,8 +21,17 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import { useSidebar } from "./sidebar-context"
 import { useLanguage } from "@/contexts/language-context"
 
@@ -39,7 +48,10 @@ export function Sidebar() {
     navigation.forEach((item) => {
       if (
         item.children &&
-        item.children.some((child) => pathname === child.href || pathname.startsWith(child.href + "/"))
+        item.children.some(
+          (child) =>
+            pathname === child.href || pathname.startsWith(child.href + "/")
+        )
       ) {
         newOpenItems[item.name] = true
       }
@@ -55,7 +67,11 @@ export function Sidebar() {
       icon: BarChart2,
       children: [
         { name: t("ancestryAnalysis"), href: "/analysis/ancestry", icon: Dna },
-        { name: t("traitInterpretation"), href: "/analysis/traits", icon: User },
+        {
+          name: t("traitInterpretation"),
+          href: "/analysis/traits",
+          icon: User,
+        },
         { name: "ClinVar", href: "/analysis/clinvar", icon: AlertCircle },
       ],
     },
@@ -70,9 +86,7 @@ export function Sidebar() {
     },
   ]
 
-  const bottomNavigation = [
-    { name: t("about"), href: "/about", icon: Info },
-  ]
+  const bottomNavigation = [{ name: t("about"), href: "/about", icon: Info }]
 
   const toggleItem = (name: string) => {
     setOpenItems((prev) => ({
@@ -117,15 +131,20 @@ export function Sidebar() {
             ? true
             : item.children &&
                 item.children.some(
-                  (child: { href: string; children?: Array<{ href: string }> }) =>
+                  (child: {
+                    href: string
+                    children?: Array<{ href: string }>
+                  }) =>
                     pathname === child.href ||
-                    (child.href !== "/" && pathname.startsWith(child.href + "/")) ||
+                    (child.href !== "/" &&
+                      pathname.startsWith(child.href + "/")) ||
                     (child.children &&
                       child.children.some(
                         (grandchild) =>
                           pathname === grandchild.href ||
-                          (grandchild.href !== "/" && pathname.startsWith(grandchild.href + "/")),
-                      )),
+                          (grandchild.href !== "/" &&
+                            pathname.startsWith(grandchild.href + "/"))
+                      ))
                 )
               ? true
               : false
@@ -142,7 +161,12 @@ export function Sidebar() {
 
       // 特殊情况：如果当前路径以该项的路径开头，且该项不是"/reports"，则激活
       // 这样可以处理子路径的情况，但排除了"/reports"和"/reports/upload"的冲突
-      if (!isActive && item.href !== "/" && item.href !== "/reports" && pathname.startsWith(item.href + "/")) {
+      if (
+        !isActive &&
+        item.href !== "/" &&
+        item.href !== "/reports" &&
+        pathname.startsWith(item.href + "/")
+      ) {
         isActive = true
       }
     }
@@ -165,14 +189,22 @@ export function Sidebar() {
                     ? "bg-secondary text-secondary-foreground"
                     : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
                   isCollapsed && "justify-center px-2",
-                  level > 0 && "pl-6",
+                  level > 0 && "pl-6"
                 )}
               >
-                {item.icon && <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />}
+                {item.icon && (
+                  <item.icon
+                    className={cn("h-4 w-4", !isCollapsed && "mr-3")}
+                  />
+                )}
                 {!isCollapsed && (
                   <>
                     <span className="flex-1">{item.name}</span>
-                    {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                    {isOpen ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
                   </>
                 )}
               </div>
@@ -197,13 +229,16 @@ export function Sidebar() {
                       "flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors cursor-pointer",
                       isActive
                         ? "bg-secondary text-secondary-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
+                        : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
                     )}
                   >
                     {item.icon && <item.icon className="h-4 w-4" />}
                   </div>
                 </TooltipTrigger>
-                <TooltipContent side="right" className="flex items-center gap-4">
+                <TooltipContent
+                  side="right"
+                  className="flex items-center gap-4"
+                >
                   {item.name}
                 </TooltipContent>
               </Tooltip>
@@ -219,8 +254,10 @@ export function Sidebar() {
           <TooltipTrigger asChild>
             <Link
               href={item.href}
-              target={item.href.startsWith('http') ? "_blank" : undefined}
-              rel={item.href.startsWith('http') ? "noopener noreferrer" : undefined}
+              target={item.href.startsWith("http") ? "_blank" : undefined}
+              rel={
+                item.href.startsWith("http") ? "noopener noreferrer" : undefined
+              }
               onClick={() => setIsMobileOpen(false)}
               className={cn(
                 "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -228,10 +265,12 @@ export function Sidebar() {
                   ? "bg-secondary text-secondary-foreground"
                   : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground",
                 isCollapsed && "justify-center px-2",
-                level > 0 && !isCollapsed && "pl-6",
+                level > 0 && !isCollapsed && "pl-6"
               )}
             >
-              {item.icon && <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />}
+              {item.icon && (
+                <item.icon className={cn("h-4 w-4", !isCollapsed && "mr-3")} />
+              )}
               {!isCollapsed && <span>{item.name}</span>}
             </Link>
           </TooltipTrigger>
@@ -267,11 +306,16 @@ export function Sidebar() {
         className={cn(
           "fixed inset-y-0 z-[1001] flex flex-col bg-background transition-all duration-300 ease-in-out border-r border-border",
           isCollapsed ? "w-[72px]" : "w-72",
-          isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         <div className="border-b border-border">
-          <div className={cn("flex h-16 items-center gap-2 px-4", isCollapsed && "justify-center px-2")}>
+          <div
+            className={cn(
+              "flex h-16 items-center gap-2 px-4",
+              isCollapsed && "justify-center px-2"
+            )}
+          >
             {!isCollapsed && (
               <Link
                 href="/"
@@ -291,8 +335,15 @@ export function Sidebar() {
               className={cn("ml-auto h-8 w-8 lg:hidden", isCollapsed && "ml-0")}
               onClick={toggleSidebar}
             >
-              <ChevronLeft className={cn("h-4 w-4 transition-transform", isCollapsed && "rotate-180")} />
-              <span className="sr-only">{isCollapsed ? "Expand" : "Collapse"} Sidebar</span>
+              <ChevronLeft
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  isCollapsed && "rotate-180"
+                )}
+              />
+              <span className="sr-only">
+                {isCollapsed ? "Expand" : "Collapse"} Sidebar
+              </span>
             </Button>
           </div>
         </div>

@@ -15,12 +15,14 @@ export default function Dashboard() {
   // 页面加载时自动刷新所有模块
   useEffect(() => {
     // 页面初次加载时触发刷新
-    setRefreshKey(prevKey => prevKey + 1)
+    setRefreshKey((prevKey) => prevKey + 1)
   }, [])
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t("geneticDashboard")}</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        {t("geneticDashboard")}
+      </h1>
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
         <GeneticProfileOverview key={`genetic-overview-${refreshKey}`} />
       </div>

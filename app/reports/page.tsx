@@ -24,7 +24,10 @@ export default function ReportsPage() {
       </div>
 
       {/* 设置 WeGene 报告为默认报告，并添加报告切换回调 */}
-      <ReportSwitcher defaultReportId="RPT_TEMPLATE01" onReportChange={handleReportChange} />
+      <ReportSwitcher
+        defaultReportId="RPT_TEMPLATE01"
+        onReportChange={handleReportChange}
+      />
 
       {/* 传递当前报告ID给原始数据组件 */}
       <RawGeneticData currentReportId={currentReportId} />

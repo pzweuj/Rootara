@@ -101,28 +101,28 @@ export function ReportSwitcher({
   // 更新删除报告函数
   const handleDeleteReport = async (reportId: string) => {
     try {
-      const response = await fetch('/api/report/delete', {
-        method: 'POST',
+      const response = await fetch("/api/report/delete", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ report_id: reportId })
-      });
+        body: JSON.stringify({ report_id: reportId }),
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to delete report');
+        throw new Error("Failed to delete report")
       }
       // 添加调试信息
-      console.log("执行删除操作，报告ID:", reportId);
-      
+      console.log("执行删除操作，报告ID:", reportId)
+
       // 验证reportId是否有效，防止传入错误的路径
-      if (!reportId || reportId.includes('/') || reportId.includes('\\')) {
-        throw new Error(`无效的报告ID: ${reportId}`);
+      if (!reportId || reportId.includes("/") || reportId.includes("\\")) {
+        throw new Error(`无效的报告ID: ${reportId}`)
       }
-      
+
       // 打印响应状态
-      console.log("删除API响应状态:", response.status);
-      
+      console.log("删除API响应状态:", response.status)
+
       if (!response.ok) {
         throw new Error(`删除失败: ${response.status}`)
       }
@@ -138,7 +138,6 @@ export function ReportSwitcher({
           onReportChange(firstReport.id)
         }
       }
-
     } catch (error) {
       console.error("Error deleting report:", error)
 
@@ -155,16 +154,16 @@ export function ReportSwitcher({
   // 添加删除确认对话框处理函数
   const openDeleteDialog = (reportId: string) => {
     // 验证reportId是否有效
-    if (!reportId || reportId.includes('/') || reportId.includes('\\')) {
+    if (!reportId || reportId.includes("/") || reportId.includes("\\")) {
       toast({
         title: t("error"),
         description: t("invalidReportId"),
         variant: "destructive",
         duration: 5000,
-      });
-      return;
+      })
+      return
     }
-    
+
     // 添加模板报告保护逻辑
     if (reportId === "RPT_TEMPLATE01") {
       toast({
@@ -172,24 +171,28 @@ export function ReportSwitcher({
         description: t("cannotDeleteTemplate"),
         variant: "destructive",
         duration: 5000,
-      });
-      return;
+      })
+      return
     }
-    
+
     // 添加调试信息，显示将要删除的reportId
-    console.log("准备删除的报告ID:", reportId);
+    console.log("准备删除的报告ID:", reportId)
     toast({
       title: t("debugInfo"),
       description: `报告ID: ${reportId}`,
       duration: 5000,
-    });
-    
-    setReportToDelete(reportId);
-    setDeleteDialogOpen(true);
+    })
+
+    setReportToDelete(reportId)
+    setDeleteDialogOpen(true)
   }
 
   const confirmDelete = async () => {
-    if (reportToDelete && !reportToDelete.includes('/') && !reportToDelete.includes('\\')) {
+    if (
+      reportToDelete &&
+      !reportToDelete.includes("/") &&
+      !reportToDelete.includes("\\")
+    ) {
       // 添加模板报告保护逻辑
       if (reportToDelete === "RPT_TEMPLATE01") {
         toast({
@@ -197,54 +200,54 @@ export function ReportSwitcher({
           description: t("cannotDeleteTemplate"),
           variant: "destructive",
           duration: 5000,
-        });
-        setReportToDelete(null);
-        setDeleteDialogOpen(false);
-        return;
+        })
+        setReportToDelete(null)
+        setDeleteDialogOpen(false)
+        return
       }
-      
+
       // 添加调试信息，显示确认删除的reportId
-      console.log("确认删除的报告ID:", reportToDelete);
+      console.log("确认删除的报告ID:", reportToDelete)
       toast({
         title: t("debugInfo"),
         description: `确认删除报告ID: ${reportToDelete}`,
         duration: 5000,
-      });
-      
-      await handleDeleteReport(reportToDelete);
-      setReportToDelete(null);
-      setDeleteDialogOpen(false);
+      })
+
+      await handleDeleteReport(reportToDelete)
+      setReportToDelete(null)
+      setDeleteDialogOpen(false)
     } else {
       toast({
         title: t("error"),
         description: t("invalidReportId"),
         variant: "destructive",
         duration: 5000,
-      });
+      })
     }
   }
 
   // 添加重命名报告函数
   const handleRenameReport = async () => {
     if (!reportToRename) return
-    
+
     try {
-      const response = await fetch('/api/report/rename', {
-        method: 'POST',
+      const response = await fetch("/api/report/rename", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           report_id: reportToRename.id,
           new_name: newReportName,
-          new_name_zh: newReportNameZh
-        })
-      });
-  
+          new_name_zh: newReportNameZh,
+        }),
+      })
+
       if (!response.ok) {
         throw new Error(`重命名失败: ${response.status}`)
       }
-  
+
       // 更新报告列表
       setReports(
         reports.map((report) => {
@@ -256,9 +259,9 @@ export function ReportSwitcher({
             }
           }
           return report
-        }),
+        })
       )
-  
+
       // 如果重命名的是当前选中的报告，更新选中的报告
       if (selectedReport && selectedReport.id === reportToRename.id) {
         setSelectedReport({
@@ -267,14 +270,14 @@ export function ReportSwitcher({
           nameZh: newReportName, // 让nameZh跟随name的值
         })
       }
-  
+
       // 显示成功通知
       toast({
         title: t("renameSuccessful"),
         description: t("reportNameUpdated"),
         duration: 3000,
       })
-  
+
       // 关闭对话框
       setRenameDialogOpen(false)
       setReportToRename(null)
@@ -282,7 +285,7 @@ export function ReportSwitcher({
       setNewReportNameZh("")
     } catch (error) {
       console.error("Error renaming report:", error)
-  
+
       // 显示错误通知
       toast({
         title: t("renameFailed"),
@@ -306,12 +309,12 @@ export function ReportSwitcher({
     try {
       // 调用API导出原始数据
       const response = await fetch(`/api/report/${reportId}/rawdata`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({})
-      });
+        body: JSON.stringify({}),
+      })
 
       if (!response.ok) {
         throw new Error(`导出失败: ${response.status}`)
@@ -333,14 +336,14 @@ export function ReportSwitcher({
       // 清理
       window.URL.revokeObjectURL(url)
       document.body.removeChild(link)
-
     } catch (error) {
       console.error("导出报告时出错:", error)
 
       // 显示错误通知
       toast({
         title: t("exportError"),
-        description: error instanceof Error ? error.message : t("unknownErrorChinese"),
+        description:
+          error instanceof Error ? error.message : t("unknownErrorChinese"),
         variant: "destructive",
         duration: 5000,
       })
@@ -358,13 +361,13 @@ export function ReportSwitcher({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({}),
-        });
+        })
 
         if (!response.ok) {
-          throw new Error(`API请求失败: ${response.status}`);
+          throw new Error(`API请求失败: ${response.status}`)
         }
 
-        const data = await response.json();
+        const data = await response.json()
 
         // 转换API返回的数据格式
         const formattedReports: Report[] = data.map((item: any) => ({
@@ -378,44 +381,49 @@ export function ReportSwitcher({
           user_id: item.user_id,
           extend: item.extend,
           snpCount: item.snpCount,
-        }));
+        }))
 
-        setReports(formattedReports);
+        setReports(formattedReports)
 
         // 设置默认选中的报告
-        let reportToSelect: Report | undefined;
+        let reportToSelect: Report | undefined
 
         // 首先检查是否有指定的defaultReportId
         if (defaultReportId) {
-          reportToSelect = formattedReports.find((r) => r.id === defaultReportId);
+          reportToSelect = formattedReports.find(
+            (r) => r.id === defaultReportId
+          )
         }
 
         // 如果没有找到指定的报告，则检查全局上下文中的currentReportId
         if (!reportToSelect && currentReportId) {
-          reportToSelect = formattedReports.find((r) => r.id === currentReportId);
+          reportToSelect = formattedReports.find(
+            (r) => r.id === currentReportId
+          )
         }
 
         // 如果仍然没有找到，则使用默认报告或第一个报告
         if (!reportToSelect) {
-          reportToSelect = formattedReports.find((r) => r.isDefault) || formattedReports[0];
+          reportToSelect =
+            formattedReports.find((r) => r.isDefault) || formattedReports[0]
         }
 
         if (reportToSelect) {
-          setSelectedReport(reportToSelect);
+          setSelectedReport(reportToSelect)
           // 更新全局上下文中的报告ID
-          setCurrentReportId(reportToSelect.id);
+          setCurrentReportId(reportToSelect.id)
         }
 
         // setLoading(false); // 移除设置 loading 为 false
       } catch (err) {
-        console.error("获取报告失败:", err);
-        setError(err instanceof Error ? err.message : "获取报告数据失败");
+        console.error("获取报告失败:", err)
+        setError(err instanceof Error ? err.message : "获取报告数据失败")
         // setLoading(false); // 移除设置 loading 为 false
       }
-    };
+    }
 
-    fetchReports();
-  }, [defaultReportId, currentReportId, setCurrentReportId]);
+    fetchReports()
+  }, [defaultReportId, currentReportId, setCurrentReportId])
 
   // 根据环境变量TZ格式化日期的函数
   const formatDateWithTimezone = (dateString: string): string => {
@@ -443,22 +451,17 @@ export function ReportSwitcher({
     }
   }
 
-
-
-
-
   // 处理设置默认报告
   const handleSetDefault = async (reportId: string) => {
     try {
-
       // 调用API设置默认报告
-      const response = await fetch('/api/report/default', {
-        method: 'POST',
+      const response = await fetch("/api/report/default", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ report_id: reportId })
-      });
+        body: JSON.stringify({ report_id: reportId }),
+      })
 
       if (!response.ok) {
         throw new Error(`设置默认报告失败: ${response.status}`)
@@ -472,7 +475,7 @@ export function ReportSwitcher({
         reports.map((report) => ({
           ...report,
           isDefault: report.id === reportId,
-        })),
+        }))
       )
 
       // 显示成功通知
@@ -496,21 +499,21 @@ export function ReportSwitcher({
 
   const handleSelectReport = (report: Report) => {
     // 移除临时加载状态，直接更新状态
-    setSelectedReport(report);
+    setSelectedReport(report)
     // 更新全局上下文中的报告ID
-    setCurrentReportId(report.id);
+    setCurrentReportId(report.id)
     // 添加对 onReportChange 回调的调用
     if (onReportChange) {
-      onReportChange(report.id);
+      onReportChange(report.id)
     }
-    
+
     // 显示切换成功的通知，而不是加载状态
     toast({
       title: t("reportSwitched"),
       description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
       duration: 2000,
-    });
-    
+    })
+
     // 重要：不要在这里使用 router.push() 或其他导致页面导航的方法
   }
 
@@ -528,13 +531,17 @@ export function ReportSwitcher({
     })
     .sort((a, b) => {
       if (sortBy === "name") {
-        return sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
+        return sortOrder === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name)
       } else if (sortBy === "date") {
         return sortOrder === "asc"
           ? new Date(a.uploadDate).getTime() - new Date(b.uploadDate).getTime()
           : new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime()
       } else {
-        return sortOrder === "asc" ? a.source.localeCompare(b.source) : b.source.localeCompare(a.source)
+        return sortOrder === "asc"
+          ? a.source.localeCompare(b.source)
+          : b.source.localeCompare(a.source)
       }
     })
 
@@ -577,7 +584,9 @@ export function ReportSwitcher({
               <p className="text-red-500 mb-4">
                 {t("error")}: {error}
               </p>
-              <Button onClick={() => window.location.reload()}>{t("retry")}</Button>
+              <Button onClick={() => window.location.reload()}>
+                {t("retry")}
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -591,8 +600,14 @@ export function ReportSwitcher({
       <Card className="mb-6">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-medium">{t("myReports")}</CardTitle>
-            <Button variant="outline" size="sm" onClick={() => router.push("/reports/upload")}>
+            <CardTitle className="text-lg font-medium">
+              {t("myReports")}
+            </CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/reports/upload")}
+            >
               {t("uploadNewReport")}
             </Button>
           </div>
@@ -610,8 +625,14 @@ export function ReportSwitcher({
     <Card className="mb-6">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium">{t("myReports")}</CardTitle>
-          <Button variant="outline" size="sm" onClick={() => router.push("/reports/upload")}>
+          <CardTitle className="text-lg font-medium">
+            {t("myReports")}
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.push("/reports/upload")}
+          >
             {t("uploadNewReport")}
           </Button>
         </div>
@@ -632,8 +653,16 @@ export function ReportSwitcher({
             <div className="flex gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex items-center">
-                    {sortOrder === "asc" ? <SortAsc className="mr-2 h-4 w-4" /> : <SortDesc className="mr-2 h-4 w-4" />}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center"
+                  >
+                    {sortOrder === "asc" ? (
+                      <SortAsc className="mr-2 h-4 w-4" />
+                    ) : (
+                      <SortDesc className="mr-2 h-4 w-4" />
+                    )}
                     {t("sort")}
                   </Button>
                 </DropdownMenuTrigger>
@@ -645,7 +674,9 @@ export function ReportSwitcher({
                       toggleSortOrder()
                     }}
                   >
-                    <Check className={`mr-2 h-4 w-4 ${sortBy === "name" ? "opacity-100" : "opacity-0"}`} />
+                    <Check
+                      className={`mr-2 h-4 w-4 ${sortBy === "name" ? "opacity-100" : "opacity-0"}`}
+                    />
                     {t("name")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -654,7 +685,9 @@ export function ReportSwitcher({
                       toggleSortOrder()
                     }}
                   >
-                    <Check className={`mr-2 h-4 w-4 ${sortBy === "date" ? "opacity-100" : "opacity-0"}`} />
+                    <Check
+                      className={`mr-2 h-4 w-4 ${sortBy === "date" ? "opacity-100" : "opacity-0"}`}
+                    />
                     {t("uploadDate")}
                   </DropdownMenuItem>
                   <DropdownMenuItem
@@ -663,7 +696,9 @@ export function ReportSwitcher({
                       toggleSortOrder()
                     }}
                   >
-                    <Check className={`mr-2 h-4 w-4 ${sortBy === "source" ? "opacity-100" : "opacity-0"}`} />
+                    <Check
+                      className={`mr-2 h-4 w-4 ${sortBy === "source" ? "opacity-100" : "opacity-0"}`}
+                    />
                     {t("source")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -682,7 +717,9 @@ export function ReportSwitcher({
                 <div className="flex items-center">
                   <FileText className="h-5 w-5 mr-2 text-primary" />
                   <h3 className="text-lg font-medium">
-                    {language === "zh-CN" ? selectedReport.nameZh : selectedReport.name}
+                    {language === "zh-CN"
+                      ? selectedReport.nameZh
+                      : selectedReport.name}
                   </h3>
                   {selectedReport.isDefault && (
                     <Badge
@@ -701,31 +738,39 @@ export function ReportSwitcher({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={(e) => {
-                      e.preventDefault();
-                      handleSelectReport(selectedReport);
-                      // 可以添加一个通知提示用户报告已切换
-                      toast({
-                        title: t("reportSwitched"),
-                        description: `${t("currentlyViewing")}${language === "zh-CN" ? selectedReport.nameZh : selectedReport.name}`,
-                        duration: 3000,
-                      });
-                    }}>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleSelectReport(selectedReport)
+                        // 可以添加一个通知提示用户报告已切换
+                        toast({
+                          title: t("reportSwitched"),
+                          description: `${t("currentlyViewing")}${language === "zh-CN" ? selectedReport.nameZh : selectedReport.name}`,
+                          duration: 3000,
+                        })
+                      }}
+                    >
                       <FileText className="mr-2 h-4 w-4" />
                       {t("viewReport")}
                     </DropdownMenuItem>
                     {!selectedReport.isDefault && (
-                      <DropdownMenuItem onClick={() => handleSetDefault(selectedReport.id)}>
+                      <DropdownMenuItem
+                        onClick={() => handleSetDefault(selectedReport.id)}
+                      >
                         <Star className="mr-2 h-4 w-4" />
                         {t("setAsDefault")}
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={() => openRenameDialog(selectedReport)}>
+                    <DropdownMenuItem
+                      onClick={() => openRenameDialog(selectedReport)}
+                    >
                       <Edit className="mr-2 h-4 w-4" />
                       {t("rename")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => handleExportReport(selectedReport.id)}>
+                    <DropdownMenuItem
+                      onClick={() => handleExportReport(selectedReport.id)}
+                    >
                       <Download className="mr-2 h-4 w-4" />
                       {t("download")}
                     </DropdownMenuItem>
@@ -748,20 +793,30 @@ export function ReportSwitcher({
                   <span className="ml-2 font-medium">{selectedReport.id}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">{t("uploadDate")}</span>
-                  <span className="ml-2 font-medium">{selectedReport.uploadDate}</span>
+                  <span className="text-muted-foreground">
+                    {t("uploadDate")}
+                  </span>
+                  <span className="ml-2 font-medium">
+                    {selectedReport.uploadDate}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">{t("source")}</span>
                   <span className="ml-2">
-                    <Badge className={getSourceBadgeColor(selectedReport.source)}>{selectedReport.source}</Badge>
+                    <Badge
+                      className={getSourceBadgeColor(selectedReport.source)}
+                    >
+                      {selectedReport.source}
+                    </Badge>
                   </span>
                 </div>
               </div>
               {selectedReport.snpCount && (
                 <div className="mt-2 text-sm">
                   <span className="text-muted-foreground">{t("snpCount")}</span>
-                  <span className="ml-2 font-medium">{selectedReport.snpCount.toLocaleString()}</span>
+                  <span className="ml-2 font-medium">
+                    {selectedReport.snpCount.toLocaleString()}
+                  </span>
                 </div>
               )}
             </div>
@@ -777,11 +832,11 @@ export function ReportSwitcher({
                       key={report.id}
                       className={`flex items-center justify-between p-3 rounded-md cursor-pointer hover:bg-secondary/50 ${selectedReport?.id === report.id ? "bg-secondary" : ""}`}
                       onClick={(e) => {
-                        e.preventDefault();
+                        e.preventDefault()
                         // 如果已经选中了这个报告，不做任何操作
-                        if (selectedReport?.id === report.id) return;
-                        
-                        handleSelectReport(report);
+                        if (selectedReport?.id === report.id) return
+
+                        handleSelectReport(report)
                       }}
                     >
                       <div className="flex-1 min-w-0">
@@ -802,7 +857,11 @@ export function ReportSwitcher({
                         </div>
                       </div>
                       <div className="flex items-center ml-4">
-                        <Badge className={`mr-2 ${getSourceBadgeColor(report.source)}`}>{report.source}</Badge>
+                        <Badge
+                          className={`mr-2 ${getSourceBadgeColor(report.source)}`}
+                        >
+                          {report.source}
+                        </Badge>
                       </div>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -811,32 +870,40 @@ export function ReportSwitcher({
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation(); // 阻止事件冒泡
-                            handleSelectReport(report); // 或 selectedReport，取决于上下文
-                            // 添加通知提示用户报告已切换
-                            toast({
-                              title: t("reportSwitched"),
-                              description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
-                              duration: 3000,
-                            });
-                          }}>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation() // 阻止事件冒泡
+                              handleSelectReport(report) // 或 selectedReport，取决于上下文
+                              // 添加通知提示用户报告已切换
+                              toast({
+                                title: t("reportSwitched"),
+                                description: `${t("currentlyViewing")}${language === "zh-CN" ? report.nameZh : report.name}`,
+                                duration: 3000,
+                              })
+                            }}
+                          >
                             <FileText className="mr-2 h-4 w-4" />
                             {t("viewReport")}
                           </DropdownMenuItem>
                           {!report.isDefault && (
-                            <DropdownMenuItem onClick={() => handleSetDefault(report.id)}>
+                            <DropdownMenuItem
+                              onClick={() => handleSetDefault(report.id)}
+                            >
                               <Star className="mr-2 h-4 w-4" />
                               {t("setAsDefault")}
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem onClick={() => openRenameDialog(report)}>
+                          <DropdownMenuItem
+                            onClick={() => openRenameDialog(report)}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             {t("rename")}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleExportReport(report.id)}>
+                          <DropdownMenuItem
+                            onClick={() => handleExportReport(report.id)}
+                          >
                             <Download className="mr-2 h-4 w-4" />
                             {t("download")}
                           </DropdownMenuItem>
@@ -855,7 +922,9 @@ export function ReportSwitcher({
                     </div>
                   ))
                 ) : (
-                  <div className="p-4 text-center text-muted-foreground">{t("noReportsFound")}</div>
+                  <div className="p-4 text-center text-muted-foreground">
+                    {t("noReportsFound")}
+                  </div>
                 )}
               </div>
             </ScrollArea>
@@ -867,11 +936,16 @@ export function ReportSwitcher({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("deleteConfirmTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("deleteConfirmMessage")}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {t("deleteConfirmMessage")}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               {t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -883,9 +957,7 @@ export function ReportSwitcher({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("renameReport")}</DialogTitle>
-            <DialogDescription>
-              {t("enterNewReportName")}
-            </DialogDescription>
+            <DialogDescription>{t("enterNewReportName")}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -901,7 +973,10 @@ export function ReportSwitcher({
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setRenameDialogOpen(false)}
+            >
               {t("cancel")}
             </Button>
             <Button onClick={handleRenameReport}>{t("save")}</Button>

@@ -99,7 +99,10 @@ export function TopNav() {
             {pathSegments.map((segment, index) => (
               <React.Fragment key={segment}>
                 <div className="text-muted-foreground">/</div>
-                <Link href={`/${pathSegments.slice(0, index + 1).join("/")}`} className="text-sm font-medium">
+                <Link
+                  href={`/${pathSegments.slice(0, index + 1).join("/")}`}
+                  className="text-sm font-medium"
+                >
                   {getTranslatedSegment(segment)}
                 </Link>
               </React.Fragment>
@@ -120,7 +123,10 @@ export function TopNav() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/default-avatar.png" alt={user?.name || "User"} />
+                  <AvatarImage
+                    src="/default-avatar.png"
+                    alt={user?.name || "User"}
+                  />
                   <AvatarFallback>{getUserInitial()}</AvatarFallback>
                 </Avatar>
               </Button>
@@ -128,12 +134,18 @@ export function TopNav() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user?.name || "User"}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{user?.email || "user@example.com"}</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user?.name || "User"}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email || "user@example.com"}
+                  </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => logout()}>{t("logOut")}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                {t("logOut")}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

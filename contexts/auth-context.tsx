@@ -1,6 +1,12 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react"
 import { useRouter } from "next/navigation"
 
 type User = {
@@ -54,27 +60,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       console.log("Attempting login for:", email)
       console.log("=== CLIENT SENDING LOGIN REQUEST ===")
-      
+
       // Hash password on client side for secure transmission
       let hashedPassword: string
-      
-      if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+
+      if (
+        typeof window !== "undefined" &&
+        window.crypto &&
+        window.crypto.subtle
+      ) {
         const encoder = new TextEncoder()
         const data = encoder.encode(password)
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data)
         const hashArray = Array.from(new Uint8Array(hashBuffer))
-        hashedPassword = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+        hashedPassword = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
       } else {
         // Fallback for environments where crypto.subtle is not available
         console.warn("crypto.subtle not available, using simple hash fallback")
-        hashedPassword = btoa(password).replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+        hashedPassword = btoa(password)
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toLowerCase()
       }
-      
+
       console.log("Hashed password length:", hashedPassword.length)
-      
+
       // Clear password from memory immediately
       password = ""
-      
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -102,7 +116,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const verifyRes = await fetch("/api/auth/me")
           console.log("Cookie verification status:", verifyRes.status)
           if (!verifyRes.ok) {
-            console.error("Cookie verification failed - this may cause redirect issues")
+            console.error(
+              "Cookie verification failed - this may cause redirect issues"
+            )
           } else {
             console.log("Cookie verification successful")
           }
@@ -144,5 +160,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return <AuthContext.Provider value={{ user, isLoading, login, logout }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }

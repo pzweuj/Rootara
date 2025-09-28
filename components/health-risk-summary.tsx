@@ -7,7 +7,14 @@ import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
 
 const healthRisks = [
-  { name: "Type 2 Diabetes", nameZh: "2型糖尿病", risk: "Average", riskZh: "一般", level: 50, variants: 3 },
+  {
+    name: "Type 2 Diabetes",
+    nameZh: "2型糖尿病",
+    risk: "Average",
+    riskZh: "一般",
+    level: 50,
+    variants: 3,
+  },
   {
     name: "Coronary Heart Disease",
     nameZh: "冠心病",
@@ -16,9 +23,30 @@ const healthRisks = [
     level: 65,
     variants: 5,
   },
-  { name: "Alzheimer's Disease", nameZh: "阿尔茨海默病", risk: "Reduced", riskZh: "降低", level: 30, variants: 2 },
-  { name: "Macular Degeneration", nameZh: "黄斑变性", risk: "Elevated", riskZh: "升高", level: 75, variants: 4 },
-  { name: "Celiac Disease", nameZh: "乳糜泻", risk: "Average", riskZh: "一般", level: 45, variants: 1 },
+  {
+    name: "Alzheimer's Disease",
+    nameZh: "阿尔茨海默病",
+    risk: "Reduced",
+    riskZh: "降低",
+    level: 30,
+    variants: 2,
+  },
+  {
+    name: "Macular Degeneration",
+    nameZh: "黄斑变性",
+    risk: "Elevated",
+    riskZh: "升高",
+    level: 75,
+    variants: 4,
+  },
+  {
+    name: "Celiac Disease",
+    nameZh: "乳糜泻",
+    risk: "Average",
+    riskZh: "一般",
+    level: 45,
+    variants: 1,
+  },
 ]
 
 export function HealthRiskSummary() {
@@ -58,9 +86,13 @@ export function HealthRiskSummary() {
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   {getRiskIcon(risk.risk)}
-                  <span className="ml-2 text-sm font-medium">{language === "zh-CN" ? risk.nameZh : risk.name}</span>
+                  <span className="ml-2 text-sm font-medium">
+                    {language === "zh-CN" ? risk.nameZh : risk.name}
+                  </span>
                 </div>
-                <span className="text-sm">{language === "zh-CN" ? risk.riskZh : risk.risk}</span>
+                <span className="text-sm">
+                  {language === "zh-CN" ? risk.riskZh : risk.risk}
+                </span>
               </div>
               <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
                 <div
@@ -73,7 +105,11 @@ export function HealthRiskSummary() {
               </p>
             </div>
           ))}
-          <Button className="w-full mt-2" variant="outline" onClick={() => router.push("/analysis/health")}>
+          <Button
+            className="w-full mt-2"
+            variant="outline"
+            onClick={() => router.push("/analysis/health")}
+          >
             {t("viewDetailedHealthReport")}
           </Button>
         </div>

@@ -2,11 +2,24 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Progress } from "@/components/ui/progress"
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
@@ -18,7 +31,9 @@ export default function UploadReportPage() {
   const router = useRouter()
   const { t, language } = useLanguage()
   // 移除 useAuth 相关代码
-  const [uploadState, setUploadState] = useState<"idle" | "uploading" | "success" | "error">("idle")
+  const [uploadState, setUploadState] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle")
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState("")
   const [fileContent, setFileContent] = useState("") // 存储文件内容
@@ -29,34 +44,34 @@ export default function UploadReportPage() {
   const [userId, setUserId] = useState("guest") // 添加用户ID状态，默认为guest
 
   // 文件大小限制（50MB）
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
+  const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB in bytes
 
   // 在组件加载时获取用户ID
   useEffect(() => {
     // 修改fetchUserId函数
     const fetchUserId = async () => {
       try {
-        const response = await fetch('/api/user/id', {
-          method: 'POST',
+        const response = await fetch("/api/user/id", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({})
-        });
-    
+          body: JSON.stringify({}),
+        })
+
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json()
           if (data && data.user_id) {
-            setUserId(data.user_id);
+            setUserId(data.user_id)
           }
         }
       } catch (error) {
-        console.error('获取用户ID出错:', error);
+        console.error("获取用户ID出错:", error)
       }
-    };
-    
-    fetchUserId();
-  }, []); // 添加依赖项
+    }
+
+    fetchUserId()
+  }, []) // 添加依赖项
 
   // 添加额外的翻译项
   const translations = {
@@ -78,22 +93,29 @@ export default function UploadReportPage() {
       uploading: "Uploading your genetic data...",
       takeFewMinutes: "This may take a few minutes depending on file size",
       uploadComplete: "Upload Complete!",
-      dataProcessing: "Your genetic data has been successfully uploaded and is now being processed.",
+      dataProcessing:
+        "Your genetic data has been successfully uploaded and is now being processed.",
       viewMyReports: "View My Reports",
       uploadFailed: "Upload Failed",
       tryAgain: "Try Again",
-      errorUploadingFile: "There was an error uploading your file. Please try again.",
+      errorUploadingFile:
+        "There was an error uploading your file. Please try again.",
       fileTooLarge: "File is too large. Maximum file size is 50MB.", // 新增
       cancel: "Cancel",
       uploadReport: "Upload Report",
       supportedDataFormats: "Supported Data Formats",
       compatibleFormats: "Information about compatible genetic data formats",
-      rawDataFiles: "Raw data files from 23andMe are typically in a tab-separated format (.txt).",
-      downloadFrom23andMe: "Download from 23andMe: Account → Browse Raw Data → Download",
-      ancestryDataFormat: "AncestryDNA provides raw data in a tab-separated format (.txt).",
-      downloadFromAncestry: "Download from Ancestry: DNA → Settings → Download Raw DNA Data",
+      rawDataFiles:
+        "Raw data files from 23andMe are typically in a tab-separated format (.txt).",
+      downloadFrom23andMe:
+        "Download from 23andMe: Account → Browse Raw Data → Download",
+      ancestryDataFormat:
+        "AncestryDNA provides raw data in a tab-separated format (.txt).",
+      downloadFromAncestry:
+        "Download from Ancestry: DNA → Settings → Download Raw DNA Data",
       wegeneDataFormat: "WeGene DNA data is available in txt format (.txt).",
-      downloadFromWeGene: "Download from WeGene: DNA → Manage DNA kits → Download",
+      downloadFromWeGene:
+        "Download from WeGene: DNA → Manage DNA kits → Download",
       ftdnaDataFormat: "FTDNA provides raw data in CSV format (.csv).",
       downloadFromFTDNA: "Download from FTDNA: myDNA → Download Raw Data",
       importantNote: "Important Note",
@@ -113,7 +135,8 @@ export default function UploadReportPage() {
       selectFile: "选择文件",
       remove: "移除",
       setAsDefault: "设为默认报告",
-      privateSecure: "您的基因数据是私密且安全的。我们使用行业标准加密来保护您的信息。",
+      privateSecure:
+        "您的基因数据是私密且安全的。我们使用行业标准加密来保护您的信息。",
       uploading: "正在上传您的基因数据...",
       takeFewMinutes: "根据文件大小，这可能需要几分钟时间",
       uploadComplete: "上传完成！",
@@ -136,7 +159,8 @@ export default function UploadReportPage() {
       ftdnaDataFormat: "FTDNA提供CSV格式(.csv)的原始数据。",
       downloadFromFTDNA: "从FTDNA下载：myDNA → 下载原始数据",
       importantNote: "重要提示",
-      uncompressedFiles: "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。\n\nRootara无法匹配所有的位点，部分非核心位点信息会丢失，但不会影响储存的原始数据的完整性。",
+      uncompressedFiles:
+        "上传前文件必须解压缩。如果您的文件是.zip或.gz格式，请先解压。最大文件大小为50MB。\n\nRootara无法匹配所有的位点，部分非核心位点信息会丢失，但不会影响储存的原始数据的完整性。",
     },
   }
 
@@ -152,14 +176,14 @@ export default function UploadReportPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      
+
       // 检查文件大小
       if (file.size > MAX_FILE_SIZE) {
         setErrorMessage(localT("fileTooLarge"))
         setUploadState("error")
         return
       }
-      
+
       setFileName(file.name)
 
       // 读取文件内容
@@ -188,7 +212,7 @@ export default function UploadReportPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!fileName || !reportName || !source || !fileContent) {
       return
     }
@@ -216,17 +240,17 @@ export default function UploadReportPage() {
         input_data: fileContent,
         source_from: source,
         report_name: reportName,
-        default_report: isDefault
+        default_report: isDefault,
       }
 
       // 使用新的API端点和API_KEY
-      const response = await fetch('/api/report/create', {
-        method: 'POST',
+      const response = await fetch("/api/report/create", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData)
-      });
+        body: JSON.stringify(requestData),
+      })
       // 处理响应
       if (response.ok) {
         clearInterval(progressInterval)
@@ -239,7 +263,9 @@ export default function UploadReportPage() {
     } catch (error) {
       clearInterval(progressInterval)
       setUploadState("error")
-      setErrorMessage(error instanceof Error ? error.message : "上传过程中发生错误")
+      setErrorMessage(
+        error instanceof Error ? error.message : "上传过程中发生错误"
+      )
       console.error("Upload error:", error)
     }
   }
@@ -247,7 +273,9 @@ export default function UploadReportPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">{localT("uploadGeneticData")}</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {localT("uploadGeneticData")}
+        </h1>
       </div>
 
       <Card>
@@ -283,7 +311,7 @@ export default function UploadReportPage() {
                 </Select>
               </div>
 
-              <div 
+              <div
                 className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center"
                 onDragOver={(e) => {
                   e.preventDefault()
@@ -292,19 +320,19 @@ export default function UploadReportPage() {
                 onDrop={(e) => {
                   e.preventDefault()
                   e.stopPropagation()
-                  
+
                   if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                     const file = e.dataTransfer.files[0]
-                    
+
                     // 检查文件大小
                     if (file.size > MAX_FILE_SIZE) {
                       setErrorMessage(localT("fileTooLarge"))
                       setUploadState("error")
                       return
                     }
-                    
+
                     setFileName(file.name)
-                    
+
                     // 读取文件内容
                     const reader = new FileReader()
                     reader.onload = (event) => {
@@ -313,7 +341,7 @@ export default function UploadReportPage() {
                       }
                     }
                     reader.readAsText(file) // 读取为文本
-                    
+
                     // Auto-detect source based on file name (simplified example)
                     if (file.name.toLowerCase().includes("23andme")) {
                       setSource("23andme")
@@ -322,16 +350,22 @@ export default function UploadReportPage() {
                     } else if (file.name.toLowerCase().includes("wegene")) {
                       setSource("wegene")
                     }
-                    
+
                     // Auto-generate report name based on file name
-                    const baseName = file.name.split(".")[0].replace(/[_-]/g, " ")
+                    const baseName = file.name
+                      .split(".")[0]
+                      .replace(/[_-]/g, " ")
                     setReportName(baseName)
                   }
                 }}
               >
                 <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground mb-2">{localT("dragDropFile")}</p>
-                <p className="text-xs text-muted-foreground mb-4">{localT("supportedFormats")}</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {localT("dragDropFile")}
+                </p>
+                <p className="text-xs text-muted-foreground mb-4">
+                  {localT("supportedFormats")}
+                </p>
                 <input
                   type="file"
                   id="file-upload"
@@ -341,9 +375,9 @@ export default function UploadReportPage() {
                   required
                 />
                 <label htmlFor="file-upload">
-                  <Button 
-                    variant="outline" 
-                    className="mx-auto" 
+                  <Button
+                    variant="outline"
+                    className="mx-auto"
                     type="button"
                     onClick={() => {
                       // 手动触发文件输入框的点击事件
@@ -359,9 +393,16 @@ export default function UploadReportPage() {
                 <div className="flex items-center justify-between p-2 bg-secondary rounded-md">
                   <div className="flex items-center">
                     <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span className="text-sm truncate max-w-[200px]">{fileName}</span>
+                    <span className="text-sm truncate max-w-[200px]">
+                      {fileName}
+                    </span>
                   </div>
-                  <Button size="sm" variant="ghost" type="button" onClick={() => setFileName("")}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    type="button"
+                    onClick={() => setFileName("")}
+                  >
                     {localT("remove")}
                   </Button>
                 </div>
@@ -388,9 +429,13 @@ export default function UploadReportPage() {
           {uploadState === "uploading" && (
             <div className="space-y-4">
               <div className="p-6 text-center">
-                <p className="text-sm font-medium mb-4">{localT("uploading")}</p>
+                <p className="text-sm font-medium mb-4">
+                  {localT("uploading")}
+                </p>
                 <Progress value={progress} className="h-2 mb-4" />
-                <p className="text-xs text-muted-foreground">{localT("takeFewMinutes")}</p>
+                <p className="text-xs text-muted-foreground">
+                  {localT("takeFewMinutes")}
+                </p>
               </div>
             </div>
           )}
@@ -399,9 +444,15 @@ export default function UploadReportPage() {
             <div className="space-y-4">
               <div className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 mx-auto text-green-500 mb-2" />
-                <p className="text-lg font-medium mb-2">{localT("uploadComplete")}</p>
-                <p className="text-sm text-muted-foreground mb-4">{localT("dataProcessing")}</p>
-                <Button onClick={() => router.push("/reports")}>{localT("viewMyReports")}</Button>
+                <p className="text-lg font-medium mb-2">
+                  {localT("uploadComplete")}
+                </p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {localT("dataProcessing")}
+                </p>
+                <Button onClick={() => router.push("/reports")}>
+                  {localT("viewMyReports")}
+                </Button>
               </div>
             </div>
           )}
@@ -410,11 +461,16 @@ export default function UploadReportPage() {
             <div className="space-y-4">
               <div className="p-6 text-center">
                 <AlertCircle className="h-12 w-12 mx-auto text-red-500 mb-2" />
-                <p className="text-lg font-medium mb-2">{localT("uploadFailed")}</p>
+                <p className="text-lg font-medium mb-2">
+                  {localT("uploadFailed")}
+                </p>
                 <p className="text-sm text-muted-foreground mb-4">
                   {errorMessage || localT("errorUploadingFile")}
                 </p>
-                <Button variant="outline" onClick={() => setUploadState("idle")}>
+                <Button
+                  variant="outline"
+                  onClick={() => setUploadState("idle")}
+                >
                   {localT("tryAgain")}
                 </Button>
               </div>
@@ -426,7 +482,11 @@ export default function UploadReportPage() {
             <Button variant="outline" onClick={() => router.push("/reports")}>
               {localT("cancel")}
             </Button>
-            <Button type="submit" onClick={handleSubmit} disabled={!fileName || !reportName || !source}>
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              disabled={!fileName || !reportName || !source}
+            >
               {localT("uploadReport")}
             </Button>
           </CardFooter>
@@ -444,20 +504,32 @@ export default function UploadReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">23andMe</h3>
-                <p className="text-sm text-muted-foreground mb-2">{localT("rawDataFiles")}</p>
-                <p className="text-xs text-muted-foreground">{localT("downloadFrom23andMe")}</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {localT("rawDataFiles")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {localT("downloadFrom23andMe")}
+                </p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">AncestryDNA</h3>
-                <p className="text-sm text-muted-foreground mb-2">{localT("ancestryDataFormat")}</p>
-                <p className="text-xs text-muted-foreground">{localT("downloadFromAncestry")}</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {localT("ancestryDataFormat")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {localT("downloadFromAncestry")}
+                </p>
               </div>
 
               <div className="border rounded-md p-4">
                 <h3 className="font-medium mb-2">WeGene</h3>
-                <p className="text-sm text-muted-foreground mb-2">{localT("wegeneDataFormat")}</p>
-                <p className="text-xs text-muted-foreground">{localT("downloadFromWeGene")}</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {localT("wegeneDataFormat")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {localT("downloadFromWeGene")}
+                </p>
               </div>
 
               {/* <div className="border rounded-md p-4">
@@ -471,14 +543,18 @@ export default function UploadReportPage() {
               <div className="flex items-start">
                 <AlertCircle className="h-5 w-5 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">{localT("importantNote")}</p>
+                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                    {localT("importantNote")}
+                  </p>
                   <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                    {localT("uncompressedFiles").split('\n').map((line, index) => (
-                      <span key={index}>
-                        {line}
-                        <br />
-                      </span>
-                    ))}
+                    {localT("uncompressedFiles")
+                      .split("\n")
+                      .map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          <br />
+                        </span>
+                      ))}
                   </p>
                 </div>
               </div>

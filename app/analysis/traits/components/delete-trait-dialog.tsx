@@ -21,7 +21,12 @@ interface DeleteTraitDialogProps {
   onConfirmDelete: () => void
 }
 
-export function DeleteTraitDialog({ isOpen, onOpenChange, traitToDelete, onConfirmDelete }: DeleteTraitDialogProps) {
+export function DeleteTraitDialog({
+  isOpen,
+  onOpenChange,
+  traitToDelete,
+  onConfirmDelete,
+}: DeleteTraitDialogProps) {
   const { language } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -46,37 +51,40 @@ export function DeleteTraitDialog({ isOpen, onOpenChange, traitToDelete, onConfi
     },
   }
 
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   const handleDelete = async () => {
     if (!traitToDelete) return
-    
+
     try {
       setIsLoading(true)
-      toast.loading(language === 'en' ? 'Deleting trait...' : '正在删除特征...')
-      
+      toast.loading(language === "en" ? "Deleting trait..." : "正在删除特征...")
+
       // 调用新的API路由
-      const response = await fetch('/api/traits/delete', {
-        method: 'POST',
+      const response = await fetch("/api/traits/delete", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ traits_id: traitToDelete.id })
+        body: JSON.stringify({ traits_id: traitToDelete.id }),
       })
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
       }
-      
+
       await response.json()
-      
+
       // 通知父组件删除成功
       onConfirmDelete()
       toast.dismiss()
-      toast.success(language === 'en' ? 'Trait deleted successfully' : '特征删除成功')
+      toast.success(
+        language === "en" ? "Trait deleted successfully" : "特征删除成功"
+      )
       onOpenChange(false)
     } catch (error) {
-      console.error('Error deleting trait:', error)
+      console.error("Error deleting trait:", error)
       toast.dismiss()
       toast.error(t("errorDeleting"))
     } finally {
@@ -94,10 +102,18 @@ export function DeleteTraitDialog({ isOpen, onOpenChange, traitToDelete, onConfi
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isLoading}
+          >
             {t("cancel")}
           </Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={isLoading}
+          >
             {isLoading ? t("deleting") : t("delete")}
           </Button>
         </DialogFooter>

@@ -29,5 +29,9 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     // 桌面设备上不执行任何操作
   }
 
-  return <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>{children}</SidebarContext.Provider>
+  return (
+    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar }}>
+      {children}
+    </SidebarContext.Provider>
+  )
 }

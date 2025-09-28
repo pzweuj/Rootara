@@ -6,18 +6,29 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Trash2 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface ScoreThresholdManagerProps {
   thresholds: Record<string, number | boolean>
   onChange: (thresholds: Record<string, number | boolean>) => void
 }
 
-export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdManagerProps) {
+export function ScoreThresholdManager({
+  thresholds,
+  onChange,
+}: ScoreThresholdManagerProps) {
   const { language } = useLanguage()
   const [thresholdName, setThresholdName] = useState("")
   const [thresholdValue, setThresholdValue] = useState("")
-  const [thresholdType, setThresholdType] = useState<"number" | "boolean">("number")
+  const [thresholdType, setThresholdType] = useState<"number" | "boolean">(
+    "number"
+  )
 
   const translations = {
     en: {
@@ -27,7 +38,8 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdType: "Type",
       thresholdNamePlaceholder: "e.g., Brown",
       thresholdValuePlaceholder: "e.g., 12",
-      thresholdsDescription: "Define the score thresholds or boolean values for different results (higher scores are checked first)",
+      thresholdsDescription:
+        "Define the score thresholds or boolean values for different results (higher scores are checked first)",
       delete: "Delete",
       add: "Add",
       result: "Result",
@@ -43,7 +55,8 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
       thresholdType: "类型",
       thresholdNamePlaceholder: "例如：棕色",
       thresholdValuePlaceholder: "例如：12",
-      thresholdsDescription: "定义不同结果的分数阈值或布尔值（先检查较高的分数）",
+      thresholdsDescription:
+        "定义不同结果的分数阈值或布尔值（先检查较高的分数）",
       delete: "移除",
       add: "添加",
       result: "结果",
@@ -54,13 +67,14 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
     },
   }
 
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   const addScoreThreshold = () => {
     if (!thresholdName || !thresholdValue) return
 
     const updatedThresholds = { ...thresholds }
-    
+
     if (thresholdType === "number") {
       updatedThresholds[thresholdName] = Number.parseInt(thresholdValue, 10)
     } else {
@@ -137,7 +151,9 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           {t("add")}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground break-words">{t("thresholdsDescription")}</p>
+      <p className="text-xs text-muted-foreground break-words">
+        {t("thresholdsDescription")}
+      </p>
 
       {/* Display added score thresholds */}
       {Object.keys(thresholds).length > 0 && (
@@ -146,13 +162,24 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
           <div className="hidden sm:block">
             <div className="grid grid-cols-[1fr_1fr_auto] gap-2 font-medium text-sm mb-1 border-b pb-1">
               <div className="px-2 text-center border-r">{t("result")}</div>
-              <div className="px-2 text-center border-r">{t("thresholdValue")}</div>
+              <div className="px-2 text-center border-r">
+                {t("thresholdValue")}
+              </div>
               <div className="px-2 text-center">{t("delete")}</div>
             </div>
             {Object.entries(thresholds).map(([key, value], index) => (
-              <div key={key} className={`grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < Object.keys(thresholds).length - 1 ? 'border-b' : ''}`}>
+              <div
+                key={key}
+                className={`grid grid-cols-[1fr_1fr_auto] gap-2 text-sm items-center py-1 ${index < Object.keys(thresholds).length - 1 ? "border-b" : ""}`}
+              >
                 <div className="px-2 text-center border-r truncate">{key}</div>
-                <div className="px-2 text-center border-r">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</div>
+                <div className="px-2 text-center border-r">
+                  {typeof value === "boolean"
+                    ? value
+                      ? t("true")
+                      : t("false")
+                    : value}
+                </div>
                 <div className="px-2 text-center">
                   <Button
                     variant="ghost"
@@ -183,8 +210,16 @@ export function ScoreThresholdManager({ thresholds, onChange }: ScoreThresholdMa
                   </Button>
                 </div>
                 <div className="text-xs">
-                  <span className="text-muted-foreground">{t("thresholdValue")}:</span>
-                  <span className="ml-1">{typeof value === "boolean" ? (value ? t("true") : t("false")) : value}</span>
+                  <span className="text-muted-foreground">
+                    {t("thresholdValue")}:
+                  </span>
+                  <span className="ml-1">
+                    {typeof value === "boolean"
+                      ? value
+                        ? t("true")
+                        : t("false")
+                      : value}
+                  </span>
                 </div>
               </div>
             ))}

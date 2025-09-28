@@ -1,6 +1,12 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react"
 
 interface ReportContextType {
   currentReportId: string
@@ -41,23 +47,25 @@ export function ReportProvider({ children }: { children: ReactNode }) {
 
       try {
         // 调用API获取所有报告
-        const response = await fetch('/api/report/all', {
-          method: 'POST',
+        const response = await fetch("/api/report/all", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: ""
+          body: "",
         })
 
         if (!response.ok) {
-          throw new Error('获取报告列表失败')
+          throw new Error("获取报告列表失败")
         }
 
         const data = await response.json()
-        
+
         // 查找默认报告
-        const defaultReport = Array.isArray(data) ? data.find((report: Report) => report.isDefault) : null
-        
+        const defaultReport = Array.isArray(data)
+          ? data.find((report: Report) => report.isDefault)
+          : null
+
         if (defaultReport) {
           setCurrentReportId(defaultReport.id)
         } else if (Array.isArray(data) && data.length > 0) {
@@ -68,7 +76,7 @@ export function ReportProvider({ children }: { children: ReactNode }) {
           setCurrentReportId("RPT_TEMPLATE01")
         }
       } catch (error) {
-        console.error('获取默认报告错误:', error)
+        console.error("获取默认报告错误:", error)
         // 出错时使用原来的默认值
         setCurrentReportId("RPT_TEMPLATE01")
       } finally {
@@ -81,13 +89,16 @@ export function ReportProvider({ children }: { children: ReactNode }) {
 
   // 当报告ID变化时保存到localStorage
   useEffect(() => {
-    if (currentReportId) { // 只有当ID有值时才保存
+    if (currentReportId) {
+      // 只有当ID有值时才保存
       localStorage.setItem("currentReportId", currentReportId)
     }
   }, [currentReportId])
 
   return (
-    <ReportContext.Provider value={{ currentReportId, setCurrentReportId, isLoading }}>
+    <ReportContext.Provider
+      value={{ currentReportId, setCurrentReportId, isLoading }}
+    >
       {children}
     </ReportContext.Provider>
   )

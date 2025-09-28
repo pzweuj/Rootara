@@ -10,7 +10,10 @@ interface IconSelectorProps {
   onSelectIcon: (icon: string) => void
 }
 
-export function IconSelector({ selectedIcon, onSelectIcon }: IconSelectorProps) {
+export function IconSelector({
+  selectedIcon,
+  onSelectIcon,
+}: IconSelectorProps) {
   const { language } = useLanguage()
 
   const translations = {
@@ -24,7 +27,8 @@ export function IconSelector({ selectedIcon, onSelectIcon }: IconSelectorProps) 
     },
   }
 
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   // Common icons to display in the selector
   const commonIcons = [
@@ -96,7 +100,9 @@ export function IconSelector({ selectedIcon, onSelectIcon }: IconSelectorProps) 
                 className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
                 onClick={() => onSelectIcon(iconName)}
               >
-                {IconComponent && <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />}
+                {IconComponent && (
+                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                )}
               </Button>
             )
           })}

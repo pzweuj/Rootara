@@ -7,7 +7,10 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
   try {
     // 解析SCORE公式
     if (trait.formula.startsWith("SCORE(") && trait.formula.endsWith(")")) {
-      const formulaContent = trait.formula.substring(6, trait.formula.length - 1)
+      const formulaContent = trait.formula.substring(
+        6,
+        trait.formula.length - 1
+      )
       const ruleGroups = formulaContent
         .split(";")
         .map((group) => group.trim())
@@ -19,7 +22,9 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
       for (const group of ruleGroups) {
         if (!group) continue
 
-        const [rsidPart, scoresPart] = group.split(":").map((part) => part.trim())
+        const [rsidPart, scoresPart] = group
+          .split(":")
+          .map((part) => part.trim())
         if (!rsidPart || !scoresPart) continue
 
         const rsid = rsidPart.trim()
@@ -33,7 +38,9 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
           return { genotype, score: Number.parseInt(scoreStr, 10) }
         })
 
-        const matchingRule = scoreRules.find((rule) => rule.genotype === userGenotype)
+        const matchingRule = scoreRules.find(
+          (rule) => rule.genotype === userGenotype
+        )
         if (matchingRule) {
           totalScore += matchingRule.score
         }
@@ -43,7 +50,10 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
     }
     // 解析IF条件公式
     else if (trait.formula.startsWith("IF(") && trait.formula.endsWith(")")) {
-      const formulaContent = trait.formula.substring(3, trait.formula.length - 1)
+      const formulaContent = trait.formula.substring(
+        3,
+        trait.formula.length - 1
+      )
       const parts = formulaContent.split(",").map((part) => part.trim())
 
       if (parts.length < 3) return 0
@@ -54,7 +64,9 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
       const falseValue = Number.parseInt(parts[2], 10)
 
       // 解析条件表达式，例如 "rs123=AG"
-      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
+      const [rsid, expectedGenotype] = condition
+        .split("=")
+        .map((part) => part.trim())
       const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
 
       if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) return falseValue
@@ -63,7 +75,10 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
       return userGenotype === expectedGenotype ? trueValue : falseValue
     }
     // 支持组合公式：IF(condition, SCORE(...), value)
-    else if (trait.formula.includes("IF(") && trait.formula.includes("SCORE(")) {
+    else if (
+      trait.formula.includes("IF(") &&
+      trait.formula.includes("SCORE(")
+    ) {
       // 提取IF条件
       const ifMatch = trait.formula.match(/IF\((.*?),(.*),(.*)/)
       if (!ifMatch || ifMatch.length < 4) return 0
@@ -73,7 +88,9 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
       const falseExpr = ifMatch[3].trim()
 
       // 解析条件
-      const [rsid, expectedGenotype] = condition.split("=").map((part) => part.trim())
+      const [rsid, expectedGenotype] = condition
+        .split("=")
+        .map((part) => part.trim())
       const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
 
       if (rsidIndex === -1 || !trait.yourGenotypes[rsidIndex]) {
@@ -112,8 +129,13 @@ export const calculateTraitScore = (trait: Partial<Trait>): number => {
 }
 
 // 根据分数和阈值确定结果
-export const determineResult = (trait: Partial<Trait>): { en: string; "zh-CN": string } => {
-  if (!trait.scoreThresholds || Object.keys(trait.scoreThresholds).length === 0) {
+export const determineResult = (
+  trait: Partial<Trait>
+): { en: string; "zh-CN": string } => {
+  if (
+    !trait.scoreThresholds ||
+    Object.keys(trait.scoreThresholds).length === 0
+  ) {
     return { en: "", "zh-CN": "" }
   }
 

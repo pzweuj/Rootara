@@ -2,17 +2,46 @@
   "compilerOptions": {
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "target": "ES6",
+    "target": "ES2022",
     "skipLibCheck": true,
+
+    // 严格模式配置
     "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    // 错误检查配置 (逐步启用)
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noUncheckedIndexedAccess": true,  // 暂时禁用，需要逐步修复
+    // "noImplicitOverride": true,        // 暂时禁用
+    // "exactOptionalPropertyTypes": true, // 暂时禁用，需要大量代码修改
+
+    // 模块配置
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "moduleDetection": "force",
+
+    // JSX 配置
     "jsx": "preserve",
+    "jsxImportSource": "react",
+
+    // 其他配置
     "incremental": true,
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": false,
+
     "plugins": [
       {
         "name": "next"
@@ -23,5 +52,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next", "out", "dist"]
 }

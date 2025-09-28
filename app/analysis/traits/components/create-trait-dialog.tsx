@@ -25,24 +25,28 @@ interface CreateTraitDialogProps {
   onCreateTrait: (trait: Trait) => void
 }
 
-export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: CreateTraitDialogProps) {
+export function CreateTraitDialog({
+  isOpen,
+  onOpenChange,
+  onCreateTrait,
+}: CreateTraitDialogProps) {
   const { language } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [newTrait, setNewTrait] = useState<Partial<Trait>>({
-    name: { 
+    name: {
       en: "",
       "zh-CN": "",
-      default: "" 
+      default: "",
     },
-    result: { 
+    result: {
       en: "",
       "zh-CN": "",
-      default: "" 
+      default: "",
     },
-    description: { 
+    description: {
       en: "",
       "zh-CN": "",
-      default: "" 
+      default: "",
     },
     icon: "AlertCircle",
     confidence: "medium",
@@ -68,7 +72,8 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       creatingTrait: "Creating trait...",
       errorCreatingTrait: "Error creating trait",
       references: "References", // Added translation key
-      reference_note: "Enter comma-separated PubMed IDs (e.g., 12345678,98765432)", // Added translation key
+      reference_note:
+        "Enter comma-separated PubMed IDs (e.g., 12345678,98765432)", // Added translation key
     },
     "zh-CN": {
       createTrait: "创建特征",
@@ -86,7 +91,8 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
     },
   }
 
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   const handleCreateTrait = async () => {
     // 验证逻辑只检查default字段
@@ -105,7 +111,10 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       return
     }
 
-    if (!newTrait.scoreThresholds || Object.keys(newTrait.scoreThresholds).length === 0) {
+    if (
+      !newTrait.scoreThresholds ||
+      Object.keys(newTrait.scoreThresholds).length === 0
+    ) {
       toast.error(t("pleaseAddThreshold"))
       return
     }
@@ -113,14 +122,17 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
     // 构建特征数据对象
     const traitData = {
       name: newTrait.name,
-      result: Object.keys(newTrait.scoreThresholds).reduce((acc, key) => ({
-        ...acc,
-        [key]: {
-          'en': '',
-          'zh-CN': '',
-          'default': key
-        }
-      }), {}),
+      result: Object.keys(newTrait.scoreThresholds).reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: {
+            en: "",
+            "zh-CN": "",
+            default: key,
+          },
+        }),
+        {}
+      ),
       description: newTrait.description,
       icon: newTrait.icon,
       confidence: newTrait.confidence,
@@ -134,35 +146,37 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
     try {
       setIsLoading(true)
       toast.loading(t("creatingTrait"))
-      
+
       // 调用API路由创建特征
-      const response = await fetch('/api/traits/add', {
-        method: 'POST',
+      const response = await fetch("/api/traits/add", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ traitData: traitData })
+        body: JSON.stringify({ traitData: traitData }),
       })
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
       }
-      
+
       const result = await response.json()
-      
+
       // 如果API返回了更新后的特征数据，使用它
-      const finalTrait = result.trait || traitData as Trait
-      
+      const finalTrait = result.trait || (traitData as Trait)
+
       // 通知父组件特征已创建
       onCreateTrait(finalTrait)
       toast.dismiss()
-      toast.success(language === 'en' ? 'Trait created successfully' : '特征创建成功')
-      
+      toast.success(
+        language === "en" ? "Trait created successfully" : "特征创建成功"
+      )
+
       // 重置表单
       setNewTrait({
-        name: { en: "", "zh-CN": "", default: ""  },
-        result: { en: "", "zh-CN": "", default: ""  },
-        description: { en: "", "zh-CN": "", default: ""  },
+        name: { en: "", "zh-CN": "", default: "" },
+        result: { en: "", "zh-CN": "", default: "" },
+        description: { en: "", "zh-CN": "", default: "" },
         icon: "AlertCircle",
         confidence: "medium",
         category: "appearance",
@@ -174,7 +188,7 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
         reference: [], // 重置参考文献
       })
     } catch (error) {
-      console.error('Error creating trait:', error)
+      console.error("Error creating trait:", error)
       toast.dismiss()
       toast.error(t("errorCreatingTrait"))
     } finally {
@@ -187,8 +201,12 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
       <DialogContent className="w-[calc(100vw-2rem)] max-w-[600px] max-h-[90vh] overflow-hidden p-4 sm:p-6">
         <div className="overflow-y-auto scrollbar-thin max-h-[calc(90vh-8rem)]">
           <DialogHeader className="pb-2 pr-6">
-            <DialogTitle className="text-lg sm:text-xl">{t("createTrait")}</DialogTitle>
-            <DialogDescription className="text-sm">{t("fillDetails")}</DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">
+              {t("createTrait")}
+            </DialogTitle>
+            <DialogDescription className="text-sm">
+              {t("fillDetails")}
+            </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-3 sm:gap-4 py-2 sm:py-4 overflow-hidden">
@@ -204,7 +222,12 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
               referenceGenotypes={newTrait.referenceGenotypes || []}
               yourGenotypes={newTrait.yourGenotypes || []}
               onChange={(rsids, referenceGenotypes, yourGenotypes) =>
-                setNewTrait({ ...newTrait, rsids, referenceGenotypes, yourGenotypes })
+                setNewTrait({
+                  ...newTrait,
+                  rsids,
+                  referenceGenotypes,
+                  yourGenotypes,
+                })
               }
             />
 
@@ -215,21 +238,26 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
 
             <ScoreThresholdManager
               thresholds={newTrait.scoreThresholds || {}}
-              onChange={(scoreThresholds) => setNewTrait({ ...newTrait, scoreThresholds })}
+              onChange={(scoreThresholds) =>
+                setNewTrait({ ...newTrait, scoreThresholds })
+              }
             />
 
             {/* References Input */}
             <div className="space-y-2">
-              <label htmlFor="references" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label
+                htmlFor="references"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
                 {t("references")} {/* Add translation key */}
               </label>
               <textarea
                 id="references"
-                value={newTrait.reference?.join(', ') || ''}
+                value={newTrait.reference?.join(", ") || ""}
                 onChange={(e) =>
                   setNewTrait({
                     ...newTrait,
-                    reference: [e.target.value] // 将整个输入字符串作为数组的一个元素
+                    reference: [e.target.value], // 将整个输入字符串作为数组的一个元素
                   })
                 }
                 className="flex min-h-[60px] sm:min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
@@ -252,7 +280,11 @@ export function CreateTraitDialog({ isOpen, onOpenChange, onCreateTrait }: Creat
               disabled={isLoading}
               className="w-full sm:w-auto order-1 sm:order-2"
             >
-              {isLoading ? (language === 'en' ? 'Creating...' : '创建中...') : t("create")}
+              {isLoading
+                ? language === "en"
+                  ? "Creating..."
+                  : "创建中..."
+                : t("create")}
             </Button>
           </DialogFooter>
         </div>

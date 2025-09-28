@@ -6,20 +6,20 @@ import type { Trait } from "@/types/trait"
 export async function loadAllTraits(reportId: string): Promise<Trait[]> {
   try {
     // Call the API to get traits data
-    const response = await fetch('/api/traits/info', {
-      method: 'POST',
+    const response = await fetch("/api/traits/info", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ report_id: reportId })
-    });
+      body: JSON.stringify({ report_id: reportId }),
+    })
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`)
     }
 
-    const data = await response.json();
-    return data as Trait[];
+    const data = await response.json()
+    return data as Trait[]
   } catch (error) {
     console.error("Failed to load traits:", error)
     return []
@@ -29,7 +29,10 @@ export async function loadAllTraits(reportId: string): Promise<Trait[]> {
 /**
  * Finds a trait by ID, using cache when possible
  */
-export async function findTraitById(id: string, reportId: string): Promise<Trait | null> {
+export async function findTraitById(
+  id: string,
+  reportId: string
+): Promise<Trait | null> {
   try {
     // First try to get from cache
     if (typeof window !== "undefined") {
@@ -101,7 +104,9 @@ export function calculateTraitScore(trait: Trait): number {
       })
 
       // Find the matching score rule for the user's genotype
-      const matchingRule = scoreRules.find((rule) => rule.genotype === userGenotype)
+      const matchingRule = scoreRules.find(
+        (rule) => rule.genotype === userGenotype
+      )
       if (matchingRule) {
         totalScore += matchingRule.score
       }
@@ -166,13 +171,18 @@ export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
     appearance: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
     internal: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200",
-    nutrition: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    nutrition:
+      "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
     risk: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-    lifestyle: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    default: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+    lifestyle:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    default: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
   }
 
-  return colors[category] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+  return (
+    colors[category] ||
+    "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+  )
 }
 
 /**

@@ -19,14 +19,18 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value || ""
 
   if (!isProduction) {
-    console.log(`[Middleware] Public path: ${isPublicPath}, Has token: ${!!token}`)
+    console.log(
+      `[Middleware] Public path: ${isPublicPath}, Has token: ${!!token}`
+    )
   }
 
   // If the path is public and the user is logged in, redirect to home
   if (isPublicPath && token) {
     try {
       // Verify the token using jose instead of jsonwebtoken
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
+      const secret = new TextEncoder().encode(
+        process.env.JWT_SECRET || "your-secret-key"
+      )
       await jose.jwtVerify(token, secret)
 
       if (!isProduction) {
@@ -37,7 +41,10 @@ export async function middleware(request: NextRequest) {
     } catch (error) {
       // If token verification fails, continue to login page
       if (!isProduction) {
-        console.log(`[Middleware] Token verification failed:`, error instanceof Error ? error.message : error)
+        console.log(
+          `[Middleware] Token verification failed:`,
+          error instanceof Error ? error.message : error
+        )
       }
 
       // 清除无效的token cookie
@@ -47,7 +54,7 @@ export async function middleware(request: NextRequest) {
         path: "/",
         httpOnly: true,
         secure: false, // 与login API保持一致
-        sameSite: "lax"
+        sameSite: "lax",
       })
       return response
     }
@@ -56,7 +63,9 @@ export async function middleware(request: NextRequest) {
   // If the path is not public and the user is not logged in, redirect to login
   if (!isPublicPath && !token) {
     if (!isProduction) {
-      console.log(`[Middleware] No token for protected path, redirecting to login`)
+      console.log(
+        `[Middleware] No token for protected path, redirecting to login`
+      )
     }
     return NextResponse.redirect(new URL("/login", request.url))
   }
@@ -64,7 +73,9 @@ export async function middleware(request: NextRequest) {
   // If the path is not public and there is a token, verify it
   if (!isPublicPath && token) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "your-secret-key")
+      const secret = new TextEncoder().encode(
+        process.env.JWT_SECRET || "your-secret-key"
+      )
       await jose.jwtVerify(token, secret)
 
       if (!isProduction) {
@@ -72,7 +83,9 @@ export async function middleware(request: NextRequest) {
       }
     } catch (error) {
       if (!isProduction) {
-        console.log(`[Middleware] Invalid token for protected path, redirecting to login`)
+        console.log(
+          `[Middleware] Invalid token for protected path, redirecting to login`
+        )
       }
 
       // 清除无效的token并重定向到登录页面
@@ -82,7 +95,7 @@ export async function middleware(request: NextRequest) {
         path: "/",
         httpOnly: true,
         secure: false, // 与login API保持一致
-        sameSite: "lax"
+        sameSite: "lax",
       })
       return response
     }

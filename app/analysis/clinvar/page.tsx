@@ -1,12 +1,41 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Search, AlertCircle, AlertTriangle, CheckCircle, Info, ExternalLink, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  Search,
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  ExternalLink,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { Button } from "@/components/ui/button"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
@@ -39,19 +68,19 @@ interface ClinVarResponse {
 
 // 添加防抖函数
 function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+      setDebouncedValue(value)
+    }, delay)
 
     return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
+      clearTimeout(handler)
+    }
+  }, [value, delay])
 
-  return debouncedValue;
+  return debouncedValue
 }
 
 export default function ClinvarAnalysisPage() {
@@ -71,28 +100,28 @@ export default function ClinvarAnalysisPage() {
     likely_pathogenic: 0,
     benign: 0,
     likely_benign: 0,
-    uncertain_significance: 0
+    uncertain_significance: 0,
   })
 
   // 使用防抖处理搜索查询
-  const debouncedQuery = useDebounce(searchQuery, 300);
+  const debouncedQuery = useDebounce(searchQuery, 300)
 
   // 当防抖查询变化时更新搜索结果
   useEffect(() => {
-    setDebouncedSearchQuery(debouncedQuery);
-  }, [debouncedQuery]);
+    setDebouncedSearchQuery(debouncedQuery)
+  }, [debouncedQuery])
 
   // 获取ClinVar数据的函数
   const fetchClinvarData = async (reportId: string) => {
     setLoading(true)
     setError(null)
-    
+
     try {
       // 修改为调用新的API路由
       const response = await fetch(`/api/report/clinvar`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           report_id: reportId,
@@ -100,8 +129,8 @@ export default function ClinvarAnalysisPage() {
           sort_order: "asc",
           search_term: "",
           filters: {},
-          indel: false
-        })
+          indel: false,
+        }),
       })
 
       if (!response.ok) {
@@ -157,26 +186,30 @@ export default function ClinvarAnalysisPage() {
   }
 
   const normalizeClassification = (classification: string) => {
-    const lowerClass = classification.toLowerCase();
-    
+    const lowerClass = classification.toLowerCase()
+
     // 如果包含多个分类（用/分隔），按优先级选择一个
-    if (lowerClass.includes('/')) {
-      if (lowerClass.includes('pathogenic')) return 'pathogenic';
-      if (lowerClass.includes('likely pathogenic')) return 'likely pathogenic';
-      if (lowerClass.includes('benign')) return 'benign';
-      if (lowerClass.includes('likely benign')) return 'likely benign';
-      if (lowerClass.includes('uncertain_significance') || lowerClass.includes('uncertain significance')) return 'uncertain significance';
-      return lowerClass.split('/')[0].trim(); // 如果没有匹配到优先级，返回第一个
+    if (lowerClass.includes("/")) {
+      if (lowerClass.includes("pathogenic")) return "pathogenic"
+      if (lowerClass.includes("likely pathogenic")) return "likely pathogenic"
+      if (lowerClass.includes("benign")) return "benign"
+      if (lowerClass.includes("likely benign")) return "likely benign"
+      if (
+        lowerClass.includes("uncertain_significance") ||
+        lowerClass.includes("uncertain significance")
+      )
+        return "uncertain significance"
+      return lowerClass.split("/")[0].trim() // 如果没有匹配到优先级，返回第一个
     }
-    
-    return lowerClass.replace(/_/g, ' ');
+
+    return lowerClass.replace(/_/g, " ")
   }
 
   // 根据API返回的分类获取对应的Badge
   const getClassificationBadge = (classification: string) => {
     // 将API返回的分类映射到UI显示的分类
-    const normalizedClassification = normalizeClassification(classification);
-  
+    const normalizedClassification = normalizeClassification(classification)
+
     switch (normalizedClassification) {
       case "pathogenic":
         return (
@@ -231,7 +264,10 @@ export default function ClinvarAnalysisPage() {
         )
       default:
         return (
-          <Badge variant="outline" className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+          <Badge
+            variant="outline"
+            className="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+          >
             {classification}
           </Badge>
         )
@@ -253,8 +289,10 @@ export default function ClinvarAnalysisPage() {
     return (
       <div className="flex flex-col justify-center items-center h-64">
         <AlertCircle className="h-8 w-8 text-red-500" />
-        <p className="mt-2 text-red-500">{t("error")}: {error}</p>
-        <button 
+        <p className="mt-2 text-red-500">
+          {t("error")}: {error}
+        </p>
+        <button
           className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
           onClick={() => fetchClinvarData(currentReportId)}
         >
@@ -278,13 +316,15 @@ export default function ClinvarAnalysisPage() {
     id: rsid,
     ...variant,
     // 将API返回的clnsig映射到UI显示的classification
-    classification: variant.clnsig.replace(/_/g, ' '),
+    classification: variant.clnsig.replace(/_/g, " "),
     // 将API返回的clndn映射到UI显示的condition
-    condition: variant.clndn.replace(/_/g, ' ')
+    condition: variant.clndn.replace(/_/g, " "),
   }))
 
   // 获取所有基因的唯一列表
-  const uniqueGenes = Array.from(new Set(variants.map((variant) => variant.gene))).sort()
+  const uniqueGenes = Array.from(
+    new Set(variants.map((variant) => variant.gene))
+  ).sort()
 
   // 计算各个分类的数量
   const calculateStatistics = () => {
@@ -293,36 +333,36 @@ export default function ClinvarAnalysisPage() {
       likely_pathogenic: 0,
       benign: 0,
       likely_benign: 0,
-      uncertain_significance: 0
-    };
+      uncertain_significance: 0,
+    }
 
-    variants.forEach(variant => {
-      const normalizedClass = normalizeClassification(variant.classification);
-      
-      switch(normalizedClass) {
-        case 'pathogenic':
-          stats.pathogenic += 1;
-          break;
-        case 'likely pathogenic':
-          stats.likely_pathogenic += 1;
-          break;
-        case 'benign':
-          stats.benign += 1;
-          break;
-        case 'likely benign':
-          stats.likely_benign += 1;
-          break;
-        case 'uncertain significance':
-          stats.uncertain_significance += 1;
-          break;
+    variants.forEach((variant) => {
+      const normalizedClass = normalizeClassification(variant.classification)
+
+      switch (normalizedClass) {
+        case "pathogenic":
+          stats.pathogenic += 1
+          break
+        case "likely pathogenic":
+          stats.likely_pathogenic += 1
+          break
+        case "benign":
+          stats.benign += 1
+          break
+        case "likely benign":
+          stats.likely_benign += 1
+          break
+        case "uncertain significance":
+          stats.uncertain_significance += 1
+          break
       }
-    });
+    })
 
-    return stats;
-  };
+    return stats
+  }
 
   // 计算统计数据
-  const variantStatistics = calculateStatistics();
+  const variantStatistics = calculateStatistics()
 
   // 过滤变异
   const filteredVariants = variants.filter((variant) => {
@@ -330,17 +370,26 @@ export default function ClinvarAnalysisPage() {
       debouncedSearchQuery === "" || // 如果搜索词为空，显示所有结果
       variant.id.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
       variant.gene.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      variant.condition.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+      variant.condition
+        .toLowerCase()
+        .includes(debouncedSearchQuery.toLowerCase())
 
-    const normalizedClassification = normalizeClassification(variant.classification);
+    const normalizedClassification = normalizeClassification(
+      variant.classification
+    )
 
     const matchesClassification =
       classificationFilter === "all" ||
-      (classificationFilter === "pathogenic" && normalizedClassification === "pathogenic") ||
-      (classificationFilter === "likely_pathogenic" && normalizedClassification === "likely pathogenic") ||
-      (classificationFilter === "uncertain" && normalizedClassification.includes("uncertain")) ||
-      (classificationFilter === "likely_benign" && normalizedClassification === "likely benign") ||
-      (classificationFilter === "benign" && normalizedClassification === "benign")
+      (classificationFilter === "pathogenic" &&
+        normalizedClassification === "pathogenic") ||
+      (classificationFilter === "likely_pathogenic" &&
+        normalizedClassification === "likely pathogenic") ||
+      (classificationFilter === "uncertain" &&
+        normalizedClassification.includes("uncertain")) ||
+      (classificationFilter === "likely_benign" &&
+        normalizedClassification === "likely benign") ||
+      (classificationFilter === "benign" &&
+        normalizedClassification === "benign")
 
     return matchesSearch && matchesClassification
   })
@@ -350,8 +399,6 @@ export default function ClinvarAnalysisPage() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentItems = filteredVariants.slice(indexOfFirstItem, indexOfLastItem)
   const totalPages = Math.ceil(filteredVariants.length / itemsPerPage)
-
-
 
   return (
     <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">
@@ -372,20 +419,31 @@ export default function ClinvarAnalysisPage() {
       <Card className="w-full overflow-hidden">
         <CardHeader className="pb-3 sm:pb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <CardTitle className="text-lg sm:text-xl">{t("clinvarAnalysis")}</CardTitle>
-            <Badge variant="outline" className="text-xs font-mono self-start sm:self-center">
+            <CardTitle className="text-lg sm:text-xl">
+              {t("clinvarAnalysis")}
+            </CardTitle>
+            <Badge
+              variant="outline"
+              className="text-xs font-mono self-start sm:self-center"
+            >
               {t("reportId")}
               {currentReportId}
             </Badge>
           </div>
-          <CardDescription className="text-sm break-words">{t("clinvarDescription")}</CardDescription>
+          <CardDescription className="text-sm break-words">
+            {t("clinvarDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="grid gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
             <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
               <CardContent className="p-3 sm:p-4 text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">{variantStatistics.pathogenic}</div>
-                <div className="text-xs sm:text-sm text-red-600 dark:text-red-400 leading-tight">{t("pathogenicVariants")}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-red-600 dark:text-red-400">
+                  {variantStatistics.pathogenic}
+                </div>
+                <div className="text-xs sm:text-sm text-red-600 dark:text-red-400 leading-tight">
+                  {t("pathogenicVariants")}
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
@@ -393,25 +451,39 @@ export default function ClinvarAnalysisPage() {
                 <div className="text-2xl sm:text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                   {variantStatistics.likely_pathogenic}
                 </div>
-                <div className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400 leading-tight">{t("likelyPathogenic")}</div>
+                <div className="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400 leading-tight">
+                  {t("likelyPathogenic")}
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 col-span-2 sm:col-span-1">
               <CardContent className="p-3 sm:p-4 text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{variantStatistics.uncertain_significance}</div>
-                <div className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 leading-tight">{t("uncertainSignificance")}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  {variantStatistics.uncertain_significance}
+                </div>
+                <div className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 leading-tight">
+                  {t("uncertainSignificance")}
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800">
               <CardContent className="p-3 sm:p-4 text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">{variantStatistics.likely_benign}</div>
-                <div className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 leading-tight">{t("likelyBenign")}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-teal-600 dark:text-teal-400">
+                  {variantStatistics.likely_benign}
+                </div>
+                <div className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 leading-tight">
+                  {t("likelyBenign")}
+                </div>
               </CardContent>
             </Card>
             <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
               <CardContent className="p-3 sm:p-4 text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{variantStatistics.benign}</div>
-                <div className="text-xs sm:text-sm text-green-600 dark:text-green-400 leading-tight">{t("benign")}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
+                  {variantStatistics.benign}
+                </div>
+                <div className="text-xs sm:text-sm text-green-600 dark:text-green-400 leading-tight">
+                  {t("benign")}
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -430,16 +502,27 @@ export default function ClinvarAnalysisPage() {
             />
           </div>
           <div className="w-full sm:w-1/3">
-            <Select value={classificationFilter} onValueChange={setClassificationFilter}>
+            <Select
+              value={classificationFilter}
+              onValueChange={setClassificationFilter}
+            >
               <SelectTrigger className="text-sm sm:text-base">
                 <SelectValue placeholder={t("classification")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("allClassifications")}</SelectItem>
-                <SelectItem value="pathogenic">{t("pathogenicVariants")}</SelectItem>
-                <SelectItem value="likely_pathogenic">{t("likelyPathogenic")}</SelectItem>
-                <SelectItem value="uncertain">{t("uncertainSignificance")}</SelectItem>
-                <SelectItem value="likely_benign">{t("likelyBenign")}</SelectItem>
+                <SelectItem value="pathogenic">
+                  {t("pathogenicVariants")}
+                </SelectItem>
+                <SelectItem value="likely_pathogenic">
+                  {t("likelyPathogenic")}
+                </SelectItem>
+                <SelectItem value="uncertain">
+                  {t("uncertainSignificance")}
+                </SelectItem>
+                <SelectItem value="likely_benign">
+                  {t("likelyBenign")}
+                </SelectItem>
                 <SelectItem value="benign">{t("benign")}</SelectItem>
               </SelectContent>
             </Select>
@@ -459,14 +542,18 @@ export default function ClinvarAnalysisPage() {
                     <TableHead className="w-[10%]">{t("position")}</TableHead>
                     <TableHead className="w-[10%]">{t("genotype")}</TableHead>
                     <TableHead className="w-[30%]">{t("condition")}</TableHead>
-                    <TableHead className="w-[20%]">{t("classification")}</TableHead>
+                    <TableHead className="w-[20%]">
+                      {t("classification")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {currentItems.length > 0 ? (
                     currentItems.map((variant) => (
                       <TableRow key={variant.id}>
-                        <TableCell className="font-medium">{variant.gene}</TableCell>
+                        <TableCell className="font-medium">
+                          {variant.gene}
+                        </TableCell>
                         <TableCell className="max-w-[150px] truncate">
                           <a
                             href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
@@ -482,15 +569,23 @@ export default function ClinvarAnalysisPage() {
                         <TableCell>{variant.chromosome}</TableCell>
                         <TableCell>{variant.position}</TableCell>
                         <TableCell>{variant.gt}</TableCell>
-                        <TableCell className="max-w-[200px] truncate" title={variant.condition}>
+                        <TableCell
+                          className="max-w-[200px] truncate"
+                          title={variant.condition}
+                        >
                           {variant.condition}
                         </TableCell>
-                        <TableCell>{getClassificationBadge(variant.classification)}</TableCell>
+                        <TableCell>
+                          {getClassificationBadge(variant.classification)}
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
+                      <TableCell
+                        colSpan={7}
+                        className="text-center py-4 text-muted-foreground"
+                      >
                         {t("noVariantsFound")}
                       </TableCell>
                     </TableRow>
@@ -508,7 +603,9 @@ export default function ClinvarAnalysisPage() {
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
-                            <div className="font-medium text-sm">{variant.gene}</div>
+                            <div className="font-medium text-sm">
+                              {variant.gene}
+                            </div>
                             <a
                               href={`https://www.ncbi.nlm.nih.gov/snp/${variant.id}`}
                               target="_blank"
@@ -527,22 +624,32 @@ export default function ClinvarAnalysisPage() {
 
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div>
-                            <span className="text-muted-foreground">{t("chromosome")}:</span>
+                            <span className="text-muted-foreground">
+                              {t("chromosome")}:
+                            </span>
                             <span className="ml-1">{variant.chromosome}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t("position")}:</span>
+                            <span className="text-muted-foreground">
+                              {t("position")}:
+                            </span>
                             <span className="ml-1">{variant.position}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{t("genotype")}:</span>
+                            <span className="text-muted-foreground">
+                              {t("genotype")}:
+                            </span>
                             <span className="ml-1">{variant.gt}</span>
                           </div>
                         </div>
 
                         <div className="text-xs">
-                          <span className="text-muted-foreground">{t("condition")}:</span>
-                          <p className="mt-1 break-words">{variant.condition}</p>
+                          <span className="text-muted-foreground">
+                            {t("condition")}:
+                          </span>
+                          <p className="mt-1 break-words">
+                            {variant.condition}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -556,7 +663,7 @@ export default function ClinvarAnalysisPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* 分页控件 */}
         {filteredVariants.length > 0 && (
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between mt-4 px-4 sm:px-0">
@@ -585,7 +692,8 @@ export default function ClinvarAnalysisPage() {
 
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
               <div className="text-xs sm:text-sm text-muted-foreground text-center">
-                {t("page")} {currentPage} {t("of")} {Math.ceil(filteredVariants.length / itemsPerPage)}
+                {t("page")} {currentPage} {t("of")}{" "}
+                {Math.ceil(filteredVariants.length / itemsPerPage)}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
@@ -603,7 +711,10 @@ export default function ClinvarAnalysisPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={currentPage === Math.ceil(filteredVariants.length / itemsPerPage)}
+                  disabled={
+                    currentPage ===
+                    Math.ceil(filteredVariants.length / itemsPerPage)
+                  }
                   aria-label={t("next")}
                   className="h-8 px-2 sm:px-3"
                 >

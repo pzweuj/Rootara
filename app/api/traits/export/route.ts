@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
@@ -7,12 +7,12 @@ export async function POST(request: Request) {
     const response = await fetch(
       `${process.env.ROOTARA_BACKEND_URL}/traits/export`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ROOTARA_BACKEND_API_KEY || ''
+          "Content-Type": "application/json",
+          "x-api-key": process.env.ROOTARA_BACKEND_API_KEY || "",
         },
-        body: JSON.stringify(traits)
+        body: JSON.stringify(traits),
       }
     )
 
@@ -29,14 +29,14 @@ export async function POST(request: Request) {
     return new NextResponse(formattedJson, {
       status: 200,
       headers: {
-        'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename="traits-export-${new Date().toISOString().split('T')[0]}.json"`,
+        "Content-Type": "application/json",
+        "Content-Disposition": `attachment; filename="traits-export-${new Date().toISOString().split("T")[0]}.json"`,
       },
     })
   } catch (error) {
-    console.error('Error in traits/export API:', error)
+    console.error("Error in traits/export API:", error)
     return NextResponse.json(
-      { error: 'Failed to export traits' },
+      { error: "Failed to export traits" },
       { status: 500 }
     )
   }

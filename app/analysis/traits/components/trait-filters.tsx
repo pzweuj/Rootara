@@ -40,9 +40,15 @@ interface TraitFiltersProps {
   onCategoryChange: (category: TraitCategory) => void
 }
 
-export function TraitFilters({ searchQuery, onSearchChange, selectedCategory, onCategoryChange }: TraitFiltersProps) {
+export function TraitFilters({
+  searchQuery,
+  onSearchChange,
+  selectedCategory,
+  onCategoryChange,
+}: TraitFiltersProps) {
   const { language } = useLanguage()
-  const t = (key: keyof typeof translations.en) => translations[language as keyof typeof translations][key] || key
+  const t = (key: keyof typeof translations.en) =>
+    translations[language as keyof typeof translations][key] || key
 
   return (
     <div className="flex flex-col md:flex-row gap-4 w-full">

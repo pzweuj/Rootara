@@ -11,38 +11,126 @@ import { useReport } from "@/contexts/report-context"
 import type { Trait } from "@/types/trait"
 
 const iconNames = [
-  "Plus", "AlertCircle", "Coffee", "Moon", "Brain", "Music", "Clock", "Droplet",
-  "Eye", "Scissors", "Utensils", "Wine", "Heart", "Dna", "Leaf", "Zap", "Sun",
-  "Smile", "Frown", "Thermometer", "Wind", "Umbrella", "Flame", "Snowflake",
-  "Activity", "Apple", "Baby", "Banana", "Beef", "Beer", "Book", "Braces",
-  "Briefcase", "Cake", "Camera", "Car", "Cat", "ChefHat", "Cherry", "Cloud",
-  "Code", "Compass", "Cookie", "Cpu", "Crown", "Diamond", "Dog", "Egg", "Fish",
-  "Flower", "Gamepad2", "Gift", "Glasses", "Globe", "Grape", "Hammer", "HandMetal",
-  "Headphones", "Home", "IceCream", "Landmark", "Lightbulb", "Microscope", "Mountain",
-  "Palette", "Pill", "Pizza", "Plane", "Rocket", "Salad", "Shirt", "ShoppingBag",
-  "Smartphone", "Star", "Stethoscope", "Syringe", "Target", "Tent", "Trophy",
-  "Tv", "Wheat", "AlertTriangle", "Milk", "Paw", "Pencil", "Pig", "PizzaSlice",
-  "Poo", "QuestionMark", "Ribbon", "Shield", "Shirt2", "Socks", "Star2", "Truck",
+  "Plus",
+  "AlertCircle",
+  "Coffee",
+  "Moon",
+  "Brain",
+  "Music",
+  "Clock",
+  "Droplet",
+  "Eye",
+  "Scissors",
+  "Utensils",
+  "Wine",
+  "Heart",
+  "Dna",
+  "Leaf",
+  "Zap",
+  "Sun",
+  "Smile",
+  "Frown",
+  "Thermometer",
+  "Wind",
+  "Umbrella",
+  "Flame",
+  "Snowflake",
+  "Activity",
+  "Apple",
+  "Baby",
+  "Banana",
+  "Beef",
+  "Beer",
+  "Book",
+  "Braces",
+  "Briefcase",
+  "Cake",
+  "Camera",
+  "Car",
+  "Cat",
+  "ChefHat",
+  "Cherry",
+  "Cloud",
+  "Code",
+  "Compass",
+  "Cookie",
+  "Cpu",
+  "Crown",
+  "Diamond",
+  "Dog",
+  "Egg",
+  "Fish",
+  "Flower",
+  "Gamepad2",
+  "Gift",
+  "Glasses",
+  "Globe",
+  "Grape",
+  "Hammer",
+  "HandMetal",
+  "Headphones",
+  "Home",
+  "IceCream",
+  "Landmark",
+  "Lightbulb",
+  "Microscope",
+  "Mountain",
+  "Palette",
+  "Pill",
+  "Pizza",
+  "Plane",
+  "Rocket",
+  "Salad",
+  "Shirt",
+  "ShoppingBag",
+  "Smartphone",
+  "Star",
+  "Stethoscope",
+  "Syringe",
+  "Target",
+  "Tent",
+  "Trophy",
+  "Tv",
+  "Wheat",
+  "AlertTriangle",
+  "Milk",
+  "Paw",
+  "Pencil",
+  "Pig",
+  "PizzaSlice",
+  "Poo",
+  "QuestionMark",
+  "Ribbon",
+  "Shield",
+  "Shirt2",
+  "Socks",
+  "Star2",
+  "Truck",
   "Wifi",
-];
+]
 
 // 创建动态组件
-const dynamicIcons: Record<string, React.ComponentType<{ className?: string }>> = {};
+const dynamicIcons: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {}
 
 iconNames.forEach((name) => {
   // 使用类型断言确保类型正确
   dynamicIcons[name] = dynamic(
-    async (): Promise<{ default: React.ComponentType<{ className?: string }> }> => {
-      const module = await import("lucide-react");
-      const Icon = module[name as keyof typeof module];
+    async (): Promise<{
+      default: React.ComponentType<{ className?: string }>
+    }> => {
+      const module = await import("lucide-react")
+      const Icon = module[name as keyof typeof module]
       // 确保返回的Icon组件符合ComponentType<{ className?: string }> 类型
       return {
-        default: Icon as React.ComponentType<{ className?: string }>
-      };
+        default: Icon as React.ComponentType<{ className?: string }>,
+      }
     },
     { ssr: false }
-  ) as React.ComponentType<{ className?: string }>;
-});
+  ) as React.ComponentType<{ className?: string }>
+})
 
 export function TraitHighlights() {
   const { language } = useLanguage()
@@ -64,12 +152,12 @@ export function TraitHighlights() {
 
       try {
         setLoading(true)
-        const response = await fetch('/api/traits/info', {
-          method: 'POST',
+        const response = await fetch("/api/traits/info", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ report_id: currentReportId })
+          body: JSON.stringify({ report_id: currentReportId }),
         })
 
         if (!response.ok) {
@@ -114,18 +202,27 @@ export function TraitHighlights() {
 
   const t = (key: string) => {
     return (
-      translations[language as keyof typeof translations][key as keyof (typeof translations)[typeof language]] || key
+      translations[language as keyof typeof translations][
+        key as keyof (typeof translations)[typeof language]
+      ] || key
     )
   }
 
   // 辅助函数：获取多语言字段的文本
-  const getLocalizedText = (field: { en: string; "zh-CN": string; default: string } | undefined, fallback: string = "N/A"): string => {
+  const getLocalizedText = (
+    field: { en: string; "zh-CN": string; default: string } | undefined,
+    fallback: string = "N/A"
+  ): string => {
     if (!field) return fallback
     return field[language as keyof typeof field] || field.default || fallback
   }
 
   // 辅助函数：从result Record中获取第一个结果的文本
-  const getResultText = (result: Record<string, { en: string; "zh-CN": string; default: string }> | undefined): string => {
+  const getResultText = (
+    result:
+      | Record<string, { en: string; "zh-CN": string; default: string }>
+      | undefined
+  ): string => {
     if (!result) return "N/A"
     const firstKey = Object.keys(result)[0]
     if (!firstKey) return "N/A"
@@ -134,19 +231,25 @@ export function TraitHighlights() {
   }
 
   // 辅助函数：获取图标组件
-  const getIconComponent = (iconName: string): React.ComponentType<{ className?: string }> => {
+  const getIconComponent = (
+    iconName: string
+  ): React.ComponentType<{ className?: string }> => {
     // 如果图标名称在动态图标中存在，返回对应的组件
     if (dynamicIcons[iconName]) {
       return dynamicIcons[iconName]
     }
     // 如果不存在，返回默认的AlertCircle图标
-    return dynamicIcons["AlertCircle"] || (() => <div className="w-2 h-2 bg-primary rounded-full" />)
+    return (
+      dynamicIcons["AlertCircle"] ||
+      (() => <div className="w-2 h-2 bg-primary rounded-full" />)
+    )
   }
 
   const getConfidenceBadge = (confidence: "high" | "medium" | "low") => {
     const styles = {
       high: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+      medium:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
       low: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
     }
 
@@ -157,7 +260,9 @@ export function TraitHighlights() {
     }
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[confidence as keyof typeof styles]}`}>
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[confidence as keyof typeof styles]}`}
+      >
         {confidenceText[confidence as keyof typeof confidenceText]}
       </span>
     )
@@ -168,7 +273,9 @@ export function TraitHighlights() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-medium">{t("traitHighlights")}</CardTitle>
+          <CardTitle className="text-lg font-medium">
+            {t("traitHighlights")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
@@ -184,7 +291,9 @@ export function TraitHighlights() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-medium">{t("traitHighlights")}</CardTitle>
+          <CardTitle className="text-lg font-medium">
+            {t("traitHighlights")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
@@ -198,7 +307,9 @@ export function TraitHighlights() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-medium">{t("traitHighlights")}</CardTitle>
+        <CardTitle className="text-lg font-medium">
+          {t("traitHighlights")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -219,16 +330,24 @@ export function TraitHighlights() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold">
-                    {getLocalizedText(trait.result_current) || getResultText(trait.result)}
+                    {getLocalizedText(trait.result_current) ||
+                      getResultText(trait.result)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {getLocalizedText(trait.description, "No description available")}
+                    {getLocalizedText(
+                      trait.description,
+                      "No description available"
+                    )}
                   </p>
                 </div>
               </div>
             )
           })}
-          <Button className="w-full" variant="outline" onClick={() => router.push("/analysis/traits")}>
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={() => router.push("/analysis/traits")}
+          >
             {t("viewAllTraits")}
             <ExternalLink className="h-3 w-3" />
           </Button>

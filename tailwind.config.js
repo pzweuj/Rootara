@@ -17,12 +17,12 @@ module.exports = {
       },
     },
     screens: {
-      'xs': '475px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1400px',
+      xs: "475px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1400px",
     },
     extend: {
       colors: {
@@ -60,10 +60,10 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
         purple: {
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          800: '#6b21a8',
-          900: '#581c87'
+          100: "#f3e8ff",
+          200: "#e9d5ff",
+          800: "#6b21a8",
+          900: "#581c87",
         },
       },
       borderRadius: {

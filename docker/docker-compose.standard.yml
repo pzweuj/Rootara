@@ -1,26 +1,19 @@
-# Rootara 基因数据分析平台 - 部署选择说明
+# Rootara 基因数据分析平台 - 标准版本（含Redis缓存）
 #
-# 🎯 请选择适合的部署版本：
+# 🚀 快速部署（2步完成）：
+# 1. 确保已安装 Docker 和 Docker Compose
+# 2. 运行：docker-compose -f docker-compose.standard.yml up -d
+# 3. 访问：http://localhost:3000（用户名：admin@rootara.app 密码：rootara123）
 #
-# 📁 docker-compose.standard.yml - 标准版本（推荐）
-#   - 内存占用：约70-80MB
-#   - 性能：含Redis缓存，响应速度快（提升70-90%）
-#   - 适用：生产环境，内存充足的服务器（>1GB）
-#   - 部署：docker-compose -f docker-compose.standard.yml up -d
+# 📊 标准版本特性：
+# - 内存占用：约70-80MB
+# - 性能：Redis缓存，响应速度快（提升70-90%）
+# - 适用：生产环境，内存充足的服务器
 #
-# 📁 docker-compose.lite.yml - 轻量版本
-#   - 内存占用：约30-40MB（节省50MB）
-#   - 性能：内存缓存，响应稍慢但够用
-#   - 适用：内存有限的服务器（<1GB），个人学习使用
-#   - 部署：docker-compose -f docker-compose.lite.yml up -d
-#
-# 💡 如何选择：
-# - 内存 > 1GB：选择 standard.yml
-# - 内存 < 1GB：选择 lite.yml
-# - 生产环境：推荐 standard.yml
-# - 个人学习：lite.yml 即可
-#
-# 📖 两个版本的配置完全相同，只是Redis缓存的差异
+# ⚠️ 需要修改的配置（如果需要）：
+# - 管理员邮箱和密码（见下方 ADMIN_EMAIL 和 ADMIN_PASSWORD）
+# - 访问端口（默认3000，见下方 ports 配置）
+# - API密钥（见下方 ROOTARA_API_KEY，前后端需保持一致）
 
 version: '3.8'
 
@@ -93,19 +86,12 @@ networks:
     name: rootara
 
 # 🔧 常用命令：
-# 标准模式启动：docker-compose up -d
-# 轻量模式启动：docker-compose -f docker-compose.yml -f docker-compose.lite.yml up -d
-# 停止：docker-compose down
-# 查看日志：docker-compose logs -f
-# 重启：docker-compose restart
-#
-# 💡 模式选择建议：
-# - 内存 > 1GB：选择标准模式（更快的响应速度）
-# - 内存 < 1GB：选择轻量模式（更低的资源占用）
-# - 生产环境：推荐标准模式
-# - 个人学习：轻量模式即可
+# 启动：docker-compose -f docker-compose.standard.yml up -d
+# 停止：docker-compose -f docker-compose.standard.yml down
+# 查看日志：docker-compose -f docker-compose.standard.yml logs -f
+# 重启：docker-compose -f docker-compose.standard.yml restart
 #
 # 📖 高级配置（可选）：
-# - Redis内存调整：修改 redis 服务的 --maxmemory 参数
+# - Redis内存调整：修改 redis 服务的 --maxmemory 参数（如512mb、1gb）
 # - 缓存时间调整：修改 backend 服务的 CACHE_TTL 环境变量
 # - Redis密码保护：在 redis 命令中添加 --requirepass 参数

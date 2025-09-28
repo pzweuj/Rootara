@@ -16,11 +16,11 @@ export async function POST(request: Request) {
       path: "/",
       httpOnly: true,
       secure: false, // 与login保持一致
-      sameSite: "lax"
+      sameSite: "lax",
     }
 
     // 如果是生产环境且使用HTTPS，则启用secure
-    if (isProduction && request.headers.get('x-forwarded-proto') === 'https') {
+    if (isProduction && request.headers.get("x-forwarded-proto") === "https") {
       cookieOptions.secure = true
       cookieOptions.sameSite = "strict"
     }

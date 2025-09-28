@@ -76,7 +76,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 
   /* 确保所有元素都能正确响应 */
@@ -97,8 +99,8 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .overflow-y-auto {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* 添加在文件末尾 */
@@ -145,7 +147,9 @@
 }
 
 /* 确保所有输入元素不会溢出 */
-input, textarea, select {
+input,
+textarea,
+select {
   max-width: 100% !important;
   box-sizing: border-box !important;
 }

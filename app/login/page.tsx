@@ -5,7 +5,14 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -40,8 +47,6 @@ export default function LoginPage() {
     }
   }
 
-
-
   return (
     <div className="min-h-screen w-full flex">
       {/* Left side - Background image and branding */}
@@ -53,17 +58,15 @@ export default function LoginPage() {
             alt="Rootara"
             className="h-20 w-auto mb-6"
             onError={(e) => {
-              console.error('White logo failed to load, trying fallback');
-              const img = e.currentTarget as HTMLImageElement;
-              img.src = '/rootara_logo_rmbg.png';
+              console.error("White logo failed to load, trying fallback")
+              const img = e.currentTarget as HTMLImageElement
+              img.src = "/rootara_logo_rmbg.png"
               img.onerror = () => {
                 // 最终备用方案：显示文本
-              };
+              }
             }}
           />
-          <p className="text-xl max-w-md text-center">
-            {t("discoverGenetic")}
-          </p>
+          <p className="text-xl max-w-md text-center">{t("discoverGenetic")}</p>
         </div>
       </div>
 
@@ -88,7 +91,11 @@ export default function LoginPage() {
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             title={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
           </Button>
         </div>
 
@@ -101,8 +108,12 @@ export default function LoginPage() {
                 className="h-12 w-auto dark:invert"
               />
             </div>
-            <CardTitle className="text-2xl text-center">{t("welcomeBack")}</CardTitle>
-            <CardDescription className="text-center">{t("enterCredentials")}</CardDescription>
+            <CardTitle className="text-2xl text-center">
+              {t("welcomeBack")}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {t("enterCredentials")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -138,7 +149,11 @@ export default function LoginPage() {
             </form>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={handleSubmit} disabled={isLoading}>
+            <Button
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
               {isLoading ? t("signingIn") : t("signIn")}
             </Button>
           </CardFooter>

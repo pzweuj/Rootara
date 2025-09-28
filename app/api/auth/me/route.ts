@@ -33,6 +33,9 @@ export async function GET() {
     } else if (error instanceof jose.errors.JWTInvalid) {
       console.log("JWT token is invalid")
     }
-    return NextResponse.json({ error: "Authentication failed" }, { status: 401 })
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 401 }
+    )
   }
 }

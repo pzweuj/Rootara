@@ -1,7 +1,13 @@
 "use client"
 
 import { useLanguage } from "@/contexts/language-context"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Github, Star } from "lucide-react"
@@ -27,10 +33,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "React framework for production-grade applications",
-      "zh-CN": "用于生产级应用的 React 框架"
+      "zh-CN": "用于生产级应用的 React 框架",
     },
     url: "https://nextjs.org/",
-    repository: "https://github.com/vercel/next.js"
+    repository: "https://github.com/vercel/next.js",
   },
   {
     name: "React",
@@ -38,10 +44,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "JavaScript library for building user interfaces",
-      "zh-CN": "用于构建用户界面的 JavaScript 库"
+      "zh-CN": "用于构建用户界面的 JavaScript 库",
     },
     url: "https://reactjs.org/",
-    repository: "https://github.com/facebook/react"
+    repository: "https://github.com/facebook/react",
   },
   {
     name: "TypeScript",
@@ -49,10 +55,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "Apache-2.0",
     description: {
       en: "Typed superset of JavaScript that compiles to plain JavaScript",
-      "zh-CN": "编译为纯 JavaScript 的 JavaScript 类型化超集"
+      "zh-CN": "编译为纯 JavaScript 的 JavaScript 类型化超集",
     },
     url: "https://www.typescriptlang.org/",
-    repository: "https://github.com/microsoft/TypeScript"
+    repository: "https://github.com/microsoft/TypeScript",
   },
   {
     name: "Tailwind CSS",
@@ -60,10 +66,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "Utility-first CSS framework for rapid UI development",
-      "zh-CN": "用于快速 UI 开发的实用优先 CSS 框架"
+      "zh-CN": "用于快速 UI 开发的实用优先 CSS 框架",
     },
     url: "https://tailwindcss.com/",
-    repository: "https://github.com/tailwindlabs/tailwindcss"
+    repository: "https://github.com/tailwindlabs/tailwindcss",
   },
   {
     name: "Radix UI",
@@ -71,10 +77,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "Low-level UI primitives with accessibility and customization in mind",
-      "zh-CN": "考虑可访问性和自定义的低级 UI 原语"
+      "zh-CN": "考虑可访问性和自定义的低级 UI 原语",
     },
     url: "https://www.radix-ui.com/",
-    repository: "https://github.com/radix-ui/primitives"
+    repository: "https://github.com/radix-ui/primitives",
   },
   {
     name: "Lucide React",
@@ -82,10 +88,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "ISC",
     description: {
       en: "Beautiful & consistent icon toolkit made by the community",
-      "zh-CN": "由社区制作的美观且一致的图标工具包"
+      "zh-CN": "由社区制作的美观且一致的图标工具包",
     },
     url: "https://lucide.dev/",
-    repository: "https://github.com/lucide-icons/lucide"
+    repository: "https://github.com/lucide-icons/lucide",
   },
   {
     name: "class-variance-authority",
@@ -93,9 +99,9 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "Apache-2.0",
     description: {
       en: "CSS-in-TS variants API that focuses on developer experience",
-      "zh-CN": "专注于开发者体验的 CSS-in-TS 变体 API"
+      "zh-CN": "专注于开发者体验的 CSS-in-TS 变体 API",
     },
-    repository: "https://github.com/joe-bell/cva"
+    repository: "https://github.com/joe-bell/cva",
   },
   {
     name: "clsx",
@@ -103,9 +109,9 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "Tiny utility for constructing className strings conditionally",
-      "zh-CN": "用于有条件地构造 className 字符串的小工具"
+      "zh-CN": "用于有条件地构造 className 字符串的小工具",
     },
-    repository: "https://github.com/lukeed/clsx"
+    repository: "https://github.com/lukeed/clsx",
   },
   {
     name: "admix",
@@ -113,9 +119,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "GPL-3.0",
     description: {
       en: "An admixture analysis tool for Python that supports raw data from 23andme, AncestryDNA, etc.",
-      "zh-CN": "一个用于 Python 的 admixture 分析工具，支持 23andme、AncestryDNA 等原始数据。"
+      "zh-CN":
+        "一个用于 Python 的 admixture 分析工具，支持 23andme、AncestryDNA 等原始数据。",
     },
-    repository: "https://github.com/stevenliuyi/admix"
+    repository: "https://github.com/stevenliuyi/admix",
   },
   {
     name: "haploGrouper",
@@ -123,9 +130,9 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "Apache-2.0",
     description: {
       en: "A software to classify haplotypes into haplogroups on the basis of a known phylogenetic tree.",
-      "zh-CN": "一个基于已知的系统发育树，将等位基因进行单倍群分组的软件。"
+      "zh-CN": "一个基于已知的系统发育树，将等位基因进行单倍群分组的软件。",
     },
-    url: "https://gitlab.com/bio_anth_decode/haploGrouper"
+    url: "https://gitlab.com/bio_anth_decode/haploGrouper",
   },
   {
     name: "pandas",
@@ -133,10 +140,11 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "BSD-3",
     description: {
       en: "Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more.",
-      "zh-CN": "一个用于 Python 的数据分析和操作库，提供类似于 R 中 data.frame 对象的带标签数据结构、统计函数等。"
+      "zh-CN":
+        "一个用于 Python 的数据分析和操作库，提供类似于 R 中 data.frame 对象的带标签数据结构、统计函数等。",
     },
     url: "https://pandas.pydata.org",
-    repository: "https://github.com/pandas-dev/pandas"
+    repository: "https://github.com/pandas-dev/pandas",
   },
   {
     name: "pysam",
@@ -144,9 +152,10 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "Pysam is a Python package for reading, manipulating, and writing genomics data such as SAM/BAM/CRAM and VCF/BCF files. It's a lightweight wrapper of the HTSlib API, the same one that powers samtools, bcftools, and tabix.",
-      "zh-CN": "一个用于 Python 的生物学数据处理库，提供对 SAM/BAM/CRAM 和 VCF/BCF 文件的读取、操作和写入功能。"
+      "zh-CN":
+        "一个用于 Python 的生物学数据处理库，提供对 SAM/BAM/CRAM 和 VCF/BCF 文件的读取、操作和写入功能。",
     },
-    repository: "https://github.com/pysam-developers/pysam"
+    repository: "https://github.com/pysam-developers/pysam",
   },
   {
     name: "sqlite3",
@@ -155,10 +164,11 @@ const openSourceLibraries: LicenseInfo[] = [
     licenseUrl: "https://github.com/sqlite/sqlite?tab=License-1-ov-file",
     description: {
       en: "SQLite is a C-language library that implements a small, fast, self-contained, high-reliability, full-featured, SQL database engine.",
-      "zh-CN": "SQLite 是一个 C 语言库，它实现了一个小型、快速、自包含、高可靠性、功能齐全的 SQL 数据库引擎。"
+      "zh-CN":
+        "SQLite 是一个 C 语言库，它实现了一个小型、快速、自包含、高可靠性、功能齐全的 SQL 数据库引擎。",
     },
     url: "https://www.sqlite.org",
-    repository: "https://github.com/sqlite/sqlite"
+    repository: "https://github.com/sqlite/sqlite",
   },
   {
     name: "FastAPI",
@@ -166,10 +176,11 @@ const openSourceLibraries: LicenseInfo[] = [
     license: "MIT",
     description: {
       en: "FastAPI framework, high performance, easy to learn, fast to code, ready for production.",
-      "zh-CN": "一个用于 Python 的高性能 Web 框架，易于学习，快速开发，适用于生产环境。"
+      "zh-CN":
+        "一个用于 Python 的高性能 Web 框架，易于学习，快速开发，适用于生产环境。",
     },
     url: "https://fastapi.tiangolo.com",
-    repository: "https://github.com/fastapi/fastapi"
+    repository: "https://github.com/fastapi/fastapi",
   },
 ]
 
@@ -180,9 +191,7 @@ export default function AboutPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold mb-2">{t("about")}</h1>
-        <p className="text-muted-foreground">
-          {t("licenseInformation")}
-        </p>
+        <p className="text-muted-foreground">{t("licenseInformation")}</p>
       </div>
 
       {/* Project Description Card */}
@@ -192,15 +201,11 @@ export default function AboutPage() {
             <Star className="h-5 w-5" />
             {t("projectDescription")}
           </CardTitle>
-          <CardDescription>
-            {t("geneticAnalysis")}
-          </CardDescription>
+          <CardDescription>{t("geneticAnalysis")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <p className="text-sm leading-relaxed">
-              {t("rootaraDescription")}
-            </p>
+            <p className="text-sm leading-relaxed">{t("rootaraDescription")}</p>
             <div className="flex items-center gap-4">
               {/* <Badge variant="secondary" className="flex items-center gap-1">
                 <Github className="h-3 w-3" />
@@ -229,19 +234,25 @@ export default function AboutPage() {
             <Github className="h-5 w-5" />
             {t("openSourceLicenses")}
           </CardTitle>
-          <CardDescription>
-            {t("thisProjectUses")}
-          </CardDescription>
+          <CardDescription>{t("thisProjectUses")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium">{t("softwareName")}</th>
-                  <th className="text-left py-3 px-4 font-medium">{t("version")}</th>
-                  <th className="text-left py-3 px-4 font-medium">{t("license")}</th>
-                  <th className="text-left py-3 px-4 font-medium">{t("description")}</th>
+                  <th className="text-left py-3 px-4 font-medium">
+                    {t("softwareName")}
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium">
+                    {t("version")}
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium">
+                    {t("license")}
+                  </th>
+                  <th className="text-left py-3 px-4 font-medium">
+                    {t("description")}
+                  </th>
                   <th className="text-left py-3 px-4 font-medium">Links</th>
                 </tr>
               </thead>
@@ -255,9 +266,9 @@ export default function AboutPage() {
                     <td className="py-3 px-4">
                       <Badge variant="outline">
                         {lib.licenseUrl ? (
-                          <Link 
-                            href={lib.licenseUrl} 
-                            target="_blank" 
+                          <Link
+                            href={lib.licenseUrl}
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="hover:underline"
                           >
@@ -269,7 +280,11 @@ export default function AboutPage() {
                       </Badge>
                     </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
-                      {lib.description[language as keyof typeof lib.description]}
+                      {
+                        lib.description[
+                          language as keyof typeof lib.description
+                        ]
+                      }
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
@@ -307,14 +322,9 @@ export default function AboutPage() {
         <p>
           {language === "zh-CN"
             ? "感谢所有开源软件的贡献者们！"
-            : "Thanks to all the contributors of these open source projects!"
-          }
+            : "Thanks to all the contributors of these open source projects!"}
         </p>
       </div>
     </div>
   )
 }
-
-
-
-
