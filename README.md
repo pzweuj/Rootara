@@ -224,6 +224,3 @@ We welcome contributions of any form of traits, which will be added to Rootara's
 
 This project is released under the AGPLv3 license. Please see the [LICENSE](LICENSE) file for more information.
 
----
-
-**Current Version**: v0.16.0 | **Last Updated**: 2024

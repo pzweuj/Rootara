@@ -224,6 +224,3 @@ tail -f ./logs/rootara.log
 
 本项目采用AGPLv3许可证发布。请参阅 [LICENSE](LICENSE) 文件获取更多信息。
 
----
-
-**当前版本**: v0.16.0 | **最后更新**: 2024年
