@@ -91,7 +91,7 @@ docker-compose -f docker-compose.lite.yml up -d
 - 邮箱：admin@rootara.app
 - 密码：rootara123
 
-> 💡 **建议**：首次登录后立即修改管理员密码
+> 💡 **重要提示**：管理员密码只能通过修改 docker-compose.yml 文件中的 `ADMIN_PASSWORD` 环境变量并重启容器来更改，无法在应用程序内部修改。
 
 ### 配置说明
 

@@ -91,7 +91,7 @@ After deployment, visit http://localhost:3000
 - Email: admin@rootara.app
 - Password: rootara123
 
-> 💡 **Recommendation**: Change the admin password immediately after first login
+> 💡 **Important**: Admin password can only be changed by modifying the `ADMIN_PASSWORD` environment variable in your docker-compose.yml file and restarting the container. It cannot be changed from within the application.
 
 ### Configuration
 
