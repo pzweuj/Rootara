@@ -110,12 +110,13 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api/auth (API routes that handle authentication)
+     * - api/report (API routes that handle large file uploads)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - *.ico (all ico files)
      * - *.png, *.jpg, *.jpeg, *.gif, *.svg (static images)
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
+    "/((?!api/auth|api/report|_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
   ],
 }

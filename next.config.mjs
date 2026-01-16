@@ -26,6 +26,9 @@ const nextConfig = {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
   },
   // 启用standalone输出模式，用于Docker部署
   output: 'standalone',
