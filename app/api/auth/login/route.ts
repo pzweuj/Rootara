@@ -1,157 +1,78 @@
+import { createHash, createHmac, timingSafeEqual } from "crypto"
+
+import * as jose from "jose"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
-import * as jose from "jose"
-// @ts-ignore
-const { createHmac } = require("crypto")
 
-// In a real app, you would use a database
-// For this example, we'll use environment variables
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
-const JWT_SECRET = process.env.JWT_SECRET
+function passwordDigest(password: string): string {
+  if (password.length === 64) {
+    return createHash("sha256").update(password).digest("hex")
+  }
+  return Buffer.from(password, "utf8")
+    .toString("base64")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toLowerCase()
+}
+
+function secureEqual(left: string, right: string): boolean {
+  const leftBuffer = Buffer.from(left)
+  const rightBuffer = Buffer.from(right)
+  return (
+    leftBuffer.length === rightBuffer.length &&
+    timingSafeEqual(leftBuffer, rightBuffer)
+  )
+}
 
 export async function POST(request: Request) {
-  console.log("=== LOGIN API CALLED ===")
   try {
-    const { email, password } = await request.json()
-
-    console.log("Login attempt for email:", email)
-    console.log("Received password hash length:", password.length)
-    console.log("Environment check:", {
-      hasAdminEmail: !!process.env.ADMIN_EMAIL,
-      hasAdminPassword: !!process.env.ADMIN_PASSWORD,
-      hasJwtSecret: !!process.env.JWT_SECRET,
-      nodeEnv: process.env.NODE_ENV,
-      adminEmail: process.env.ADMIN_EMAIL,
-    })
-
-    if (
-      !process.env.ADMIN_EMAIL ||
-      !process.env.ADMIN_PASSWORD ||
-      !process.env.JWT_SECRET
-    ) {
-      console.error("Missing environment variables")
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@rootara.app"
+    const adminPassword = process.env.ADMIN_PASSWORD
+    const jwtSecret = process.env.JWT_SECRET
+    if (!adminPassword || !jwtSecret) {
       return NextResponse.json(
-        { error: "Missing environment variables" },
-        { status: 500 }
+        { error: "Authentication is not configured" },
+        { status: 503 }
       )
     }
 
-    // Handle both SHA-256 and fallback hashing methods from client
-    let storedPasswordHash: string
-
-    if (password.length === 64) {
-      // Client used SHA-256 (64 hex characters)
-      const encoder = new TextEncoder()
-      const storedPasswordData = encoder.encode(ADMIN_PASSWORD)
-      const storedPasswordHashBuffer = await crypto.subtle.digest(
-        "SHA-256",
-        storedPasswordData
-      )
-      const storedPasswordHashArray = Array.from(
-        new Uint8Array(storedPasswordHashBuffer)
-      )
-      storedPasswordHash = storedPasswordHashArray
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
-    } else {
-      // Client used fallback method (base64 encoding)
-      storedPasswordHash = btoa(ADMIN_PASSWORD || "")
-        .replace(/[^a-zA-Z0-9]/g, "")
-        .toLowerCase()
+    const { email, password } = await request.json()
+    if (typeof email !== "string" || typeof password !== "string") {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    console.log("Password hash comparison:", {
-      clientHashLength: password.length,
-      storedHashLength: storedPasswordHash.length,
-      hashingMethod: password.length === 64 ? "SHA-256" : "Fallback",
-    })
-
-    // Apply HMAC for additional security
-    const clientPasswordHmac = createHmac("sha256", JWT_SECRET)
+    const expectedDigest = createHmac("sha256", jwtSecret)
+      .update(passwordDigest(adminPassword))
+      .digest("hex")
+    const receivedDigest = createHmac("sha256", jwtSecret)
       .update(password)
       .digest("hex")
 
-    const storedPasswordHmac = createHmac("sha256", JWT_SECRET)
-      .update(storedPasswordHash)
-      .digest("hex")
-
-    console.log("Password validation debug:", {
-      emailMatch: email === ADMIN_EMAIL,
-      clientPasswordHmac: clientPasswordHmac.substring(0, 10) + "...",
-      storedPasswordHmac: storedPasswordHmac.substring(0, 10) + "...",
-      passwordMatch: clientPasswordHmac === storedPasswordHmac,
-    })
-
-    // Validate credentials
-    if (email !== ADMIN_EMAIL || clientPasswordHmac !== storedPasswordHmac) {
-      console.log("Invalid credentials provided")
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      )
+    if (email !== adminEmail || !secureEqual(receivedDigest, expectedDigest)) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
     }
 
-    // Create user object
     const user = {
-      // 从邮箱地址中提取用户名部分作为name
-      name: ADMIN_EMAIL?.split("@")[0] || "Admin",
-      email: ADMIN_EMAIL,
+      name: adminEmail.split("@", 1)[0] || "Admin",
+      email: adminEmail,
     }
-
-    // Create JWT token using jose
-    const secret = new TextEncoder().encode(JWT_SECRET)
     const token = await new jose.SignJWT(user)
       .setProtectedHeader({ alg: "HS256" })
       .setExpirationTime("8h")
       .setIssuedAt()
-      .sign(secret)
+      .sign(new TextEncoder().encode(jwtSecret))
 
-    // Set HTTP-only cookie with improved settings for different environments
-    const cookieStore = await cookies()
-    const isProduction = process.env.NODE_ENV === "production"
-
-    // 获取请求的host信息来设置正确的cookie domain
-    const host = request.headers.get("host")
-    console.log("Request host:", host)
-
-    let cookieOptions: {
-      httpOnly: boolean
-      secure: boolean
-      sameSite: "lax" | "strict"
-      path: string
-      maxAge: number
-    } = {
+    const isHttps = request.headers.get("x-forwarded-proto") === "https"
+    ;(await cookies()).set("auth_token", token, {
       httpOnly: true,
-      secure: false, // 在VPS环境中暂时禁用secure，因为可能没有HTTPS
-      sameSite: "lax", // 使用lax以确保跨域兼容性
+      secure: process.env.NODE_ENV === "production" && isHttps,
+      sameSite:
+        process.env.NODE_ENV === "production" && isHttps ? "strict" : "lax",
       path: "/",
-      maxAge: 8 * 60 * 60, // 8 hours to match JWT expiration
-    }
-
-    // 如果是生产环境且使用HTTPS，则启用secure
-    if (isProduction && request.headers.get("x-forwarded-proto") === "https") {
-      cookieOptions.secure = true
-      cookieOptions.sameSite = "strict"
-    }
-
-    console.log("Setting cookie with options:", cookieOptions)
-    cookieStore.set("auth_token", token, cookieOptions)
-
-    // Verify cookie was set
-    const verifyToken = cookieStore.get("auth_token")
-    console.log("Cookie verification after setting:", {
-      cookieExists: !!verifyToken,
-      tokenLength: verifyToken?.value?.length || 0,
+      maxAge: 8 * 60 * 60,
     })
 
-    console.log("Login successful for user:", user.email)
     return NextResponse.json(user)
-  } catch (error) {
-    console.error("Login error:", error)
-    return NextResponse.json(
-      { error: "Authentication failed" },
-      { status: 500 }
-    )
+  } catch {
+    return NextResponse.json({ error: "Authentication failed" }, { status: 500 })
   }
 }

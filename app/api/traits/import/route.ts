@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { backendFetch } from "@/lib/backend-client"
 
 export async function POST(request: Request) {
   try {
@@ -28,14 +29,13 @@ export async function POST(request: Request) {
     console.log("Parsed traits data:", traitsData)
 
     // Send the parsed data directly to the backend
-    const response = await fetch(
-      `${process.env.ROOTARA_BACKEND_URL}/traits/import`,
+    const response = await backendFetch(
+      "/traits/import",
       {
         method: "POST",
         headers: {
           accept: "application/json",
           "Content-Type": "application/json",
-          "x-api-key": process.env.ROOTARA_BACKEND_API_KEY || "",
         },
         body: JSON.stringify(traitsData),
       }

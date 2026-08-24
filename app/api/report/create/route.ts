@@ -1,43 +1,20 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
-import * as jose from "jose"
-
-async function verifyAuth(): Promise<boolean> {
-  try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get("auth_token")?.value
-    if (!token) return false
-
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || "your-secret-key"
-    )
-    await jose.jwtVerify(token, secret)
-    return true
-  } catch {
-    return false
-  }
-}
+import { backendFetch, requireApiAuth } from "@/lib/backend-client"
 
 export async function POST(request: Request) {
   try {
-    const isAuthenticated = await verifyAuth()
-    if (!isAuthenticated) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      )
-    }
+    const unauthorized = await requireApiAuth()
+    if (unauthorized) return unauthorized
 
     const requestData = await request.json()
 
-    const response = await fetch(
-      `${process.env.ROOTARA_BACKEND_URL}/report/create`,
+    const response = await backendFetch(
+      "/report/create",
       {
         method: "POST",
         headers: {
           accept: "application/json",
           "Content-Type": "application/json",
-          "x-api-key": process.env.ROOTARA_BACKEND_API_KEY || "",
         },
         body: JSON.stringify(requestData),
       }

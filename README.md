@@ -1,226 +1,61 @@
 <div align="center">
   <img src="public/rootara_logo_rmbg_small.svg" alt="Rootara Logo" width="300">
-
-  <h1>Rootara - Open Source Genetic Platform</h1>
-
-  <p><strong>English | <a href="README_ZH.md">中文</a></strong></p>
+  <h1>Rootara - Self-hosted Genomics Platform</h1>
+  <p><strong>English</strong> | <a href="README_ZH.md">中文</a></p>
 </div>
 
-## Introduction
+Rootara is a self-hosted platform for importing and exploring personal genetic data. All analysis runs locally in a single container; the browser-facing Next.js application supervises a private FastAPI analysis service.
 
-Rootara is an easy-to-deploy consumer-grade genetic data hosting platform that users can self-deploy on their own servers to ensure data security. Rootara supports importing personal genetic data from testing service providers such as 23andMe and WeGene. Through quick installation and configuration using Docker Compose, users can safely perform various operations including ancestry analysis, genetic trait interpretation, and ClinVar database queries in their local environment.
+> **Testing status:** genetic trait results are currently test data and must not be used for medical, health, or other important decisions.
 
-## ⚠️ NOTICE
+## Quick start
 
-**The current system is in a testing phase, and all genetic trait analysis results are randomly generated test data with no scientific basis or reference value. Please do not use the test results for any medical, health-related, or other important decision-making purposes.**
+Docker 20+ and Docker Compose v2+ are required.
 
-## Features
-
-### ✨ Core Functions
-- 🧬 **Multi-source Compatibility**: Supports uploading genetic data files from 23andMe, WeGene, and other providers
-- 📊 **Comprehensive Analysis**:
-  - Ancestral origin exploration with interactive visualizations
-  - Genetic trait assessment
-  - Haplogroup analysis (paternal and maternal lineages)
-  - ClinVar variant interpretation
-- 🔒 **Privacy Protection**: All processing is completed locally, ensuring your personal information is not leaked
-
-### 🚀 Performance & Reliability
-- ⚡ **High Performance**: Redis caching improves API response speed by 70-90% (Standard version)
-- 🔗 **Connection Pooling**: Database connection reuse improves resource utilization by 80%
-- 📝 **Structured Logging**: Comprehensive logging system for easy troubleshooting
-- 💊 **Health Monitoring**: Real-time system status and performance metrics monitoring
-
-### 🛡️ Security Features
-- 🔐 **JWT Authentication**: Secure user authentication mechanism
-- 👤 **Non-root Containers**: Docker containers run with non-privileged users
-- 🔑 **API Key Protection**: Encrypted frontend-backend communication
-- 📊 **Resource Monitoring**: CPU, memory, disk usage monitoring with alerting
-
-## Quick Start
-
-### Choose Deployment Version
-
-Select the appropriate deployment version based on your server configuration:
-
-#### 📁 Standard Version (Recommended)
 ```bash
-# Download configuration files
-cd rootara/docker
-# Start services
-docker-compose -f docker-compose.standard.yml up -d
+git clone https://github.com/pzweuj/Rootara.git
+cd Rootara
+export ADMIN_PASSWORD='replace-with-a-long-random-password'
+docker compose up -d
 ```
 
-**Features:**
-- Memory usage: ~70-80MB
-- Performance: Includes Redis cache, API response speed improved by 70-90%
-- Suitable for: Production environments, servers with sufficient memory (>1GB)
+Open <http://localhost:3000>. `ADMIN_EMAIL` defaults to `admin@rootara.app` and can be overridden before starting the container.
 
-#### 📁 Lite Version
+The published image is also usable without a checkout:
+
 ```bash
-# Download configuration files
-cd rootara/docker
-# Start services
-docker-compose -f docker-compose.lite.yml up -d
+docker run -d --name rootara \
+  -p 3000:3000 \
+  -v rootara_data:/data \
+  -e ADMIN_PASSWORD='replace-with-a-long-random-password' \
+  ghcr.io/pzweuj/rootara:latest
 ```
 
-**Features:**
-- Memory usage: ~30-40MB (saves 50MB)
-- Performance: In-memory cache, slightly slower but sufficient
+## Configuration
 
-### System Requirements
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `ADMIN_PASSWORD` | required | Administrator password; startup fails when absent |
+| `ADMIN_EMAIL` | `admin@rootara.app` | Administrator email |
+| `ROOTARA_PORT` | `3000` | Host port in `compose.yaml` |
+| `TZ` | `Asia/Shanghai` | Container timezone |
+| `CACHE_TTL` | `3600` | In-memory cache TTL in seconds |
+| `CACHE_MAX_ENTRIES` | `1024` | Maximum in-memory cache entries |
 
-#### Minimum Requirements
-- **CPU**: 1 core
-- **Memory**:
-  - Standard version: 1GB RAM
-  - Lite version: 512MB RAM
-- **Storage**: 2GB available space
-- **Software**: Docker 20.0+, Docker Compose 2.0+
+JWT signing material is generated on first startup and stored in `/data/config/jwt-secret`. The SQLite database and uploaded raw data are stored under `/data`; keep this volume for backups and upgrades.
 
-#### Recommended Configuration
-- **CPU**: 2 cores or more
-- **Memory**: 2GB RAM or more
-- **Storage**: 10GB available space (for data storage)
+FastAPI listens only on `127.0.0.1:8000` inside the container. Only port 3000 is public. The public health endpoints are:
 
-### Access System
+- `GET /health/live`
+- `GET /health/ready`
+- `GET /health`
 
-After deployment, visit http://localhost:3000
+## Development
 
-**Default admin account:**
-- Email: admin@rootara.app
-- Password: rootara123
+The web application remains at the repository root and the backend source is under `backend/`. From the repository root, install the pinned `backend/requirements.txt` in a Python 3.11 virtual environment and run `PYTHONPATH=backend python -m uvicorn main:app --host 127.0.0.1 --port 8000`. Set `ROOTARA_API_KEY=dev-only-key`, `ROOTARA_BACKEND_API_KEY=dev-only-key`, `ROOTARA_DATA_DIR=.data`, `ADMIN_PASSWORD=dev-only-password`, and `JWT_SECRET=dev-only-jwt-secret` for both processes. Run the web app with `pnpm dev` in a second terminal and set `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`.
 
-> 💡 **Important**: Admin password can only be changed by modifying the `ADMIN_PASSWORD` environment variable in your docker-compose.yml file and restarting the container. It cannot be changed from within the application.
+## Version and migration
 
-### Configuration
+The unified release line starts at `v1.0.0`. This release intentionally does not migrate the old two-container deployment, old Compose files, or old environment-variable names. Keep the old deployment available while validating a fresh `/data` volume, then copy user data only through a separately verified backup procedure.
 
-#### Required Configuration Changes
-
-In your chosen `docker-compose.yml` file, it's recommended to modify:
-
-```yaml
-environment:
-  # 🔧 Admin account configuration - Recommended to modify
-  - ADMIN_EMAIL=your-email@example.com          # Admin email
-  - ADMIN_PASSWORD=your-secure-password         # Admin password
-
-  # 🔧 Security configuration - Recommended to modify
-  - JWT_SECRET=your-random-secret-string        # JWT secret
-  - ROOTARA_BACKEND_API_KEY=your-api-key        # API key (must match between frontend and backend)
-```
-
-#### Optional Configuration
-
-```yaml
-ports:
-  - "3000:3000"  # 🔧 Port modification: change to 8080:3000 if needed
-
-# Redis memory adjustment (Standard version only)
-command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
-```
-
-## User Guide
-
-### Data Upload
-
-1. After logging into the system, click "Upload Data"
-2. Supported file formats:
-   - 23andMe raw data files (.txt)
-   - WeGene raw data files (.txt)
-
-### Analysis Features
-
-- **Ancestry Analysis**: View your ancestral geographical distribution
-
-![ancestry](public/Rootara_Ancestry.png)
-
-- **Haplogroup Analysis**: Paternal and maternal haplogroup analysis
-- **Genetic Traits**: Understand the impact of genes on personal characteristics
-- **Health Risks**: Variant interpretation based on the ClinVar database
-
-![clinvar](public/Rootara_Clinvar.png)
-
-## 🛠️ Common Commands
-
-### Service Management
-```bash
-# Start services
-docker-compose -f docker-compose.standard.yml up -d
-
-# Stop services
-docker-compose -f docker-compose.standard.yml down
-
-# View logs
-docker-compose -f docker-compose.standard.yml logs -f
-
-# Restart services
-docker-compose -f docker-compose.standard.yml restart
-
-# Check service status
-docker-compose -f docker-compose.standard.yml ps
-```
-
-### Data Management
-```bash
-# Backup data
-cp -r ./data ./data-backup-$(date +%Y%m%d)
-
-# View log files
-tail -f ./logs/rootara.log
-```
-
-## 📊 Monitoring Endpoints
-
-The system provides multiple monitoring endpoints for status checking:
-
-- `GET /health` - Comprehensive health check (includes system metrics)
-- `GET /health/live` - Liveness check
-- `GET /health/ready` - Readiness check
-- `GET /metrics` - Performance metrics (requires API key)
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **Container startup failure**
-   ```bash
-   # View detailed error information
-   docker-compose logs backend
-   ```
-
-2. **Cannot access web interface**
-   - Check if port is occupied: `netstat -an | grep 3000`
-   - Confirm firewall settings allow the corresponding port
-
-3. **Memory insufficient**
-   - Switch to lite version: use `docker-compose.lite.yml`
-   - Adjust Redis memory limit (Standard version)
-
-4. **Performance optimization**
-   - Standard version: Adjust Redis maximum memory
-   - Lite version: Consider upgrading to standard version
-
-## 🏗️ Architecture
-
-### Technology Stack
-- **Frontend**: Next.js 15.5.4, React 18.3.1, TypeScript, Tailwind CSS
-- **Backend**: FastAPI, Python 3.13, SQLite
-- **Cache**: Redis 7.4 (Standard version)
-- **Container**: Docker, Docker Compose
-
-### Service Architecture
-```
-User Browser → Frontend (Next.js) → Backend (FastAPI) → SQLite Database
-                                      ↓
-                               Redis Cache (Optional)
-```
-
-## Contributing
-
-We welcome contributions of any form of traits, which will be added to Rootara's default traits after verification.
-
-## License
-
-This project is released under the AGPLv3 license. Please see the [LICENSE](LICENSE) file for more information.
-
+Rootara is licensed under AGPLv3.

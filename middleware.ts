@@ -12,8 +12,16 @@ export async function middleware(request: NextRequest) {
     console.log(`[Middleware] Processing path: ${path}`)
   }
 
-  // Define public paths that don't require authentication
-  const isPublicPath = path === "/login"
+  // Login, logout and health probes are intentionally public. API routes use
+  // JSON 401 responses so clients never receive an HTML redirect.
+  const isPublicPath =
+    path === "/login" ||
+    path === "/health" ||
+    path.startsWith("/health/") ||
+    path === "/api/auth/login" ||
+    path === "/api/auth/logout"
+  const redirectAuthenticated = path === "/login"
+  const isApiPath = path.startsWith("/api/")
 
   // Get the token from the cookies
   const token = request.cookies.get("auth_token")?.value || ""
@@ -25,11 +33,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // If the path is public and the user is logged in, redirect to home
-  if (isPublicPath && token) {
+  if (redirectAuthenticated && token) {
     try {
       // Verify the token using jose instead of jsonwebtoken
       const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || "your-secret-key"
+        process.env.JWT_SECRET || ""
       )
       await jose.jwtVerify(token, secret)
 
@@ -67,14 +75,16 @@ export async function middleware(request: NextRequest) {
         `[Middleware] No token for protected path, redirecting to login`
       )
     }
-    return NextResponse.redirect(new URL("/login", request.url))
+    return isApiPath
+      ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      : NextResponse.redirect(new URL("/login", request.url))
   }
 
   // If the path is not public and there is a token, verify it
   if (!isPublicPath && token) {
     try {
       const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || "your-secret-key"
+        process.env.JWT_SECRET || ""
       )
       await jose.jwtVerify(token, secret)
 
@@ -89,7 +99,9 @@ export async function middleware(request: NextRequest) {
       }
 
       // 清除无效的token并重定向到登录页面
-      const response = NextResponse.redirect(new URL("/login", request.url))
+      const response = isApiPath
+        ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        : NextResponse.redirect(new URL("/login", request.url))
       response.cookies.set("auth_token", "", {
         expires: new Date(0),
         path: "/",
@@ -108,15 +120,14 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (API routes that handle authentication)
-     * - api/report (API routes that handle large file uploads)
+     * Match all request paths except for static assets. Authentication routes
+     * are handled explicitly above so API callers receive JSON 401 responses.
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - *.ico (all ico files)
      * - *.png, *.jpg, *.jpeg, *.gif, *.svg (static images)
      */
-    "/((?!api/auth|api/report|_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
   ],
 }

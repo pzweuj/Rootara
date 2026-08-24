@@ -1,0 +1,28 @@
+services:
+  rootara:
+    image: ghcr.io/pzweuj/rootara:latest
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: rootara
+    ports:
+      - "${ROOTARA_PORT:-3000}:3000"
+    environment:
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@rootara.app}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD before starting Rootara}
+      TZ: ${TZ:-Asia/Shanghai}
+      CACHE_TTL: ${CACHE_TTL:-3600}
+      CACHE_MAX_ENTRIES: ${CACHE_MAX_ENTRIES:-1024}
+    volumes:
+      - rootara_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3000/health/ready', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  rootara_data:

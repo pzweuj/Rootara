@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server"
+import { backendFetch } from "@/lib/backend-client"
 
 export async function POST() {
   try {
-    const response = await fetch(`${process.env.ROOTARA_BACKEND_URL}/user/id`, {
+    const response = await backendFetch("/user/id", {
       method: "POST",
       headers: {
         accept: "application/json",
-        "x-api-key": process.env.ROOTARA_BACKEND_API_KEY || "",
       },
       body: JSON.stringify({}),
     })
