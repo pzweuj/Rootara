@@ -38,11 +38,7 @@ export function CreateTraitDialog({
       "zh-CN": "",
       default: "",
     },
-    result: {
-      en: "",
-      "zh-CN": "",
-      default: "",
-    },
+    result: {},
     description: {
       en: "",
       "zh-CN": "",
@@ -175,7 +171,7 @@ export function CreateTraitDialog({
       // 重置表单
       setNewTrait({
         name: { en: "", "zh-CN": "", default: "" },
-        result: { en: "", "zh-CN": "", default: "" },
+        result: {},
         description: { en: "", "zh-CN": "", default: "" },
         icon: "AlertCircle",
         confidence: "medium",

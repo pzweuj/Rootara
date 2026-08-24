@@ -104,9 +104,7 @@ const translations = {
     setDefaultSuccess: "Set Default Success",
     reportSetAsDefault: "Report set as default",
     setDefaultFailed: "Set Default Failed",
-    uploadNewReport: "Upload New Report",
     searchReports: "Search reports...",
-    allReports: "All Reports",
     sort: "Sort",
     sortBy: "Sort by",
     name: "Name",
@@ -131,9 +129,6 @@ const translations = {
       "Are you sure you want to delete this report? This action cannot be undone.",
     // Raw Genetic Data
     mitochondria: "Mitochondria",
-    rawData: "Raw Data",
-    searchByRsID: "Search by rsID...",
-    allChromosomes: "All Chromosomes",
     // Health Risk Summary
     healthRiskSummary: "Health Risk Summary",
     viewDetailedHealthReport: "View Detailed Health Report",
@@ -167,7 +162,6 @@ const translations = {
     clinvarNoticeTitle: "Important Notice",
     clinvarNoticeContent:
       "Genetic testing is not a diagnostic tool. Always consult with a healthcare professional before making any medical decisions based on these results.",
-    pathogenicVariants: "Pathogenic Variants",
     likelyPathogenic: "Likely Pathogenic",
     uncertainSignificance: "Uncertain Significance",
     likelyBenign: "Likely Benign",
@@ -182,14 +176,9 @@ const translations = {
     searchVariants: "Search variants...",
     allClassifications: "All Classifications",
     variantId: "Variant ID",
-    chromosome: "Chromosome",
-    position: "Position",
-    genotype: "Genotype",
     page: "Page",
-    of: "of",
     itemsPerPage: "Items per page",
     prev: "Previous",
-    next: "Next",
     clinvarDescription:
       "ClinVar is a public database of reports of the relationships among human variations and phenotypes, with supporting evidence. Rootara filtered out insertions and deletions because gene chips may not accurately detect these types.",
     // Ancestry
@@ -207,7 +196,6 @@ const translations = {
     asian: "Asian",
     african: "African",
     subregions: "Subregions",
-    ancestryAnalysis: "Ancestry Analysis",
     exploreGenetic: "Explore your genetic ancestry and find DNA relatives",
     understandingResults: "Understanding Your Results",
     compositionDescription:
@@ -311,9 +299,7 @@ const translations = {
     setDefaultSuccess: "设置成功",
     reportSetAsDefault: "报告已设为默认",
     setDefaultFailed: "设置失败",
-    uploadNewReport: "上传新报告",
     searchReports: "搜索报告...",
-    allReports: "所有报告",
     sort: "排序",
     sortBy: "排序方式",
     name: "名称",
@@ -337,9 +323,6 @@ const translations = {
     deleteConfirmMessage: "确定要删除此报告吗？此操作无法撤销。",
     // Raw Genetic Data
     mitochondria: "线粒体",
-    rawData: "原始基因数据",
-    searchByRsID: "按rsID搜索...",
-    allChromosomes: "所有染色体",
     // Health Risk Summary
     healthRiskSummary: "健康风险摘要",
     viewDetailedHealthReport: "查看详细健康报告",
@@ -372,7 +355,6 @@ const translations = {
     clinvarNoticeTitle: "重要提示",
     clinvarNoticeContent:
       "基因检测不是诊断工具。在基于这些结果做出任何医疗决定之前，请务必咨询医疗专业人士。",
-    pathogenicVariants: "致病变异",
     likelyPathogenic: "可能致病",
     uncertainSignificance: "意义不明确",
     likelyBenign: "可能良性",
@@ -387,14 +369,9 @@ const translations = {
     searchVariants: "搜索变异...",
     allClassifications: "所有分类",
     variantId: "变异ID",
-    chromosome: "染色体",
-    position: "位置",
-    genotype: "基因型",
     page: "页",
-    of: "共",
     itemsPerPage: "每页显示",
     prev: "上一页",
-    next: "下一页",
     clinvarDescription:
       "ClinVar是一个公共数据库，报告人类变异与表型之间的关系，并提供支持证据。Rootara过滤了插入和缺失位点，因为基因芯片对该类型可能无法准确检测。",
     // Ancestry
@@ -411,7 +388,6 @@ const translations = {
     asian: "亚洲",
     african: "非洲",
     subregions: "子区域",
-    ancestryAnalysis: "祖源分析",
     exploreGenetic: "探索您的遗传祖源并寻找DNA亲缘关系",
     understandingResults: "了解您的结果",
     compositionDescription:

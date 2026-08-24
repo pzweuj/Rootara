@@ -5,13 +5,7 @@ import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 
 function passwordDigest(password: string): string {
-  if (password.length === 64) {
-    return createHash("sha256").update(password).digest("hex")
-  }
-  return Buffer.from(password, "utf8")
-    .toString("base64")
-    .replace(/[^a-zA-Z0-9]/g, "")
-    .toLowerCase()
+  return createHash("sha256").update(password, "utf8").digest("hex")
 }
 
 function secureEqual(left: string, right: string): boolean {
