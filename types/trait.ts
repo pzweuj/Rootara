@@ -18,6 +18,11 @@ export interface Trait {
     "zh-CN": string
     default: string
   }
+  evaluationStatus?:
+    | "ok"
+    | "insufficient_data"
+    | "invalid_rule"
+    | "review_required"
   description: {
     en: string
     "zh-CN": string
@@ -34,6 +39,17 @@ export interface Trait {
   formula: string
   scoreThresholds: Record<string, number | boolean>
   reference: string[]
+  evidenceStatus?: string
+  evidenceGrade?: string
+  evidence?: Array<{
+    type: string
+    id: string
+    role?: string
+    url?: string
+    supports?: string[]
+  }>
+  limitations?: string[]
+  reviewBlockers?: string[]
 }
 
 export type TraitCategory =

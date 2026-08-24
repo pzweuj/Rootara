@@ -50,6 +50,8 @@ FastAPI 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口�
 - `GET /health/ready`
 - `GET /health`
 
+
+
 ## 开发
 
 前端仍位于仓库根目录，后端源码位于 `backend/`。在仓库根目录使用 Python 3.11 虚拟环境安装锁定的 `backend/requirements.txt`，然后执行 `PYTHONPATH=backend python -m uvicorn main:app --host 127.0.0.1 --port 8000`。为后端和前端进程设置 `ROOTARA_API_KEY=dev-only-key`、`ROOTARA_BACKEND_API_KEY=dev-only-key`、`ROOTARA_DATA_DIR=.data`、`ADMIN_PASSWORD=dev-only-password` 和 `JWT_SECRET=dev-only-jwt-secret`。另开终端在根目录执行 `pnpm dev`，并设置 `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`。

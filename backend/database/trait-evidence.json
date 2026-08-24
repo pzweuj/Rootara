@@ -1,0 +1,2943 @@
+{
+  "schema_version": 1,
+  "description": "Evidence, complete legacy genotype mappings and executable fixtures for every Rootara default rule.",
+  "review_policy": {
+    "curated_requires": [
+      "independent source per declared RSID",
+      "explicit allele orientation and genotype mapping",
+      "executable fixtures covering every genotype combination",
+      "population scope and limitations"
+    ],
+    "unreviewed_behavior": "withhold result_current and expose evaluationStatus=review_required"
+  },
+  "rules": {
+    "eye-color": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs12913832",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1800407",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 5.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "hair-color": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs12913832",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 8.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1805007",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 0.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 10.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "skin-pigmentation": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "rule_type": "genotype_score",
+      "variants": [
+        {
+          "rsid": "rs1426654",
+          "gene": "SLC24A5",
+          "literature_alleles": "A>G",
+          "input_alleles": "A>G",
+          "genotype_map": {
+            "AA": {
+              "score": 0
+            },
+            "AG": {
+              "score": 5
+            },
+            "GG": {
+              "score": 10
+            }
+          }
+        },
+        {
+          "rsid": "rs16891982",
+          "gene": "SLC45A2",
+          "literature_alleles": "C>G",
+          "input_alleles": "C>G",
+          "genotype_map": {
+            "CC": {
+              "score": 5
+            },
+            "CG": {
+              "score": 3
+            },
+            "GG": {
+              "score": 0
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "16357253",
+          "role": "primary",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/16357253/",
+          "supports": [
+            "rs1426654",
+            "SLC24A5",
+            "human pigmentation"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "28457509",
+          "role": "population_replication",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/28457509/",
+          "supports": [
+            "rs16891982",
+            "SLC45A2",
+            "skin pigmentation"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "light_score",
+          "genotypes": {
+            "rs1426654": "AA",
+            "rs16891982": "GG"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Light"
+        },
+        {
+          "name": "intermediate_score",
+          "genotypes": {
+            "rs1426654": "AG",
+            "rs16891982": "CG"
+          },
+          "expected_score": 8,
+          "expected_result_key": "Medium"
+        },
+        {
+          "name": "dark_score",
+          "genotypes": {
+            "rs1426654": "GG",
+            "rs16891982": "CC"
+          },
+          "expected_score": 15,
+          "expected_result_key": "Dark"
+        }
+      ],
+      "limitations": [
+        "Pigmentation is polygenic and strongly population-dependent; the score is an educational approximation, not a skin-color prediction for an individual."
+      ]
+    },
+    "freckles-tendency": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs12203592",
+          "gene": "IRF4",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "genotype_map": {
+            "CC": {
+              "result_key": "Low",
+              "score": 0
+            },
+            "CT": {
+              "result_key": "Medium",
+              "score": 5
+            },
+            "TT": {
+              "result_key": "High",
+              "score": 10
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "25705849",
+          "role": "primary_gwas",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/25705849/",
+          "supports": [
+            "rs12203592",
+            "IRF4",
+            "facial pigmented spots"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "20602913",
+          "role": "replication",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/20602913/",
+          "supports": [
+            "IRF4 variants",
+            "pigmented nevi"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "low_risk_genotype",
+          "genotypes": {
+            "rs12203592": "CC"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Low"
+        },
+        {
+          "name": "heterozygote",
+          "genotypes": {
+            "rs12203592": "CT"
+          },
+          "expected_score": 5,
+          "expected_result_key": "Medium"
+        },
+        {
+          "name": "higher_risk_genotype",
+          "genotypes": {
+            "rs12203592": "TT"
+          },
+          "expected_score": 10,
+          "expected_result_key": "High"
+        }
+      ],
+      "limitations": [
+        "The evidence is for facial pigmented spots/nevus-related phenotypes and should not be presented as a diagnosis of freckles or melanoma risk."
+      ]
+    },
+    "muscle-fiber-type": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs1815739",
+          "gene": "ACTN3",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "genotype_map": {
+            "CC": {
+              "result_key": "Fast",
+              "score": 10
+            },
+            "CT": {
+              "result_key": "Mixed",
+              "score": 5
+            },
+            "TT": {
+              "result_key": "Slow",
+              "score": 0
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "12879365",
+          "role": "primary",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12879365/",
+          "supports": [
+            "rs1815739",
+            "ACTN3",
+            "fast-twitch muscle performance"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "25761735",
+          "role": "population_replication",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/25761735/",
+          "supports": [
+            "ACTN3 R577X",
+            "muscle function"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "r577r",
+          "genotypes": {
+            "rs1815739": "CC"
+          },
+          "expected_score": 10,
+          "expected_result_key": "Fast"
+        },
+        {
+          "name": "r577x",
+          "genotypes": {
+            "rs1815739": "CT"
+          },
+          "expected_score": 5,
+          "expected_result_key": "Mixed"
+        },
+        {
+          "name": "x577x",
+          "genotypes": {
+            "rs1815739": "TT"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Slow"
+        }
+      ],
+      "limitations": [
+        "ACTN3 is associated with performance-related phenotypes, not a direct measurement of fiber composition or athletic ability."
+      ]
+    },
+    "earwax-type": {
+      "status": "curated",
+      "evidence_grade": "A",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs17822931",
+          "gene": "ABCC11",
+          "literature_alleles": "G>A",
+          "input_alleles": "C>T",
+          "input_note": "Rootara reader representation is the complementary strand used by the current formulas.",
+          "genotype_map": {
+            "TT": {
+              "result_key": "Dry",
+              "score": 0
+            },
+            "CT": {
+              "result_key": "Mixed",
+              "score": 5
+            },
+            "CC": {
+              "result_key": "Wet",
+              "score": 10
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "16444273",
+          "role": "primary",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/16444273/",
+          "supports": [
+            "rs17822931",
+            "ABCC11",
+            "earwax type"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "19383836",
+          "role": "replication_review",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/19383836/",
+          "supports": [
+            "rs17822931",
+            "wet/dry earwax mapping"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "dry_homozygote",
+          "genotypes": {
+            "rs17822931": "TT"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Dry"
+        },
+        {
+          "name": "heterozygote",
+          "genotypes": {
+            "rs17822931": "CT"
+          },
+          "expected_score": 5,
+          "expected_result_key": "Mixed"
+        },
+        {
+          "name": "wet_homozygote",
+          "genotypes": {
+            "rs17822931": "CC"
+          },
+          "expected_score": 10,
+          "expected_result_key": "Wet"
+        }
+      ],
+      "limitations": [
+        "The 27-bp ABCC11 deletion is not represented by the current SNP-only reader."
+      ]
+    },
+    "bitter-taste-sensitivity": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs713598",
+          "gene": "TAS2R38",
+          "literature_alleles": "G>C",
+          "input_alleles": "G>C",
+          "genotype_map": {
+            "GG": {
+              "result_key": "Low",
+              "score": 0
+            },
+            "CG": {
+              "result_key": "Medium",
+              "score": 5
+            },
+            "CC": {
+              "result_key": "High",
+              "score": 10
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "21763010",
+          "role": "association",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/21763010/",
+          "supports": [
+            "rs713598",
+            "TAS2R38",
+            "bitter taste sensitivity"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "15883422",
+          "role": "population_replication",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/15883422/",
+          "supports": [
+            "TAS2R38 haplotypes",
+            "bitter taste and eating behavior"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "low_sensitivity",
+          "genotypes": {
+            "rs713598": "GG"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Low"
+        },
+        {
+          "name": "heterozygote",
+          "genotypes": {
+            "rs713598": "CG"
+          },
+          "expected_score": 5,
+          "expected_result_key": "Medium"
+        },
+        {
+          "name": "high_sensitivity",
+          "genotypes": {
+            "rs713598": "CC"
+          },
+          "expected_score": 10,
+          "expected_result_key": "High"
+        }
+      ],
+      "limitations": [
+        "TAS2R38 haplotypes require additional linked variants for full PAV/AVI classification; this is a one-SNP approximation."
+      ]
+    },
+    "body-odor": {
+      "status": "curated",
+      "evidence_grade": "A",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs17822931",
+          "gene": "ABCC11",
+          "literature_alleles": "G>A",
+          "input_alleles": "C>T",
+          "genotype_map": {
+            "TT": {
+              "result_key": "Mild",
+              "score": 0
+            },
+            "CT": {
+              "result_key": "Medium",
+              "score": 5
+            },
+            "CC": {
+              "result_key": "Strong",
+              "score": 10
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "19650936",
+          "role": "primary",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/19650936/",
+          "supports": [
+            "rs17822931",
+            "ABCC11",
+            "axillary osmidrosis",
+            "wet earwax"
+          ]
+        },
+        {
+          "type": "PMID",
+          "id": "19383836",
+          "role": "mechanistic_review",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/19383836/",
+          "supports": [
+            "ABCC11",
+            "wet/dry secretion phenotype"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "low_odor_dry_type",
+          "genotypes": {
+            "rs17822931": "TT"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Mild"
+        },
+        {
+          "name": "intermediate_heterozygote",
+          "genotypes": {
+            "rs17822931": "CT"
+          },
+          "expected_score": 5,
+          "expected_result_key": "Medium"
+        },
+        {
+          "name": "wet_type_high_odor",
+          "genotypes": {
+            "rs17822931": "CC"
+          },
+          "expected_score": 10,
+          "expected_result_key": "Strong"
+        }
+      ],
+      "limitations": [
+        "Axillary odor is a phenotype association, not a diagnosis; hygiene, microbiome, and environment also contribute."
+      ]
+    },
+    "cilantro-taste": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs72921001",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "lactose-tolerance": {
+      "status": "partial_evidence",
+      "evidence_grade": "B",
+      "rule_type": "genotype_score",
+      "variants": [
+        {
+          "rsid": "rs4988235",
+          "gene": "MCM6/LCT",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "genotype_map": {
+            "CC": {
+              "score": 0
+            },
+            "CT": {
+              "score": 5
+            },
+            "TT": {
+              "score": 10
+            }
+          }
+        },
+        {
+          "rsid": "rs182549",
+          "gene": "MCM6/LCT",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "genotype_map": {
+            "CC": {
+              "score": 0
+            },
+            "CT": {
+              "score": 5
+            },
+            "TT": {
+              "score": 10
+            }
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "32042409",
+          "role": "replication",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/32042409/",
+          "supports": [
+            "rs4988235",
+            "LCT-13910 C/T",
+            "lactase persistence"
+          ]
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "low_persistence",
+          "genotypes": {
+            "rs4988235": "CC",
+            "rs182549": "CC"
+          },
+          "expected_score": 0,
+          "expected_result_key": "Low"
+        },
+        {
+          "name": "intermediate_persistence",
+          "genotypes": {
+            "rs4988235": "CT",
+            "rs182549": "CT"
+          },
+          "expected_score": 10,
+          "expected_result_key": "Medium"
+        },
+        {
+          "name": "high_persistence",
+          "genotypes": {
+            "rs4988235": "TT",
+            "rs182549": "TT"
+          },
+          "expected_score": 20,
+          "expected_result_key": "High"
+        }
+      ],
+      "limitations": [
+        "rs182549 still needs a separate direct source record; lactase-persistence alleles are population-specific and multiple non-European variants exist."
+      ]
+    },
+    "iron-absorption": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1800562",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1799945",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 5.0
+            },
+            "CG": {
+              "score": 3.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "detoxification-capacity": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1695",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1138272",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 5.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "pain-sensitivity": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs6269",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "caffeine-metabolism": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs762551",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AC": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs2472297",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 0.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 10.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "diabetes-t2-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs7903146",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs12255372",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "GT": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "alzheimer-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs429358",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs7412",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "alcohol-flush": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs671",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 0.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 10.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1229984",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 0.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 10.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "exercise-response": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1815739",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs8192678",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 5.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "morning-person": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1801260",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "TC": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "nicotine-dependence": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs16969968",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "vitamin-b12": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1801198",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 0.0
+            },
+            "CG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 10.0
+            }
+          }
+        },
+        {
+          "rsid": "rs602662",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "omega3-metabolism": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs174547",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs174556",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 5.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "folate-metabolism": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1801133",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "alcohol-metabolism": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1229984",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs671",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "warfarin-sensitivity": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs9923231",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1799853",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "aspirin-response": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs20417",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs5918",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 5.0
+            },
+            "TC": {
+              "score": 3.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "clopidogrel-response": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs4244285",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GA": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4986893",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 5.0
+            },
+            "GA": {
+              "score": 3.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "statin-response": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs4149056",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "TC": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4363657",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 5.0
+            },
+            "TG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "celiac-disease-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs2187668",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs7454108",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 8.0
+            },
+            "AT": {
+              "score": 4.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "psoriasis-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs12188917",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs2395029",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "GT": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "rheumatoid-arthritis-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs6457617",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs6679677",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "age-related-macular-degeneration": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1061170",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs10490924",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "GT": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "glaucoma-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs2157719",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4236601",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "venous-thromboembolism-risk": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs6025",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1799963",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "migraine-susceptibility": {
+      "status": "do_not_import_unknown_formula",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1835740",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs11172113",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "restless-leg-syndrome": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs3923809",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs9296249",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "sleep-apnea-risk": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs9937053",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs11126184",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "longevity-associated": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs2802292",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4420638",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 5.0
+            },
+            "AG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "muscle-power": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1815739",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1049434",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 5.0
+            },
+            "CT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "endurance-performance": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1799752",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "II": {
+              "score": 10.0
+            },
+            "ID": {
+              "score": 5.0
+            },
+            "DD": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4994",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 5.0
+            },
+            "AG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "injury-recovery": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1800012",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1107946",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 5.0
+            },
+            "AG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "vitamin-a-conversion": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs7501331",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "TC": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs12934922",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 5.0
+            },
+            "AT": {
+              "score": 3.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "vitamin-e-needs": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs964184",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs6511720",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 5.0
+            },
+            "TG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "choline-needs": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs7946",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs12325817",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "sodium-sensitivity": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs5068",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4961",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "antioxidant-needs": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1001179",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs4880",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 5.0
+            },
+            "TC": {
+              "score": 3.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "histamine-intolerance": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs10156191",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1049742",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "sweet-taste-preference": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs35874116",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs307355",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "CC": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "alcohol-preference": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1229984",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs698",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 5.0
+            },
+            "GA": {
+              "score": 3.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "umami-taste-sensitivity": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs307355",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 10.0
+            },
+            "CT": {
+              "score": 5.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs35874116",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 5.0
+            },
+            "AG": {
+              "score": 3.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "skin-aging": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1800012",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "TT": {
+              "score": 10.0
+            },
+            "GT": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1799750",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "hair-loss-male-pattern": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs6625163",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "GG": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "AA": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs1998076",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 8.0
+            },
+            "AG": {
+              "score": 4.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    },
+    "acne-susceptibility": {
+      "status": "review_required",
+      "evidence_grade": "unverified",
+      "rule_type": "legacy_score",
+      "variants": [
+        {
+          "rsid": "rs1051730",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "AA": {
+              "score": 10.0
+            },
+            "AG": {
+              "score": 5.0
+            },
+            "GG": {
+              "score": 0.0
+            }
+          }
+        },
+        {
+          "rsid": "rs2294008",
+          "gene": null,
+          "literature_alleles": null,
+          "input_alleles": null,
+          "mapping_status": "formula_complete_only",
+          "genotype_map": {
+            "CC": {
+              "score": 8.0
+            },
+            "CT": {
+              "score": 4.0
+            },
+            "TT": {
+              "score": 0.0
+            }
+          }
+        }
+      ],
+      "evidence": [],
+      "fixture_strategy": "cartesian_exhaustive",
+      "review_blockers": [
+        "No independent literature record has been manually verified for this exact formula.",
+        "The legacy score direction, weights, threshold and population scope require review.",
+        "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
+      ],
+      "limitations": [
+        "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
+      ]
+    }
+  }
+}

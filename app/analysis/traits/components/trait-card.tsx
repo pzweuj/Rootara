@@ -142,6 +142,13 @@ interface TraitCardProps {
 export function TraitCard({ trait, onClick, onDeleteClick }: TraitCardProps) {
   const { language } = useLanguage()
 
+  const pendingReview =
+    trait.evaluationStatus === "review_required" ||
+    trait.evidenceStatus === "review_required" ||
+    trait.evidenceStatus === "do_not_import_unknown_formula" ||
+    trait.evidenceStatus === "partial_evidence"
+  const pendingLabel = language === "zh-CN" ? "证据待审核" : "Evidence pending"
+
   // Get the icon component or fallback to AlertCircle
   const IconComponent = dynamicIcons[trait.icon] || AlertCircle
 
@@ -165,11 +172,17 @@ export function TraitCard({ trait, onClick, onDeleteClick }: TraitCardProps) {
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <div className="text-xl font-bold mb-1">
-            {trait.result_current?.[
-              language as keyof typeof trait.result_current
-            ] || trait.result_current?.default}
-          </div>
+          {pendingReview ? (
+            <div className="text-sm font-medium text-muted-foreground mb-1">
+              {pendingLabel}
+            </div>
+          ) : (
+            <div className="text-xl font-bold mb-1">
+              {trait.result_current?.[
+                language as keyof typeof trait.result_current
+              ] || trait.result_current?.default || "N/A"}
+            </div>
+          )}
           <p className="text-sm text-muted-foreground">
             {trait.description[language as keyof typeof trait.description]}
           </p>

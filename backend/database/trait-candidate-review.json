@@ -1,0 +1,2837 @@
+{
+  "schema_version": 1,
+  "description": "Review manifest for WeGene candidates. This file intentionally keeps candidates out of production until their formula and evidence are independently reconstructed.",
+  "source": {
+    "provider": "WeGene",
+    "report": "wgs_male",
+    "retrieved_at": "2026-08-24",
+    "category_scope": [
+      "心理特质",
+      "皮肤特性",
+      "营养代谢",
+      "运动基因",
+      "遗传倾向",
+      "饮食偏好"
+    ],
+    "category_pages": {
+      "心理特质": "https://www.wegene.com/demo2/wgs_male/report/%E5%BF%83%E7%90%86%E7%89%B9%E8%B4%A8",
+      "皮肤特性": "https://www.wegene.com/demo2/wgs_male/report/%E7%9A%AE%E8%82%A4%E7%89%B9%E6%80%A7",
+      "营养代谢": "https://www.wegene.com/demo2/wgs_male/report/%E8%90%A5%E5%85%BB%E4%BB%A3%E8%B0%A2",
+      "运动基因": "https://www.wegene.com/demo2/wgs_male/report/%E8%BF%90%E5%8A%A8%E5%9F%BA%E5%9B%A0",
+      "遗传倾向": "https://www.wegene.com/demo2/wgs_male/report/%E9%81%97%E4%BC%A0%E5%80%BE%E5%90%91",
+      "饮食偏好": "https://www.wegene.com/demo2/wgs_male/report/%E9%A5%AE%E9%A3%9F%E5%81%8F%E5%A5%BD"
+    },
+    "selection": "仅保留非疾病、非用药分类中 RSID 数量不超过 3 的项目；不代表已通过证据审核。"
+  },
+  "counts": {
+    "selected_candidates": 95,
+    "unique_rsids": 164,
+    "locus_overlap_candidates": 23,
+    "new_locus_candidates": 72
+  },
+  "candidates": [
+    {
+      "id": "wegene-营养代谢-5",
+      "name": {
+        "zh-CN": "乳糖代谢能力",
+        "en": "Lactose Metabolism"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "5",
+      "rsids": [
+        "rs182549",
+        "rs4988235"
+      ],
+      "gene_by_rsid": {
+        "rs182549": "MCM6",
+        "rs4988235": "MCM6"
+      },
+      "observed_demo_genotypes": {
+        "rs182549": "CC",
+        "rs4988235": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-22",
+      "name": {
+        "zh-CN": "咖啡因代谢能力",
+        "en": "Caffeine Metabolism"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "22",
+      "rsids": [
+        "rs762551"
+      ],
+      "gene_by_rsid": {
+        "rs762551": "CYP1A2"
+      },
+      "observed_demo_genotypes": {
+        "rs762551": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-225",
+      "name": {
+        "zh-CN": "叶酸营养需求",
+        "en": "Folate Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "225",
+      "rsids": [
+        "rs1801131",
+        "rs1801133",
+        "rs1801394"
+      ],
+      "gene_by_rsid": {
+        "rs1801131": "MTHFR",
+        "rs1801133": "MTHFR",
+        "rs1801394": "MTRR"
+      },
+      "observed_demo_genotypes": {
+        "rs1801131": "TT",
+        "rs1801133": "AG",
+        "rs1801394": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-247",
+      "name": {
+        "zh-CN": "钙营养需求",
+        "en": "Calcium Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "247",
+      "rsids": [
+        "rs1042636",
+        "rs1544410"
+      ],
+      "gene_by_rsid": {
+        "rs1042636": "CASR",
+        "rs1544410": "VDR"
+      },
+      "observed_demo_genotypes": {
+        "rs1042636": "AG",
+        "rs1544410": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-249",
+      "name": {
+        "zh-CN": "酒精代谢能力",
+        "en": "Alcohol Metabolism"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "249",
+      "rsids": [
+        "rs1229984",
+        "rs2066702",
+        "rs671"
+      ],
+      "gene_by_rsid": {
+        "rs1229984": "ADH1B",
+        "rs2066702": "ADH1B",
+        "rs671": "ALDH2"
+      },
+      "observed_demo_genotypes": {
+        "rs1229984": "TT",
+        "rs2066702": "GG",
+        "rs671": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-250",
+      "name": {
+        "zh-CN": "维生素E营养需求",
+        "en": "Vitamin E Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "250",
+      "rsids": [
+        "rs2108622",
+        "rs964184",
+        "rs6994076"
+      ],
+      "gene_by_rsid": {
+        "rs2108622": "CYP4F2",
+        "rs964184": "ZPR1"
+      },
+      "observed_demo_genotypes": {
+        "rs2108622": "CC",
+        "rs964184": "CG",
+        "rs6994076": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-256",
+      "name": {
+        "zh-CN": "维生素A营养需求",
+        "en": "Vitamin A Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "256",
+      "rsids": [
+        "rs11645428",
+        "rs6420424",
+        "rs6564851"
+      ],
+      "gene_by_rsid": {
+        "rs11645428": "BCMO1",
+        "rs6420424": "PKD1L2",
+        "rs6564851": "BCMO1"
+      },
+      "observed_demo_genotypes": {
+        "rs11645428": "GG",
+        "rs6420424": "GG",
+        "rs6564851": "GT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-1701",
+      "name": {
+        "zh-CN": "维生素K营养需求",
+        "en": "Vitamin K Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "1701",
+      "rsids": [
+        "rs2108622",
+        "rs9923231"
+      ],
+      "gene_by_rsid": {
+        "rs2108622": "CYP4F2",
+        "rs9923231": "VKORC1"
+      },
+      "observed_demo_genotypes": {
+        "rs2108622": "CC",
+        "rs9923231": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-1702",
+      "name": {
+        "zh-CN": "维生素B6营养需求",
+        "en": "Vitamin B6 Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "1702",
+      "rsids": [
+        "rs4654748",
+        "rs1256335"
+      ],
+      "gene_by_rsid": {
+        "rs4654748": "NBPF3",
+        "rs1256335": "ALPL"
+      },
+      "observed_demo_genotypes": {
+        "rs4654748": "CT",
+        "rs1256335": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-营养代谢-1705",
+      "name": {
+        "zh-CN": "维生素B2营养需求",
+        "en": "Vitamin B2 Nutritional Requirement"
+      },
+      "category": "nutrition",
+      "source_category": "营养代谢",
+      "source_id": "1705",
+      "rsids": [
+        "rs1801133"
+      ],
+      "gene_by_rsid": {
+        "rs1801133": "MTHFR"
+      },
+      "observed_demo_genotypes": {
+        "rs1801133": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2277",
+      "name": {
+        "zh-CN": "连眉倾向性",
+        "en": "Unibrow Tendency"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2277",
+      "rsids": [
+        "rs36015125"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs36015125": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2284",
+      "name": {
+        "zh-CN": "浓密头发倾向性",
+        "en": "Dense Hair Tendency"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2284",
+      "rsids": [
+        "rs3771033",
+        "rs10908366",
+        "rs11940736"
+      ],
+      "gene_by_rsid": {
+        "rs3771033": "NRP2",
+        "rs11940736": "SPATA5"
+      },
+      "observed_demo_genotypes": {
+        "rs3771033": "CT",
+        "rs10908366": "TT",
+        "rs11940736": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2289",
+      "name": {
+        "zh-CN": "晒太阳偏好",
+        "en": "Sun-Seeking Preference"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2289",
+      "rsids": [
+        "rs76112426",
+        "rs2570497",
+        "rs13393754"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs76112426": "GG",
+        "rs2570497": "CT",
+        "rs13393754": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2290",
+      "name": {
+        "zh-CN": "浓眉倾向性",
+        "en": "Thick Eyebrow Tendency"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2290",
+      "rsids": [
+        "rs57744491",
+        "rs73182377",
+        "rs10508556"
+      ],
+      "gene_by_rsid": {
+        "rs10508556": "SLC39A12"
+      },
+      "observed_demo_genotypes": {
+        "rs57744491": "AA",
+        "rs73182377": "CC",
+        "rs10508556": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2294",
+      "name": {
+        "zh-CN": "科学创造力",
+        "en": "Occupational Scientific Creativity"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2294",
+      "rsids": [
+        "rs2613492",
+        "rs9387963",
+        "rs7200666"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs2613492": "TT",
+        "rs9387963": "GG",
+        "rs7200666": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2296",
+      "name": {
+        "zh-CN": "管理创造力",
+        "en": "Occupational Managerial Creativity"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2296",
+      "rsids": [
+        "rs1487441"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs1487441": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2297",
+      "name": {
+        "zh-CN": "美人尖倾向性",
+        "en": "Widow's Peak Tendency"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2297",
+      "rsids": [
+        "rs13423753",
+        "rs4959669"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs13423753": "GG",
+        "rs4959669": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2300",
+      "name": {
+        "zh-CN": "艺术创造力",
+        "en": "Occupational Artistic Creativity"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2300",
+      "rsids": [
+        "rs4800011"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs4800011": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-遗传倾向-2304",
+      "name": {
+        "zh-CN": "领导力",
+        "en": "Leadership Ability​​"
+      },
+      "category": "lifestyle",
+      "source_category": "遗传倾向",
+      "source_id": "2304",
+      "rsids": [
+        "rs1487441",
+        "rs4977839",
+        "rs9848497"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs1487441": "AA",
+        "rs4977839": "AG",
+        "rs9848497": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1561",
+      "name": {
+        "zh-CN": "抗职业倦怠能力",
+        "en": "Resistance to Job Burnout"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1561",
+      "rsids": [
+        "rs13219957",
+        "rs6265",
+        "rs12506228"
+      ],
+      "gene_by_rsid": {
+        "rs13219957": "UST",
+        "rs6265": "BDNF",
+        "rs12506228": "F11-AS1"
+      },
+      "observed_demo_genotypes": {
+        "rs13219957": "AG",
+        "rs6265": "CT",
+        "rs12506228": "AC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1711",
+      "name": {
+        "zh-CN": "数字记忆能力",
+        "en": "Digit Memory Ability"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1711",
+      "rsids": [
+        "rs6265",
+        "rs34087853"
+      ],
+      "gene_by_rsid": {
+        "rs6265": "BDNF",
+        "rs34087853": "CAMK2A"
+      },
+      "observed_demo_genotypes": {
+        "rs6265": "CT",
+        "rs34087853": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1718",
+      "name": {
+        "zh-CN": "积极情感程度",
+        "en": "Positive Emotion"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1718",
+      "rsids": [
+        "rs322931"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs322931": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1721",
+      "name": {
+        "zh-CN": "尽责性",
+        "en": "Conscientiousness"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1721",
+      "rsids": [
+        "rs2576037",
+        "rs13070781"
+      ],
+      "gene_by_rsid": {
+        "rs2576037": "KATNAL2"
+      },
+      "observed_demo_genotypes": {
+        "rs2576037": "TT",
+        "rs13070781": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1723",
+      "name": {
+        "zh-CN": "情景记忆能力",
+        "en": "Episodic Memory Ability"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1723",
+      "rsids": [
+        "rs17070145",
+        "rs7594645"
+      ],
+      "gene_by_rsid": {
+        "rs17070145": "WWC1",
+        "rs7594645": "FASTKD2"
+      },
+      "observed_demo_genotypes": {
+        "rs17070145": "TT",
+        "rs7594645": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-心理特质-1725",
+      "name": {
+        "zh-CN": "抗过度囤积能力",
+        "en": "Anti-Compulsive Hoarding"
+      },
+      "category": "lifestyle",
+      "source_category": "心理特质",
+      "source_id": "1725",
+      "rsids": [
+        "rs2388436",
+        "rs3747767"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs2388436": "AG",
+        "rs3747767": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1488",
+      "name": {
+        "zh-CN": "运动后心率改善",
+        "en": "Heart Rate Improvement "
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1488",
+      "rsids": [
+        "rs2253206",
+        "rs13387495"
+      ],
+      "gene_by_rsid": {
+        "rs13387495": "ERBB4"
+      },
+      "observed_demo_genotypes": {
+        "rs2253206": "GG",
+        "rs13387495": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1490",
+      "name": {
+        "zh-CN": "运动积极性",
+        "en": "Motivation to Exercise"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1490",
+      "rsids": [
+        "rs10887741",
+        "rs12612420",
+        "rs8097348"
+      ],
+      "gene_by_rsid": {
+        "rs10887741": "PAPSS2"
+      },
+      "observed_demo_genotypes": {
+        "rs10887741": "TT",
+        "rs12612420": "GG",
+        "rs8097348": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1491",
+      "name": {
+        "zh-CN": "肌肉耐劳度提升",
+        "en": "Muscle Endurance Improvement from Exercise"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1491",
+      "rsids": [
+        "rs2267668",
+        "rs8192678"
+      ],
+      "gene_by_rsid": {
+        "rs2267668": "PPARD",
+        "rs8192678": "PPARGC1A"
+      },
+      "observed_demo_genotypes": {
+        "rs2267668": "GG",
+        "rs8192678": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1492",
+      "name": {
+        "zh-CN": "运动时体温升高速度",
+        "en": "Temperature Increasing Rate During Exercise"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1492",
+      "rsids": [
+        "rs2253206"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs2253206": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1493",
+      "name": {
+        "zh-CN": "运动对体重的影响",
+        "en": "Influences of Exercise on Weight "
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1493",
+      "rsids": [
+        "rs1800588",
+        "rs1801282",
+        "rs9939609"
+      ],
+      "gene_by_rsid": {
+        "rs1800588": "LIPC",
+        "rs1801282": "PPARG",
+        "rs9939609": "FTO"
+      },
+      "observed_demo_genotypes": {
+        "rs1800588": "TT",
+        "rs1801282": "CC",
+        "rs9939609": "AT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1494",
+      "name": {
+        "zh-CN": "饮食对体重的影响",
+        "en": "Influences of Diet on Weight "
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1494",
+      "rsids": [
+        "rs1801282",
+        "rs5082",
+        "rs662799"
+      ],
+      "gene_by_rsid": {
+        "rs1801282": "PPARG",
+        "rs5082": "APOA2",
+        "rs662799": "APOA5"
+      },
+      "observed_demo_genotypes": {
+        "rs1801282": "CC",
+        "rs5082": "AG",
+        "rs662799": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1495",
+      "name": {
+        "zh-CN": "总热量摄入倾向",
+        "en": "Total Calorie Intake Tendency"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1495",
+      "rsids": [
+        "rs5082",
+        "rs9939609"
+      ],
+      "gene_by_rsid": {
+        "rs5082": "APOA2",
+        "rs9939609": "FTO"
+      },
+      "observed_demo_genotypes": {
+        "rs5082": "AG",
+        "rs9939609": "AT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1496",
+      "name": {
+        "zh-CN": "碳水化合物摄入倾向",
+        "en": "Total Carbohydrate Intake"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1496",
+      "rsids": [
+        "rs5082",
+        "rs35874116"
+      ],
+      "gene_by_rsid": {
+        "rs5082": "APOA2",
+        "rs35874116": "TAS1R2"
+      },
+      "observed_demo_genotypes": {
+        "rs5082": "AG",
+        "rs35874116": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-运动基因-1499",
+      "name": {
+        "zh-CN": "咖啡因敏感性",
+        "en": "Caffeine Sensitivity"
+      },
+      "category": "lifestyle",
+      "source_category": "运动基因",
+      "source_id": "1499",
+      "rsids": [
+        "rs762551"
+      ],
+      "gene_by_rsid": {
+        "rs762551": "CYP1A2"
+      },
+      "observed_demo_genotypes": {
+        "rs762551": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1524",
+      "name": {
+        "zh-CN": "抗糖化能力",
+        "en": "Anti-Glycation Ability"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1524",
+      "rsids": [
+        "rs1800624",
+        "rs1800625"
+      ],
+      "gene_by_rsid": {
+        "rs1800624": "AGER, PBX2",
+        "rs1800625": "AGER, PBX2"
+      },
+      "observed_demo_genotypes": {
+        "rs1800624": "AA",
+        "rs1800625": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1556",
+      "name": {
+        "zh-CN": "抵御老年斑能力",
+        "en": "Ability To Resist Senile Plaques"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1556",
+      "rsids": [
+        "rs35563099",
+        "rs251468",
+        "rs61866017"
+      ],
+      "gene_by_rsid": {
+        "rs251468": "PPARGC1B"
+      },
+      "observed_demo_genotypes": {
+        "rs35563099": "CC",
+        "rs251468": "TT",
+        "rs61866017": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1566",
+      "name": {
+        "zh-CN": "皮肤控油能力",
+        "en": "Skin Oil Control Ability"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1566",
+      "rsids": [
+        "rs174547",
+        "rs1801282",
+        "rs743572"
+      ],
+      "gene_by_rsid": {
+        "rs174547": "FADS1",
+        "rs1801282": "PPARG",
+        "rs743572": "CYP17A1"
+      },
+      "observed_demo_genotypes": {
+        "rs174547": "CC",
+        "rs1801282": "CC",
+        "rs743572": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1567",
+      "name": {
+        "zh-CN": "抵御酒糟鼻能力",
+        "en": "Ability To Resist Rosacea"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1567",
+      "rsids": [
+        "rs763035"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs763035": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1568",
+      "name": {
+        "zh-CN": "抵御脂肪团能力",
+        "en": "Ability To Resist Cellulite"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1568",
+      "rsids": [
+        "rs11549465"
+      ],
+      "gene_by_rsid": {
+        "rs11549465": "HIF1A"
+      },
+      "observed_demo_genotypes": {
+        "rs11549465": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1569",
+      "name": {
+        "zh-CN": "抵御静脉曲张能力",
+        "en": "Ability To Resist Varicose Veins"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1569",
+      "rsids": [
+        "rs1801131",
+        "rs1801133"
+      ],
+      "gene_by_rsid": {
+        "rs1801131": "MTHFR",
+        "rs1801133": "MTHFR"
+      },
+      "observed_demo_genotypes": {
+        "rs1801131": "TT",
+        "rs1801133": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1693",
+      "name": {
+        "zh-CN": "皮肤抗皱能力",
+        "en": "Anti-Skin Wrinkle Ability"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1693",
+      "rsids": [
+        "rs2066853"
+      ],
+      "gene_by_rsid": {
+        "rs2066853": "AHR"
+      },
+      "observed_demo_genotypes": {
+        "rs2066853": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1694",
+      "name": {
+        "zh-CN": "抗眼睑松弛能力",
+        "en": "Anti-Sagging Eyelid Ability"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1694",
+      "rsids": [
+        "rs11876749",
+        "rs11979919"
+      ],
+      "gene_by_rsid": {
+        "rs11876749": "DLGAP1"
+      },
+      "observed_demo_genotypes": {
+        "rs11876749": "CT",
+        "rs11979919": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-皮肤特性-1695",
+      "name": {
+        "zh-CN": "胶原蛋白保持能力",
+        "en": "Collagen Retention Ability"
+      },
+      "category": "appearance",
+      "source_category": "皮肤特性",
+      "source_id": "1695",
+      "rsids": [
+        "rs1800795",
+        "rs3918242"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs1800795": "GG",
+        "rs3918242": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2306",
+      "name": {
+        "zh-CN": "可颂偏好",
+        "en": "Croissant Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2306",
+      "rsids": [
+        "rs4580876"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs4580876": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2308",
+      "name": {
+        "zh-CN": "培根偏好",
+        "en": "Bacon Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2308",
+      "rsids": [
+        "rs10946808",
+        "rs429358",
+        "rs6718656"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE"
+      },
+      "observed_demo_genotypes": {
+        "rs10946808": "GG",
+        "rs429358": "TT",
+        "rs6718656": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2309",
+      "name": {
+        "zh-CN": "大蒜偏好",
+        "en": "Garlic Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2309",
+      "rsids": [
+        "rs13009019",
+        "rs12495758"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs13009019": "AA",
+        "rs12495758": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2311",
+      "name": {
+        "zh-CN": "干果偏好",
+        "en": "Dried Fruit Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2311",
+      "rsids": [
+        "rs7618456",
+        "rs35260863"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs7618456": "CC",
+        "rs35260863": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2312",
+      "name": {
+        "zh-CN": "披萨偏好",
+        "en": "Pizza Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2312",
+      "rsids": [
+        "rs281377",
+        "rs13250449",
+        "rs3791203"
+      ],
+      "gene_by_rsid": {
+        "rs281377": "FUT2"
+      },
+      "observed_demo_genotypes": {
+        "rs281377": "TT",
+        "rs13250449": "GG",
+        "rs3791203": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2314",
+      "name": {
+        "zh-CN": "李子偏好",
+        "en": "Plums Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2314",
+      "rsids": [
+        "rs35260863",
+        "rs2504714",
+        "rs2316901"
+      ],
+      "gene_by_rsid": {
+        "rs2316901": "TRIM66"
+      },
+      "observed_demo_genotypes": {
+        "rs35260863": "TT",
+        "rs2504714": "GG",
+        "rs2316901": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2315",
+      "name": {
+        "zh-CN": "柠檬偏好",
+        "en": "Lemons Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2315",
+      "rsids": [
+        "rs786272",
+        "rs8097318"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs786272": "AA",
+        "rs8097318": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2316",
+      "name": {
+        "zh-CN": "梨子偏好",
+        "en": "Pears Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2316",
+      "rsids": [
+        "rs4953148",
+        "rs2504701"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs4953148": "AA",
+        "rs2504701": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2318",
+      "name": {
+        "zh-CN": "橙子偏好",
+        "en": "Oranges Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2318",
+      "rsids": [
+        "rs10423928",
+        "rs553450800"
+      ],
+      "gene_by_rsid": {
+        "rs10423928": "GIPR"
+      },
+      "observed_demo_genotypes": {
+        "rs10423928": "TT",
+        "rs553450800": "--"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2319",
+      "name": {
+        "zh-CN": "橙汁偏好",
+        "en": "Orange Juice Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2319",
+      "rsids": [
+        "rs12149574"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs12149574": "CG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2320",
+      "name": {
+        "zh-CN": "洋葱偏好",
+        "en": "Onion Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2320",
+      "rsids": [
+        "rs838133",
+        "rs7511986",
+        "rs9959497"
+      ],
+      "gene_by_rsid": {
+        "rs838133": "FGF21"
+      },
+      "observed_demo_genotypes": {
+        "rs838133": "GG",
+        "rs7511986": "AA",
+        "rs9959497": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2321",
+      "name": {
+        "zh-CN": "洋蓟偏好",
+        "en": "Globe Artichoke Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2321",
+      "rsids": [
+        "rs187580",
+        "rs12214204",
+        "rs12430440"
+      ],
+      "gene_by_rsid": {
+        "rs12214204": "ARID1B"
+      },
+      "observed_demo_genotypes": {
+        "rs187580": "TT",
+        "rs12214204": "AA",
+        "rs12430440": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2323",
+      "name": {
+        "zh-CN": "炸鱼偏好",
+        "en": "Fried Fish Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2323",
+      "rsids": [
+        "rs429358",
+        "rs601338",
+        "rs79288427"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE",
+        "rs601338": "FUT2"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs601338": "GG",
+        "rs79288427": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2324",
+      "name": {
+        "zh-CN": "炸鸡偏好",
+        "en": "Fried Chicken Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2324",
+      "rsids": [
+        "rs429358"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2325",
+      "name": {
+        "zh-CN": "烤鸡偏好",
+        "en": "Roast Chicken Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2325",
+      "rsids": [
+        "rs429358",
+        "rs8083301",
+        "rs186775337"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs8083301": "AT",
+        "rs186775337": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2327",
+      "name": {
+        "zh-CN": "牛肉偏好",
+        "en": "Beef Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2327",
+      "rsids": [
+        "rs429358",
+        "rs62250717",
+        "rs11240430"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs62250717": "GG",
+        "rs11240430": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2329",
+      "name": {
+        "zh-CN": "甜椒偏好",
+        "en": "Bell Pepper Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2329",
+      "rsids": [
+        "rs111688645",
+        "rs35773951"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs111688645": "CC",
+        "rs35773951": "DI"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2331",
+      "name": {
+        "zh-CN": "番茄偏好",
+        "en": "Tomatoes Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2331",
+      "rsids": [
+        "rs4240637",
+        "rs11370368"
+      ],
+      "gene_by_rsid": {
+        "rs4240637": "MSRA"
+      },
+      "observed_demo_genotypes": {
+        "rs4240637": "GG",
+        "rs11370368": "DI"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2334",
+      "name": {
+        "zh-CN": "芜菁偏好",
+        "en": "Turnip Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2334",
+      "rsids": [
+        "rs5743618",
+        "rs3013340",
+        "rs374952396"
+      ],
+      "gene_by_rsid": {
+        "rs5743618": "TLR1"
+      },
+      "observed_demo_genotypes": {
+        "rs5743618": "AA",
+        "rs3013340": "AT",
+        "rs374952396": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2337",
+      "name": {
+        "zh-CN": "苹果偏好",
+        "en": "Apples Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2337",
+      "rsids": [
+        "rs7625384"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs7625384": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2340",
+      "name": {
+        "zh-CN": "菜花偏好",
+        "en": "Cauliflower Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2340",
+      "rsids": [
+        "rs13135092",
+        "rs1170216",
+        "rs4310746"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs13135092": "AA",
+        "rs1170216": "AG",
+        "rs4310746": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2342",
+      "name": {
+        "zh-CN": "薯条偏好",
+        "en": "Chips Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2342",
+      "rsids": [
+        "rs12682352",
+        "rs9972653"
+      ],
+      "gene_by_rsid": {
+        "rs12682352": "MFHAS1"
+      },
+      "observed_demo_genotypes": {
+        "rs12682352": "CC",
+        "rs9972653": "GT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2347",
+      "name": {
+        "zh-CN": "蜂蜜偏好",
+        "en": "Honey Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2347",
+      "rsids": [
+        "rs10852521"
+      ],
+      "gene_by_rsid": {
+        "rs10852521": "FTO"
+      },
+      "observed_demo_genotypes": {
+        "rs10852521": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2353",
+      "name": {
+        "zh-CN": "香肠偏好",
+        "en": "Sausages Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2353",
+      "rsids": [
+        "rs429358",
+        "rs72839449"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs72839449": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2354",
+      "name": {
+        "zh-CN": "香菜偏好",
+        "en": "Coriander Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2354",
+      "rsids": [
+        "rs10243750"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs10243750": "TT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2355",
+      "name": {
+        "zh-CN": "香蕉偏好",
+        "en": "Banana Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2355",
+      "rsids": [
+        "rs7241775"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs7241775": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2358",
+      "name": {
+        "zh-CN": "鸡蛋偏好",
+        "en": "Eggs Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2358",
+      "rsids": [
+        "rs429358",
+        "rs838133",
+        "rs56094641"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE",
+        "rs838133": "FGF21"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs838133": "GG",
+        "rs56094641": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2359",
+      "name": {
+        "zh-CN": "黄瓜偏好",
+        "en": "Cucumber Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2359",
+      "rsids": [
+        "rs62090520"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs62090520": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2365",
+      "name": {
+        "zh-CN": "威士忌偏好",
+        "en": "Whisky Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2365",
+      "rsids": [
+        "rs713598",
+        "rs2726478",
+        "rs10974347"
+      ],
+      "gene_by_rsid": {
+        "rs713598": "TAS2R38"
+      },
+      "observed_demo_genotypes": {
+        "rs713598": "GG",
+        "rs2726478": "AT",
+        "rs10974347": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2367",
+      "name": {
+        "zh-CN": "无糖茶偏好",
+        "en": "Tea without Sugar Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2367",
+      "rsids": [
+        "rs12653396"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs12653396": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2368",
+      "name": {
+        "zh-CN": "明太鱼偏好",
+        "en": "Pollock Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2368",
+      "rsids": [
+        "rs3105049"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs3105049": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2369",
+      "name": {
+        "zh-CN": "杏仁膏偏好",
+        "en": "Marzipan Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2369",
+      "rsids": [
+        "rs514659"
+      ],
+      "gene_by_rsid": {
+        "rs514659": "ABO"
+      },
+      "observed_demo_genotypes": {
+        "rs514659": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2371",
+      "name": {
+        "zh-CN": "沙拉酱偏好",
+        "en": "Salad Dressing Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2371",
+      "rsids": [
+        "rs7741058",
+        "rs142175605"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs7741058": "AA",
+        "rs142175605": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2375",
+      "name": {
+        "zh-CN": "玉米片偏好",
+        "en": "Cornflakes Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2375",
+      "rsids": [
+        "rs6798507",
+        "rs11222562"
+      ],
+      "gene_by_rsid": {
+        "rs6798507": "FOXP1"
+      },
+      "observed_demo_genotypes": {
+        "rs6798507": "GG",
+        "rs11222562": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2376",
+      "name": {
+        "zh-CN": "甜菜根偏好",
+        "en": "Beetroot Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2376",
+      "rsids": [
+        "rs73034263",
+        "rs11710277"
+      ],
+      "gene_by_rsid": {
+        "rs11710277": "SEMA3F"
+      },
+      "observed_demo_genotypes": {
+        "rs73034263": "CC",
+        "rs11710277": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2377",
+      "name": {
+        "zh-CN": "番茄酱偏好",
+        "en": "Ketchup Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2377",
+      "rsids": [
+        "rs2271342",
+        "rs4940994"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs2271342": "TT",
+        "rs4940994": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2378",
+      "name": {
+        "zh-CN": "白面包偏好",
+        "en": "White Bread Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2378",
+      "rsids": [
+        "rs12137388"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs12137388": "CC"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2379",
+      "name": {
+        "zh-CN": "苹果汁偏好",
+        "en": "Apple Juice Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2379",
+      "rsids": [
+        "rs7188250"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs7188250": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2380",
+      "name": {
+        "zh-CN": "茴香籽偏好",
+        "en": "Aniseed Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2380",
+      "rsids": [
+        "rs4947336",
+        "rs75051825"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs4947336": "TT",
+        "rs75051825": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2382",
+      "name": {
+        "zh-CN": "西兰花偏好",
+        "en": "Broccoli Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2382",
+      "rsids": [
+        "rs13384513",
+        "rs11749582"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs13384513": "TT",
+        "rs11749582": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2386",
+      "name": {
+        "zh-CN": "黑线鳕偏好",
+        "en": "Haddock Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2386",
+      "rsids": [
+        "rs62148582",
+        "rs3105049",
+        "rs55798953"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs62148582": "AG",
+        "rs3105049": "CT",
+        "rs55798953": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2389",
+      "name": {
+        "zh-CN": "加糖咖啡偏好",
+        "en": "Coffee with Sugar Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2389",
+      "rsids": [
+        "rs10125362"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs10125362": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2391",
+      "name": {
+        "zh-CN": "咸味饼干偏好",
+        "en": "Savory Biscuits Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2391",
+      "rsids": [
+        "rs56131196"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs56131196": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2392",
+      "name": {
+        "zh-CN": "奶油南瓜偏好",
+        "en": "Butternut Squash Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2392",
+      "rsids": [
+        "rs55872725",
+        "rs2937339"
+      ],
+      "gene_by_rsid": {
+        "rs55872725": "FTO"
+      },
+      "observed_demo_genotypes": {
+        "rs55872725": "CT",
+        "rs2937339": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2393",
+      "name": {
+        "zh-CN": "山羊奶酪偏好",
+        "en": "Goat Cheese Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2393",
+      "rsids": [
+        "rs11035710"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs11035710": "CT"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2397",
+      "name": {
+        "zh-CN": "无糖咖啡偏好",
+        "en": "Coffee without Sugar Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2397",
+      "rsids": [
+        "rs2472297",
+        "rs62033400",
+        "rs6968865"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs2472297": "CC",
+        "rs62033400": "AG",
+        "rs6968865": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2398",
+      "name": {
+        "zh-CN": "烧烤肉类偏好",
+        "en": "BBQ Grilled Meat Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2398",
+      "rsids": [
+        "rs429358",
+        "rs76395182",
+        "rs6424510"
+      ],
+      "gene_by_rsid": {
+        "rs429358": "APOE",
+        "rs76395182": "CADM2"
+      },
+      "observed_demo_genotypes": {
+        "rs429358": "TT",
+        "rs76395182": "GG",
+        "rs6424510": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2400",
+      "name": {
+        "zh-CN": "白葡萄酒偏好",
+        "en": "White Wine Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2400",
+      "rsids": [
+        "rs1229984",
+        "rs11940694"
+      ],
+      "gene_by_rsid": {
+        "rs1229984": "ADH1B",
+        "rs11940694": "MIR1273H"
+      },
+      "observed_demo_genotypes": {
+        "rs1229984": "TT",
+        "rs11940694": "AA"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2401",
+      "name": {
+        "zh-CN": "碳酸饮料偏好",
+        "en": "Fizzy Drinks Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2401",
+      "rsids": [
+        "rs62033400"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs62033400": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2404",
+      "name": {
+        "zh-CN": "芝士蛋糕偏好",
+        "en": "Cheesecake Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2404",
+      "rsids": [
+        "rs9300002",
+        "rs34783010"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs9300002": "TT",
+        "rs34783010": "GG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2408",
+      "name": {
+        "zh-CN": "全谷物麦片偏好",
+        "en": "Whole Grain Cereals Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2408",
+      "rsids": [
+        "rs9490002"
+      ],
+      "gene_by_rsid": {},
+      "observed_demo_genotypes": {
+        "rs9490002": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    },
+    {
+      "id": "wegene-饮食偏好-2410",
+      "name": {
+        "zh-CN": "罐装金枪鱼偏好",
+        "en": "Tinned Tuna Preference"
+      },
+      "category": "nutrition",
+      "source_category": "饮食偏好",
+      "source_id": "2410",
+      "rsids": [
+        "rs838133",
+        "rs56094641"
+      ],
+      "gene_by_rsid": {
+        "rs838133": "FGF21"
+      },
+      "observed_demo_genotypes": {
+        "rs838133": "GG",
+        "rs56094641": "AG"
+      },
+      "disposition": "do_not_import_unknown_formula",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "evidence_status": "not_independently_verified",
+      "review_blockers": [
+        "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
+        "Observed demo genotypes are not a complete genotype mapping.",
+        "Independent phenotype and replication evidence is required before production import."
+      ]
+    }
+  ]
+}

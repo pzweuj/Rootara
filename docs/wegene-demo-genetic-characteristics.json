@@ -1,0 +1,204 @@
+{
+  "schema": "rootara.trait-candidate/v0",
+  "source": {
+    "provider": "WeGene",
+    "url": "https://www.wegene.com/demo2/wgs_male/report/%E9%81%97%E4%BC%A0%E7%89%B9%E5%BE%81",
+    "detail_url_template": "https://www.wegene.com/demo2/wgs_male/detail/{id}",
+    "report": "wgs_male",
+    "retrieved_at": "2026-08-24",
+    "scope": "遗传特征",
+    "scope_count_reported": 13,
+    "unique_rsid_count": 17,
+    "notes": [
+      "RSID 已规范化为 Rootara 使用的小写 rs 前缀。",
+      "observed_demo_genotype 和 demo_result 仅代表 WeGene 公开示例报告，不是 Rootara 的规则映射。",
+      "WeGene 页面未公开完整计算公式或可审计的逐位点证据，因此本文件不会直接导入 default-traits.json。",
+      "页面中的结果文案和单个位点 genotype summary 存在不一致时，以待独立证据复核为准。"
+    ]
+  },
+  "traits": [
+    {
+      "id": "wegene-alcohol-flushing",
+      "name": {"zh-CN": "酒精性脸红", "en": "Alcohol Flushing"},
+      "category": "lifestyle",
+      "rootara_match": "alcohol-flush",
+      "status": "existing_overlap_review",
+      "rsids": ["rs671"],
+      "observed_demo_genotypes": [{"rsid": "rs671", "genotype": "GG", "gene": "ALDH2", "orientation": "plus"}],
+      "demo_result": "喝酒不脸红",
+      "formula": null,
+      "references": [],
+      "notes": ["Rootara 已有该特征，但现有规则还包含 rs1229984；不能用单个 WeGene 示例结果替换现有公式。"]
+    },
+    {
+      "id": "wegene-bitter-sensitivity",
+      "name": {"zh-CN": "苦味敏感度", "en": "Bitter Sensitivity"},
+      "category": "appearance",
+      "rootara_match": "bitter-taste-sensitivity",
+      "status": "existing_overlap_review",
+      "rsids": ["rs713598"],
+      "observed_demo_genotypes": [{"rsid": "rs713598", "genotype": "GG", "gene": "TAS2R38", "orientation": "plus"}],
+      "demo_result": "对苦味敏感",
+      "formula": null,
+      "references": [],
+      "notes": ["页面总结果与该位点的 genotype summary 不完全一致，必须独立复核等位基因方向和结果映射。"]
+    },
+    {
+      "id": "wegene-earwax",
+      "name": {"zh-CN": "耳垢类型", "en": "Ear Wax"},
+      "category": "appearance",
+      "rootara_match": "earwax-type",
+      "status": "existing_overlap_review",
+      "rsids": ["rs17822931"],
+      "observed_demo_genotypes": [{"rsid": "rs17822931", "genotype": "TT", "gene": "ABCC11", "orientation": "plus"}],
+      "demo_result": "干燥的耳垢",
+      "formula": null,
+      "references": [],
+      "notes": ["Rootara 已有该位点规则；保留 WeGene 结果仅作示例交叉检查。"]
+    },
+    {
+      "id": "wegene-smoking-behaviors",
+      "name": {"zh-CN": "吸烟倾向", "en": "Smoking Behaviors"},
+      "category": "lifestyle",
+      "rootara_match": null,
+      "status": "candidate_single_locus",
+      "rsids": ["rs1051730"],
+      "observed_demo_genotypes": [{"rsid": "rs1051730", "genotype": "GG", "gene": "CHRNA3", "orientation": "plus"}],
+      "demo_result": "吸烟不容易上瘾",
+      "formula": null,
+      "references": [],
+      "notes": ["需要独立整理完整基因型映射；不能把一个示例基因型直接当成 SCORE 规则。"]
+    },
+    {
+      "id": "wegene-fasting-glucose",
+      "name": {"zh-CN": "空腹血糖水平", "en": "Fasting Plasma Glucose Levels"},
+      "category": "internal",
+      "rootara_match": null,
+      "status": "health_sensitive_candidate",
+      "rsids": ["rs560887"],
+      "observed_demo_genotypes": [{"rsid": "rs560887", "genotype": "CT", "gene": "G6PC2", "orientation": "plus"}],
+      "demo_result": "空腹血糖水平较高",
+      "formula": null,
+      "references": [],
+      "notes": ["健康相关结果；需要人群、效应方向和临床免责声明，暂不进入默认特征。"]
+    },
+    {
+      "id": "wegene-photic-sneeze",
+      "name": {"zh-CN": "见光喷嚏", "en": "ACHOO Syndrome"},
+      "category": "lifestyle",
+      "rootara_match": null,
+      "status": "candidate_single_locus",
+      "rsids": ["rs10427255"],
+      "observed_demo_genotypes": [{"rsid": "rs10427255", "genotype": "CC", "gene": null, "orientation": "plus"}],
+      "demo_result": "见光打喷嚏的几率高",
+      "formula": null,
+      "references": [],
+      "notes": ["页面未给出基因名和完整映射，需先核对变异注释和研究证据。"]
+    },
+    {
+      "id": "wegene-error-avoidance",
+      "name": {"zh-CN": "避错倾向", "en": "Tendency to Avoid Mistakes"},
+      "category": "lifestyle",
+      "rootara_match": null,
+      "status": "exploratory_candidate",
+      "rsids": ["rs1800497"],
+      "observed_demo_genotypes": [{"rsid": "rs1800497", "genotype": "AA", "gene": "ANKK1", "orientation": "plus"}],
+      "demo_result": "可能不善于避免错误",
+      "formula": null,
+      "references": [],
+      "notes": ["心理/行为表型易受人群和环境影响，证据门槛应高于普通外观特征。"]
+    },
+    {
+      "id": "wegene-absolute-pitch",
+      "name": {"zh-CN": "绝对音准", "en": "Absolute Pitch"},
+      "category": "lifestyle",
+      "rootara_match": null,
+      "status": "exploratory_candidate",
+      "rsids": ["rs3057"],
+      "observed_demo_genotypes": [{"rsid": "rs3057", "genotype": "CT", "gene": "ASAP1", "orientation": "plus"}],
+      "demo_result": "绝对音准能力较不明显",
+      "formula": null,
+      "references": [],
+      "notes": ["页面明确限定部分人群，不能作为普遍适用规则。"]
+    },
+    {
+      "id": "wegene-abo-blood-group",
+      "name": {"zh-CN": "ABO 血型", "en": "ABO Blood Group"},
+      "category": "internal",
+      "rootara_match": null,
+      "status": "candidate_deterministic_multilocus",
+      "rsids": ["rs8176719", "rs8176746", "rs8176747"],
+      "observed_demo_genotypes": [
+        {"rsid": "rs8176719", "genotype": "DD", "gene": "ABO", "orientation": "plus"},
+        {"rsid": "rs8176746", "genotype": "GG", "gene": "ABO", "orientation": "plus"},
+        {"rsid": "rs8176747", "genotype": "CC", "gene": "ABO", "orientation": "plus"}
+      ],
+      "demo_result": "O 型血",
+      "formula": null,
+      "references": [],
+      "notes": ["需要明确 indel/等位基因编码和参考基因组；不应直接沿用页面中的 D、G、C 表示。"]
+    },
+    {
+      "id": "wegene-apoe-genotype",
+      "name": {"zh-CN": "APOE 分型", "en": "APOE Genotype"},
+      "category": "risk",
+      "rootara_match": "alzheimer-risk",
+      "status": "health_sensitive_candidate",
+      "rsids": ["rs429358", "rs7412"],
+      "observed_demo_genotypes": [
+        {"rsid": "rs429358", "genotype": "TT", "gene": "APOE", "orientation": "plus"},
+        {"rsid": "rs7412", "genotype": "CC", "gene": "APOE", "orientation": "plus"}
+      ],
+      "demo_result": "APOE 基因型为 ε3/ε3",
+      "formula": null,
+      "references": [],
+      "notes": ["与 Rootara 现有阿尔茨海默病风险规则共享位点，但基因分型不等于疾病风险；必须拆成独立的 APOE 分型规则并单独标注临床敏感性。"]
+    },
+    {
+      "id": "wegene-deep-sleep",
+      "name": {"zh-CN": "深度睡眠", "en": "Deep Sleep"},
+      "category": "lifestyle",
+      "rootara_match": null,
+      "status": "candidate_single_locus",
+      "rsids": ["rs73598374"],
+      "observed_demo_genotypes": [{"rsid": "rs73598374", "genotype": "CC", "gene": "ADA", "orientation": "plus"}],
+      "demo_result": "深度睡眠时间较短",
+      "formula": null,
+      "references": [],
+      "notes": ["需要独立验证效应方向和人群适用性。"]
+    },
+    {
+      "id": "wegene-genetic-height",
+      "name": {"zh-CN": "基因身高", "en": "Genetic Height"},
+      "category": "internal",
+      "rootara_match": null,
+      "status": "do_not_import_unknown_formula",
+      "rsids": ["rs10427255", "rs11645428", "rs17822931", "rs6420424", "rs6564851", "rs671"],
+      "observed_demo_genotypes": [
+        {"rsid": "rs10427255", "genotype": "CC", "gene": null, "orientation": "plus"},
+        {"rsid": "rs11645428", "genotype": "GG", "gene": "BCMO1", "orientation": "plus"},
+        {"rsid": "rs17822931", "genotype": "TT", "gene": "ABCC11", "orientation": "plus"},
+        {"rsid": "rs6420424", "genotype": "GG", "gene": "PKD1L2", "orientation": "plus"},
+        {"rsid": "rs6564851", "genotype": "GT", "gene": "BCMO1", "orientation": "plus"},
+        {"rsid": "rs671", "genotype": "GG", "gene": "ALDH2", "orientation": "plus"}
+      ],
+      "demo_result": "176.5 CM",
+      "formula": null,
+      "references": [],
+      "notes": ["页面给出多位点集合和一个身高结果，但未给出权重、截距、训练人群或单位换算；严禁据此反推公式。"]
+    },
+    {
+      "id": "wegene-axillary-odor",
+      "name": {"zh-CN": "腋臭", "en": "Axillary Odor"},
+      "category": "appearance",
+      "rootara_match": "body-odor",
+      "status": "existing_overlap_review",
+      "rsids": ["rs17822931"],
+      "observed_demo_genotypes": [{"rsid": "rs17822931", "genotype": "TT", "gene": "ABCC11", "orientation": "plus"}],
+      "demo_result": "腋臭不易发",
+      "formula": null,
+      "references": [],
+      "notes": ["与 Rootara 体味规则共享位点；耳垢和腋臭是相关但不同的表型，不能仅凭同一位点合并结果。"]
+    }
+  ]
+}

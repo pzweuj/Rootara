@@ -51,17 +51,7 @@
         "zh-CN": "蓝色"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "hair-color",
@@ -76,7 +66,7 @@
       "default": ""
     },
     "icon": "Scissors",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -121,17 +111,7 @@
         "zh-CN": "红色"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "skin-pigmentation",
@@ -188,13 +168,7 @@
     "reference": [
       "16357253",
       "28457509"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "B",
-    "limitations": [
-      "Pigmentation is polygenic and strongly population-dependent; the score is an educational approximation, not a skin-color prediction for an individual."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "freckles-tendency",
@@ -248,13 +222,7 @@
     "reference": [
       "25705849",
       "20602913"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "B",
-    "limitations": [
-      "The evidence is for facial pigmented spots/nevus-related phenotypes and should not be presented as a diagnosis of freckles or melanoma risk."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "muscle-fiber-type",
@@ -308,13 +276,7 @@
     "reference": [
       "12879365",
       "25761735"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "B",
-    "limitations": [
-      "ACTN3 is associated with performance-related phenotypes, not a direct measurement of fiber composition or athletic ability."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "earwax-type",
@@ -368,13 +330,7 @@
     "reference": [
       "16444273",
       "19383836"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "A",
-    "limitations": [
-      "The 27-bp ABCC11 deletion is not represented by the current SNP-only reader."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "bitter-taste-sensitivity",
@@ -428,13 +384,7 @@
     "reference": [
       "21763010",
       "15883422"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "B",
-    "limitations": [
-      "TAS2R38 haplotypes require additional linked variants for full PAV/AVI classification; this is a one-SNP approximation."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "body-odor",
@@ -488,13 +438,7 @@
     "reference": [
       "19650936",
       "19383836"
-    ],
-    "evidenceStatus": "curated",
-    "evidenceGrade": "A",
-    "limitations": [
-      "Axillary odor is a phenotype association, not a diagnosis; hygiene, microbiome, and environment also contribute."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "cilantro-taste",
@@ -509,7 +453,7 @@
       "default": ""
     },
     "icon": "Leaf",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -545,17 +489,7 @@
         "zh-CN": "肥皂味"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "lactose-tolerance",
@@ -570,7 +504,7 @@
       "default": ""
     },
     "icon": "Droplet",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "internal",
@@ -611,13 +545,7 @@
     },
     "reference": [
       "32042409"
-    ],
-    "evidenceStatus": "partial_evidence",
-    "evidenceGrade": "B",
-    "limitations": [
-      "rs182549 still needs a separate direct source record; lactase-persistence alleles are population-specific and multiple non-European variants exist."
-    ],
-    "reviewBlockers": []
+    ]
   },
   {
     "id": "iron-absorption",
@@ -632,7 +560,7 @@
       "default": ""
     },
     "icon": "Zap",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "internal",
@@ -671,17 +599,7 @@
         "zh-CN": "降低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "detoxification-capacity",
@@ -696,7 +614,7 @@
       "default": ""
     },
     "icon": "Umbrella",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "internal",
@@ -735,17 +653,7 @@
         "zh-CN": "缓慢"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "pain-sensitivity",
@@ -760,7 +668,7 @@
       "default": ""
     },
     "icon": "AlertCircle",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "internal",
@@ -796,17 +704,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "caffeine-metabolism",
@@ -821,7 +719,7 @@
       "default": ""
     },
     "icon": "Coffee",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -860,17 +758,7 @@
         "zh-CN": "快速"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "diabetes-t2-risk",
@@ -885,7 +773,7 @@
       "default": ""
     },
     "icon": "Activity",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -924,17 +812,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "alzheimer-risk",
@@ -949,7 +827,7 @@
       "default": ""
     },
     "icon": "Brain",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -988,17 +866,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "alcohol-flush",
@@ -1013,7 +881,7 @@
       "default": ""
     },
     "icon": "Wine",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -1052,17 +920,7 @@
         "zh-CN": "高"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "exercise-response",
@@ -1077,7 +935,7 @@
       "default": ""
     },
     "icon": "Activity",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -1116,17 +974,7 @@
         "zh-CN": "耐力型"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "morning-person",
@@ -1141,7 +989,7 @@
       "default": ""
     },
     "icon": "Sun",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -1177,17 +1025,7 @@
         "zh-CN": "夜猫子"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "nicotine-dependence",
@@ -1202,7 +1040,7 @@
       "default": ""
     },
     "icon": "Snowflake",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -1238,17 +1076,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "vitamin-b12",
@@ -1263,7 +1091,7 @@
       "default": ""
     },
     "icon": "Dna",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -1302,17 +1130,7 @@
         "zh-CN": "正常"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "omega3-metabolism",
@@ -1327,7 +1145,7 @@
       "default": ""
     },
     "icon": "Utensils",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -1366,17 +1184,7 @@
         "zh-CN": "较差"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "folate-metabolism",
@@ -1391,7 +1199,7 @@
       "default": ""
     },
     "icon": "Leaf",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -1427,17 +1235,7 @@
         "zh-CN": "较差"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "alcohol-metabolism",
@@ -1452,7 +1250,7 @@
       "default": ""
     },
     "icon": "Wine",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "internal",
@@ -1491,17 +1289,7 @@
         "zh-CN": "缓慢"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "warfarin-sensitivity",
@@ -1516,7 +1304,7 @@
       "default": ""
     },
     "icon": "Heart",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1555,17 +1343,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "aspirin-response",
@@ -1580,7 +1358,7 @@
       "default": ""
     },
     "icon": "Heart",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1619,17 +1397,7 @@
         "zh-CN": "较差"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "clopidogrel-response",
@@ -1644,7 +1412,7 @@
       "default": ""
     },
     "icon": "Activity",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1683,17 +1451,7 @@
         "zh-CN": "较差"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "statin-response",
@@ -1708,7 +1466,7 @@
       "default": ""
     },
     "icon": "Activity",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1747,17 +1505,7 @@
         "zh-CN": "较差"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "celiac-disease-risk",
@@ -1772,7 +1520,7 @@
       "default": ""
     },
     "icon": "AlertCircle",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1811,17 +1559,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "psoriasis-risk",
@@ -1836,7 +1574,7 @@
       "default": ""
     },
     "icon": "Sun",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1875,17 +1613,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "rheumatoid-arthritis-risk",
@@ -1900,7 +1628,7 @@
       "default": ""
     },
     "icon": "AlertCircle",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -1939,17 +1667,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "age-related-macular-degeneration",
@@ -1964,7 +1682,7 @@
       "default": ""
     },
     "icon": "Eye",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -2003,17 +1721,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "glaucoma-risk",
@@ -2028,7 +1736,7 @@
       "default": ""
     },
     "icon": "Eye",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -2067,17 +1775,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "venous-thromboembolism-risk",
@@ -2092,7 +1790,7 @@
       "default": ""
     },
     "icon": "Heart",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -2131,17 +1829,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "migraine-susceptibility",
@@ -2156,7 +1844,7 @@
       "default": ""
     },
     "icon": "Brain",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "risk",
@@ -2195,17 +1883,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "do_not_import_unknown_formula",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "restless-leg-syndrome",
@@ -2220,7 +1898,7 @@
       "default": ""
     },
     "icon": "Moon",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2259,17 +1937,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "sleep-apnea-risk",
@@ -2284,7 +1952,7 @@
       "default": ""
     },
     "icon": "Moon",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2323,17 +1991,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "longevity-associated",
@@ -2348,7 +2006,7 @@
       "default": ""
     },
     "icon": "Clock",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2387,17 +2045,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "muscle-power",
@@ -2412,7 +2060,7 @@
       "default": ""
     },
     "icon": "Zap",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2451,17 +2099,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "endurance-performance",
@@ -2476,7 +2114,7 @@
       "default": ""
     },
     "icon": "Activity",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2515,17 +2153,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "injury-recovery",
@@ -2540,7 +2168,7 @@
       "default": ""
     },
     "icon": "Heart",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "lifestyle",
@@ -2579,17 +2207,7 @@
         "zh-CN": "缓慢"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "vitamin-a-conversion",
@@ -2604,7 +2222,7 @@
       "default": ""
     },
     "icon": "Sun",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2643,17 +2261,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "vitamin-e-needs",
@@ -2668,7 +2276,7 @@
       "default": ""
     },
     "icon": "Leaf",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2707,17 +2315,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "choline-needs",
@@ -2732,7 +2330,7 @@
       "default": ""
     },
     "icon": "Dna",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2771,17 +2369,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "sodium-sensitivity",
@@ -2796,7 +2384,7 @@
       "default": ""
     },
     "icon": "Droplet",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2835,17 +2423,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "antioxidant-needs",
@@ -2860,7 +2438,7 @@
       "default": ""
     },
     "icon": "Umbrella",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2899,17 +2477,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "histamine-intolerance",
@@ -2924,7 +2492,7 @@
       "default": ""
     },
     "icon": "AlertCircle",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "nutrition",
@@ -2963,17 +2531,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "sweet-taste-preference",
@@ -2988,7 +2546,7 @@
       "default": ""
     },
     "icon": "Smile",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3027,17 +2585,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "alcohol-preference",
@@ -3052,7 +2600,7 @@
       "default": ""
     },
     "icon": "Wine",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3091,17 +2639,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "umami-taste-sensitivity",
@@ -3116,7 +2654,7 @@
       "default": ""
     },
     "icon": "Utensils",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3155,17 +2693,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "skin-aging",
@@ -3180,7 +2708,7 @@
       "default": ""
     },
     "icon": "Sun",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3219,17 +2747,7 @@
         "zh-CN": "缓慢"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "hair-loss-male-pattern",
@@ -3244,7 +2762,7 @@
       "default": ""
     },
     "icon": "Scissors",
-    "confidence": "low",
+    "confidence": "high",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3283,17 +2801,7 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   },
   {
     "id": "acne-susceptibility",
@@ -3308,7 +2816,7 @@
       "default": ""
     },
     "icon": "AlertCircle",
-    "confidence": "low",
+    "confidence": "medium",
     "isDefault": true,
     "createdAt": "2023-01-01T00:00:00Z",
     "category": "appearance",
@@ -3347,16 +2855,6 @@
         "zh-CN": "低"
       }
     },
-    "reference": [],
-    "evidenceStatus": "review_required",
-    "evidenceGrade": "unverified",
-    "limitations": [
-      "Do not present this rule as a validated genetic interpretation until the blockers are resolved."
-    ],
-    "reviewBlockers": [
-      "No independent literature record has been manually verified for this exact formula.",
-      "The legacy score direction, weights, threshold and population scope require review.",
-      "A complete genotype map is derived from the legacy formula only; it is not evidence of a biological effect."
-    ]
+    "reference": []
   }
 ]

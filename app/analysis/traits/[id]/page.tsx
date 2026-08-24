@@ -128,6 +128,10 @@ export default function TraitDetailPage() {
       yourGenotype: "Your Genotype",
       formula: "Calculation Formula",
       noGeneticData: "No genetic data available for this trait",
+      insufficientData: "Insufficient genetic data for a reliable result",
+      invalidRule: "This rule is not currently available for evaluation",
+      reviewRequired:
+        "This rule is awaiting independent evidence review and is not presented as a validated result",
       scoreThresholds: "Score Thresholds",
       resultName: "Result",
       minimumScore: "Minimum Score",
@@ -154,6 +158,9 @@ export default function TraitDetailPage() {
       yourGenotype: "您的基因型",
       formula: "计算公式",
       noGeneticData: "此特征没有可用的基因数据",
+      insufficientData: "基因数据不足，无法可靠计算此结果",
+      invalidRule: "此规则当前无法计算",
+      reviewRequired: "该规则尚未完成独立证据审核，暂不作为已验证结果展示",
       scoreThresholds: "分数阈值",
       resultName: "结果",
       minimumScore: "最小分数",
@@ -238,13 +245,30 @@ export default function TraitDetailPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-lg font-medium">{t("result")}</h3>
-            <p className="text-xl">
-              {trait.result_current?.[
-                language as keyof typeof trait.result_current
-              ] ||
-                trait.result_current?.default ||
-                "N/A"}
-            </p>
+            {trait.evaluationStatus === "review_required" ? (
+              <div className="text-muted-foreground space-y-2">
+                <p>{t("reviewRequired")}</p>
+                {trait.reviewBlockers && trait.reviewBlockers.length > 0 && (
+                  <ul className="list-disc pl-5 text-sm">
+                    {trait.reviewBlockers.map((blocker) => (
+                      <li key={blocker}>{blocker}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ) : trait.evaluationStatus === "insufficient_data" ? (
+              <p className="text-muted-foreground">{t("insufficientData")}</p>
+            ) : trait.evaluationStatus === "invalid_rule" ? (
+              <p className="text-muted-foreground">{t("invalidRule")}</p>
+            ) : (
+              <p className="text-xl">
+                {trait.result_current?.[
+                  language as keyof typeof trait.result_current
+                ] ||
+                  trait.result_current?.default ||
+                  "N/A"}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">

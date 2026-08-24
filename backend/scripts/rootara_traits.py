@@ -37,6 +37,26 @@ from datetime import datetime
 import random
 import json
 import sqlite3
+from functools import lru_cache
+from pathlib import Path
+
+
+TRAIT_EVIDENCE_PATH = Path(
+    os.environ.get(
+        "ROOTARA_TRAIT_EVIDENCE_PATH",
+        str(Path(__file__).resolve().parents[1] / "database" / "trait-evidence.json"),
+    )
+)
+
+
+@lru_cache(maxsize=1)
+def _load_trait_evidence_catalog():
+    """Load the reviewed evidence sidecar without making it a DB migration."""
+
+    try:
+        return json.loads(TRAIT_EVIDENCE_PATH.read_text(encoding="utf-8")).get("rules", {})
+    except (OSError, ValueError, TypeError):
+        return {}
 
 # 根据脚本运行方式选择合适的导入路径
 if __name__ == "__main__":
@@ -213,6 +233,25 @@ def self_traits_to_json(db_path):
                 'result': result_dict,
                 'reference': row[12].split(';') if row[12] else []
             }
+            evidence_rule = _load_trait_evidence_catalog().get(trait['id'])
+            if evidence_rule:
+                trait['evidenceStatus'] = evidence_rule.get('status')
+                trait['evidenceGrade'] = evidence_rule.get('evidence_grade')
+                trait['evidence'] = evidence_rule.get('evidence', [])
+                trait['limitations'] = evidence_rule.get('limitations', [])
+                trait['reviewBlockers'] = evidence_rule.get('review_blockers', [])
+                # Reviewed references supersede legacy placeholders in the DB.
+                trait['reference'] = [
+                    item['id']
+                    for item in evidence_rule.get('evidence', [])
+                    if item.get('type') == 'PMID' and item.get('id')
+                ]
+            else:
+                trait['reference'] = [
+                    reference
+                    for reference in trait['reference']
+                    if reference not in {'11111111', '222222222', '333333333'}
+                ]
             traits.append(trait)
         except (ValueError, SyntaxError) as e:
             print(f"解析数据时出错: {e}")
@@ -224,6 +263,10 @@ def self_traits_to_json(db_path):
     return json_str
 
 # 公式解析器
+class InsufficientGeneticData(ValueError):
+    """Raised when a rule cannot be evaluated from the available genotypes."""
+
+
 def parse_formula(formula, genotype_dict):
     """
     解析公式并计算结果，支持SCORE、IF以及组合公式
@@ -274,17 +317,19 @@ def _parse_score_formula(formula, genotype_dict):
         # 分离位点ID和得分规则
         parts = rule.split(':')
         if len(parts) != 2:
-            continue
+            raise ValueError(f"SCORE规则格式不正确: {rule}")
 
         rsid = parts[0].strip()
         score_rules = parts[1].strip()
 
-        # 如果该位点不在输入的基因型字典中，跳过
+        # 缺少位点时不能静默按零分处理，否则会产生虚假的结果
         if rsid not in genotype_dict:
-            continue
+            raise InsufficientGeneticData(f"缺少位点基因型: {rsid}")
 
         # 获取该位点的基因型
         genotype = genotype_dict[rsid]
+        if not genotype:
+            raise InsufficientGeneticData(f"位点基因型为空: {rsid}")
 
         # 解析得分规则
         score_pairs = score_rules.split(',')
@@ -296,18 +341,22 @@ def _parse_score_formula(formula, genotype_dict):
             # 分离基因型和对应得分
             gt_score = pair.split('=')
             if len(gt_score) != 2:
-                continue
+                raise ValueError(f"SCORE基因型规则格式不正确: {pair}")
 
             gt = gt_score[0].strip()
             try:
                 score = float(gt_score[1].strip())
             except ValueError:
-                continue
+                raise ValueError(f"SCORE分数不是数字: {pair}")
 
             # 如果基因型匹配，累加得分
             if gt == genotype:
                 total_score += score
                 break  # 找到匹配的基因型后，不再检查该位点的其他规则
+        else:
+            raise InsufficientGeneticData(
+                f"位点基因型没有匹配规则: {rsid}={genotype}"
+            )
 
     return total_score
 
@@ -338,21 +387,24 @@ def _parse_if_formula(formula, genotype_dict):
         # 分离位点ID和条件规则
         parts = rule.split(':')
         if len(parts) != 2:
-            continue
+            raise ValueError(f"IF规则格式不正确: {rule}")
 
         rsid = parts[0].strip()
         condition_rules = parts[1].strip()
 
-        # 如果该位点不在输入的基因型字典中，跳过
+        # 缺少位点时不能把整个 AND 表达式当成真
         if rsid not in genotype_dict:
-            continue
+            raise InsufficientGeneticData(f"缺少位点基因型: {rsid}")
 
         # 获取该位点的基因型
         genotype = genotype_dict[rsid]
+        if not genotype:
+            raise InsufficientGeneticData(f"位点基因型为空: {rsid}")
 
         # 解析条件规则
         condition_pairs = condition_rules.split(',')
         rule_result = False  # 默认该规则为假
+        matched = False
 
         for pair in condition_pairs:
             pair = pair.strip()
@@ -362,7 +414,7 @@ def _parse_if_formula(formula, genotype_dict):
             # 分离基因型和对应条件
             gt_condition = pair.split('=')
             if len(gt_condition) != 2:
-                continue
+                raise ValueError(f"IF基因型规则格式不正确: {pair}")
 
             gt = gt_condition[0].strip()
             condition_str = gt_condition[1].strip().lower()
@@ -373,16 +425,25 @@ def _parse_if_formula(formula, genotype_dict):
             elif condition_str == 'false':
                 condition = False
             else:
-                continue
+                raise ValueError(f"IF条件不是布尔值: {pair}")
 
             # 如果基因型匹配，获取条件结果
             if gt == genotype:
+                matched = True
                 rule_result = condition
                 break  # 找到匹配的基因型后，不再检查该位点的其他规则
+
+        if not matched:
+            raise InsufficientGeneticData(
+                f"位点基因型没有匹配规则: {rsid}={genotype}"
+            )
 
         # 如果任一规则为假，整个结果为假（逻辑与）
         if not rule_result:
             return False
+
+    if not any(rule.strip() for rule in rsid_rules):
+        raise ValueError("IF公式不包含有效规则")
 
     # 所有规则都为真，结果为真
     return True
@@ -491,6 +552,25 @@ def result_trait_data(report_id, db_path):
                 'result': result_dict,
                 'reference': row[12].split(';') if row[12] else []
             }
+            evidence_rule = _load_trait_evidence_catalog().get(trait['id'])
+            if evidence_rule:
+                trait['evidenceStatus'] = evidence_rule.get('status')
+                trait['evidenceGrade'] = evidence_rule.get('evidence_grade')
+                trait['evidence'] = evidence_rule.get('evidence', [])
+                trait['limitations'] = evidence_rule.get('limitations', [])
+                trait['reviewBlockers'] = evidence_rule.get('review_blockers', [])
+                # Reviewed references supersede legacy placeholders in the DB.
+                trait['reference'] = [
+                    item['id']
+                    for item in evidence_rule.get('evidence', [])
+                    if item.get('type') == 'PMID' and item.get('id')
+                ]
+            else:
+                trait['reference'] = [
+                    reference
+                    for reference in trait['reference']
+                    if reference not in {'11111111', '222222222', '333333333'}
+                ]
             traits.append(trait)
         except (ValueError, SyntaxError) as e:
             print(f"解析数据时出错: {e}")
@@ -508,8 +588,41 @@ def result_trait_data(report_id, db_path):
         rsid_gt_result[i] = rsid_result[i][1]
 
     for item in traits:
-        # 计算得分或布尔值
-        score_or_bool = parse_formula(item['formula'], rsid_gt_result)
+        # 保持位点和用户基因型对齐，即使该规则因缺失数据无法计算。
+        declared_rsids = list(item['rsids'])
+        item['rsids'] = declared_rsids
+        item['referenceGenotypes'] = [
+            rsid_result[rsid][0] if rsid in rsid_result else None
+            for rsid in declared_rsids
+        ]
+        item['yourGenotypes'] = [
+            rsid_result[rsid][1] if rsid in rsid_result else None
+            for rsid in declared_rsids
+        ]
+
+        # A formula copied from an unreviewed/generated rule must not be
+        # presented as a biological interpretation. Keep the genotype data
+        # visible for audit, but withhold the calculated result until the
+        # evidence catalog promotes the rule to curated/partial_evidence.
+        evidence_status = item.get('evidenceStatus')
+        if evidence_status in {'partial_evidence', 'review_required', 'do_not_import_unknown_formula'}:
+            item['result_current'] = None
+            item['evaluationStatus'] = 'review_required'
+            continue
+
+        # 计算得分或布尔值；缺少位点时明确返回不可用，不能静默给出结果
+        try:
+            score_or_bool = parse_formula(item['formula'], rsid_gt_result)
+        except InsufficientGeneticData:
+            item['result_current'] = None
+            item['evaluationStatus'] = 'insufficient_data'
+            continue
+        except (TypeError, ValueError):
+            item['result_current'] = None
+            item['evaluationStatus'] = 'invalid_rule'
+            continue
+
+        item['evaluationStatus'] = 'ok'
         scoreThresholds = item['scoreThresholds']
 
         # 判断是得分还是布尔值
@@ -534,9 +647,5 @@ def result_trait_data(report_id, db_path):
             result = item['result'].get(result_key, None)
         item['result_current'] = result
 
-        # 调整RSID的顺序
-        item['rsids'] = [rsid for rsid in item['rsids'] if rsid in rsid_result]
-        item['referenceGenotypes'] = [rsid_result[rsid][0] if rsid in rsid_result else None for rsid in item['rsids']]
-        item['yourGenotypes'] = [rsid_result[rsid][1] if rsid in rsid_result else None for rsid in item['rsids']]
     return traits
 

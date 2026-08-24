@@ -1,0 +1,168 @@
+{
+  "earwax-type": {
+    "status": "curated",
+    "evidence_grade": "A",
+    "rule_type": "genotype",
+    "variants": [{
+      "rsid": "rs17822931",
+      "gene": "ABCC11",
+      "literature_alleles": "G>A",
+      "input_alleles": "C>T",
+      "input_note": "Rootara reader representation is the complementary strand used by the current formulas.",
+      "genotype_map": {
+        "TT": {"result_key": "Dry", "score": 0},
+        "CT": {"result_key": "Mixed", "score": 5},
+        "CC": {"result_key": "Wet", "score": 10}
+      }
+    }],
+    "evidence": [
+      {"type": "PMID", "id": "16444273", "role": "primary", "url": "https://pubmed.ncbi.nlm.nih.gov/16444273/", "supports": ["rs17822931", "ABCC11", "earwax type"]},
+      {"type": "PMID", "id": "19383836", "role": "replication_review", "url": "https://pubmed.ncbi.nlm.nih.gov/19383836/", "supports": ["rs17822931", "wet/dry earwax mapping"]}
+    ],
+    "fixtures": [
+      {"name": "dry_homozygote", "genotypes": {"rs17822931": "TT"}, "expected_score": 0, "expected_result_key": "Dry"},
+      {"name": "heterozygote", "genotypes": {"rs17822931": "CT"}, "expected_score": 5, "expected_result_key": "Mixed"},
+      {"name": "wet_homozygote", "genotypes": {"rs17822931": "CC"}, "expected_score": 10, "expected_result_key": "Wet"}
+    ],
+    "limitations": ["The 27-bp ABCC11 deletion is not represented by the current SNP-only reader."]
+  },
+  "body-odor": {
+    "status": "curated",
+    "evidence_grade": "A",
+    "rule_type": "genotype",
+    "variants": [{
+      "rsid": "rs17822931",
+      "gene": "ABCC11",
+      "literature_alleles": "G>A",
+      "input_alleles": "C>T",
+      "genotype_map": {
+        "TT": {"result_key": "Mild", "score": 0},
+        "CT": {"result_key": "Medium", "score": 5},
+        "CC": {"result_key": "Strong", "score": 10}
+      }
+    }],
+    "evidence": [
+      {"type": "PMID", "id": "19650936", "role": "primary", "url": "https://pubmed.ncbi.nlm.nih.gov/19650936/", "supports": ["rs17822931", "ABCC11", "axillary osmidrosis", "wet earwax"]},
+      {"type": "PMID", "id": "19383836", "role": "mechanistic_review", "url": "https://pubmed.ncbi.nlm.nih.gov/19383836/", "supports": ["ABCC11", "wet/dry secretion phenotype"]}
+    ],
+    "fixtures": [
+      {"name": "low_odor_dry_type", "genotypes": {"rs17822931": "TT"}, "expected_score": 0, "expected_result_key": "Mild"},
+      {"name": "intermediate_heterozygote", "genotypes": {"rs17822931": "CT"}, "expected_score": 5, "expected_result_key": "Medium"},
+      {"name": "wet_type_high_odor", "genotypes": {"rs17822931": "CC"}, "expected_score": 10, "expected_result_key": "Strong"}
+    ],
+    "limitations": ["Axillary odor is a phenotype association, not a diagnosis; hygiene, microbiome, and environment also contribute."]
+  },
+  "bitter-taste-sensitivity": {
+    "status": "curated",
+    "evidence_grade": "B",
+    "rule_type": "genotype",
+    "variants": [{
+      "rsid": "rs713598",
+      "gene": "TAS2R38",
+      "literature_alleles": "G>C",
+      "input_alleles": "G>C",
+      "genotype_map": {
+        "GG": {"result_key": "Low", "score": 0},
+        "CG": {"result_key": "Medium", "score": 5},
+        "CC": {"result_key": "High", "score": 10}
+      }
+    }],
+    "evidence": [
+      {"type": "PMID", "id": "21763010", "role": "association", "url": "https://pubmed.ncbi.nlm.nih.gov/21763010/", "supports": ["rs713598", "TAS2R38", "bitter taste sensitivity"]},
+      {"type": "PMID", "id": "15883422", "role": "population_replication", "url": "https://pubmed.ncbi.nlm.nih.gov/15883422/", "supports": ["TAS2R38 haplotypes", "bitter taste and eating behavior"]}
+    ],
+    "fixtures": [
+      {"name": "low_sensitivity", "genotypes": {"rs713598": "GG"}, "expected_score": 0, "expected_result_key": "Low"},
+      {"name": "heterozygote", "genotypes": {"rs713598": "CG"}, "expected_score": 5, "expected_result_key": "Medium"},
+      {"name": "high_sensitivity", "genotypes": {"rs713598": "CC"}, "expected_score": 10, "expected_result_key": "High"}
+    ],
+    "limitations": ["TAS2R38 haplotypes require additional linked variants for full PAV/AVI classification; this is a one-SNP approximation."]
+  },
+  "muscle-fiber-type": {
+    "status": "curated",
+    "evidence_grade": "B",
+    "rule_type": "genotype",
+    "variants": [{
+      "rsid": "rs1815739",
+      "gene": "ACTN3",
+      "literature_alleles": "C>T",
+      "input_alleles": "C>T",
+      "genotype_map": {
+        "CC": {"result_key": "Fast", "score": 10},
+        "CT": {"result_key": "Mixed", "score": 5},
+        "TT": {"result_key": "Slow", "score": 0}
+      }
+    }],
+    "evidence": [
+      {"type": "PMID", "id": "12879365", "role": "primary", "url": "https://pubmed.ncbi.nlm.nih.gov/12879365/", "supports": ["rs1815739", "ACTN3", "fast-twitch muscle performance"]},
+      {"type": "PMID", "id": "25761735", "role": "population_replication", "url": "https://pubmed.ncbi.nlm.nih.gov/25761735/", "supports": ["ACTN3 R577X", "muscle function"]}
+    ],
+    "fixtures": [
+      {"name": "r577r", "genotypes": {"rs1815739": "CC"}, "expected_score": 10, "expected_result_key": "Fast"},
+      {"name": "r577x", "genotypes": {"rs1815739": "CT"}, "expected_score": 5, "expected_result_key": "Mixed"},
+      {"name": "x577x", "genotypes": {"rs1815739": "TT"}, "expected_score": 0, "expected_result_key": "Slow"}
+    ],
+    "limitations": ["ACTN3 is associated with performance-related phenotypes, not a direct measurement of fiber composition or athletic ability."]
+  },
+  "freckles-tendency": {
+    "status": "curated",
+    "evidence_grade": "B",
+    "rule_type": "genotype",
+    "variants": [{
+      "rsid": "rs12203592",
+      "gene": "IRF4",
+      "literature_alleles": "C>T",
+      "input_alleles": "C>T",
+      "genotype_map": {
+        "CC": {"result_key": "Low", "score": 0},
+        "CT": {"result_key": "Medium", "score": 5},
+        "TT": {"result_key": "High", "score": 10}
+      }
+    }],
+    "evidence": [
+      {"type": "PMID", "id": "25705849", "role": "primary_gwas", "url": "https://pubmed.ncbi.nlm.nih.gov/25705849/", "supports": ["rs12203592", "IRF4", "facial pigmented spots"]},
+      {"type": "PMID", "id": "20602913", "role": "replication", "url": "https://pubmed.ncbi.nlm.nih.gov/20602913/", "supports": ["IRF4 variants", "pigmented nevi"]}
+    ],
+    "fixtures": [
+      {"name": "low_risk_genotype", "genotypes": {"rs12203592": "CC"}, "expected_score": 0, "expected_result_key": "Low"},
+      {"name": "heterozygote", "genotypes": {"rs12203592": "CT"}, "expected_score": 5, "expected_result_key": "Medium"},
+      {"name": "higher_risk_genotype", "genotypes": {"rs12203592": "TT"}, "expected_score": 10, "expected_result_key": "High"}
+    ],
+    "limitations": ["The evidence is for facial pigmented spots/nevus-related phenotypes and should not be presented as a diagnosis of freckles or melanoma risk."]
+  },
+  "skin-pigmentation": {
+    "status": "curated",
+    "evidence_grade": "B",
+    "rule_type": "genotype_score",
+    "variants": [
+      {"rsid": "rs1426654", "gene": "SLC24A5", "literature_alleles": "A>G", "input_alleles": "A>G", "genotype_map": {"AA": {"score": 0}, "AG": {"score": 5}, "GG": {"score": 10}}},
+      {"rsid": "rs16891982", "gene": "SLC45A2", "literature_alleles": "C>G", "input_alleles": "C>G", "genotype_map": {"CC": {"score": 5}, "CG": {"score": 3}, "GG": {"score": 0}}}
+    ],
+    "evidence": [
+      {"type": "PMID", "id": "16357253", "role": "primary", "url": "https://pubmed.ncbi.nlm.nih.gov/16357253/", "supports": ["rs1426654", "SLC24A5", "human pigmentation"]},
+      {"type": "PMID", "id": "28457509", "role": "population_replication", "url": "https://pubmed.ncbi.nlm.nih.gov/28457509/", "supports": ["rs16891982", "SLC45A2", "skin pigmentation"]}
+    ],
+    "fixtures": [
+      {"name": "light_score", "genotypes": {"rs1426654": "AA", "rs16891982": "GG"}, "expected_score": 0, "expected_result_key": "Light"},
+      {"name": "intermediate_score", "genotypes": {"rs1426654": "AG", "rs16891982": "CG"}, "expected_score": 8, "expected_result_key": "Medium"},
+      {"name": "dark_score", "genotypes": {"rs1426654": "GG", "rs16891982": "CC"}, "expected_score": 15, "expected_result_key": "Dark"}
+    ],
+    "limitations": ["Pigmentation is polygenic and strongly population-dependent; the score is an educational approximation, not a skin-color prediction for an individual."]
+  },
+  "lactose-tolerance": {
+    "status": "partial_evidence",
+    "evidence_grade": "B",
+    "rule_type": "genotype_score",
+    "variants": [
+      {"rsid": "rs4988235", "gene": "MCM6/LCT", "literature_alleles": "C>T", "input_alleles": "C>T", "genotype_map": {"CC": {"score": 0}, "CT": {"score": 5}, "TT": {"score": 10}}},
+      {"rsid": "rs182549", "gene": "MCM6/LCT", "literature_alleles": "C>T", "input_alleles": "C>T", "genotype_map": {"CC": {"score": 0}, "CT": {"score": 5}, "TT": {"score": 10}}}
+    ],
+    "evidence": [{"type": "PMID", "id": "32042409", "role": "replication", "url": "https://pubmed.ncbi.nlm.nih.gov/32042409/", "supports": ["rs4988235", "LCT-13910 C/T", "lactase persistence"]}],
+    "fixtures": [
+      {"name": "low_persistence", "genotypes": {"rs4988235": "CC", "rs182549": "CC"}, "expected_score": 0, "expected_result_key": "Low"},
+      {"name": "intermediate_persistence", "genotypes": {"rs4988235": "CT", "rs182549": "CT"}, "expected_score": 10, "expected_result_key": "Medium"},
+      {"name": "high_persistence", "genotypes": {"rs4988235": "TT", "rs182549": "TT"}, "expected_score": 20, "expected_result_key": "High"}
+    ],
+    "limitations": ["rs182549 still needs a separate direct source record; lactase-persistence alleles are population-specific and multiple non-European variants exist."]
+  }
+}
