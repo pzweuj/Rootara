@@ -48,8 +48,22 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
-import { toast } from "@/components/ui/use-toast"
+import { toast as sonnerToast } from "sonner"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
+
+interface ToastOptions {
+  title: string
+  description?: string
+  variant?: "destructive"
+  duration?: number
+}
+
+function toast({ title, description, variant, duration }: ToastOptions) {
+  const options = { description, duration }
+  return variant === "destructive"
+    ? sonnerToast.error(title, options)
+    : sonnerToast(title, options)
+}
 
 // 定义报告接口
 interface Report {

@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/language-context"
 import { AuthProvider } from "@/contexts/auth-context"
 import { AuthGuard } from "@/components/auth-guard"
 import { ReportProvider } from "@/contexts/report-context"
+import { Toaster } from "@/components/ui/sonner"
 import type React from "react"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -38,6 +39,7 @@ export default function RootLayout({
                 <SidebarProvider>
                   <TooltipProvider delayDuration={0}>
                     <AuthGuard>{children}</AuthGuard>
+                    <Toaster />
                   </TooltipProvider>
                 </SidebarProvider>
               </ReportProvider>
