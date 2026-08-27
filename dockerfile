@@ -39,7 +39,10 @@ RUN git clone --filter=blob:none https://gitlab.com/bio_anth_decode/haploGrouper
 
 FROM ${PYTHON_IMAGE} AS runtime
 ARG ROOTARA_VERSION
-LABEL org.opencontainers.image.title="Rootara" org.opencontainers.image.version="${ROOTARA_VERSION}" org.opencontainers.image.licenses="AGPL-3.0"
+LABEL org.opencontainers.image.title="Rootara" \
+      org.opencontainers.image.version="${ROOTARA_VERSION}" \
+      org.opencontainers.image.licenses="AGPL-3.0" \
+      org.opencontainers.image.source="https://github.com/pzweuj/Rootara"
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
