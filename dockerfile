@@ -1,5 +1,6 @@
 ARG NODE_IMAGE=node:20-bookworm-slim
 ARG PYTHON_IMAGE=python:3.11.10-slim-bookworm
+ARG ROOTARA_VERSION=1.0.1
 
 FROM golang:1.23-alpine AS go-builder
 WORKDIR /build
@@ -37,13 +38,14 @@ RUN git clone --filter=blob:none https://gitlab.com/bio_anth_decode/haploGrouper
     && rm -rf .git
 
 FROM ${PYTHON_IMAGE} AS runtime
-LABEL org.opencontainers.image.title="Rootara" org.opencontainers.image.version="1.0.0" org.opencontainers.image.licenses="AGPL-3.0"
+ARG ROOTARA_VERSION
+LABEL org.opencontainers.image.title="Rootara" org.opencontainers.image.version="${ROOTARA_VERSION}" org.opencontainers.image.licenses="AGPL-3.0"
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production \
-    ROOTARA_VERSION=1.0.0 \
+    ROOTARA_VERSION=${ROOTARA_VERSION} \
     ROOTARA_BACKEND_ROOT=/opt/rootara/backend \
     ROOTARA_WEB_ROOT=/opt/rootara/web \
     ROOTARA_DATA_DIR=/data \

@@ -64,11 +64,22 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve image version
+        id: image-version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" == v* ]]; then
+            echo "value=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=0.0.0-ci" >> "$GITHUB_OUTPUT"
+          fi
       - uses: docker/build-push-action@v6
         with:
           context: .
           file: dockerfile
           platforms: linux/amd64
+          build-args: |
+            ROOTARA_VERSION=${{ steps.image-version.outputs.value }}
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
           tags: |
             ghcr.io/${{ github.repository_owner }}/rootara:${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'ci' }}

@@ -73,7 +73,7 @@ app = FastAPI(
     lifespan=lifespan,
     title = 'Rootara API',
     description = 'Rootara API 基因数据分析平台',
-    version = os.environ.get("ROOTARA_VERSION", "1.0.0"),
+    version = os.environ.get("ROOTARA_VERSION", "1.0.1"),
     docs_url=None if os.environ.get("ROOTARA_ENV", "production") == "production" else "/docs",
     redoc_url=None if os.environ.get("ROOTARA_ENV", "production") == "production" else "/redoc",
 )

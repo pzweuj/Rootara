@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json(
       {
         status: response.ok ? "healthy" : "degraded",
-        version: process.env.ROOTARA_VERSION || "1.0.0",
+        version: process.env.ROOTARA_VERSION || "1.0.1",
         backend: payload,
         traitCatalog,
       },
@@ -18,7 +18,7 @@ export async function GET() {
     )
   } catch {
     return NextResponse.json(
-      { status: "unhealthy", version: process.env.ROOTARA_VERSION || "1.0.0" },
+      { status: "unhealthy", version: process.env.ROOTARA_VERSION || "1.0.1" },
       { status: 503 }
     )
   }

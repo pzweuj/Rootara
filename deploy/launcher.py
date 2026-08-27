@@ -18,7 +18,7 @@ BACKEND_ROOT = Path(os.environ.get("ROOTARA_BACKEND_ROOT", "/opt/rootara/backend
 DATA_DIR = Path(os.environ.get("ROOTARA_DATA_DIR", "/data"))
 DB_PATH = Path(os.environ.get("DB_PATH", str(DATA_DIR / "rootara.db")))
 JWT_SECRET_PATH = DATA_DIR / "config" / "jwt-secret"
-VERSION = os.environ.get("ROOTARA_VERSION", "1.0.0")
+VERSION = os.environ.get("ROOTARA_VERSION", "1.0.1")
 
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
