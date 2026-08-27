@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# v1.0.0
 set -eu
 
 : "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD before starting Rootara}"
