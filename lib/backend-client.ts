@@ -27,7 +27,9 @@ export async function backendFetch(
   const backendUrl = process.env.ROOTARA_BACKEND_URL || DEFAULT_BACKEND_URL
   const headers = new Headers(init.headers)
   headers.set("x-api-key", process.env.ROOTARA_BACKEND_API_KEY || "")
-  if (!headers.has("accept")) headers.set("accept", "application/json")
+  if (!headers.has("accept")) {
+    headers.set("accept", "application/json")
+  }
 
   return fetch(`${backendUrl.replace(/\/$/, "")}${path}`, {
     ...init,
@@ -37,8 +39,30 @@ export async function backendFetch(
   })
 }
 
-export function backendError(response: Response, fallback = "Backend API error") {
+export function backendError(
+  response: Response,
+  fallback = "Backend API error"
+) {
   return new Error(`${fallback}: ${response.status} ${response.statusText}`)
+}
+
+/** Forward an upstream JSON/error response without turning its status into 500. */
+export async function proxyBackendResponse(
+  response: Response
+): Promise<NextResponse> {
+  const body = await response.text()
+  const headers = new Headers()
+  const contentType = response.headers.get("content-type")
+  if (contentType) {
+    headers.set("content-type", contentType)
+  }
+  return new NextResponse(
+    body || JSON.stringify({ error: response.statusText }),
+    {
+      status: response.status,
+      headers,
+    }
+  )
 }
 
 export function withApiAuth<T extends (...args: any[]) => Promise<Response>>(
@@ -46,7 +70,9 @@ export function withApiAuth<T extends (...args: any[]) => Promise<Response>>(
 ): T {
   return (async (...args: Parameters<T>) => {
     const unauthorized = await requireApiAuth()
-    if (unauthorized) return unauthorized
+    if (unauthorized) {
+      return unauthorized
+    }
     return handler(...args)
   }) as T
 }

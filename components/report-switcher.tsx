@@ -1,37 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import {
   FileText,
   Search,
@@ -45,10 +13,42 @@ import {
   Trash2,
   Edit,
 } from "lucide-react"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter, usePathname } from "next/navigation"
-import { useLanguage } from "@/contexts/language-context"
+import { useState, useEffect } from "react"
 import { toast as sonnerToast } from "sonner"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 interface ToastOptions {
@@ -243,7 +243,9 @@ export function ReportSwitcher({
 
   // 添加重命名报告函数
   const handleRenameReport = async () => {
-    if (!reportToRename) return
+    if (!reportToRename) {
+      return
+    }
 
     try {
       const response = await fetch("/api/report/rename", {
@@ -848,7 +850,9 @@ export function ReportSwitcher({
                       onClick={(e) => {
                         e.preventDefault()
                         // 如果已经选中了这个报告，不做任何操作
-                        if (selectedReport?.id === report.id) return
+                        if (selectedReport?.id === report.id) {
+                          return
+                        }
 
                         handleSelectReport(report)
                       }}

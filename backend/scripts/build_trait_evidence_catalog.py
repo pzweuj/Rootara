@@ -56,7 +56,7 @@ def _generated_rule(trait: dict[str, Any]) -> dict[str, Any]:
         if trait.get("category") == "risk"
         else "review_required"
     )
-    return {
+    result = {
         "status": status,
         "evidence_grade": "unverified",
         "rule_type": "legacy_score",
@@ -83,9 +83,14 @@ def build(default_path: Path = DEFAULT_TRAITS, evidence_path: Path = DEFAULT_EVI
     for trait in traits:
         rule_id = trait["id"]
         rules[rule_id] = existing_rules.get(rule_id, _generated_rule(trait))
-    return {
+    result = {
         "schema_version": 1,
         "description": "Evidence, complete legacy genotype mappings and executable fixtures for every Rootara default rule.",
+        "release_contract": {
+            "target_count": 150,
+            "requires_all_curated": True,
+            "allowed_evidence_grades": ["A", "B"],
+        },
         "review_policy": {
             "curated_requires": [
                 "independent source per declared RSID",
@@ -97,6 +102,9 @@ def build(default_path: Path = DEFAULT_TRAITS, evidence_path: Path = DEFAULT_EVI
         },
         "rules": rules,
     }
+    if existing.get("review_audit"):
+        result["review_audit"] = existing["review_audit"]
+    return result
 
 
 def main() -> None:

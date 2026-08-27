@@ -21,6 +21,14 @@ GENOTYPE_RE = re.compile(r"^(?:[ACGTDI-]{2}|--)$")
 SCORE_RULE_RE = re.compile(r"(rs\d+)\s*:\s*([^;]+)")
 
 
+def _canonical_genotype(genotype: str) -> str:
+    """Compare unphased genotypes independent of allele order."""
+
+    if not isinstance(genotype, str) or len(genotype) != 2:
+        return genotype
+    return "".join(sorted(genotype.upper()))
+
+
 def extract_formula_maps(formula: str) -> dict[str, dict[str, float]]:
     """Extract the genotype-to-score table from a legacy SCORE formula.
 
@@ -168,11 +176,20 @@ def validate_catalog(
             mapping = variant.get("genotype_map", {})
             if not mapping:
                 errors.append(f"{rule_id}/{rsid}: empty genotype_map")
+            if rule.get("status") == "curated" and variant.get("mapping_status") not in {
+                "complete",
+                "literature_complete",
+            }:
+                errors.append(f"{rule_id}/{rsid}: curated mapping_status must be complete")
             for genotype, mapping_value in mapping.items():
                 if not GENOTYPE_RE.fullmatch(genotype):
                     errors.append(f"{rule_id}/{rsid}: invalid genotype {genotype!r}")
                 if not isinstance(mapping_value, dict):
                     errors.append(f"{rule_id}/{rsid}/{genotype}: mapping must be object")
+            if rule.get("status") == "curated":
+                for field in ("gene", "literature_alleles", "input_alleles", "effect_allele", "direction"):
+                    if not variant.get(field):
+                        errors.append(f"{rule_id}/{rsid}: curated mapping needs {field}")
 
         formula_maps = extract_formula_maps(trait.get("formula", ""))
         for rsid, expected_map in formula_maps.items():
@@ -183,13 +200,24 @@ def validate_catalog(
             if sidecar_variant is None:
                 continue
             actual_map = sidecar_variant.get("genotype_map", {})
-            if set(actual_map) != set(expected_map):
+            actual_keys = {_canonical_genotype(key) for key in actual_map}
+            expected_keys = {_canonical_genotype(key) for key in expected_map}
+            if actual_keys != expected_keys:
                 errors.append(
                     f"{rule_id}/{rsid}: genotype_map must cover exactly "
                     f"{sorted(expected_map)}; got {sorted(actual_map)}"
                 )
             for genotype, expected_score in expected_map.items():
-                actual_score = actual_map.get(genotype, {}).get("score")
+                canonical = _canonical_genotype(genotype)
+                actual_entry = next(
+                    (
+                        value
+                        for key, value in actual_map.items()
+                        if _canonical_genotype(key) == canonical
+                    ),
+                    {},
+                )
+                actual_score = actual_entry.get("score")
                 if actual_score is not None and float(actual_score) != expected_score:
                     errors.append(
                         f"{rule_id}/{rsid}/{genotype}: sidecar score "
@@ -215,6 +243,13 @@ def validate_catalog(
                 errors.append(f"{rule_id}: unsupported evidence type {item.get('type')!r}")
             if not item.get("id") or not item.get("url"):
                 errors.append(f"{rule_id}: evidence item needs id and url")
+            if rule.get("status") == "curated":
+                for field in ("title", "journal", "year", "studyType", "supports"):
+                    if not item.get(field):
+                        errors.append(f"{rule_id}: curated evidence item needs {field}")
+                for field in ("population", "effectAllele", "direction"):
+                    if not item.get(field):
+                        errors.append(f"{rule_id}: curated evidence item needs {field}")
             if str(item.get("id")) in {"11111111", "222222222", "333333333"}:
                 errors.append(f"{rule_id}: placeholder evidence identifier is forbidden")
 

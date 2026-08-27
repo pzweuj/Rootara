@@ -1,13 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Trash2 } from "lucide-react"
+import { useState } from "react"
+
+import { fetchGenotypeData } from "@/app/analysis/traits/utils/genotype-utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
-import { fetchGenotypeData } from "@/app/analysis/traits/utils/genotype-utils"
 
 interface RsidGenotypeManagerProps {
   rsids: string[]
@@ -61,8 +62,9 @@ export function RsidGenotypeManager({
 
   // 获取基因型数据的函数
   const getGenotypeData = async (rsid: string) => {
-    if (!rsid.match(/^rs\d{1,}$/))
+    if (!rsid.match(/^rs\d{1,}$/)) {
       return { success: false, reference: "--", user: "--" }
+    }
 
     setIsLoading(true)
     try {
@@ -85,7 +87,9 @@ export function RsidGenotypeManager({
   }
 
   const addRsidGenotype = async () => {
-    if (!rsidInput) return
+    if (!rsidInput) {
+      return
+    }
 
     // 获取基因型数据
     const result = await getGenotypeData(rsidInput)

@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
+
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -9,15 +12,13 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
-import { toast } from "sonner"
-import type { Trait } from "@/types/trait"
+import type { TraitCardModel } from "@/types/trait"
 
 interface DeleteTraitDialogProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  traitToDelete: Trait | null
+  traitToDelete: TraitCardModel | null
   onConfirmDelete: () => void
 }
 
@@ -55,7 +56,9 @@ export function DeleteTraitDialog({
     translations[language as keyof typeof translations][key] || key
 
   const handleDelete = async () => {
-    if (!traitToDelete) return
+    if (!traitToDelete) {
+      return
+    }
 
     try {
       setIsLoading(true)

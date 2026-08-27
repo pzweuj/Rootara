@@ -1,17 +1,18 @@
 "use client"
 
+import { Plus } from "lucide-react"
 import type React from "react"
 
-import { Plus } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
+import type { TraitCardModel } from "@/types/trait"
+
 import { TraitCard } from "./trait-card"
-import type { Trait } from "@/types/trait"
 
 interface TraitsListProps {
-  traits: Trait[]
-  onTraitClick: (trait: Trait) => void
-  onDeleteClick: (e: React.MouseEvent, trait: Trait) => void
+  traits: TraitCardModel[]
+  onTraitClick: (trait: TraitCardModel) => void
+  onDeleteClick: (e: React.MouseEvent, trait: TraitCardModel) => void
   onCreateClick: () => void
 }
 

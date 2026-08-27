@@ -31,18 +31,24 @@ export async function POST(request: Request) {
 
     const { email, password } = await request.json()
     if (typeof email !== "string" || typeof password !== "string") {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      )
     }
 
     const expectedDigest = createHmac("sha256", jwtSecret)
       .update(passwordDigest(adminPassword))
       .digest("hex")
     const receivedDigest = createHmac("sha256", jwtSecret)
-      .update(password)
+      .update(passwordDigest(password))
       .digest("hex")
 
     if (email !== adminEmail || !secureEqual(receivedDigest, expectedDigest)) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      )
     }
 
     const user = {
@@ -67,6 +73,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(user)
   } catch {
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 500 }
+    )
   }
 }

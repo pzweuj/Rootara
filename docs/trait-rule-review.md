@@ -1,23 +1,30 @@
 # Trait rule evidence review
 
 The legacy rules in `backend/database/default-traits.json` are executable
-data, not proof that the underlying interpretation is valid. Every one of the
-53 rules now has a record in `backend/database/trait-evidence.json`, and the
-status/grade/limitations are materialized in the default file:
+data, not proof that the underlying interpretation is valid. Every shipped
+rule has a record in `backend/database/trait-evidence.json`, and the
+status/grade/limitations are materialized in the default file. The release
+gate in `scripts.production_catalog_validation` is stricter than the audit
+catalog: a production build must contain exactly 150 rules, all `curated`,
+with grade A or B evidence.
 
-- `curated`: independent literature covers the declared loci and the mapping
-  has executable fixtures (6 rules).
-- `partial_evidence`: at least one locus is supported, but a blocker remains
-  (currently lactose tolerance because `rs182549` lacks a direct source).
-- `review_required`: the mapping is copied from the legacy formula solely so
-  it can be tested; no biological claim is made (32 rules).
-- `do_not_import_unknown_formula`: medical/risk formulas are blocked until a
-  clinically appropriate model and evidence review exists (14 rules).
+- `curated`: the production release contains exactly 150 rules; every rule
+  has a direct source record, complete mapping, population scope, limitations,
+  and executable fixtures. Evidence grades are A/B only.
+- The 108 WeGene discovery records remain rejected and are not counted as
+  production rules. Legacy formulas that did not pass independent review are
+  not exposed as production cards.
+- Ten disease/drug-association cards that lacked ClinVar, CPIC, PharmGKB, or
+  a complete validated model were rejected and replaced with ten independent
+  non-diagnostic GWAS cards. Caffeine metabolism was explicitly reclassified
+  as lifestyle physiology, and the former acne label was replaced by a
+  CHRNA3 smoking-cessation response card. The complete decision log is in
+  `trait-evidence.json.review_audit` and the generated audit report.
 
-`review_required`, `partial_evidence` and `do_not_import_unknown_formula`
-rules remain visible for audit, but the API sets
-`evaluationStatus=review_required` and withholds `result_current`. This avoids
-turning generated scores into an apparently validated personal result.
+The API still understands `review_required` for user-defined or future
+candidate rules, but the shipped default catalog contains no such entries.
+This prevents generated scores from being presented as validated personal
+results.
 
 For each rule, the sidecar stores every genotype used by the formula. The
 `cartesian_exhaustive` fixture strategy evaluates every combination of those
@@ -30,19 +37,38 @@ the formula. It is now removed from that rule's declared inputs rather than
 silently treating an unused locus as evidence; it can be re-added only with a
 reviewed multi-locus model.
 
-The 95 WeGene discoveries are kept in
-`backend/database/trait-candidate-review.json`. They are all marked
-`do_not_import_unknown_formula`: the public demo exposes example genotypes and
-labels, but not a reproducible formula, weights, intercept, calibration
-population or complete genotype mapping. A demo observation is therefore not
-used as a production rule.
+The WeGene discoveries are kept in
+`backend/database/trait-candidate-review.json`. The current 108 discovery
+records are explicitly rejected (with reviewer, date and reason) because the
+public demo exposes example genotypes and labels, but not a reproducible
+formula, weights, intercept, calibration population or complete genotype
+mapping. A demo observation is therefore not used as a production rule.
+
+Candidates are reviewed independently. A reviewed candidate receives
+`review_status=accepted` with `disposition=accepted_independent_evidence` only
+after a direct paper supports every declared RSID and a complete Rootara-input
+genotype map is recorded. Rejected candidates use an explicit disposition:
+`rejected_evidence_insufficient`, `rejected_semantic_duplicate`, or
+`rejected_medical_model_insufficient`; each remains in the manifest with a
+reason and reviewer/date so the path to the 150-rule release is auditable.
+WeGene text and results are discovery metadata, not evidence. The release gate
+is open only when the exact 150-rule production catalog validator passes.
 
 Run the deterministic checks from the repository root:
 
 ```bash
 PYTHONPATH=backend python -m scripts.trait_rule_validation
 PYTHONPATH=backend python -m scripts.candidate_review_validation
+PYTHONPATH=backend python -m scripts.production_catalog_validation
 ```
+
+The reviewed GWAS batch can be regenerated with
+`PYTHONPATH=backend python -m scripts.curate_gwas_catalog_rules` when the
+review-session source snapshots are available; the committed JSON files are
+the release input and do not depend on a live GWAS service at runtime.
+At startup the launcher persists the catalog version/hash to
+`/data/config/trait-catalog.json`; readiness fails if that validated version
+cannot be persisted or no longer matches the shipped files.
 
 When a rule is manually reviewed, edit
 `backend/database/curated-trait-evidence.json`, add independent PMID/DOI

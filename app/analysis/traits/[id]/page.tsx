@@ -1,17 +1,5 @@
 "use client"
 
-import React from "react"
-
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import {
   AlertCircle,
   ArrowLeft,
@@ -40,45 +28,57 @@ import {
   Snowflake,
   Activity,
 } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
+import { useParams, useRouter } from "next/navigation"
+import React from "react"
+import { useState, useEffect } from "react"
+
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card"
+import { useLanguage } from "@/contexts/language-context"
+import { useReport } from "@/contexts/report-context"
 import {
   getCategoryColor,
   getCategoryName,
   findTraitById,
 } from "@/lib/trait-utils"
-import { useReport } from "@/contexts/report-context"
-import { Trait } from "@/types/trait"
+import type { TraitDetail } from "@/types/trait"
 
 // 添加图标映射对象
 const iconMapping: Record<
   string,
   React.ComponentType<{ className?: string }>
 > = {
-  Eye: Eye,
-  Coffee: Coffee,
-  Moon: Moon,
-  Droplet: Droplet,
-  Brain: Brain,
-  Scissors: Scissors,
-  Utensils: Utensils,
-  Wine: Wine,
-  Clock: Clock,
-  Music: Music,
-  Heart: Heart,
-  Dna: Dna,
-  Leaf: Leaf,
-  Zap: Zap,
-  Sun: Sun,
-  Smile: Smile,
-  Frown: Frown,
-  Thermometer: Thermometer,
-  Wind: Wind,
-  Umbrella: Umbrella,
-  Flame: Flame,
-  Snowflake: Snowflake,
-  Activity: Activity,
-  AlertCircle: AlertCircle,
+  Eye,
+  Coffee,
+  Moon,
+  Droplet,
+  Brain,
+  Scissors,
+  Utensils,
+  Wine,
+  Clock,
+  Music,
+  Heart,
+  Dna,
+  Leaf,
+  Zap,
+  Sun,
+  Smile,
+  Frown,
+  Thermometer,
+  Wind,
+  Umbrella,
+  Flame,
+  Snowflake,
+  Activity,
+  AlertCircle,
 }
 
 export default function TraitDetailPage() {
@@ -86,27 +86,40 @@ export default function TraitDetailPage() {
   const router = useRouter()
   const { language } = useLanguage()
   const { currentReportId } = useReport()
-  const [trait, setTrait] = useState<Trait | null>(null)
+  const [trait, setTrait] = useState<TraitDetail | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const controller = new AbortController()
     const loadTrait = async () => {
-      if (!id || !currentReportId) return
+      if (!id || !currentReportId) {
+        return
+      }
 
       setLoading(true)
 
       try {
-        const foundTrait = await findTraitById(id as string, currentReportId)
+        const foundTrait = await findTraitById(
+          id as string,
+          currentReportId,
+          controller.signal
+        )
+        if (controller.signal.aborted) {
+          return
+        }
         setTrait(foundTrait)
       } catch (error) {
         console.error("Failed to load trait:", error)
         setTrait(null)
       }
 
-      setLoading(false)
+      if (!controller.signal.aborted) {
+        setLoading(false)
+      }
     }
 
     loadTrait()
+    return () => controller.abort()
   }, [id, currentReportId])
 
   // 在translations对象中添加可信度的翻译
@@ -216,13 +229,11 @@ export default function TraitDetailPage() {
         <CardHeader>
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
-              {trait.icon && iconMapping[trait.icon] && (
-                <div className="p-2 bg-secondary rounded-full">
-                  {React.createElement(iconMapping[trait.icon], {
-                    className: "h-6 w-6",
-                  })}
-                </div>
-              )}
+              <div className="p-2 bg-secondary rounded-full">
+                {React.createElement(iconMapping[trait.icon || "Dna"] || Dna, {
+                  className: "h-6 w-6",
+                })}
+              </div>
               <div>
                 <CardTitle className="text-2xl">
                   {trait.name[language as keyof typeof trait.name] ||
@@ -234,7 +245,7 @@ export default function TraitDetailPage() {
             <Badge className={getCategoryColor(trait.category)}>
               {getCategoryName(trait.category, language)}
             </Badge>
-            {!trait.isDefault && (
+            {trait.isDefault === false && (
               <Button variant="outline" size="sm">
                 <Edit className="mr-2 h-4 w-4" />
                 {t("edit")}
@@ -245,28 +256,21 @@ export default function TraitDetailPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-lg font-medium">{t("result")}</h3>
-            {trait.evaluationStatus === "review_required" ? (
-              <div className="text-muted-foreground space-y-2">
-                <p>{t("reviewRequired")}</p>
-                {trait.reviewBlockers && trait.reviewBlockers.length > 0 && (
-                  <ul className="list-disc pl-5 text-sm">
-                    {trait.reviewBlockers.map((blocker) => (
-                      <li key={blocker}>{blocker}</li>
-                    ))}
-                  </ul>
-                )}
+            {trait.evaluation.status === "insufficient_data" ? (
+              <div className="text-muted-foreground">
+                <p>{t("insufficientData")}</p>
+                <p className="mt-1 font-mono text-sm">
+                  {language === "zh-CN" ? "未检测到：" : "Missing: "}
+                  {trait.evaluation.missingRsids?.join("、")}
+                </p>
               </div>
-            ) : trait.evaluationStatus === "insufficient_data" ? (
-              <p className="text-muted-foreground">{t("insufficientData")}</p>
-            ) : trait.evaluationStatus === "invalid_rule" ? (
+            ) : trait.evaluation.status === "invalid_rule" ||
+              trait.evaluation.status === "invalid_orientation" ? (
               <p className="text-muted-foreground">{t("invalidRule")}</p>
             ) : (
               <p className="text-xl">
-                {trait.result_current?.[
-                  language as keyof typeof trait.result_current
-                ] ||
-                  trait.result_current?.default ||
-                  "N/A"}
+                {trait.evaluation.resultCurrent?.[language] ||
+                  trait.evaluation.resultCurrent?.default}
               </p>
             )}
           </div>
@@ -293,7 +297,9 @@ export default function TraitDetailPage() {
                         : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
                   }
                 >
-                  {t(trait.confidence as keyof typeof translations.en)}
+                  {t(
+                    (trait.confidence || "low") as keyof typeof translations.en
+                  )}
                 </Badge>
               </div>
             </div>
@@ -308,10 +314,44 @@ export default function TraitDetailPage() {
             </div>
           </div>
 
+          {trait.evidenceGrade && (
+            <div className="space-y-2 border-t pt-4">
+              <h3 className="text-sm font-medium">
+                {language === "zh-CN" ? "证据等级" : "Evidence grade"}
+              </h3>
+              <Badge variant="outline">{trait.evidenceGrade}</Badge>
+              {trait.limitations?.[language]?.length > 0 && (
+                <ul className="list-disc pl-5 text-sm text-muted-foreground">
+                  {trait.limitations[language].map((limitation) => (
+                    <li key={limitation}>{limitation}</li>
+                  ))}
+                </ul>
+              )}
+              {trait.populationScope?.[language] && (
+                <p className="text-sm text-muted-foreground">
+                  {language === "zh-CN" ? "适用人群：" : "Population scope: "}
+                  {trait.populationScope[language]}
+                </p>
+              )}
+              {trait.medicalDisclaimer && (
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  {language === "zh-CN"
+                    ? "本结果仅供信息参考；用药选择和剂量必须遵循最新临床指南，并由合格的医疗专业人员评估。"
+                    : trait.medicalDisclaimer}
+                </p>
+              )}
+              {trait.evidenceSummary?.[language] && (
+                <p className="text-sm text-muted-foreground">
+                  {trait.evidenceSummary[language]}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Genetic Data Section */}
           <div className="pt-4 border-t">
             <h3 className="text-lg font-medium mb-3">{t("geneticData")}</h3>
-            {trait.rsids && trait.rsids.length > 0 ? (
+            {trait.loci.length > 0 ? (
               <div className="space-y-4">
                 <div className="border rounded-md overflow-hidden">
                   <table className="w-full">
@@ -321,7 +361,9 @@ export default function TraitDetailPage() {
                           {t("rsid")}
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium">
-                          {t("referenceGenotype")}
+                          {language === "zh-CN"
+                            ? "GRCh38 位点/等位基因"
+                            : "GRCh38 locus/alleles"}
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium">
                           {t("yourGenotype")}
@@ -329,14 +371,49 @@ export default function TraitDetailPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {trait.rsids.map((rsid, index) => (
-                        <tr key={index} className="border-t">
-                          <td className="px-4 py-2 text-sm">{rsid}</td>
-                          <td className="px-4 py-2 text-sm font-mono">
-                            {trait.referenceGenotypes?.[index] || "--"}
+                      {trait.loci.map((locus) => (
+                        <tr key={locus.rsid} className="border-t">
+                          <td className="px-4 py-2 text-sm">
+                            <div>{locus.rsid}</div>
+                            {locus.gene && (
+                              <div className="text-xs text-muted-foreground">
+                                {locus.gene}
+                              </div>
+                            )}
                           </td>
                           <td className="px-4 py-2 text-sm font-mono">
-                            {trait.yourGenotypes?.[index] || "--"}
+                            {locus.assembly.GRCh38.chromosome &&
+                            locus.assembly.GRCh38.position
+                              ? `chr${locus.assembly.GRCh38.chromosome}:${locus.assembly.GRCh38.position}`
+                              : language === "zh-CN"
+                                ? "位点核验中"
+                                : "Pending verification"}
+                            {locus.assembly.GRCh37?.chromosome &&
+                              locus.assembly.GRCh37.position && (
+                                <div className="text-xs text-muted-foreground">
+                                  {`GRCh37 chr${locus.assembly.GRCh37.chromosome}:${locus.assembly.GRCh37.position}`}
+                                </div>
+                              )}
+                            <div>
+                              {[
+                                locus.referenceAllele,
+                                ...locus.alternateAlleles,
+                              ]
+                                .filter(Boolean)
+                                .join("/")}
+                              {locus.effectAllele
+                                ? ` · ${language === "zh-CN" ? "效应" : "effect"} ${locus.effectAllele}`
+                                : ""}
+                              {locus.effectDirection
+                                ? ` (${locus.effectDirection})`
+                                : ""}
+                            </div>
+                          </td>
+                          <td className="px-4 py-2 text-sm font-mono">
+                            {trait.evaluation.genotypes[locus.rsid] ||
+                              (language === "zh-CN"
+                                ? "未检测到"
+                                : "Not detected")}
                           </td>
                         </tr>
                       ))}
@@ -382,9 +459,13 @@ export default function TraitDetailPage() {
                                   return b[1] === a[1] ? 0 : b[1] ? -1 : 1 // true排在false前面
                                 }
                                 // 如果只有a是布尔值
-                                if (typeof a[1] === "boolean") return -1
+                                if (typeof a[1] === "boolean") {
+                                  return -1
+                                }
                                 // 如果只有b是布尔值
-                                if (typeof b[1] === "boolean") return 1
+                                if (typeof b[1] === "boolean") {
+                                  return 1
+                                }
                                 // 如果都是数字，按降序排序
                                 return b[1] - a[1]
                               })
@@ -404,7 +485,7 @@ export default function TraitDetailPage() {
                     </div>
                   )}
 
-                {trait.reference && trait.reference.length > 0 && (
+                {trait.evidence && trait.evidence.length > 0 && (
                   <div className="pt-4 border-t space-y-2">
                     {" "}
                     {/* Added pt-4 border-t */}
@@ -412,15 +493,16 @@ export default function TraitDetailPage() {
                       {t("reference")}
                     </h3>
                     <ul className="space-y-1 text-sm text-muted-foreground">
-                      {trait.reference.map((pubmedId, index) => (
-                        <li key={index.toString()}>
+                      {trait.evidence.map((item) => (
+                        <li key={`${item.type}:${item.id}`}>
                           <a
-                            href={`https://pubmed.ncbi.nlm.nih.gov/${pubmedId}/`}
+                            href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:underline"
                           >
-                            PMID: {pubmedId}
+                            {item.type}: {item.id}
+                            {item.title ? ` — ${item.title}` : ""}
                           </a>
                         </li>
                       ))}
@@ -435,11 +517,13 @@ export default function TraitDetailPage() {
             )}
           </div>
 
-          {!trait.isDefault && (
+          {trait.isDefault === false && (
             <div className="pt-4 border-t">
               <p className="text-sm text-muted-foreground">
                 {t("createdAt")}:{" "}
-                {new Date(trait.createdAt).toLocaleDateString()}
+                {trait.createdAt
+                  ? new Date(trait.createdAt).toLocaleDateString()
+                  : ""}
               </p>
             </div>
           )}

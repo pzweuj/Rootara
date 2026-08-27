@@ -2,9 +2,22 @@
 # pzw
 # 单个表格的信息查询和处理
 import sqlite3
+import re
+
+
+REPORT_TABLE_RE = re.compile(r"^RPT_(?:TEMPLATE01|[A-Z0-9]{10})$")
+
+
+def validate_report_table_name(report_id):
+    """Return a safe SQLite report-table identifier or raise ValueError."""
+
+    if not isinstance(report_id, str) or not REPORT_TABLE_RE.fullmatch(report_id):
+        raise ValueError("invalid report id")
+    return report_id
 
 # 根据RSID查询若干个SNP的信息
 def get_snp_info_by_rsid(rsid_list, report_id, db_path, concise=False):
+    report_id = validate_report_table_name(report_id)
     # 连接到数据库
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -31,38 +44,41 @@ def get_snp_info_by_rsid(rsid_list, report_id, db_path, concise=False):
         conn.close()
         return empty_result
     
-    # 创建结果字典
+    # A trait page requests roughly 150 loci. Query them in one indexed scan
+    # instead of scanning a 300k+ row report table once per RSID.
+    requested = list(dict.fromkeys(rsid for rsid in rsid_list if isinstance(rsid, str)))
     result_dict = {}
     concise_dict = {}
-    
-    # 查询每个RSID的SNP信息
-    for rsid in rsid_list:
-        cursor.execute(f"SELECT * FROM {report_id} WHERE rsid=?", (rsid,))
-        snp_info = cursor.fetchone()
-        
-        if snp_info:
-            # 获取列名
-            column_names = [description[0] for description in cursor.description]
-            # 将结果转换为字典
-            snp_dict = dict(zip(column_names, snp_info))
+    if requested:
+        placeholders = ",".join("?" for _ in requested)
+        cursor.execute(f"SELECT * FROM {report_id} WHERE rsid IN ({placeholders})", requested)
+        column_names = [description[0] for description in cursor.description]
+        for row in cursor.fetchall():
+            snp_dict = dict(zip(column_names, row))
+            rsid = snp_dict.get('rsid')
+            if not rsid or rsid in result_dict:
+                continue
             result_dict[rsid] = snp_dict
-            concise_dict[rsid] = [snp_dict['ref'] + snp_dict['ref'], snp_dict['genotype']]
-        else:
-            # 如果没有找到该RSID的信息，添加空记录
-            result_dict[rsid] = {
-                'chromosome': None,
-                'position': None,
-                'ref': None,
-                'alt': None,
-                'rsid': rsid,
-                'gnomAD_AF': None,
-                'gene': None,
-                'clnsig': None,
-                'clndn': None,
-                'genotype': None,
-                'check': None
-            }
-            concise_dict[rsid] = [None, None]
+            reference = snp_dict.get('ref')
+            concise_dict[rsid] = [reference + reference if reference else None, snp_dict.get('genotype')]
+
+    for rsid in requested:
+        if rsid in result_dict:
+            continue
+        result_dict[rsid] = {
+            'chromosome': None,
+            'position': None,
+            'ref': None,
+            'alt': None,
+            'rsid': rsid,
+            'gnomAD_AF': None,
+            'gene': None,
+            'clnsig': None,
+            'clndn': None,
+            'genotype': None,
+            'check': None
+        }
+        concise_dict[rsid] = [None, None]
     
     # 关闭数据库连接
     conn.close()
@@ -73,6 +89,7 @@ def get_snp_info_by_rsid(rsid_list, report_id, db_path, concise=False):
 # 根据chromosome position ref alt查询若干个SNP的信息
 # 这个输入是一个这样的列表[(chromosome, position, ref, alt), (chromosome, position, ref, alt)]
 def get_snp_info_by_chromosome_position_ref_alt(query_list, report_id, db_path):
+    report_id = validate_report_table_name(report_id)
     # 连接到数据库
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -139,6 +156,7 @@ def get_snp_info_by_chromosome_position_ref_alt(query_list, report_id, db_path):
 # 整张表的信息输出，表格很大，使用懒惰加载方式处理，支持前端表格展示、搜索和筛选
 def get_all_snp_info(report_id, db_path, page_size=1000, page=1, sort_by="", sort_order='asc', 
                      search_term="", filters={}):
+    report_id = validate_report_table_name(report_id)
     
     # 在函数内部添加检查
     if sort_by == "":

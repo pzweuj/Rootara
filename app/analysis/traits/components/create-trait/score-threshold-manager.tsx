@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { Trash2 } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
+import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useLanguage } from "@/contexts/language-context"
 
 interface ScoreThresholdManagerProps {
   thresholds: Record<string, number | boolean>
@@ -71,7 +72,9 @@ export function ScoreThresholdManager({
     translations[language as keyof typeof translations][key] || key
 
   const addScoreThreshold = () => {
-    if (!thresholdName || !thresholdValue) return
+    if (!thresholdName || !thresholdValue) {
+      return
+    }
 
     const updatedThresholds = { ...thresholds }
 

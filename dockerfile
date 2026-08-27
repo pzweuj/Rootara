@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 ARG NODE_IMAGE=node:20-bookworm-slim
 ARG PYTHON_IMAGE=python:3.11.10-slim-bookworm
 
@@ -49,6 +47,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     ROOTARA_BACKEND_ROOT=/opt/rootara/backend \
     ROOTARA_WEB_ROOT=/opt/rootara/web \
     ROOTARA_DATA_DIR=/data \
+    PYTHONPATH=/opt/rootara/backend \
     DB_PATH=/data/rootara.db \
     PORT=3000 \
     HOSTNAME=0.0.0.0 \

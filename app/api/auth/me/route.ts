@@ -1,6 +1,6 @@
+import * as jose from "jose"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
-import * as jose from "jose"
 
 export async function GET() {
   const token = (await cookies()).get("auth_token")?.value
@@ -16,6 +16,9 @@ export async function GET() {
     )
     return NextResponse.json(payload)
   } catch {
-    return NextResponse.json({ error: "Authentication failed" }, { status: 401 })
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 401 }
+    )
   }
 }

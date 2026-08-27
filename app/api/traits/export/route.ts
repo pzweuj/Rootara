@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
 
-export async function POST(request: Request) {
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
+
+export async function POST() {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
-    const { traits } = await request.json()
-
-    const response = await backendFetch(
-      "/traits/export",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(traits),
-      }
-    )
+    const response = await backendFetch("/traits/export", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: "",
+    })
 
     if (!response.ok) {
-      throw new Error(`Backend API error: ${response.status}`)
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

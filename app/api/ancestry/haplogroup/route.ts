@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     // 从请求中获取报告ID
     const { reportId } = await request.json()
@@ -11,19 +21,16 @@ export async function POST(request: NextRequest) {
     }
 
     // 调用后端API
-    const response = await backendFetch(
-      `/report/${reportId}/haplogroup`,
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-        },
-        body: "",
-      }
-    )
+    const response = await backendFetch(`/report/${reportId}/haplogroup`, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+      },
+      body: "",
+    })
 
     if (!response.ok) {
-      throw new Error(`API请求失败: ${response.status} ${response.statusText}`)
+      return proxyBackendResponse(response)
     }
 
     // 获取并返回数据

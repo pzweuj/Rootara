@@ -1,6 +1,6 @@
+import * as jose from "jose"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import * as jose from "jose"
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
@@ -36,9 +36,7 @@ export async function middleware(request: NextRequest) {
   if (redirectAuthenticated && token) {
     try {
       // Verify the token using jose instead of jsonwebtoken
-      const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || ""
-      )
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "")
       await jose.jwtVerify(token, secret)
 
       if (!isProduction) {
@@ -83,9 +81,7 @@ export async function middleware(request: NextRequest) {
   // If the path is not public and there is a token, verify it
   if (!isPublicPath && token) {
     try {
-      const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || ""
-      )
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "")
       await jose.jwtVerify(token, secret)
 
       if (!isProduction) {

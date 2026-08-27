@@ -223,6 +223,56 @@ class HealthChecker:
                 'available': False
             }
 
+    def check_trait_catalog(self) -> Dict[str, Any]:
+        """Verify that the shipped trait and evidence catalogs are readable."""
+        try:
+            from .rootara_traits import get_trait_catalog_metadata, persisted_trait_catalog_matches
+
+            metadata = get_trait_catalog_metadata()
+            expected_count = os.environ.get("ROOTARA_EXPECTED_TRAIT_COUNT")
+            if expected_count and metadata["count"] != int(expected_count):
+                return {
+                    "status": "unhealthy",
+                    "error": "trait catalog count does not match the release contract",
+                    "expected_count": int(expected_count),
+                    **metadata,
+                }
+            if metadata["statuses"].get("missing", 0):
+                return {
+                    "status": "unhealthy",
+                    "error": "trait catalog has rules without evidence records",
+                    **metadata,
+                }
+            if os.environ.get("ROOTARA_REQUIRE_CURATED_CATALOG") == "1":
+                non_curated = metadata["count"] - metadata["statuses"].get("curated", 0)
+                if non_curated:
+                    return {
+                        "status": "unhealthy",
+                        "error": "release requires every production trait to be curated",
+                        "non_curated": non_curated,
+                        **metadata,
+                    }
+                from .production_catalog_validation import validate_production_catalog
+
+                catalog_errors = validate_production_catalog()
+                if catalog_errors:
+                    return {
+                        "status": "unhealthy",
+                        "error": "trait catalog failed production validation",
+                        "validation_errors": catalog_errors[:20],
+                        **metadata,
+                    }
+                if not persisted_trait_catalog_matches(metadata):
+                    return {
+                        "status": "unhealthy",
+                        "error": "persisted trait catalog metadata is missing or stale",
+                        **metadata,
+                    }
+            return {"status": "healthy", **metadata}
+        except (OSError, TypeError, ValueError) as error:
+            logger.error("特征目录健康检查失败: %s", error)
+            return {"status": "unhealthy", "error": "trait catalog is unreadable"}
+
     def check_disk_space(self) -> Dict[str, Any]:
         """检查磁盘空间"""
         try:
@@ -299,6 +349,7 @@ class HealthChecker:
         checks = {
             'database': self.check_database_health(),
             'cache': self.check_cache_health(),
+            'trait_catalog': self.check_trait_catalog(),
             'disk_space': self.check_disk_space(),
             'memory': self.check_memory_usage(),
         }

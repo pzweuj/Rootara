@@ -1,9 +1,10 @@
 "use client"
 
+import * as LucideIcons from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useLanguage } from "@/contexts/language-context"
-import * as LucideIcons from "lucide-react"
 
 interface IconSelectorProps {
   selectedIcon: string

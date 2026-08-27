@@ -1,21 +1,27 @@
 "use client"
 
-import type React from "react"
-import type { Trait, TraitCategory } from "@/types/trait"
-import { Badge } from "@/components/ui/badge"
-import { useState, useEffect } from "react"
 import { AlertTriangle } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import type React from "react"
 import { toast } from "sonner"
-import { loadAllTraits } from "@/lib/trait-utils"
-import { TraitFilters } from "./components/trait-filters"
-import { TraitsList } from "./components/trait-list"
+
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { useLanguage } from "@/contexts/language-context"
+import { useReport } from "@/contexts/report-context" // 导入报告上下文
+import {
+  invalidateTraitCatalog,
+  loadTraitCatalog,
+  loadTraitResults,
+} from "@/lib/trait-utils"
+import type { Trait, TraitCardModel, TraitCategory } from "@/types/trait"
+
 import { CreateTraitDialog } from "./components/create-trait-dialog"
 import { DeleteTraitDialog } from "./components/delete-trait-dialog"
+import { TraitFilters } from "./components/trait-filters"
 import { TraitImportExport } from "./components/trait-import-export"
-import { Card, CardContent } from "@/components/ui/card"
-import { useReport } from "@/contexts/report-context" // 导入报告上下文
+import { TraitsList } from "./components/trait-list"
 
 export default function TraitsPage() {
   const { language, t } = useLanguage()
@@ -23,91 +29,74 @@ export default function TraitsPage() {
   const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<TraitCategory>("all")
-  const [traits, setTraits] = useState<Trait[]>([])
+  const [traits, setTraits] = useState<TraitCardModel[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [traitToDelete, setTraitToDelete] = useState<Trait | null>(null)
-
-  // Cache management using sessionStorage
-  const getCacheKey = (reportId: string) => `traits_cache_${reportId}`
-  const getTimestampKey = (reportId: string) => `traits_timestamp_${reportId}`
-
-  // Function to get cached data
-  const getCachedTraits = (reportId: string): Trait[] | null => {
-    if (typeof window === "undefined") return null
-    try {
-      const cached = sessionStorage.getItem(getCacheKey(reportId))
-      return cached ? JSON.parse(cached) : null
-    } catch (error) {
-      console.error("Failed to get cached traits:", error)
-      return null
-    }
-  }
-
-  // Function to set cached data
-  const setCachedTraits = (reportId: string, traits: Trait[]) => {
-    if (typeof window === "undefined") return
-    try {
-      sessionStorage.setItem(getCacheKey(reportId), JSON.stringify(traits))
-      sessionStorage.setItem(getTimestampKey(reportId), Date.now().toString())
-    } catch (error) {
-      console.error("Failed to cache traits:", error)
-    }
-  }
-
-  // Function to check if we need to refresh (for forced refresh scenarios)
-  const shouldForceRefresh = (reportId: string): boolean => {
-    if (typeof window === "undefined") return true
-    const forceRefreshKey = `traits_force_refresh_${reportId}`
-    const shouldRefresh = sessionStorage.getItem(forceRefreshKey) === "true"
-    if (shouldRefresh) {
-      sessionStorage.removeItem(forceRefreshKey)
-    }
-    return shouldRefresh
-  }
-
-  // Function to mark for forced refresh
-  const markForRefresh = (reportId: string) => {
-    if (typeof window === "undefined") return
-    sessionStorage.setItem(`traits_force_refresh_${reportId}`, "true")
-  }
+  const [traitToDelete, setTraitToDelete] = useState<TraitCardModel | null>(
+    null
+  )
 
   // Function to refresh traits data from API
-  const refreshTraitsData = async (reportId: string) => {
+  const refreshTraitsData = async (reportId: string, signal?: AbortSignal) => {
+    setIsLoading(true)
+    setLoadError(null)
     try {
-      const allTraits = await loadAllTraits(reportId)
-      setTraits(allTraits)
-      setCachedTraits(reportId, allTraits)
+      const [catalog, resultPayload] = await Promise.all([
+        loadTraitCatalog(),
+        loadTraitResults(reportId, signal),
+      ])
+      if (catalog.version !== resultPayload.catalogVersion) {
+        throw new Error("Trait catalog version changed during evaluation")
+      }
+      const resultById = new Map(
+        resultPayload.results.map((result) => [result.traitId, result])
+      )
+      setTraits(
+        catalog.traits.map((trait) => ({
+          ...trait,
+          evaluation: resultById.get(trait.id) || {
+            traitId: trait.id,
+            status: "invalid_rule" as const,
+            resultKey: null,
+            resultCurrent: null,
+            genotypes: {},
+            missingRsids: trait.loci.map((locus) => locus.rsid),
+            detectedCount: 0,
+            requiredCount: trait.loci.length,
+          },
+        }))
+      )
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return
+      }
       console.error("Failed to load traits:", error)
       setTraits([])
+      setLoadError(
+        language === "zh-CN" ? "特征数据加载失败" : "Failed to load traits"
+      )
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoading(false)
+      }
     }
   }
 
   // Load traits on component mount and when report ID changes
   useEffect(() => {
-    const loadTraitsData = async () => {
-      if (!currentReportId) return
-
-      // Check if we have cached data
-      const cachedTraits = getCachedTraits(currentReportId)
-      const forceRefresh = shouldForceRefresh(currentReportId)
-
-      if (cachedTraits && !forceRefresh) {
-        // Use cached data
-        setTraits(cachedTraits)
-      } else {
-        // Fetch from API
-        await refreshTraitsData(currentReportId)
-      }
+    if (!currentReportId) {
+      return
     }
-
-    loadTraitsData()
+    const controller = new AbortController()
+    refreshTraitsData(currentReportId, controller.signal)
+    return () => controller.abort()
   }, [currentReportId])
 
   // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {
-    const matchesSearch = trait.name[language as keyof typeof trait.name]
+    const matchesSearch = (trait.name[language] || trait.name.en)
       .toLowerCase()
       .includes(searchQuery.toLowerCase())
     const matchesCategory =
@@ -116,7 +105,7 @@ export default function TraitsPage() {
   })
 
   // Handle trait card click - navigate to detail page
-  const handleTraitClick = (trait: Trait) => {
+  const handleTraitClick = (trait: TraitCardModel) => {
     router.push(`/analysis/traits/${trait.id}`)
   }
 
@@ -132,14 +121,16 @@ export default function TraitsPage() {
 
     // Case 3: Refresh traits list from backend after creating a new trait
     if (currentReportId) {
-      markForRefresh(currentReportId)
+      invalidateTraitCatalog()
       await refreshTraitsData(currentReportId)
     }
   }
 
   // Handle deleting a trait
   const handleDeleteTrait = async () => {
-    if (!traitToDelete) return
+    if (!traitToDelete) {
+      return
+    }
 
     setIsDeleteDialogOpen(false)
     setTraitToDelete(null)
@@ -148,13 +139,13 @@ export default function TraitsPage() {
 
     // Case 4: Refresh traits list from backend after deleting a trait
     if (currentReportId) {
-      markForRefresh(currentReportId)
+      invalidateTraitCatalog()
       await refreshTraitsData(currentReportId)
     }
   }
 
   // Open delete confirmation dialog
-  const confirmDelete = (e: React.MouseEvent, trait: Trait) => {
+  const confirmDelete = (e: React.MouseEvent, trait: TraitCardModel) => {
     e.stopPropagation() // Prevent card click
     setTraitToDelete(trait)
     setIsDeleteDialogOpen(true)
@@ -165,7 +156,7 @@ export default function TraitsPage() {
     // Case 5: Refresh traits list from backend after importing traits
     // Note: We refresh from backend instead of using importedTraits to ensure data consistency
     if (currentReportId) {
-      markForRefresh(currentReportId)
+      invalidateTraitCatalog()
       await refreshTraitsData(currentReportId)
     }
   }
@@ -201,15 +192,36 @@ export default function TraitsPage() {
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />
-        <TraitImportExport onImport={handleImportTraits} traits={traits} />
+        <TraitImportExport onImport={handleImportTraits} />
       </div>
 
-      <TraitsList
-        traits={filteredTraits}
-        onTraitClick={handleTraitClick}
-        onDeleteClick={confirmDelete}
-        onCreateClick={() => setIsCreateDialogOpen(true)}
-      />
+      {loadError && (
+        <Card className="border-destructive">
+          <CardContent className="py-4 text-destructive">
+            {loadError}
+          </CardContent>
+        </Card>
+      )}
+
+      {isLoading && (
+        <div
+          className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+          aria-label="loading traits"
+        >
+          {Array.from({ length: 9 }).map((_, index) => (
+            <Card key={index} className="h-48 animate-pulse bg-muted/40" />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !loadError && (
+        <TraitsList
+          traits={filteredTraits}
+          onTraitClick={handleTraitClick}
+          onDeleteClick={confirmDelete}
+          onCreateClick={() => setIsCreateDialogOpen(true)}
+        />
+      )}
 
       <CreateTraitDialog
         isOpen={isCreateDialogOpen}

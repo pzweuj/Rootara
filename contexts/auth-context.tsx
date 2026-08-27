@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   createContext,
   useContext,
@@ -7,7 +8,6 @@ import {
   useEffect,
   type ReactNode,
 } from "react"
-import { useRouter } from "next/navigation"
 
 type User = {
   name: string
@@ -58,38 +58,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true)
     try {
-      // Hash password on client side for secure transmission
-      let hashedPassword: string
-
-      if (
-        typeof window !== "undefined" &&
-        window.crypto &&
-        window.crypto.subtle
-      ) {
-        const encoder = new TextEncoder()
-        const data = encoder.encode(password)
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        hashedPassword = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")
-      } else {
-        // Fallback for environments where crypto.subtle is not available
-        console.warn("crypto.subtle not available, using simple hash fallback")
-        hashedPassword = btoa(password)
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toLowerCase()
-      }
-
-      // Clear password from memory immediately
-      password = ""
-
+      // The BFF performs the canonical password digest/HMAC check. Sending a
+      // client-side digest here would hash it a second time on the server and
+      // make the browser login differ from direct API clients. Production
+      // deployments should terminate TLS at the trusted proxy.
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password: hashedPassword }),
+        body: JSON.stringify({ email, password }),
       })
 
       if (!res.ok) {

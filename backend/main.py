@@ -4,8 +4,10 @@ import secrets
 import time
 import uuid
 import logging
+import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Depends, Header, Response, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, RootModel
 from typing import List, Dict, Any, Union
 
@@ -58,6 +60,13 @@ from scripts.rootara_table_info import get_snp_info_by_rsid, get_clinvar_data   
 from scripts.rootara_get_admixture import get_admixture_info                                         # 查询祖源分析信息
 from scripts.rootara_get_haplogroup import get_haplogroup_info                                       # 查询单倍群分析信息
 from scripts.rootara_traits import *                                                                 # 查询特征分析信息
+from scripts.trait_catalog_service import (
+    get_catalog_payload,
+    get_legacy_traits_payload,
+    get_report_results,
+    get_trait_detail,
+)
+from scripts.trait_report_migration import get_report_backfill_status
 
 # API
 app = FastAPI(
@@ -459,8 +468,47 @@ async def api_get_traits_info(report_id, api_key: str = Depends(verify_api_key))
     """
     特征结果数据表
     """
-    result = result_trait_data(report_id, DB_PATH)
+    result = get_legacy_traits_payload(report_id, DB_PATH)
     return result
+
+
+@app.get("/traits/catalog", tags=["traits_catalog"])
+async def api_get_trait_catalog(
+    request: Request,
+    api_key: str = Depends(verify_api_key),
+):
+    """Return report-independent card summaries with a stable ETag."""
+
+    payload = get_catalog_payload(DB_PATH)
+    etag = f'"{payload["version"]}"'
+    if request.headers.get("if-none-match") == etag:
+        return Response(status_code=304, headers={"ETag": etag})
+    return JSONResponse(
+        payload,
+        headers={
+            "ETag": etag,
+            "Cache-Control": "private, max-age=300, must-revalidate",
+        },
+    )
+
+
+@app.get("/reports/{report_id}/traits/results", tags=["traits_results"])
+async def api_get_trait_results(report_id: str, api_key: str = Depends(verify_api_key)):
+    """Evaluate the full catalog with one indexed report query."""
+
+    return get_report_results(report_id, DB_PATH)
+
+
+@app.get("/traits/{trait_id}", tags=["traits_detail"])
+async def api_get_trait_detail(
+    trait_id: str,
+    report_id: str,
+    api_key: str = Depends(verify_api_key),
+):
+    detail = get_trait_detail(trait_id, report_id, DB_PATH)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="trait not found")
+    return detail
 
 # ================================
 # 健康检查和监控端点
@@ -483,7 +531,7 @@ async def health_check():
             status_code = 503  # 服务不可用
 
         return Response(
-            content=health_status.model_dump_json() if hasattr(health_status, 'model_dump_json') else str(health_status),
+            content=health_status.model_dump_json() if hasattr(health_status, 'model_dump_json') else json.dumps(health_status, default=lambda value: value.__dict__, ensure_ascii=False),
             status_code=status_code,
             media_type="application/json"
         )
@@ -514,12 +562,33 @@ async def readiness_check():
         with db_pool.get_connection_context() as conn:
             conn.execute("SELECT 1")
 
-        return {"status": "ready", "timestamp": time.time()}
+        catalog = get_trait_catalog_metadata()
+        expected_count = os.environ.get("ROOTARA_EXPECTED_TRAIT_COUNT")
+        if expected_count and catalog["count"] != int(expected_count):
+            raise RuntimeError("trait catalog count does not match release contract")
+        if catalog["statuses"].get("missing", 0):
+            raise RuntimeError("trait catalog has missing evidence records")
+        if not persisted_trait_catalog_matches(catalog):
+            raise RuntimeError("persisted trait catalog metadata is missing or stale")
+        if os.environ.get("ROOTARA_REQUIRE_CURATED_CATALOG") == "1":
+            if catalog["statuses"].get("curated", 0) != catalog["count"]:
+                raise RuntimeError("release requires a fully curated trait catalog")
+
+        backfill = get_report_backfill_status(DB_PATH, catalog["locus_hash"])
+        if not backfill["ready"]:
+            raise RuntimeError("one or more reports have not passed the current trait import migration")
+
+        return {
+            "status": "ready",
+            "timestamp": time.time(),
+            "traitCatalog": catalog,
+            "traitImporter": backfill,
+        }
 
     except Exception as e:
         logger.error(f"就绪性检查失败: {e}")
         return Response(
-            content='{"status": "not_ready", "error": "数据库连接失败"}',
+            content=json.dumps({"status": "not_ready", "error": str(e)}, ensure_ascii=False),
             status_code=503,
             media_type="application/json"
         )

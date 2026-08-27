@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     // 从请求体中获取report_id，如果没有则从查询参数获取
     let reportId: string
@@ -34,7 +44,7 @@ export async function POST(request: NextRequest) {
     )
 
     if (!response.ok) {
-      throw new Error(`Backend API error: ${response.status}`)
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

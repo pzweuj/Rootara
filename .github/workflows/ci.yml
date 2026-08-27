@@ -45,6 +45,7 @@ jobs:
       - run: PYTHONPATH=backend python -m compileall -q backend deploy
       - run: PYTHONPATH=backend python -m scripts.trait_rule_validation
       - run: PYTHONPATH=backend python -m scripts.candidate_review_validation
+      - run: PYTHONPATH=backend python -m scripts.production_catalog_validation
       - run: PYTHONPATH=backend python -m pytest -q backend/tests
 
   image:

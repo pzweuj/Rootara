@@ -13,6 +13,8 @@ services:
       TZ: ${TZ:-Asia/Shanghai}
       CACHE_TTL: ${CACHE_TTL:-3600}
       CACHE_MAX_ENTRIES: ${CACHE_MAX_ENTRIES:-1024}
+      ROOTARA_EXPECTED_TRAIT_COUNT: ${ROOTARA_EXPECTED_TRAIT_COUNT:-150}
+      ROOTARA_REQUIRE_CURATED_CATALOG: ${ROOTARA_REQUIRE_CURATED_CATALOG:-1}
     volumes:
       - rootara_data:/data
     restart: unless-stopped

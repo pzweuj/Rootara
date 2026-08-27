@@ -1,4 +1,66 @@
-import type { Trait } from "@/types/trait"
+import type {
+  Trait,
+  TraitCatalogResponse,
+  TraitDetail,
+  TraitResultsResponse,
+} from "@/types/trait"
+
+let catalogPromise: Promise<TraitCatalogResponse> | null = null
+
+/** Load the versioned, report-independent card catalog once per browser session. */
+export function loadTraitCatalog(): Promise<TraitCatalogResponse> {
+  if (!catalogPromise) {
+    catalogPromise = fetch("/api/traits/catalog", { cache: "no-cache" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Catalog API error: ${response.status}`)
+        }
+        return response.json() as Promise<TraitCatalogResponse>
+      })
+      .catch((error) => {
+        catalogPromise = null
+        throw error
+      })
+  }
+  return catalogPromise
+}
+
+export function invalidateTraitCatalog() {
+  catalogPromise = null
+}
+
+/** Load only report-dependent genotypes and evaluation states. */
+export async function loadTraitResults(
+  reportId: string,
+  signal?: AbortSignal
+): Promise<TraitResultsResponse> {
+  const response = await fetch(
+    `/api/reports/${encodeURIComponent(reportId)}/traits/results`,
+    { cache: "no-store", signal }
+  )
+  if (!response.ok) {
+    throw new Error(`Trait results API error: ${response.status}`)
+  }
+  return response.json()
+}
+
+export async function loadTraitDetail(
+  id: string,
+  reportId: string,
+  signal?: AbortSignal
+): Promise<TraitDetail | null> {
+  const response = await fetch(
+    `/api/traits/${encodeURIComponent(id)}?report_id=${encodeURIComponent(reportId)}`,
+    { cache: "no-store", signal }
+  )
+  if (response.status === 404) {
+    return null
+  }
+  if (!response.ok) {
+    throw new Error(`Trait detail API error: ${response.status}`)
+  }
+  return response.json()
+}
 
 /**
  * Loads all traits from backend API
@@ -26,39 +88,14 @@ export async function loadAllTraits(reportId: string): Promise<Trait[]> {
   }
 }
 
-/**
- * Finds a trait by ID, using cache when possible
- */
+/** Find a trait by ID from the current backend catalog. */
 export async function findTraitById(
   id: string,
-  reportId: string
-): Promise<Trait | null> {
+  reportId: string,
+  signal?: AbortSignal
+): Promise<TraitDetail | null> {
   try {
-    // First try to get from cache
-    if (typeof window !== "undefined") {
-      const cacheKey = `traits_cache_${reportId}`
-      const cached = sessionStorage.getItem(cacheKey)
-      if (cached) {
-        const cachedTraits = JSON.parse(cached) as Trait[]
-        const foundTrait = cachedTraits.find((trait) => trait.id === id)
-        if (foundTrait) {
-          return foundTrait
-        }
-      }
-    }
-
-    // If not found in cache, fetch from API
-    const allTraits = await loadAllTraits(reportId)
-
-    // Cache the fetched data
-    if (typeof window !== "undefined") {
-      const cacheKey = `traits_cache_${reportId}`
-      const timestampKey = `traits_timestamp_${reportId}`
-      sessionStorage.setItem(cacheKey, JSON.stringify(allTraits))
-      sessionStorage.setItem(timestampKey, Date.now().toString())
-    }
-
-    return allTraits.find((trait) => trait.id === id) || null
+    return await loadTraitDetail(id, reportId, signal)
   } catch (error) {
     console.error("Failed to find trait by ID:", error)
     return null
@@ -88,24 +125,33 @@ export function calculateTraitScore(trait: Trait): number {
 
       // Find the index of this RSID in the trait's RSID array
       const rsidIndex = trait.rsids.findIndex((r) => r === rsid)
-      if (rsidIndex === -1) return
+      if (rsidIndex === -1) {
+        return
+      }
 
       // Get the user's genotype for this RSID
       const userGenotype = trait.yourGenotypes?.[rsidIndex]
-      if (!userGenotype) return
+      if (!userGenotype) {
+        return
+      }
 
       // Parse the score rules
+      const normalizeGenotype = (genotype: string) =>
+        genotype.length === 2
+          ? genotype.toUpperCase().split("").sort().join("")
+          : genotype
+
       const scoreRules = scoresPart.split(",").map((rule) => {
         const [genotype, scoreStr] = rule.split("=")
         return {
-          genotype: genotype.trim(),
+          genotype: normalizeGenotype(genotype.trim()),
           score: Number.parseInt(scoreStr, 10),
         }
       })
 
       // Find the matching score rule for the user's genotype
       const matchingRule = scoreRules.find(
-        (rule) => rule.genotype === userGenotype
+        (rule) => rule.genotype === normalizeGenotype(userGenotype)
       )
       if (matchingRule) {
         totalScore += matchingRule.score

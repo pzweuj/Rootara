@@ -20,6 +20,9 @@ DB_PATH = Path(os.environ.get("DB_PATH", str(DATA_DIR / "rootara.db")))
 JWT_SECRET_PATH = DATA_DIR / "config" / "jwt-secret"
 VERSION = os.environ.get("ROOTARA_VERSION", "1.0.0")
 
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
+
 children: list[subprocess.Popen] = []
 stopping = False
 
@@ -83,6 +86,45 @@ def _initialize_database() -> None:
         "false",
     ]
     subprocess.run(command, cwd=BACKEND_ROOT, env=os.environ.copy(), check=True)
+
+    # Upgrade legacy report tables before publishing catalog readiness. The
+    # migration preserves existing rows, restores catalog RSIDs from the saved
+    # raw files, and creates the RSID indexes used by batch evaluation.
+    from scripts.trait_catalog_service import ensure_report_rsid_indexes
+    from scripts.trait_report_migration import backfill_all_reports
+
+    ensure_report_rsid_indexes(DB_PATH)
+    backfilled = backfill_all_reports(DB_PATH)
+    print(f"Trait report backfill complete: {backfilled}")
+
+    # Optional release gates are enabled for the final reviewed image. Keep
+    # them opt-in during evidence collection so a development image can still
+    # expose its audit queue without being mistaken for a release.
+    from scripts.rootara_traits import get_trait_catalog_metadata, persist_trait_catalog_metadata
+
+    catalog = get_trait_catalog_metadata()
+    expected_count = os.environ.get("ROOTARA_EXPECTED_TRAIT_COUNT")
+    if expected_count and catalog["count"] != int(expected_count):
+        raise RuntimeError(
+            f"trait catalog count {catalog['count']} does not match {expected_count}"
+        )
+    if catalog.get("locus_count") != 153 or catalog.get("verified_locus_count") != 153:
+        raise RuntimeError(
+            "release requires 153 verified trait loci; "
+            f"found {catalog.get('verified_locus_count', 0)}/{catalog.get('locus_count', 0)}"
+        )
+    if os.environ.get("ROOTARA_REQUIRE_CURATED_CATALOG") == "1":
+        if catalog["statuses"].get("curated", 0) != catalog["count"]:
+            raise RuntimeError("release requires every production trait to be curated")
+        from scripts.production_catalog_validation import validate_production_catalog
+
+        catalog_errors = validate_production_catalog()
+        if catalog_errors:
+            raise RuntimeError(
+                "production trait catalog validation failed: "
+                + "; ".join(catalog_errors[:5])
+            )
+    persist_trait_catalog_metadata(catalog)
 
 
 def _wait_for_backend(timeout: float = 30.0) -> None:

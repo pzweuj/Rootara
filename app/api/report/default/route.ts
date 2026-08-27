@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const { report_id } = await request.json()
 
@@ -18,7 +28,7 @@ export async function POST(request: Request) {
     )
 
     if (!response.ok) {
-      throw new Error("Failed to set default report on backend")
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

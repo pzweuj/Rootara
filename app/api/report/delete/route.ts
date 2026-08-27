@@ -1,24 +1,31 @@
 import { NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const { report_id } = await request.json()
 
-    const response = await backendFetch(
-      "/report/delete",
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ report_id }),
-      }
-    )
+    const response = await backendFetch("/report/delete", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ report_id }),
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to delete report on backend")
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

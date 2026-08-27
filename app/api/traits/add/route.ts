@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const { traitData } = await request.json()
 
@@ -68,11 +78,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Backend error response:", errorText)
-      throw new Error(
-        `API请求失败: ${response.status} ${response.statusText}. Details: ${errorText}`
-      )
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

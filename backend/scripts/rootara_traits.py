@@ -37,14 +37,39 @@ from datetime import datetime
 import random
 import json
 import sqlite3
+import logging
 from functools import lru_cache
 from pathlib import Path
+
+
+logger = logging.getLogger(__name__)
 
 
 TRAIT_EVIDENCE_PATH = Path(
     os.environ.get(
         "ROOTARA_TRAIT_EVIDENCE_PATH",
         str(Path(__file__).resolve().parents[1] / "database" / "trait-evidence.json"),
+    )
+)
+
+TRAIT_CATALOG_PATH = Path(
+    os.environ.get(
+        "ROOTARA_TRAIT_CATALOG_PATH",
+        str(Path(__file__).resolve().parents[1] / "database" / "default-traits.json"),
+    )
+)
+
+TRAIT_LOCUS_PATH = Path(
+    os.environ.get(
+        "ROOTARA_TRAIT_LOCUS_PATH",
+        str(Path(__file__).resolve().parents[1] / "database" / "trait-locus-registry.json"),
+    )
+)
+
+NORMALIZED_TRAIT_CATALOG_PATH = Path(
+    os.environ.get(
+        "ROOTARA_NORMALIZED_TRAIT_CATALOG_PATH",
+        str(Path(__file__).resolve().parents[1] / "database" / "trait-catalog.json"),
     )
 )
 
@@ -57,6 +82,74 @@ def _load_trait_evidence_catalog():
         return json.loads(TRAIT_EVIDENCE_PATH.read_text(encoding="utf-8")).get("rules", {})
     except (OSError, ValueError, TypeError):
         return {}
+
+
+def get_trait_catalog_metadata() -> dict:
+    """Return a small, non-sensitive catalog summary for health checks."""
+
+    import hashlib
+
+    normalized_raw = NORMALIZED_TRAIT_CATALOG_PATH.read_bytes()
+    document = json.loads(normalized_raw.decode("utf-8"))
+    traits = document.get("traits", [])
+    evidence = {item.get("id"): item.get("evidenceRecord", {}) for item in traits}
+    locus_document = document.get("locusRegistry", {})
+    loci = locus_document.get("loci", {})
+    statuses = {}
+    for trait in traits:
+        status = evidence.get(trait.get("id"), {}).get("status", "missing")
+        statuses[status] = statuses.get(status, 0) + 1
+    return {
+        "count": len(traits),
+        # Include both files: changing evidence must invalidate the directory
+        # version even when the executable legacy array is unchanged.
+        "version": document.get("catalogVersion") or hashlib.sha256(normalized_raw).hexdigest()[:16],
+        "normalized_hash": hashlib.sha256(normalized_raw).hexdigest(),
+        "catalog_hash": hashlib.sha256(TRAIT_CATALOG_PATH.read_bytes()).hexdigest(),
+        "evidence_hash": hashlib.sha256(TRAIT_EVIDENCE_PATH.read_bytes()).hexdigest(),
+        "locus_hash": hashlib.sha256(TRAIT_LOCUS_PATH.read_bytes()).hexdigest(),
+        "locus_count": len(loci),
+        "verified_locus_count": sum(item.get("status") == "verified" for item in loci.values()),
+        "statuses": statuses,
+    }
+
+
+def persist_trait_catalog_metadata(metadata: dict, state_path: str | Path | None = None) -> Path:
+    """Persist the validated catalog version for volume-upgrade observability."""
+
+    target = trait_catalog_state_path(state_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(target.name + ".tmp")
+    temporary.write_text(json.dumps(metadata, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.chmod(0o600)
+    os.replace(temporary, target)
+    return target
+
+
+def trait_catalog_state_path(state_path: str | Path | None = None) -> Path:
+    """Resolve the persisted release-catalog metadata path."""
+
+    configured = state_path or os.environ.get("ROOTARA_TRAIT_CATALOG_STATE")
+    return Path(configured) if configured else Path(
+        os.environ.get("ROOTARA_DATA_DIR", "/data")
+    ) / "config" / "trait-catalog.json"
+
+
+def persisted_trait_catalog_matches(metadata: dict | None = None) -> bool:
+    """Return whether the persisted catalog hash matches the shipped files."""
+
+    expected = metadata or get_trait_catalog_metadata()
+    try:
+        persisted = json.loads(trait_catalog_state_path().read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return False
+    return (
+        persisted.get("version") == expected.get("version")
+        and persisted.get("normalized_hash") == expected.get("normalized_hash")
+        and persisted.get("catalog_hash") == expected.get("catalog_hash")
+        and persisted.get("evidence_hash") == expected.get("evidence_hash")
+        and persisted.get("locus_hash") == expected.get("locus_hash")
+    )
 
 # 根据脚本运行方式选择合适的导入路径
 if __name__ == "__main__":
@@ -79,17 +172,36 @@ def generate_random_id():
     random_id = ''.join(random.choice(chars) for _ in range(10))
     return random_id
 
+
+def _ensure_trait_catalog_revision(cursor: sqlite3.Cursor) -> None:
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS trait_catalog_revision (
+            singleton INTEGER PRIMARY KEY CHECK (singleton = 1),
+            revision INTEGER NOT NULL
+        )
+    ''')
+    cursor.execute('''
+        INSERT INTO trait_catalog_revision (singleton, revision)
+        VALUES (1, 0)
+        ON CONFLICT(singleton) DO NOTHING
+    ''')
+
+
+def _bump_trait_catalog_revision(cursor: sqlite3.Cursor) -> None:
+    _ensure_trait_catalog_revision(cursor)
+    cursor.execute(
+        "UPDATE trait_catalog_revision SET revision = revision + 1 WHERE singleton = 1"
+    )
+
 # 新增特征 || 特征不支持修改
 # data的格式与json的相同
 # 在main中设定data的格式
-def add_trait(data, db_path, add_mode=True):
+def add_trait(data, db_path, add_mode=True, is_default=False):
     # 连接到SQLite数据库
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # 这个data是一个json格式
-    print('Process: ', data)
-
     # 生成一个随机ID，如果是默认的特征，则使用原本的ID
     id = "TRA_" + generate_random_id() if add_mode else data['id']
 
@@ -115,7 +227,7 @@ def add_trait(data, db_path, add_mode=True):
 
     icon = data['icon']
     confidence = data['confidence']
-    is_default = False if add_mode else True
+    is_default = bool(is_default)
     created_at = datetime.now().isoformat()
     category = data['category']
     rsids = ";".join(data['rsids'])               # 尽管在新增内容时，会出现当前样本的rsid基因型，但不需要保存到数据库中
@@ -128,41 +240,107 @@ def add_trait(data, db_path, add_mode=True):
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (id, name, description, icon, confidence, is_default, created_at, category, rsids, formula, score_thresholds, result, reference))
 
+    if not is_default:
+        _bump_trait_catalog_revision(cursor)
+
     conn.commit()
     conn.close()
 
 # 转换默认json为默认特征表，用于初始化数据
 def json_to_trait_table(json_file, db_path):
-    data = json.load(open(json_file, 'r', encoding='utf-8'))
+    """Synchronize the shipped default catalog into SQLite.
 
-    # 连接到SQLite数据库
+    Older releases only inserted defaults when the database was empty. That
+    made a persistent volume permanently retain the old catalog after an image
+    upgrade. This function is an idempotent transaction: default rows are
+    upserted, removed defaults are pruned, and user-created ``TRA_*`` rows are
+    never touched.
+    """
+    with open(json_file, "r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    if not isinstance(data, list) or not data:
+        raise ValueError("default trait catalog must be a non-empty JSON array")
+
+    ids = [item.get("id") for item in data if isinstance(item, dict)]
+    if len(ids) != len(data) or any(not item_id for item_id in ids):
+        raise ValueError("every default trait must have an id")
+    if len(ids) != len(set(ids)):
+        raise ValueError("default trait catalog contains duplicate ids")
+
     conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    try:
+        cursor = conn.cursor()
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS traits (
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            description TEXT,
+            icon TEXT,
+            confidence TEXT,
+            isDefault BOOLEAN,
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            category TEXT,
+            rsids TEXT,
+            formula TEXT,
+            scoreThresholds TEXT,
+            result TEXT,
+            reference TEXT
+        )
+        ''')
+        _ensure_trait_catalog_revision(cursor)
 
-    # 创建特征表 || 这个表暂时不考虑拆分用户的特征，不过可以将用户ID作为保留字段
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS traits (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        description TEXT,
-        icon TEXT,
-        confidence TEXT,
-        isDefault BOOLEAN,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        category TEXT,
-        rsids TEXT,
-        formula TEXT,
-        scoreThresholds TEXT,
-        result TEXT,
-        reference TEXT
-    )
-    ''')
-    conn.commit()
-    conn.close()
+        def as_json(value):
+            return json.dumps(value, ensure_ascii=False)
 
-    # 遍历JSON数据，插入特征数据
-    for item in data:
-        add_trait(item, db_path, False)
+        rows = [
+            (
+                item["id"],
+                as_json(item["name"]),
+                as_json(item["description"]),
+                item["icon"],
+                item.get("confidence", "low"),
+                1,
+                item.get("createdAt") or datetime.now().isoformat(),
+                item["category"],
+                ";".join(item.get("rsids", [])),
+                item["formula"],
+                as_json(item["scoreThresholds"]),
+                as_json(item["result"]),
+                ";".join(item.get("reference", [])),
+            )
+            for item in data
+        ]
+        cursor.executemany('''
+            INSERT INTO traits
+                (id, name, description, icon, confidence, isDefault,
+                 createdAt, category, rsids, formula, scoreThresholds,
+                 result, reference)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                name=excluded.name,
+                description=excluded.description,
+                icon=excluded.icon,
+                confidence=excluded.confidence,
+                isDefault=1,
+                createdAt=excluded.createdAt,
+                category=excluded.category,
+                rsids=excluded.rsids,
+                formula=excluded.formula,
+                scoreThresholds=excluded.scoreThresholds,
+                result=excluded.result,
+                reference=excluded.reference
+        ''', rows)
+        placeholders = ",".join("?" for _ in ids)
+        cursor.execute(
+            f"DELETE FROM traits WHERE isDefault = 1 AND id NOT IN ({placeholders})",
+            ids,
+        )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 # 删除自定义的特征
 def delete_trait(id, db_path):
@@ -177,6 +355,8 @@ def delete_trait(id, db_path):
     cursor.execute('''
     DELETE FROM traits WHERE id = ?
     ''', (id,))
+    if cursor.rowcount:
+        _bump_trait_catalog_revision(cursor)
 
     # 提交更改并关闭连接
     conn.commit()
@@ -188,9 +368,9 @@ def self_json_to_trait_table(data, db_path):
     for item in data:
         # 数据现在应该已经是正确的字典格式
         if not isinstance(item, dict):
-            print(f"警告: 期望字典格式，但收到: {type(item)}, 数据: {item}")
+            logger.warning("trait import skipped non-object value of type %s", type(item).__name__)
             continue
-        add_trait(item, db_path, False)
+        add_trait(item, db_path, False, False)
 
 # 导出自定义特征
 def self_traits_to_json(db_path):
@@ -238,13 +418,16 @@ def self_traits_to_json(db_path):
                 trait['evidenceStatus'] = evidence_rule.get('status')
                 trait['evidenceGrade'] = evidence_rule.get('evidence_grade')
                 trait['evidence'] = evidence_rule.get('evidence', [])
+                trait['populationScope'] = evidence_rule.get('population_scope')
                 trait['limitations'] = evidence_rule.get('limitations', [])
                 trait['reviewBlockers'] = evidence_rule.get('review_blockers', [])
+                if evidence_rule.get('medical_disclaimer'):
+                    trait['medicalDisclaimer'] = evidence_rule['medical_disclaimer']
                 # Reviewed references supersede legacy placeholders in the DB.
                 trait['reference'] = [
                     item['id']
                     for item in evidence_rule.get('evidence', [])
-                    if item.get('type') == 'PMID' and item.get('id')
+                    if item.get('id')
                 ]
             else:
                 trait['reference'] = [
@@ -254,8 +437,7 @@ def self_traits_to_json(db_path):
                 ]
             traits.append(trait)
         except (ValueError, SyntaxError) as e:
-            print(f"解析数据时出错: {e}")
-            print(f"出错的行数据: {row}")
+            logger.warning("failed to decode trait row: %s", e)
             continue
 
     # 将字典格式转换为JSON字符串
@@ -265,6 +447,20 @@ def self_traits_to_json(db_path):
 # 公式解析器
 class InsufficientGeneticData(ValueError):
     """Raised when a rule cannot be evaluated from the available genotypes."""
+
+
+_GENOTYPE_ORDER = {base: index for index, base in enumerate("-ACGTDI")}
+
+
+def normalize_genotype(genotype: str) -> str:
+    """Normalize an unphased two-allele genotype to a stable order."""
+
+    if not isinstance(genotype, str):
+        return genotype
+    value = genotype.strip().upper()
+    if len(value) != 2 or any(base not in _GENOTYPE_ORDER for base in value):
+        return value
+    return "".join(sorted(value, key=lambda base: _GENOTYPE_ORDER[base]))
 
 
 def parse_formula(formula, genotype_dict):
@@ -327,7 +523,7 @@ def _parse_score_formula(formula, genotype_dict):
             raise InsufficientGeneticData(f"缺少位点基因型: {rsid}")
 
         # 获取该位点的基因型
-        genotype = genotype_dict[rsid]
+        genotype = normalize_genotype(genotype_dict[rsid])
         if not genotype:
             raise InsufficientGeneticData(f"位点基因型为空: {rsid}")
 
@@ -343,7 +539,7 @@ def _parse_score_formula(formula, genotype_dict):
             if len(gt_score) != 2:
                 raise ValueError(f"SCORE基因型规则格式不正确: {pair}")
 
-            gt = gt_score[0].strip()
+            gt = normalize_genotype(gt_score[0].strip())
             try:
                 score = float(gt_score[1].strip())
             except ValueError:
@@ -397,7 +593,7 @@ def _parse_if_formula(formula, genotype_dict):
             raise InsufficientGeneticData(f"缺少位点基因型: {rsid}")
 
         # 获取该位点的基因型
-        genotype = genotype_dict[rsid]
+        genotype = normalize_genotype(genotype_dict[rsid])
         if not genotype:
             raise InsufficientGeneticData(f"位点基因型为空: {rsid}")
 
@@ -416,7 +612,7 @@ def _parse_if_formula(formula, genotype_dict):
             if len(gt_condition) != 2:
                 raise ValueError(f"IF基因型规则格式不正确: {pair}")
 
-            gt = gt_condition[0].strip()
+            gt = normalize_genotype(gt_condition[0].strip())
             condition_str = gt_condition[1].strip().lower()
 
             # 将字符串转换为布尔值
@@ -529,7 +725,6 @@ def result_trait_data(report_id, db_path):
     # 转换为字典格式
     traits = []
     for row in rows:
-        print(row)
         try:
             # 使用ast.literal_eval更安全地解析字符串字典
             name_dict = json.loads(row[1])
@@ -557,13 +752,16 @@ def result_trait_data(report_id, db_path):
                 trait['evidenceStatus'] = evidence_rule.get('status')
                 trait['evidenceGrade'] = evidence_rule.get('evidence_grade')
                 trait['evidence'] = evidence_rule.get('evidence', [])
+                trait['populationScope'] = evidence_rule.get('population_scope')
                 trait['limitations'] = evidence_rule.get('limitations', [])
                 trait['reviewBlockers'] = evidence_rule.get('review_blockers', [])
+                if evidence_rule.get('medical_disclaimer'):
+                    trait['medicalDisclaimer'] = evidence_rule['medical_disclaimer']
                 # Reviewed references supersede legacy placeholders in the DB.
                 trait['reference'] = [
                     item['id']
                     for item in evidence_rule.get('evidence', [])
-                    if item.get('type') == 'PMID' and item.get('id')
+                    if item.get('id')
                 ]
             else:
                 trait['reference'] = [
@@ -573,8 +771,7 @@ def result_trait_data(report_id, db_path):
                 ]
             traits.append(trait)
         except (ValueError, SyntaxError) as e:
-            print(f"解析数据时出错: {e}")
-            print(f"出错的行数据: {row}")
+            logger.warning("failed to decode trait row: %s", e)
             continue
 
     # 聚合所有的rsid，先查询
@@ -648,4 +845,3 @@ def result_trait_data(report_id, db_path):
         item['result_current'] = result
 
     return traits
-

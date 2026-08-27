@@ -1,12 +1,12 @@
 "use client"
 
-import type React from "react"
-
-import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
-import { Sidebar } from "@/components/sidebar"
+import type React from "react"
+import { useEffect } from "react"
+
 import { MainContent } from "@/components/main-content"
+import { Sidebar } from "@/components/sidebar"
+import { useAuth } from "@/contexts/auth-context"
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth()

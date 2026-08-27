@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server"
-import { backendFetch } from "@/lib/backend-client"
+
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const { input_data } = await request.json()
 
@@ -29,24 +39,19 @@ export async function POST(request: Request) {
     console.log("Parsed traits data:", traitsData)
 
     // Send the parsed data directly to the backend
-    const response = await backendFetch(
-      "/traits/import",
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(traitsData),
-      }
-    )
+    const response = await backendFetch("/traits/import", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(traitsData),
+    })
 
     console.log("Backend response status:", response.status)
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Backend error response:", errorText)
-      throw new Error(`Backend API error: ${response.status} - ${errorText}`)
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

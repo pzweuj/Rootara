@@ -26,21 +26,29 @@ def materialize(default_path: Path = DEFAULT, evidence_path: Path = EVIDENCE) ->
             continue
         trait["evidenceStatus"] = review.get("status")
         trait["evidenceGrade"] = review.get("evidence_grade")
+        if "population_scope" in review:
+            trait["populationScope"] = review.get("population_scope")
+        else:
+            trait.pop("populationScope", None)
         trait["limitations"] = review.get("limitations", [])
         trait["reviewBlockers"] = review.get("review_blockers", [])
+        if review.get("medical_disclaimer"):
+            trait["medicalDisclaimer"] = review["medical_disclaimer"]
+        else:
+            trait.pop("medicalDisclaimer", None)
         if review.get("status") != "curated":
             # Preserve the legacy formula for review, but do not expose its
             # historical confidence label as if it were evidence-backed.
             trait["confidence"] = "low"
         # PMID identifiers remain in the legacy `reference` field so existing
         # import/export clients keep working.
-        pmids = [
+        references = [
             item["id"]
             for item in review.get("evidence", [])
-            if item.get("type") == "PMID" and item.get("id")
+            if item.get("id")
         ]
-        if pmids:
-            trait["reference"] = pmids
+        if references:
+            trait["reference"] = references
     return traits
 
 

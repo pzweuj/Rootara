@@ -320,30 +320,33 @@ def generate_template_data(name, email, db_path, force=False):
             json_to_trait_table(str(DEFAULT_TRAITS_PATH), db_path)
             print("创建特征表")
         else:
-            cursor.execute('SELECT COUNT(*) FROM traits')
-            trait_count = cursor.fetchone()[0]
             conn.close()
-            if trait_count == 0:
-                json_to_trait_table(str(DEFAULT_TRAITS_PATH), db_path)
-                print("特征表为空，插入默认数据")
+            # The shipped catalog is versioned with the image. Synchronize it
+            # on every startup so an existing persistent volume receives new
+            # and updated defaults while custom TRA_* rows remain untouched.
+            json_to_trait_table(str(DEFAULT_TRAITS_PATH), db_path)
+            print("同步默认特征目录")
 
 def init_db(name, email, db_file, force=False):
     if os.path.exists(db_file) and force is False:
         print(f"数据库文件已存在: {db_file}")
-        print("跳过初始化，使用现有数据库")
-        return
+        if init_sqlite_db(db_file):
+            generate_template_data(name, email, db_file, force=False)
+            print(f"数据库结构和默认特征同步成功: {db_file}")
+        else:
+            raise RuntimeError("数据库结构同步失败")
     elif os.path.exists(db_file) and force is True:
         print(f"数据库文件已存在，但强制重新初始化: {db_file}")
         if init_sqlite_db(db_file):
             generate_template_data(name, email, db_file, force=True)
             print(f"数据库强制重新初始化成功: {db_file}")
         else:
-            print("数据库强制重新初始化失败")
+            raise RuntimeError("数据库强制重新初始化失败")
     elif init_sqlite_db(db_file):
         generate_template_data(name, email, db_file, force=False)
         print(f"数据库初始化成功: {db_file}")
     else:
-        print("数据库初始化失败")
+        raise RuntimeError("数据库初始化失败")
 
 def str_to_bool(v):
     """将字符串转换为布尔值"""

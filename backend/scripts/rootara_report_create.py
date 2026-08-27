@@ -213,6 +213,13 @@ def create_new_report(user_id, input_data, source_from, report_name, db_path, de
     if os.path.exists(temp_dir):
         shutil.rmtree(temp_dir)
 
+    # Preserve catalog RSIDs that are absent from the legacy annotation core
+    # and add the indexed trait lookup path for this newly created report.
+    from scripts.trait_report_migration import load_locus_registry, backfill_report
+
+    loci, registry_hash = load_locus_registry()
+    backfill_report(db_path, report_id, source_from, loci, registry_hash)
+
 def main():
     parser = argparse.ArgumentParser(description='创建新的报告')
     parser.add_argument('--user_id', type=str, help='用户ID')

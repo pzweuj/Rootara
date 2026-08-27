@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
+
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -9,15 +12,14 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
-import { toast } from "sonner"
-import { TraitBasicInfo } from "./create-trait/trait-basic-info"
-import { RsidGenotypeManager } from "./create-trait/rsid-genotype-manager"
-import { FormulaInput } from "./create-trait/formula-input"
-import { ScoreThresholdManager } from "./create-trait/score-threshold-manager"
-import { IconSelector } from "./create-trait/icon-selector"
 import type { Trait } from "@/types/trait"
+
+import { FormulaInput } from "./create-trait/formula-input"
+import { IconSelector } from "./create-trait/icon-selector"
+import { RsidGenotypeManager } from "./create-trait/rsid-genotype-manager"
+import { ScoreThresholdManager } from "./create-trait/score-threshold-manager"
+import { TraitBasicInfo } from "./create-trait/trait-basic-info"
 
 interface CreateTraitDialogProps {
   isOpen: boolean
@@ -149,7 +151,7 @@ export function CreateTraitDialog({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ traitData: traitData }),
+        body: JSON.stringify({ traitData }),
       })
 
       if (!response.ok) {
@@ -194,7 +196,7 @@ export function CreateTraitDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[600px] max-h-[90vh] overflow-hidden p-4 sm:p-6">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[900px] max-h-[90vh] overflow-hidden p-4 sm:p-6">
         <div className="overflow-y-auto scrollbar-thin max-h-[calc(90vh-8rem)]">
           <DialogHeader className="pb-2 pr-6">
             <DialogTitle className="text-lg sm:text-xl">

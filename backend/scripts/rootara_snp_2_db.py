@@ -3,6 +3,10 @@
 
 import pandas as pd
 import sqlite3
+import re
+
+
+REPORT_TABLE_RE = re.compile(r"^RPT_(?:TEMPLATE01|[A-Z0-9]{10})$")
 
 
 def convert_data_to_df(file_path):
@@ -20,6 +24,8 @@ def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
     :return: 成功返回True，失败返回False
     """
     try:
+        if not REPORT_TABLE_RE.fullmatch(table_name):
+            raise ValueError("invalid report table name")
         # 连接到数据库
         conn = sqlite3.connect(db_path)
         
@@ -59,6 +65,14 @@ def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
                 'gt': 'TEXT'
             }
         )
+
+        # Trait evaluation and variant lookup are RSID-first operations. Every
+        # report table must carry the index at creation time; existing tables
+        # receive the same index from the startup backfill migration.
+        conn.execute(
+            f"CREATE INDEX IF NOT EXISTS idx_{table_name}_rsid ON {table_name}(rsid)"
+        )
+        conn.commit()
         
         conn.close()
         

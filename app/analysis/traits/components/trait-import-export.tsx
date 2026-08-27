@@ -1,21 +1,18 @@
 "use client"
 
-import type React from "react"
 import { Upload, Download } from "lucide-react"
+import type React from "react"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
-import { toast } from "sonner"
 import type { Trait } from "@/types/trait"
 
 interface TraitImportExportProps {
   onImport: (traits: Trait[]) => void
-  traits: Trait[]
 }
 
-export function TraitImportExport({
-  onImport,
-  traits,
-}: TraitImportExportProps) {
+export function TraitImportExport({ onImport }: TraitImportExportProps) {
   const { language } = useLanguage()
 
   const translations = {
@@ -237,14 +234,6 @@ export function TraitImportExport({
   }
 
   const handleExportTraits = async () => {
-    // 过滤出非默认特征（用户创建的特征）
-    const customTraits = traits.filter((trait) => !trait.isDefault)
-
-    if (customTraits.length === 0) {
-      toast.error(t("noCustomTraits"))
-      return
-    }
-
     try {
       // 调用新的API路由
       const response = await fetch("/api/traits/export", {
@@ -252,7 +241,7 @@ export function TraitImportExport({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ traits: customTraits }),
+        body: "",
       })
 
       if (!response.ok) {
@@ -272,6 +261,14 @@ export function TraitImportExport({
 
       // 获取格式化的JSON文本
       const formattedJson = await response.text()
+      const exportedTraits = JSON.parse(formattedJson)
+      const exportedList = Array.isArray(exportedTraits)
+        ? exportedTraits
+        : exportedTraits?.root
+      if (Array.isArray(exportedList) && exportedList.length === 0) {
+        toast.error(t("noCustomTraits"))
+        return
+      }
 
       // 创建下载链接
       const blob = new Blob([formattedJson], { type: "application/json" })

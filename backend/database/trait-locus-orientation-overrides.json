@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "description": "Manual resolutions for strand-ambiguous or study-encoded production loci. Each entry is tied to the rule's cited direct study.",
+  "reviewedAt": "2026-08-26",
+  "assemblyOverrides": {
+    "rs495828": {
+      "grch37": {"chromosome": "9", "position": 136154867, "reference": "G", "alternates": ["T"], "strand": 1},
+      "source": "https://api.genome.ucsc.edu/getData/track?genome=hg19;track=snp151;chrom=chr9;start=136154866;end=136154868",
+      "rationale": "UCSC hg19 dbSNP151 independently places rs495828 on the positive strand at chr9:136154867 with G/T alleles; the current Ensembl GRCh37 endpoint omits this historical placement."
+    }
+  },
+  "overrides": {
+    "rs11803731": {"traitAlleles": ["A", "T"], "literatureAlleles": "A>T", "literatureEffectAllele": "A", "forwardEffectAllele": "A", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/19896111/", "rationale": "The cited association reports rs11803731-A and its reported frequency matches the GRCh38 forward A allele."},
+    "rs11855415": {"traitAlleles": ["A", "T"], "literatureAlleles": "A>T", "literatureEffectAllele": "A", "forwardEffectAllele": "A", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/21051773/", "rationale": "The cited association reports rs11855415-A; Ensembl maps the reviewed locus to forward A/T."},
+    "rs12325817": {"traitAlleles": ["C", "G"], "literatureAlleles": "G>C", "literatureEffectAllele": "C", "forwardEffectAllele": "C", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/16816108/", "rationale": "The PEMT -744 G>C study nomenclature and forward C/G mapping support C as the higher-requirement allele; the prior synthetic C/T pair was invalid."},
+    "rs12696304": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/21573004/", "rationale": "The cited telomere-length association and committed forward C/G mapping report G as the decreasing allele."},
+    "rs12931267": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/20585627/", "rationale": "The cited hair-color association and GRCh38 forward C/G mapping report G as the effect allele."},
+    "rs12934922": {"traitAlleles": ["A", "T"], "forwardEffectAllele": "A", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/19185284/", "rationale": "The BCMO1 study directly reports the rs12934922 A/T conversion association; A is retained as the higher-conversion allele."},
+    "rs1362756": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "C", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/20548946/", "rationale": "The cited optic-disc association and Ensembl strand=1 C/G mapping report C as the increasing allele."},
+    "rs1537415": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/19897590/", "rationale": "The cited periodontitis association reports rs1537415-G on the reviewed forward C/G locus."},
+    "rs16891982": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "C", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/20585627/", "rationale": "The cited pigmentation association reports rs16891982-C on the reviewed forward C/G locus."},
+    "rs1799750": {"traitAlleles": ["D", "I"], "literatureAlleles": "1G>2G", "literatureEffectAllele": "2G", "forwardEffectAllele": "I", "inputTransform": "identity", "alleleEncoding": "insertion_deletion", "traitReferenceAllele": "I", "source": "https://pubmed.ncbi.nlm.nih.gov/37763073/", "rationale": "The MMP1 1G/2G promoter polymorphism is represented by the input platforms as D/I; the prior synthetic A/G formula was invalid."},
+    "rs1799752": {"traitAlleles": ["D", "I"], "forwardEffectAllele": "I", "inputTransform": "identity", "alleleEncoding": "insertion_deletion", "traitReferenceAllele": "D", "source": "https://pubmed.ncbi.nlm.nih.gov/22855367/", "rationale": "The ACE insertion/deletion study and vendor encoding directly use D/I genotypes."},
+    "rs1799945": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/19862010/", "rationale": "HFE H63D is the directly reviewed C/G locus; G is the effect allele used by the transparent rule."},
+    "rs1801198": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/18776911/", "rationale": "The TCN2 C776G study nomenclature supports the reviewed C/G mapping and G effect allele."},
+    "rs1830084": {"traitAlleles": ["A", "T"], "literatureAlleles": "A>T", "literatureEffectAllele": "A", "forwardEffectAllele": "A", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/19084217/", "rationale": "The cited transferrin association reports rs1830084-A; the prior synthetic A/G pair was invalid."},
+    "rs4950928": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/18403759/", "rationale": "The cited YKL-40 association reports G on the reviewed forward C/G locus."},
+    "rs6573416": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/20707712/", "rationale": "The cited self-rated-health association reports G on the reviewed forward C/G locus."},
+    "rs713598": {"traitAlleles": ["C", "G"], "forwardEffectAllele": "C", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/21763010/", "rationale": "The direct G145C TAS2R38 study identifies C as the higher-sensitivity allele."},
+    "rs964184": {"traitAlleles": ["C", "G"], "literatureAlleles": "C>G", "literatureEffectAllele": "G", "forwardEffectAllele": "G", "inputTransform": "identity", "source": "https://pubmed.ncbi.nlm.nih.gov/21729881/", "rationale": "The cited vitamin-E association and GRCh38 forward C/G mapping report G as the increasing allele; the prior G/T pair was invalid."}
+  }
+}

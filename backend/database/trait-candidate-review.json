@@ -21,13 +21,22 @@
       "遗传倾向": "https://www.wegene.com/demo2/wgs_male/report/%E9%81%97%E4%BC%A0%E5%80%BE%E5%90%91",
       "饮食偏好": "https://www.wegene.com/demo2/wgs_male/report/%E9%A5%AE%E9%A3%9F%E5%81%8F%E5%A5%BD"
     },
-    "selection": "仅保留非疾病、非用药分类中 RSID 数量不超过 3 的项目；不代表已通过证据审核。"
+    "selection": "仅保留非疾病、非用药分类中 RSID 数量不超过 3 的项目；不代表已通过证据审核。",
+    "supplemental_discovery": {
+      "path": "docs/wegene-demo-genetic-characteristics.json",
+      "count": 13,
+      "notes": "遗传特征页的13条记录作为同一审核队列的补充发现源；必须经过相同独立证据审核。"
+    }
   },
   "counts": {
     "selected_candidates": 95,
+    "total_discovered": 108,
     "unique_rsids": 164,
     "locus_overlap_candidates": 23,
-    "new_locus_candidates": 72
+    "new_locus_candidates": 72,
+    "rejected_candidates": 108,
+    "pending_candidates": 0,
+    "supplemental_candidates": 13
   },
   "candidates": [
     {
@@ -51,7 +60,7 @@
         "rs182549": "CC",
         "rs4988235": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -59,7 +68,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-营养代谢-22",
@@ -79,7 +92,7 @@
       "observed_demo_genotypes": {
         "rs762551": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -87,7 +100,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-营养代谢-225",
@@ -113,7 +130,7 @@
         "rs1801133": "AG",
         "rs1801394": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -121,7 +138,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-营养代谢-247",
@@ -144,7 +165,7 @@
         "rs1042636": "AG",
         "rs1544410": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -152,7 +173,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-营养代谢-249",
@@ -178,7 +203,7 @@
         "rs2066702": "GG",
         "rs671": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -186,7 +211,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-营养代谢-250",
@@ -211,7 +240,7 @@
         "rs964184": "CG",
         "rs6994076": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -219,7 +248,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-营养代谢-256",
@@ -245,7 +278,7 @@
         "rs6420424": "GG",
         "rs6564851": "GT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -253,7 +286,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-营养代谢-1701",
@@ -276,7 +313,7 @@
         "rs2108622": "CC",
         "rs9923231": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -284,7 +321,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-营养代谢-1702",
@@ -307,7 +348,7 @@
         "rs4654748": "CT",
         "rs1256335": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -315,7 +356,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-营养代谢-1705",
@@ -335,7 +380,7 @@
       "observed_demo_genotypes": {
         "rs1801133": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -343,7 +388,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-遗传倾向-2277",
@@ -361,7 +410,7 @@
       "observed_demo_genotypes": {
         "rs36015125": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -369,7 +418,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2284",
@@ -394,7 +447,7 @@
         "rs10908366": "TT",
         "rs11940736": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -402,7 +455,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2289",
@@ -424,7 +481,7 @@
         "rs2570497": "CT",
         "rs13393754": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -432,7 +489,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2290",
@@ -456,7 +517,7 @@
         "rs73182377": "CC",
         "rs10508556": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -464,7 +525,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2294",
@@ -486,7 +551,7 @@
         "rs9387963": "GG",
         "rs7200666": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -494,7 +559,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2296",
@@ -512,7 +581,7 @@
       "observed_demo_genotypes": {
         "rs1487441": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -520,7 +589,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2297",
@@ -540,7 +613,7 @@
         "rs13423753": "GG",
         "rs4959669": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -548,7 +621,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2300",
@@ -566,7 +643,7 @@
       "observed_demo_genotypes": {
         "rs4800011": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -574,7 +651,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-遗传倾向-2304",
@@ -596,7 +677,7 @@
         "rs4977839": "AG",
         "rs9848497": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -604,7 +685,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1561",
@@ -630,7 +715,7 @@
         "rs6265": "CT",
         "rs12506228": "AC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -638,7 +723,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1711",
@@ -661,7 +750,7 @@
         "rs6265": "CT",
         "rs34087853": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -669,7 +758,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1718",
@@ -687,7 +780,7 @@
       "observed_demo_genotypes": {
         "rs322931": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -695,7 +788,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1721",
@@ -717,7 +814,7 @@
         "rs2576037": "TT",
         "rs13070781": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -725,7 +822,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1723",
@@ -748,7 +849,7 @@
         "rs17070145": "TT",
         "rs7594645": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -756,7 +857,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-心理特质-1725",
@@ -776,7 +881,7 @@
         "rs2388436": "AG",
         "rs3747767": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -784,7 +889,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1488",
@@ -806,7 +915,7 @@
         "rs2253206": "GG",
         "rs13387495": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -814,7 +923,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1490",
@@ -838,7 +951,7 @@
         "rs12612420": "GG",
         "rs8097348": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -846,7 +959,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1491",
@@ -869,7 +986,7 @@
         "rs2267668": "GG",
         "rs8192678": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -877,7 +994,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1492",
@@ -895,7 +1016,7 @@
       "observed_demo_genotypes": {
         "rs2253206": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -903,7 +1024,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1493",
@@ -929,7 +1054,7 @@
         "rs1801282": "CC",
         "rs9939609": "AT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -937,7 +1062,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1494",
@@ -963,7 +1092,7 @@
         "rs5082": "AG",
         "rs662799": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -971,7 +1100,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1495",
@@ -994,7 +1127,7 @@
         "rs5082": "AG",
         "rs9939609": "AT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1002,7 +1135,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1496",
@@ -1025,7 +1162,7 @@
         "rs5082": "AG",
         "rs35874116": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1033,7 +1170,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-运动基因-1499",
@@ -1053,7 +1194,7 @@
       "observed_demo_genotypes": {
         "rs762551": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1061,7 +1202,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-皮肤特性-1524",
@@ -1084,7 +1229,7 @@
         "rs1800624": "AA",
         "rs1800625": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1092,7 +1237,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1556",
@@ -1116,7 +1265,7 @@
         "rs251468": "TT",
         "rs61866017": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1124,7 +1273,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1566",
@@ -1150,7 +1303,7 @@
         "rs1801282": "CC",
         "rs743572": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1158,7 +1311,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1567",
@@ -1176,7 +1333,7 @@
       "observed_demo_genotypes": {
         "rs763035": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1184,7 +1341,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1568",
@@ -1204,7 +1365,7 @@
       "observed_demo_genotypes": {
         "rs11549465": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1212,7 +1373,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1569",
@@ -1235,7 +1400,7 @@
         "rs1801131": "TT",
         "rs1801133": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1243,7 +1408,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-皮肤特性-1693",
@@ -1263,7 +1432,7 @@
       "observed_demo_genotypes": {
         "rs2066853": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1271,7 +1440,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1694",
@@ -1293,7 +1466,7 @@
         "rs11876749": "CT",
         "rs11979919": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1301,7 +1474,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-皮肤特性-1695",
@@ -1321,7 +1498,7 @@
         "rs1800795": "GG",
         "rs3918242": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1329,7 +1506,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2306",
@@ -1347,7 +1528,7 @@
       "observed_demo_genotypes": {
         "rs4580876": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1355,7 +1536,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2308",
@@ -1379,7 +1564,7 @@
         "rs429358": "TT",
         "rs6718656": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1387,7 +1572,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2309",
@@ -1407,7 +1596,7 @@
         "rs13009019": "AA",
         "rs12495758": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1415,7 +1604,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2311",
@@ -1435,7 +1628,7 @@
         "rs7618456": "CC",
         "rs35260863": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1443,7 +1636,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2312",
@@ -1467,7 +1664,7 @@
         "rs13250449": "GG",
         "rs3791203": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1475,7 +1672,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2314",
@@ -1499,7 +1700,7 @@
         "rs2504714": "GG",
         "rs2316901": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1507,7 +1708,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2315",
@@ -1527,7 +1732,7 @@
         "rs786272": "AA",
         "rs8097318": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1535,7 +1740,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2316",
@@ -1555,7 +1764,7 @@
         "rs4953148": "AA",
         "rs2504701": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1563,7 +1772,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2318",
@@ -1585,7 +1798,7 @@
         "rs10423928": "TT",
         "rs553450800": "--"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1593,7 +1806,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2319",
@@ -1611,7 +1828,7 @@
       "observed_demo_genotypes": {
         "rs12149574": "CG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1619,7 +1836,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2320",
@@ -1643,7 +1864,7 @@
         "rs7511986": "AA",
         "rs9959497": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1651,7 +1872,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2321",
@@ -1675,7 +1900,7 @@
         "rs12214204": "AA",
         "rs12430440": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1683,7 +1908,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2323",
@@ -1708,7 +1937,7 @@
         "rs601338": "GG",
         "rs79288427": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1716,7 +1945,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2324",
@@ -1736,7 +1969,7 @@
       "observed_demo_genotypes": {
         "rs429358": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1744,7 +1977,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2325",
@@ -1768,7 +2005,7 @@
         "rs8083301": "AT",
         "rs186775337": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1776,7 +2013,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2327",
@@ -1800,7 +2041,7 @@
         "rs62250717": "GG",
         "rs11240430": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1808,7 +2049,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2329",
@@ -1828,7 +2073,7 @@
         "rs111688645": "CC",
         "rs35773951": "DI"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1836,7 +2081,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2331",
@@ -1858,7 +2107,7 @@
         "rs4240637": "GG",
         "rs11370368": "DI"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1866,7 +2115,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2334",
@@ -1890,7 +2143,7 @@
         "rs3013340": "AT",
         "rs374952396": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1898,7 +2151,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2337",
@@ -1916,7 +2173,7 @@
       "observed_demo_genotypes": {
         "rs7625384": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1924,7 +2181,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2340",
@@ -1946,7 +2207,7 @@
         "rs1170216": "AG",
         "rs4310746": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1954,7 +2215,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2342",
@@ -1976,7 +2241,7 @@
         "rs12682352": "CC",
         "rs9972653": "GT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -1984,7 +2249,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2347",
@@ -2004,7 +2273,7 @@
       "observed_demo_genotypes": {
         "rs10852521": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2012,7 +2281,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2353",
@@ -2034,7 +2307,7 @@
         "rs429358": "TT",
         "rs72839449": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2042,7 +2315,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2354",
@@ -2060,7 +2337,7 @@
       "observed_demo_genotypes": {
         "rs10243750": "TT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2068,7 +2345,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2355",
@@ -2086,7 +2367,7 @@
       "observed_demo_genotypes": {
         "rs7241775": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2094,7 +2375,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2358",
@@ -2119,7 +2404,7 @@
         "rs838133": "GG",
         "rs56094641": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2127,7 +2412,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2359",
@@ -2145,7 +2434,7 @@
       "observed_demo_genotypes": {
         "rs62090520": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2153,7 +2442,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2365",
@@ -2177,7 +2470,7 @@
         "rs2726478": "AT",
         "rs10974347": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2185,7 +2478,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2367",
@@ -2203,7 +2500,7 @@
       "observed_demo_genotypes": {
         "rs12653396": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2211,7 +2508,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2368",
@@ -2229,7 +2530,7 @@
       "observed_demo_genotypes": {
         "rs3105049": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2237,7 +2538,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2369",
@@ -2257,7 +2562,7 @@
       "observed_demo_genotypes": {
         "rs514659": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2265,7 +2570,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2371",
@@ -2285,7 +2594,7 @@
         "rs7741058": "AA",
         "rs142175605": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2293,7 +2602,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2375",
@@ -2315,7 +2628,7 @@
         "rs6798507": "GG",
         "rs11222562": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2323,7 +2636,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2376",
@@ -2345,7 +2662,7 @@
         "rs73034263": "CC",
         "rs11710277": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2353,7 +2670,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2377",
@@ -2373,7 +2694,7 @@
         "rs2271342": "TT",
         "rs4940994": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2381,7 +2702,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2378",
@@ -2399,7 +2724,7 @@
       "observed_demo_genotypes": {
         "rs12137388": "CC"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2407,7 +2732,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2379",
@@ -2425,7 +2754,7 @@
       "observed_demo_genotypes": {
         "rs7188250": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2433,7 +2762,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2380",
@@ -2453,7 +2786,7 @@
         "rs4947336": "TT",
         "rs75051825": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2461,7 +2794,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2382",
@@ -2481,7 +2818,7 @@
         "rs13384513": "TT",
         "rs11749582": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2489,7 +2826,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2386",
@@ -2511,7 +2852,7 @@
         "rs3105049": "CT",
         "rs55798953": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2519,7 +2860,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2389",
@@ -2537,7 +2882,7 @@
       "observed_demo_genotypes": {
         "rs10125362": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2545,7 +2890,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2391",
@@ -2563,7 +2912,7 @@
       "observed_demo_genotypes": {
         "rs56131196": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2571,7 +2920,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2392",
@@ -2593,7 +2946,7 @@
         "rs55872725": "CT",
         "rs2937339": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2601,7 +2954,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2393",
@@ -2619,7 +2976,7 @@
       "observed_demo_genotypes": {
         "rs11035710": "CT"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2627,7 +2984,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2397",
@@ -2649,7 +3010,7 @@
         "rs62033400": "AG",
         "rs6968865": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2657,7 +3018,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2398",
@@ -2682,7 +3047,7 @@
         "rs76395182": "GG",
         "rs6424510": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2690,7 +3055,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2400",
@@ -2713,7 +3082,7 @@
         "rs1229984": "TT",
         "rs11940694": "AA"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_semantic_duplicate",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2721,7 +3090,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Duplicate or overlapping production phenotype; the WeGene formula is not imported and the independently reviewed Rootara rule is the sole source of interpretation."
     },
     {
       "id": "wegene-饮食偏好-2401",
@@ -2739,7 +3112,7 @@
       "observed_demo_genotypes": {
         "rs62033400": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2747,7 +3120,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2404",
@@ -2767,7 +3144,7 @@
         "rs9300002": "TT",
         "rs34783010": "GG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2775,7 +3152,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2408",
@@ -2793,7 +3174,7 @@
       "observed_demo_genotypes": {
         "rs9490002": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2801,7 +3182,11 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
     },
     {
       "id": "wegene-饮食偏好-2410",
@@ -2823,7 +3208,7 @@
         "rs838133": "GG",
         "rs56094641": "AG"
       },
-      "disposition": "do_not_import_unknown_formula",
+      "disposition": "rejected_evidence_insufficient",
       "formula_status": "unknown",
       "mapping_status": "observed_only_incomplete",
       "evidence_status": "not_independently_verified",
@@ -2831,7 +3216,498 @@
         "WeGene exposes example genotypes/results but not an auditable formula, weights, intercept, or population calibration.",
         "Observed demo genotypes are not a complete genotype mapping.",
         "Independent phenotype and replication evidence is required before production import."
-      ]
+      ],
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "rejection_reason": "Rejected: WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+    }
+  ],
+  "supplemental_candidates": [
+    {
+      "id": "wegene-alcohol-flushing",
+      "name": {
+        "zh-CN": "酒精性脸红",
+        "en": "Alcohol Flushing"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs671"
+      ],
+      "source_id": "wegene-alcohol-flushing",
+      "source_status": "existing_overlap_review",
+      "rootara_match": "alcohol-flush",
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs671",
+          "genotype": "GG",
+          "gene": "ALDH2",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "喝酒不脸红",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-bitter-sensitivity",
+      "name": {
+        "zh-CN": "苦味敏感度",
+        "en": "Bitter Sensitivity"
+      },
+      "category": "appearance",
+      "rsids": [
+        "rs713598"
+      ],
+      "source_id": "wegene-bitter-sensitivity",
+      "source_status": "existing_overlap_review",
+      "rootara_match": "bitter-taste-sensitivity",
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs713598",
+          "genotype": "GG",
+          "gene": "TAS2R38",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "对苦味敏感",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-earwax",
+      "name": {
+        "zh-CN": "耳垢类型",
+        "en": "Ear Wax"
+      },
+      "category": "appearance",
+      "rsids": [
+        "rs17822931"
+      ],
+      "source_id": "wegene-earwax",
+      "source_status": "existing_overlap_review",
+      "rootara_match": "earwax-type",
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs17822931",
+          "genotype": "TT",
+          "gene": "ABCC11",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "干燥的耳垢",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-smoking-behaviors",
+      "name": {
+        "zh-CN": "吸烟倾向",
+        "en": "Smoking Behaviors"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs1051730"
+      ],
+      "source_id": "wegene-smoking-behaviors",
+      "source_status": "candidate_single_locus",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs1051730",
+          "genotype": "GG",
+          "gene": "CHRNA3",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "吸烟不容易上瘾",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-fasting-glucose",
+      "name": {
+        "zh-CN": "空腹血糖水平",
+        "en": "Fasting Plasma Glucose Levels"
+      },
+      "category": "internal",
+      "rsids": [
+        "rs560887"
+      ],
+      "source_id": "wegene-fasting-glucose",
+      "source_status": "health_sensitive_candidate",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs560887",
+          "genotype": "CT",
+          "gene": "G6PC2",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "空腹血糖水平较高",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-photic-sneeze",
+      "name": {
+        "zh-CN": "见光喷嚏",
+        "en": "ACHOO Syndrome"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs10427255"
+      ],
+      "source_id": "wegene-photic-sneeze",
+      "source_status": "candidate_single_locus",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs10427255",
+          "genotype": "CC",
+          "gene": null,
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "见光打喷嚏的几率高",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-error-avoidance",
+      "name": {
+        "zh-CN": "避错倾向",
+        "en": "Tendency to Avoid Mistakes"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs1800497"
+      ],
+      "source_id": "wegene-error-avoidance",
+      "source_status": "exploratory_candidate",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs1800497",
+          "genotype": "AA",
+          "gene": "ANKK1",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "可能不善于避免错误",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-absolute-pitch",
+      "name": {
+        "zh-CN": "绝对音准",
+        "en": "Absolute Pitch"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs3057"
+      ],
+      "source_id": "wegene-absolute-pitch",
+      "source_status": "exploratory_candidate",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs3057",
+          "genotype": "CT",
+          "gene": "ASAP1",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "绝对音准能力较不明显",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-abo-blood-group",
+      "name": {
+        "zh-CN": "ABO 血型",
+        "en": "ABO Blood Group"
+      },
+      "category": "internal",
+      "rsids": [
+        "rs8176719",
+        "rs8176746",
+        "rs8176747"
+      ],
+      "source_id": "wegene-abo-blood-group",
+      "source_status": "candidate_deterministic_multilocus",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs8176719",
+          "genotype": "DD",
+          "gene": "ABO",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs8176746",
+          "genotype": "GG",
+          "gene": "ABO",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs8176747",
+          "genotype": "CC",
+          "gene": "ABO",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "O 型血",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-apoe-genotype",
+      "name": {
+        "zh-CN": "APOE 分型",
+        "en": "APOE Genotype"
+      },
+      "category": "risk",
+      "rsids": [
+        "rs429358",
+        "rs7412"
+      ],
+      "source_id": "wegene-apoe-genotype",
+      "source_status": "health_sensitive_candidate",
+      "rootara_match": "alzheimer-risk",
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs429358",
+          "genotype": "TT",
+          "gene": "APOE",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs7412",
+          "genotype": "CC",
+          "gene": "APOE",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "APOE 基因型为 ε3/ε3",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-deep-sleep",
+      "name": {
+        "zh-CN": "深度睡眠",
+        "en": "Deep Sleep"
+      },
+      "category": "lifestyle",
+      "rsids": [
+        "rs73598374"
+      ],
+      "source_id": "wegene-deep-sleep",
+      "source_status": "candidate_single_locus",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs73598374",
+          "genotype": "CC",
+          "gene": "ADA",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "深度睡眠时间较短",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-genetic-height",
+      "name": {
+        "zh-CN": "基因身高",
+        "en": "Genetic Height"
+      },
+      "category": "internal",
+      "rsids": [
+        "rs10427255",
+        "rs11645428",
+        "rs17822931",
+        "rs6420424",
+        "rs6564851",
+        "rs671"
+      ],
+      "source_id": "wegene-genetic-height",
+      "source_status": "do_not_import_unknown_formula",
+      "rootara_match": null,
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs10427255",
+          "genotype": "CC",
+          "gene": null,
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs11645428",
+          "genotype": "GG",
+          "gene": "BCMO1",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs17822931",
+          "genotype": "TT",
+          "gene": "ABCC11",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs6420424",
+          "genotype": "GG",
+          "gene": "PKD1L2",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs6564851",
+          "genotype": "GT",
+          "gene": "BCMO1",
+          "orientation": "plus"
+        },
+        {
+          "rsid": "rs671",
+          "genotype": "GG",
+          "gene": "ALDH2",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "176.5 CM",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
+    },
+    {
+      "id": "wegene-axillary-odor",
+      "name": {
+        "zh-CN": "腋臭",
+        "en": "Axillary Odor"
+      },
+      "category": "appearance",
+      "rsids": [
+        "rs17822931"
+      ],
+      "source_id": "wegene-axillary-odor",
+      "source_status": "existing_overlap_review",
+      "rootara_match": "body-odor",
+      "observed_demo_genotypes": [
+        {
+          "rsid": "rs17822931",
+          "genotype": "TT",
+          "gene": "ABCC11",
+          "orientation": "plus"
+        }
+      ],
+      "demo_result": "腋臭不易发",
+      "review_status": "rejected",
+      "reviewed_at": "2026-08-25",
+      "reviewer": "Rootara evidence audit",
+      "disposition": "rejected_evidence_insufficient",
+      "formula_status": "unknown",
+      "mapping_status": "observed_only_incomplete",
+      "review_blockers": [
+        "WeGene exposes an observed genotype/result but no auditable formula, effect size, complete genotype mapping, population calibration, or independent direct evidence sufficient for a Rootara production rule."
+      ],
+      "rejection_reason": "Rejected: WeGene discovery metadata is not a reproducible rule; no independently verified complete mapping is available."
     }
   ]
 }

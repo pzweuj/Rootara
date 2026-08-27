@@ -1,8 +1,5 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import {
   AlertCircle,
   AlertTriangle,
@@ -11,9 +8,13 @@ import {
   ExternalLink,
   Loader2,
 } from "lucide-react"
+import Link from "next/link"
+import { useState, useEffect, useRef } from "react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context"
-import Link from "next/link"
 
 // 定义ClinVar数据类型
 interface ClinVarVariant {
