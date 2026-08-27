@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 
-// 使用服务器端环境变量（不带NEXT_PUBLIC前缀）
-const API_BASE_URL = process.env.ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-const API_KEY =
-  process.env.ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     // 从请求体中获取report_id，如果没有则从查询参数获取
     let reportId: string
@@ -26,20 +32,19 @@ export async function POST(request: NextRequest) {
     }
 
     // 调用后端API
-    const response = await fetch(
-      `${API_BASE_URL}/traits/info?report_id=${reportId}`,
+    const response = await backendFetch(
+      `/traits/info?report_id=${encodeURIComponent(reportId)}`,
       {
         method: "POST",
         headers: {
           accept: "application/json",
-          "x-api-key": API_KEY,
         },
         body: "",
       }
     )
 
     if (!response.ok) {
-      throw new Error(`Backend API error: ${response.status}`)
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

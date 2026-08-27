@@ -1,14 +1,15 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dna, Globe, Heart, Brain } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
-import { Badge } from "@/components/ui/badge"
-import { useReport } from "@/contexts/report-context"
-import { useEffect, useState } from "react" // 添加useState和useEffect
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { ExternalLink } from "lucide-react"
+import Link from "next/link"
+import { useEffect, useState } from "react" // 添加useState和useEffect
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/contexts/language-context"
+import { useReport } from "@/contexts/report-context"
 
 const profileData = {
   totalSnps: 0, // 初始化为0，将从API获取
@@ -45,7 +46,9 @@ export function GeneticProfileOverview() {
   // 从API获取报告信息
   useEffect(() => {
     const fetchReportInfo = async () => {
-      if (!currentReportId) return
+      if (!currentReportId) {
+        return
+      }
 
       setReportInfoLoading(true)
       try {
@@ -86,7 +89,9 @@ export function GeneticProfileOverview() {
   // 从API获取祖源构成数据
   useEffect(() => {
     const fetchAncestryData = async () => {
-      if (!currentReportId) return
+      if (!currentReportId) {
+        return
+      }
 
       setLoading(true)
       try {

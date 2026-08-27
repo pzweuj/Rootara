@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   createContext,
   useContext,
@@ -7,7 +8,6 @@ import {
   useEffect,
   type ReactNode,
 } from "react"
-import { useRouter } from "next/navigation"
 
 type User = {
   name: string
@@ -58,69 +58,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true)
     try {
-      console.log("Attempting login for:", email)
-      console.log("=== CLIENT SENDING LOGIN REQUEST ===")
-
-      // Hash password on client side for secure transmission
-      let hashedPassword: string
-
-      if (
-        typeof window !== "undefined" &&
-        window.crypto &&
-        window.crypto.subtle
-      ) {
-        const encoder = new TextEncoder()
-        const data = encoder.encode(password)
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        hashedPassword = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("")
-      } else {
-        // Fallback for environments where crypto.subtle is not available
-        console.warn("crypto.subtle not available, using simple hash fallback")
-        hashedPassword = btoa(password)
-          .replace(/[^a-zA-Z0-9]/g, "")
-          .toLowerCase()
-      }
-
-      console.log("Hashed password length:", hashedPassword.length)
-
-      // Clear password from memory immediately
-      password = ""
-
+      // The BFF performs the canonical password digest/HMAC check. Sending a
+      // client-side digest here would hash it a second time on the server and
+      // make the browser login differ from direct API clients. Production
+      // deployments should terminate TLS at the trusted proxy.
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password: hashedPassword }),
+        body: JSON.stringify({ email, password }),
       })
 
-      console.log("Login response status:", res.status)
-
       if (!res.ok) {
-        const errorData = await res.json()
-        console.error("Login failed with error:", errorData)
+        await res.json().catch(() => undefined)
         return false
       }
 
       const userData = await res.json()
-      console.log("Login successful, user data:", userData)
       setUser(userData)
 
       // 立即验证cookie是否正确设置
       setTimeout(async () => {
         try {
-          console.log("Verifying cookie after login...")
           const verifyRes = await fetch("/api/auth/me")
-          console.log("Cookie verification status:", verifyRes.status)
           if (!verifyRes.ok) {
             console.error(
               "Cookie verification failed - this may cause redirect issues"
             )
-          } else {
-            console.log("Cookie verification successful")
           }
         } catch (error) {
           console.error("Cookie verification error:", error)
@@ -137,8 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = async (): Promise<void> => {
-    console.log("Starting logout process")
-
     // 立即清除用户状态，提高响应速度
     setUser(null)
 
@@ -153,7 +116,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // 等待服务器响应完成
       await logoutPromise
-      console.log("Logout completed successfully")
     } catch (error) {
       console.error("Logout failed", error)
       // 即使服务器端logout失败，客户端状态已经清除，用户仍然会被重定向到登录页面

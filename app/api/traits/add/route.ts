@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const API_BASE_URL = process.env.ROOTARA_BACKEND_URL || "http://0.0.0.0:8000"
-const API_KEY =
-  process.env.ROOTARA_BACKEND_API_KEY || "rootara_api_key_default_001"
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const { traitData } = await request.json()
 
@@ -61,22 +68,17 @@ export async function POST(request: NextRequest) {
       JSON.stringify(backendTraitData, null, 2)
     )
 
-    const response = await fetch(`${API_BASE_URL}/traits/add`, {
+    const response = await backendFetch("/traits/add", {
       method: "POST",
       headers: {
         accept: "application/json",
-        "x-api-key": API_KEY,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(backendTraitData),
     })
 
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Backend error response:", errorText)
-      throw new Error(
-        `API请求失败: ${response.status} ${response.statusText}. Details: ${errorText}`
-      )
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

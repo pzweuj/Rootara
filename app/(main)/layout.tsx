@@ -1,6 +1,7 @@
-import { Sidebar } from "@/components/sidebar"
-import { MainContent } from "@/components/main-content"
 import type React from "react"
+
+import { MainContent } from "@/components/main-content"
+import { Sidebar } from "@/components/sidebar"
 
 export default function MainLayout({
   children,

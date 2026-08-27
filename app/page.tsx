@@ -1,9 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
+import { ClinvarSummary } from "@/components/clinvar-summary"
 import { GeneticProfileOverview } from "@/components/genetic-profile-overview"
 import { TraitHighlights } from "@/components/trait-highlights"
-import { ClinvarSummary } from "@/components/clinvar-summary"
 import { useLanguage } from "@/contexts/language-context"
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 // import dynamic from 'next/dynamic'

@@ -1,24 +1,31 @@
 import { NextResponse } from "next/server"
 
+import {
+  backendFetch,
+  proxyBackendResponse,
+  requireApiAuth,
+} from "@/lib/backend-client"
+
 export async function POST(request: Request) {
+  const unauthorized = await requireApiAuth()
+  if (unauthorized) {
+    return unauthorized
+  }
+
   try {
     const body = await request.json()
 
-    const response = await fetch(
-      `${process.env.ROOTARA_BACKEND_URL}/report/table`,
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "x-api-key": process.env.ROOTARA_BACKEND_API_KEY || "",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    )
+    const response = await backendFetch("/report/table", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
 
     if (!response.ok) {
-      throw new Error("Failed to fetch data from backend")
+      return proxyBackendResponse(response)
     }
 
     const data = await response.json()

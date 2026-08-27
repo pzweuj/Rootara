@@ -1,13 +1,14 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Info } from "lucide-react"
+import dynamic from "next/dynamic"
+import { useEffect, useRef, useState, useMemo } from "react"
+
 import { HaplogroupDistribution } from "@/components/haplogroup-distribution"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context"
-import { useEffect, useRef, useState, useMemo } from "react"
-import dynamic from "next/dynamic"
 
 // 定义祖源数据类型接口
 interface AncestryData {
@@ -18,13 +19,18 @@ interface AncestryData {
 const emptyAncestryData: AncestryData = {}
 
 // 动态导入Leaflet (客户端渲染)
+function LoadingMap() {
+  const { t } = useLanguage()
+  return (
+    <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
+      <p className="text-muted-foreground">{t("loadingMap")}</p>
+    </div>
+  )
+}
+
 const LeafletMap = dynamic(() => import("./map-component"), {
   ssr: false,
-  loading: () => (
-    <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 rounded-lg">
-      <p className="text-muted-foreground">{useLanguage().t("loadingMap")}</p>
-    </div>
-  ),
+  loading: LoadingMap,
 })
 
 export default function AncestryAnalysisPage() {
@@ -144,7 +150,9 @@ export default function AncestryAnalysisPage() {
   // 从API获取祖源数据
   // 修改fetchAncestryData函数
   const fetchAncestryData = async (reportId: string) => {
-    if (!reportId) return
+    if (!reportId) {
+      return
+    }
 
     setIsLoading(true)
     setError(null)

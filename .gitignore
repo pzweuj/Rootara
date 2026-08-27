@@ -20,6 +20,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -29,5 +30,9 @@ yarn-error.log*
 next-env.d.ts
 tools/database/Rootara.grch37.core.vcf.gz
 .cursorrules
-backend/*
-!backend/script
+# Backend source is part of the unified repository. Runtime data remains
+# outside the repository and is mounted at /data in the container.
+/backend/__pycache__/
+/backend/**/*.pyc
+__pycache__/
+*.py[cod]

@@ -1,0 +1,660 @@
+[
+  {
+    "accessionId": "GCST001038",
+    "trait": "Dehydroepiandrosterone sulphate levels",
+    "initialSampleSize": "14,846 European ancestry individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 14846,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Northern Europe",
+            "countryName": "Sweden"
+          },
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Southern Europe",
+            "countryName": "Italy"
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Netherlands"
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Northern Europe",
+            "countryName": "U.K."
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21533175",
+      "publicationDate": "2011-04-14",
+      "publication": "PLoS Genet",
+      "title": "Eight common genetic variants associated with serum DHEAS levels suggest a key role in ageing mechanisms.",
+      "author": {
+        "fullname": "Zhai G",
+        "orcid": null
+      }
+    },
+    "rsid": "rs11761528",
+    "effectAllele": "T",
+    "alleles": [
+      "T",
+      "C"
+    ],
+    "gene": "ZKSCAN5",
+    "direction": "decrease",
+    "beta": 0.16,
+    "betaUnit": "umol/L"
+  },
+  {
+    "accessionId": "GCST001047",
+    "trait": "Soluble ICAM-1",
+    "initialSampleSize": "22,435 European ancestry female individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 22435,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": []
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 9813,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "NR"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Netherlands"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21533024",
+      "publicationDate": "2011-04-21",
+      "publication": "PLoS Genet",
+      "title": "Genome-wide association analysis of soluble ICAM-1 concentration reveals novel associations at the NFKBIK, PNPLA3, RELA, and SH2B3 loci.",
+      "author": {
+        "fullname": "Paré G",
+        "orcid": null
+      }
+    },
+    "rsid": "rs1799969",
+    "effectAllele": "A",
+    "alleles": [
+      "G",
+      "A"
+    ],
+    "gene": "ICAM1",
+    "direction": "decrease",
+    "beta": 24.9,
+    "betaUnit": "ng/mL"
+  },
+  {
+    "accessionId": "GCST001069",
+    "trait": "Thyroid volume",
+    "initialSampleSize": "3,620 European ancestry individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 3620,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 1290,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21565293",
+      "publicationDate": "2011-05-13",
+      "publication": "Am J Hum Genet",
+      "title": "Genome-wide association study identifies four genetic loci associated with thyroid volume and goiter risk.",
+      "author": {
+        "fullname": "Teumer A",
+        "orcid": null
+      }
+    },
+    "rsid": "rs12138950",
+    "effectAllele": "A",
+    "alleles": [
+      "A",
+      "C"
+    ],
+    "gene": "CAPZB",
+    "direction": "decrease",
+    "beta": 0.102,
+    "betaUnit": "unit"
+  },
+  {
+    "accessionId": "GCST001068",
+    "trait": "Telomere length",
+    "initialSampleSize": "3,554 European ancestry individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 3554,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 2460,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21573004",
+      "publicationDate": "2011-05-10",
+      "publication": "PLoS One",
+      "title": "Genome-wide association study of relative telomere length.",
+      "author": {
+        "fullname": "Prescott J",
+        "orcid": null
+      }
+    },
+    "rsid": "rs12696304",
+    "effectAllele": "G",
+    "alleles": [
+      "C",
+      "G"
+    ],
+    "gene": "TERC",
+    "direction": "decrease",
+    "beta": 0.03,
+    "betaUnit": "unit"
+  },
+  {
+    "accessionId": "GCST001073",
+    "trait": "Urinary metabolites",
+    "initialSampleSize": "862 European ancestry male individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 862,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "NR"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 1862,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21572414",
+      "publicationDate": "2011-05-15",
+      "publication": "Nat Genet",
+      "title": "A genome-wide association study of metabolic traits in human urine.",
+      "author": {
+        "fullname": "Suhre K",
+        "orcid": "0000-0001-9638-3912"
+      }
+    },
+    "rsid": "rs830124",
+    "effectAllele": "A",
+    "alleles": [
+      "C",
+      "A"
+    ],
+    "gene": "WDR66",
+    "direction": "increase",
+    "beta": null,
+    "betaUnit": null
+  },
+  {
+    "accessionId": "GCST001122",
+    "trait": "Adiponectin levels",
+    "initialSampleSize": "1,591 European ancestry female individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 1591,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 626,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Southern Europe",
+            "countryName": "Italy"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21700879",
+      "publicationDate": "2011-06-23",
+      "publication": "Diabetes",
+      "title": "Novel locus FER is associated with serum HMW adiponectin levels.",
+      "author": {
+        "fullname": "Qi L",
+        "orcid": null
+      }
+    },
+    "rsid": "rs13358260",
+    "effectAllele": "C",
+    "alleles": [
+      "A",
+      "C"
+    ],
+    "gene": "PAPD4",
+    "direction": "increase",
+    "beta": null,
+    "betaUnit": null
+  },
+  {
+    "accessionId": "GCST001142",
+    "trait": "Vitamin E levels",
+    "initialSampleSize": "2,402 European ancestry cases, 1612 European ancestry controls",
+    "ancestries": [
+      {
+        "type": "replication",
+        "numberOfIndividuals": 2775,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "Other"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          }
+        ]
+      },
+      {
+        "type": "initial",
+        "numberOfIndividuals": 4014,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Northern Europe",
+            "countryName": "Finland"
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 992,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Northern America",
+            "region": null,
+            "countryName": "U.S."
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21729881",
+      "publicationDate": "2011-07-05",
+      "publication": "Hum Mol Genet",
+      "title": "Genome-wide association study identifies common variants associated with circulating vitamin E levels.",
+      "author": {
+        "fullname": "Major JM",
+        "orcid": null
+      }
+    },
+    "rsid": "rs964184",
+    "effectAllele": "G",
+    "alleles": [
+      "G",
+      "C"
+    ],
+    "gene": "ZNF259",
+    "direction": "increase",
+    "beta": 0.04,
+    "betaUnit": "unit"
+  },
+  {
+    "accessionId": "GCST001074",
+    "trait": "Blood pressure",
+    "initialSampleSize": "19,608 East Asian ancestry individuals\r\n",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 19608,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "East Asian"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Asia",
+            "region": "Eastern Asia",
+            "countryName": "Republic of Korea"
+          },
+          {
+            "majorArea": "Asia",
+            "region": "South-eastern Asia",
+            "countryName": "Singapore"
+          },
+          {
+            "majorArea": "Asia",
+            "region": "Eastern Asia",
+            "countryName": "China"
+          },
+          {
+            "majorArea": "Asia",
+            "region": "Eastern Asia",
+            "countryName": "Japan"
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 30765,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "East Asian"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Asia",
+            "region": "Eastern Asia",
+            "countryName": "Republic of Korea"
+          },
+          {
+            "majorArea": "Asia",
+            "region": "Eastern Asia",
+            "countryName": "Japan"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21572416",
+      "publicationDate": "2011-05-15",
+      "publication": "Nat Genet",
+      "title": "Meta-analysis of genome-wide association studies identifies common variants associated with blood pressure variation in east Asians.",
+      "author": {
+        "fullname": "Kato N",
+        "orcid": null
+      }
+    },
+    "rsid": "rs1173766",
+    "effectAllele": "C",
+    "alleles": [
+      "C",
+      "T"
+    ],
+    "gene": "NPR3",
+    "direction": "increase",
+    "beta": 0.36,
+    "betaUnit": "mm Hg"
+  },
+  {
+    "accessionId": "GCST001207",
+    "trait": "Butyrylcholinesterase levels",
+    "initialSampleSize": "6,879 European ancestry adult individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 6879,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": []
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 1912,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Oceania",
+            "region": "Australia/New Zealand",
+            "countryName": "Australia"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21862451",
+      "publicationDate": "2011-08-23",
+      "publication": "Hum Mol Genet",
+      "title": "GWAS of butyrylcholinesterase activity identifies four novel loci, independent effects within BCHE and secondary associations with metabolic risk factors.",
+      "author": {
+        "fullname": "Benyamin B",
+        "orcid": "0000-0001-5608-2293"
+      }
+    },
+    "rsid": "rs4950806",
+    "effectAllele": "T",
+    "alleles": [
+      "T",
+      "C"
+    ],
+    "gene": "RNPEP",
+    "direction": "decrease",
+    "beta": 0.14,
+    "betaUnit": "SD"
+  },
+  {
+    "accessionId": "GCST001215",
+    "trait": "Coffee consumption",
+    "initialSampleSize": "18,176 European ancestry individuals",
+    "ancestries": [
+      {
+        "type": "initial",
+        "numberOfIndividuals": 18716,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Netherlands"
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Germany"
+          },
+          {
+            "majorArea": "Europe",
+            "region": "Northern Europe",
+            "countryName": "U.K."
+          }
+        ]
+      },
+      {
+        "type": "replication",
+        "numberOfIndividuals": 7929,
+        "ancestralGroups": [
+          {
+            "ancestralGroup": "European"
+          }
+        ],
+        "countryOfOrigin": [],
+        "countryOfRecruitment": [
+          {
+            "majorArea": "Europe",
+            "region": "Western Europe",
+            "countryName": "Netherlands"
+          }
+        ]
+      }
+    ],
+    "publicationInfo": {
+      "pubmedId": "21876539",
+      "publicationDate": "2011-08-30",
+      "publication": "Mol Psychiatry",
+      "title": "Genome-wide association analysis of coffee drinking suggests association with CYP1A1/CYP1A2 and NRCAM.",
+      "author": {
+        "fullname": "Amin N",
+        "orcid": "0000-0002-8944-1771"
+      }
+    },
+    "rsid": "rs2470893",
+    "effectAllele": "T",
+    "alleles": [
+      "C",
+      "T"
+    ],
+    "gene": "CYP1A1",
+    "direction": "increase",
+    "beta": 0.0675,
+    "betaUnit": "unit"
+  }
+]

@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
+
+import { RawGeneticData } from "@/components/raw-genetic-data"
 import { ReportSwitcher } from "@/components/report-switcher"
 import { useLanguage } from "@/contexts/language-context"
-import { RawGeneticData } from "@/components/raw-genetic-data"
 
 export default function ReportsPage() {
   const { t } = useLanguage()

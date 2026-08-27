@@ -1,6 +1,10 @@
 "use client"
 
-import { useLanguage } from "@/contexts/language-context"
+import { ExternalLink, Github, Star } from "lucide-react"
+import Link from "next/link"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,10 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ExternalLink, Github, Star } from "lucide-react"
-import Link from "next/link"
+import { useLanguage } from "@/contexts/language-context"
 
 interface LicenseInfo {
   name: string

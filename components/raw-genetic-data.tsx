@@ -1,9 +1,18 @@
 "use client"
 
+import { Search, Copy } from "lucide-react"
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -12,14 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search, Copy } from "lucide-react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { useLanguage } from "@/contexts/language-context"
 
 // 定义数据类型
@@ -93,7 +94,9 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
 
   // 获取数据的函数
   const fetchData = async () => {
-    if (!currentReportId) return
+    if (!currentReportId) {
+      return
+    }
 
     setLoading(true)
     setError(null)

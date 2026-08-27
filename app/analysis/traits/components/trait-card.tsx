@@ -1,190 +1,182 @@
 "use client"
 
-import type React from "react"
-import dynamic from "next/dynamic"
-import { AlertCircle, Trash2 } from "lucide-react"
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
+import {
+  Activity,
+  AlertCircle,
+  Clock,
+  Coffee,
+  Dna,
+  Droplet,
+  Eye,
+  Frown,
+  Heart,
+  Leaf,
+  Moon,
+  Scissors,
+  Smile,
+  Snowflake,
+  Sun,
+  Trash2,
+  Umbrella,
+  Utensils,
+  Wind,
+  Wine,
+  Zap,
+} from "lucide-react"
+import React from "react"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
 import { getCategoryColor, getCategoryName } from "@/lib/trait-utils"
-import type { Trait } from "@/types/trait"
+import type { TraitCardModel } from "@/types/trait"
 
-// Define icon names to be dynamically imported
-const iconNames = [
-  "Plus",
-  "AlertCircle",
-  "Coffee",
-  "Moon",
-  "Brain",
-  "Music",
-  "Clock",
-  "Droplet",
-  "Eye",
-  "Scissors",
-  "Utensils",
-  "Wine",
-  "Heart",
-  "Dna",
-  "Leaf",
-  "Zap",
-  "Sun",
-  "Smile",
-  "Frown",
-  "Thermometer",
-  "Wind",
-  "Umbrella",
-  "Flame",
-  "Snowflake",
-  "Activity",
-  "Apple",
-  "Baby",
-  "Banana",
-  "Beef",
-  "Beer",
-  "Book",
-  "Braces",
-  "Briefcase",
-  "Cake",
-  "Camera",
-  "Car",
-  "Cat",
-  "ChefHat",
-  "Cherry",
-  "Cloud",
-  "Code",
-  "Compass",
-  "Cookie",
-  "Cpu",
-  "Crown",
-  "Diamond",
-  "Dog",
-  "Egg",
-  "Fish",
-  "Flower",
-  "Gamepad2",
-  "Gift",
-  "Glasses",
-  "Globe",
-  "Grape",
-  "Hammer",
-  "HandMetal",
-  "Headphones",
-  "Home",
-  "IceCream",
-  "Landmark",
-  "Lightbulb",
-  "Microscope",
-  "Mountain",
-  "Palette",
-  "Pill",
-  "Pizza",
-  "Plane",
-  "Rocket",
-  "Salad",
-  "Shirt",
-  "ShoppingBag",
-  "Smartphone",
-  "Star",
-  "Stethoscope",
-  "Syringe",
-  "Target",
-  "Tent",
-  "Trophy",
-  "Tv",
-  "Wheat",
-  "AlertTriangle",
-  "Milk",
-  "Paw",
-  "Pencil",
-  "Pig",
-  "PizzaSlice",
-  "Poo",
-  "QuestionMark",
-  "Ribbon",
-  "Shield",
-  "Shirt2",
-  "Socks",
-  "Star2",
-  "Truck",
-  "Wifi",
-]
-
-// 创建动态组件
-const dynamicIcons: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {}
-
-iconNames.forEach((name) => {
-  // 使用类型断言确保类型正确
-  dynamicIcons[name] = dynamic(
-    async (): Promise<{
-      default: React.ComponentType<{ className?: string }>
-    }> => {
-      const module = await import("lucide-react")
-      const Icon = module[name as keyof typeof module]
-      // 确保返回的Icon组件符合ComponentType<{ className?: string }> 类型
-      return {
-        default: Icon as React.ComponentType<{ className?: string }>,
-      }
-    },
-    { ssr: false }
-  ) as React.ComponentType<{ className?: string }>
-})
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Activity,
+  AlertCircle,
+  Clock,
+  Coffee,
+  Dna,
+  Droplet,
+  Eye,
+  Frown,
+  Heart,
+  Leaf,
+  Moon,
+  Scissors,
+  Smile,
+  Snowflake,
+  Sun,
+  Umbrella,
+  Utensils,
+  Wind,
+  Wine,
+  Zap,
+}
 
 interface TraitCardProps {
-  trait: Trait
+  trait: TraitCardModel
   onClick: () => void
   onDeleteClick: (e: React.MouseEvent) => void
 }
 
-export function TraitCard({ trait, onClick, onDeleteClick }: TraitCardProps) {
-  const { language } = useLanguage()
+export const TraitCard = React.memo(
+  ({ trait, onClick, onDeleteClick }: TraitCardProps) => {
+    const { language } = useLanguage()
+    const IconComponent = iconMap[trait.icon || "Dna"] || Dna
+    const evaluation = trait.evaluation
+    const result =
+      evaluation.resultCurrent?.[language] || evaluation.resultCurrent?.default
+    const missingMessage =
+      language === "zh-CN"
+        ? `本报告未检测到 ${evaluation.missingRsids?.join("、") || "所需位点"}`
+        : `Not detected in this report: ${evaluation.missingRsids?.join(", ") || "required loci"}`
+    const invalidMessage =
+      language === "zh-CN"
+        ? "位点方向无法可靠确认"
+        : "Variant orientation could not be verified"
 
-  // Get the icon component or fallback to AlertCircle
-  const IconComponent = dynamicIcons[trait.icon] || AlertCircle
-
-  return (
-    <Card
-      className="relative cursor-pointer hover:shadow-md transition-shadow"
-      onClick={onClick}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center">
-            <IconComponent className="h-5 w-5 text-primary mr-2" />
-            <CardTitle className="text-lg">
-              {trait.name[language as keyof typeof trait.name]}
-            </CardTitle>
+    return (
+      <Card
+        className="relative cursor-pointer hover:shadow-md transition-shadow [content-visibility:auto] [contain-intrinsic-size:280px]"
+        onClick={onClick}
+      >
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start gap-3">
+            <div className="flex items-start min-w-0">
+              <IconComponent className="h-5 w-5 text-primary mr-2 mt-0.5 shrink-0" />
+              <CardTitle className="text-lg leading-snug">
+                {trait.name[language] || trait.name.default || trait.name.en}
+              </CardTitle>
+            </div>
+            <Badge className={getCategoryColor(trait.category)}>
+              {getCategoryName(trait.category, language)}
+            </Badge>
           </div>
-          <Badge className={getCategoryColor(trait.category)}>
-            {getCategoryName(trait.category, language)}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4">
-          <div className="text-xl font-bold mb-1">
-            {trait.result_current?.[
-              language as keyof typeof trait.result_current
-            ] || trait.result_current?.default}
+          <div className="flex flex-wrap gap-1 pt-2">
+            {trait.sourceLabel && (
+              <Badge variant="secondary">{trait.sourceLabel}</Badge>
+            )}
+            {[
+              ...new Set(
+                trait.loci
+                  .map((locus) => locus.gene)
+                  .filter((gene): gene is string => Boolean(gene))
+              ),
+            ].map((gene) => (
+              <Badge key={gene} variant="outline">
+                {gene}
+              </Badge>
+            ))}
+            {trait.loci.map((locus) => (
+              <Badge key={locus.rsid} variant="outline">
+                {locus.rsid}
+              </Badge>
+            ))}
+            {trait.evidenceGrade && (
+              <Badge variant="outline">
+                {language === "zh-CN" ? "证据 " : "Evidence "}
+                {trait.evidenceGrade}
+              </Badge>
+            )}
           </div>
+        </CardHeader>
+        <CardContent>
+          {evaluation.status === "ok" && result ? (
+            <div className="text-xl font-bold mb-1">{result}</div>
+          ) : evaluation.status === "insufficient_data" ? (
+            <div className="text-sm font-semibold text-amber-700 dark:text-amber-300 mb-1">
+              {missingMessage}
+            </div>
+          ) : (
+            <div className="text-sm font-semibold text-destructive mb-1">
+              {invalidMessage}
+            </div>
+          )}
           <p className="text-sm text-muted-foreground">
-            {trait.description[language as keyof typeof trait.description]}
+            {trait.description[language] ||
+              trait.description.default ||
+              trait.description.en}
           </p>
-        </div>
-      </CardContent>
-      {!trait.isDefault && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-2 right-2 text-muted-foreground hover:bg-secondary"
-          onClick={onDeleteClick}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      )}
-    </Card>
-  )
-}
+          <div className="mt-3 space-y-1 text-xs text-muted-foreground font-mono">
+            {trait.loci.map((locus) => {
+              const grch38 = locus.assembly.GRCh38
+              const alleles = [locus.referenceAllele, ...locus.alternateAlleles]
+                .filter(Boolean)
+                .join("/")
+              return (
+                <p key={locus.rsid}>
+                  {locus.rsid}
+                  {locus.gene ? ` · ${locus.gene}` : ""}
+                  {grch38?.chromosome && grch38.position
+                    ? ` · GRCh38 chr${grch38.chromosome}:${grch38.position}`
+                    : language === "zh-CN"
+                      ? " · GRCh38 位点核验中"
+                      : " · GRCh38 locus pending verification"}
+                  {alleles ? ` · ${alleles}` : ""}
+                  {locus.effectAllele
+                    ? ` · ${language === "zh-CN" ? "效应" : "effect"} ${locus.effectAllele}`
+                    : ""}
+                  {locus.effectDirection ? ` (${locus.effectDirection})` : ""}
+                </p>
+              )
+            })}
+          </div>
+        </CardContent>
+        {trait.isDefault === false && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute bottom-2 right-2 text-muted-foreground hover:bg-secondary"
+            onClick={onDeleteClick}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </Card>
+    )
+  }
+)
+
+TraitCard.displayName = "TraitCard"

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
 import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context"
 

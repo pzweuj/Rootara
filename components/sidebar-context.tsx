@@ -22,11 +22,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const toggleSidebar = () => {
-    // 只在移动设备上切换侧边栏状态
-    if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      setIsCollapsed(!isCollapsed)
-    }
-    // 桌面设备上不执行任何操作
+    setIsCollapsed((collapsed) => !collapsed)
   }
 
   return (

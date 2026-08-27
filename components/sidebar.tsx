@@ -1,10 +1,5 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
   Home,
   BarChart2,
@@ -19,21 +14,27 @@ import {
   AlertCircle,
   Info,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import type React from "react"
+import { useState, useEffect } from "react"
+
 import { Button } from "@/components/ui/button"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { useSidebar } from "./sidebar-context"
 import { useLanguage } from "@/contexts/language-context"
+import { cn } from "@/lib/utils"
+
+import { useSidebar } from "./sidebar-context"
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -50,7 +51,7 @@ export function Sidebar() {
         item.children &&
         item.children.some(
           (child) =>
-            pathname === child.href || pathname.startsWith(child.href + "/")
+            pathname === child.href || pathname.startsWith(`${child.href}/`)
         )
       ) {
         newOpenItems[item.name] = true
@@ -127,7 +128,7 @@ export function Sidebar() {
       isActive =
         pathname === item.href
           ? true
-          : item.href !== "/" && pathname.startsWith(item.href + "/")
+          : item.href !== "/" && pathname.startsWith(`${item.href}/`)
             ? true
             : item.children &&
                 item.children.some(
@@ -137,13 +138,13 @@ export function Sidebar() {
                   }) =>
                     pathname === child.href ||
                     (child.href !== "/" &&
-                      pathname.startsWith(child.href + "/")) ||
+                      pathname.startsWith(`${child.href}/`)) ||
                     (child.children &&
                       child.children.some(
                         (grandchild) =>
                           pathname === grandchild.href ||
                           (grandchild.href !== "/" &&
-                            pathname.startsWith(grandchild.href + "/"))
+                            pathname.startsWith(`${grandchild.href}/`))
                       ))
                 )
               ? true
@@ -165,7 +166,7 @@ export function Sidebar() {
         !isActive &&
         item.href !== "/" &&
         item.href !== "/reports" &&
-        pathname.startsWith(item.href + "/")
+        pathname.startsWith(`${item.href}/`)
       ) {
         isActive = true
       }
@@ -332,8 +333,9 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="sm"
-              className={cn("ml-auto h-8 w-8 lg:hidden", isCollapsed && "ml-0")}
+              className={cn("ml-auto h-8 w-8", isCollapsed && "ml-0")}
               onClick={toggleSidebar}
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             >
               <ChevronLeft
                 className={cn(

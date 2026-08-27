@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import dynamic from "next/dynamic"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
+import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context"
 import type { Trait } from "@/types/trait"
 
@@ -121,8 +122,8 @@ iconNames.forEach((name) => {
     async (): Promise<{
       default: React.ComponentType<{ className?: string }>
     }> => {
-      const module = await import("lucide-react")
-      const Icon = module[name as keyof typeof module]
+      const iconModule = await import("lucide-react")
+      const Icon = iconModule[name as keyof typeof iconModule]
       // 确保返回的Icon组件符合ComponentType<{ className?: string }> 类型
       return {
         default: Icon as React.ComponentType<{ className?: string }>,
@@ -148,7 +149,9 @@ export function TraitHighlights() {
   // 从API加载特征数据
   useEffect(() => {
     const loadTraits = async () => {
-      if (!currentReportId) return
+      if (!currentReportId) {
+        return
+      }
 
       try {
         setLoading(true)
@@ -213,7 +216,9 @@ export function TraitHighlights() {
     field: { en: string; "zh-CN": string; default: string } | undefined,
     fallback: string = "N/A"
   ): string => {
-    if (!field) return fallback
+    if (!field) {
+      return fallback
+    }
     return field[language as keyof typeof field] || field.default || fallback
   }
 
@@ -223,9 +228,13 @@ export function TraitHighlights() {
       | Record<string, { en: string; "zh-CN": string; default: string }>
       | undefined
   ): string => {
-    if (!result) return "N/A"
+    if (!result) {
+      return "N/A"
+    }
     const firstKey = Object.keys(result)[0]
-    if (!firstKey) return "N/A"
+    if (!firstKey) {
+      return "N/A"
+    }
     const firstResult = result[firstKey]
     return getLocalizedText(firstResult, "N/A")
   }

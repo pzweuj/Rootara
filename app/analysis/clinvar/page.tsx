@@ -1,6 +1,20 @@
 "use client"
 
+import {
+  Search,
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  ExternalLink,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -24,20 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import {
-  Search,
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  ExternalLink,
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
-import { Button } from "@/components/ui/button"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 // 定义ClinVar数据类型
@@ -190,15 +191,24 @@ export default function ClinvarAnalysisPage() {
 
     // 如果包含多个分类（用/分隔），按优先级选择一个
     if (lowerClass.includes("/")) {
-      if (lowerClass.includes("pathogenic")) return "pathogenic"
-      if (lowerClass.includes("likely pathogenic")) return "likely pathogenic"
-      if (lowerClass.includes("benign")) return "benign"
-      if (lowerClass.includes("likely benign")) return "likely benign"
+      if (lowerClass.includes("pathogenic")) {
+        return "pathogenic"
+      }
+      if (lowerClass.includes("likely pathogenic")) {
+        return "likely pathogenic"
+      }
+      if (lowerClass.includes("benign")) {
+        return "benign"
+      }
+      if (lowerClass.includes("likely benign")) {
+        return "likely benign"
+      }
       if (
         lowerClass.includes("uncertain_significance") ||
         lowerClass.includes("uncertain significance")
-      )
+      ) {
         return "uncertain significance"
+      }
       return lowerClass.split("/")[0].trim() // 如果没有匹配到优先级，返回第一个
     }
 

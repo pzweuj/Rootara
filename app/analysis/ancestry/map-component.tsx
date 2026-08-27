@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState, useMemo } from "react"
 import L from "leaflet"
+import { useEffect, useRef, useState, useMemo } from "react"
+
 import "leaflet/dist/leaflet.css"
 import { useLanguage } from "@/contexts/language-context"
 
@@ -128,7 +129,9 @@ const MapComponent = ({ data }: MapComponentProps) => {
 
   // 添加复位函数
   const resetMapView = () => {
-    if (!mapRef.current) return
+    if (!mapRef.current) {
+      return
+    }
 
     // 找出最高比例的地区
     let maxPercentage = 0
@@ -207,7 +210,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
               position: "topright",
             },
 
-            onAdd: function () {
+            onAdd() {
               const div = L.DomUtil.create(
                 "div",
                 "leaflet-control-zoom leaflet-bar"
@@ -217,7 +220,7 @@ const MapComponent = ({ data }: MapComponentProps) => {
                    style="font-size: 18px; line-height: 26px;">⌂</a>
               `
 
-              L.DomEvent.on(div, "click", function (e) {
+              L.DomEvent.on(div, "click", (e) => {
                 L.DomEvent.preventDefault(e)
                 resetMapView()
               })

@@ -3,8 +3,6 @@ import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
-    console.log("Processing logout request")
-
     // Clear the auth cookie
     const cookieStore = await cookies()
     const isProduction = process.env.NODE_ENV === "production"
@@ -25,13 +23,10 @@ export async function POST(request: Request) {
       cookieOptions.sameSite = "strict"
     }
 
-    console.log("Clearing cookie with options:", cookieOptions)
     cookieStore.set(cookieOptions)
 
-    console.log("Logout successful - cookie cleared")
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Logout error:", error)
     // 即使出错也返回成功，因为客户端状态已经清除
     return NextResponse.json({ success: true })
   }

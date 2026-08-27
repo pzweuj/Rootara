@@ -1,7 +1,11 @@
 "use client"
 
+import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
 import type React from "react"
 import { useState, useEffect } from "react"
+
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -10,9 +14,10 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
 import {
   Select,
   SelectContent,
@@ -20,10 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Progress } from "@/components/ui/progress"
-import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 // 移除 useAuth 导入
 

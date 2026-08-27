@@ -1,10 +1,10 @@
 "use client"
-import { ThemeToggle } from "./theme-toggle"
-import { LanguageSwitcher } from "./language-switcher"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useLanguage } from "@/contexts/language-context"
-import { useAuth } from "@/contexts/auth-context"
+import React from "react"
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import React from "react"
+import { useAuth } from "@/contexts/auth-context"
+import { useLanguage } from "@/contexts/language-context"
+
+import { LanguageSwitcher } from "./language-switcher"
+import { ThemeToggle } from "./theme-toggle"
 
 export function TopNav() {
   const pathname = usePathname()
@@ -57,7 +59,9 @@ export function TopNav() {
 
   // 获取当前页面标题
   const getPageTitle = () => {
-    if (pathSegments.length === 0) return t("home")
+    if (pathSegments.length === 0) {
+      return t("home")
+    }
     const lastSegment = pathSegments[pathSegments.length - 1]
 
     // 尝试从翻译映射中获取翻译
@@ -65,7 +69,9 @@ export function TopNav() {
       pathTranslations[language as keyof typeof pathTranslations]?.[
         lastSegment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]
       ]
-    if (translatedSegment) return translatedSegment
+    if (translatedSegment) {
+      return translatedSegment
+    }
 
     // 如果没有找到翻译，则使用首字母大写的原始段落
     return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1)
@@ -77,13 +83,17 @@ export function TopNav() {
       pathTranslations[language as keyof typeof pathTranslations][
         segment as keyof (typeof pathTranslations)[keyof typeof pathTranslations]
       ]
-    if (translatedSegment) return translatedSegment
+    if (translatedSegment) {
+      return translatedSegment
+    }
     return segment.charAt(0).toUpperCase() + segment.slice(1)
   }
 
   // Get user's first letter for avatar
   const getUserInitial = () => {
-    if (!user || !user.name) return "U"
+    if (!user || !user.name) {
+      return "U"
+    }
     return user.name.charAt(0).toUpperCase()
   }
 
