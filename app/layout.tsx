@@ -1,5 +1,4 @@
 import "./globals.css"
-import { Inter } from "next/font/google"
 import type React from "react"
 
 import { AuthGuard } from "@/components/auth-guard"
@@ -10,8 +9,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { AuthProvider } from "@/contexts/auth-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import { ReportProvider } from "@/contexts/report-context"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
   title: "Rootara",
@@ -32,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className="font-sans">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <LanguageProvider>

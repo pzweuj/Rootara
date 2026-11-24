@@ -79,8 +79,11 @@ def _iter_ancestry(path: Path) -> Iterator[tuple[str, str, int, str]]:
                 continue
 
 
-def iter_raw_variants(path: Path, source: str) -> Iterator[tuple[str, str, int, str]]:
-    if source.lower() == "ancestry":
+def iter_raw_variants(path: Path, source: str, rsids=None) -> Iterator[tuple[str, str, int, str]]:
+    if path.suffix == ".parquet":
+        from scripts.raw_archive import archive_variants
+        yield from archive_variants(path, rsids)
+    elif source.lower() == "ancestry":
         yield from _iter_ancestry(path)
     else:
         yield from _iter_four_column(path)
@@ -91,8 +94,8 @@ def load_locus_registry(path: Path = REGISTRY_PATH) -> tuple[dict, str]:
     document = json.loads(raw.decode("utf-8"))
     loci = document.get("loci", {})
     expected = int(document.get("counts", {}).get("expected", 0))
-    if expected != 153 or len(loci) != expected:
-        raise RuntimeError(f"trait locus registry is incomplete: {len(loci)}/{expected or 153}")
+    if expected != 154 or len(loci) != expected:
+        raise RuntimeError(f"trait locus registry is incomplete: {len(loci)}/{expected or 154}")
     unverified = sorted(rsid for rsid, locus in loci.items() if locus.get("status") != "verified")
     if unverified:
         raise RuntimeError(f"trait locus registry has unverified entries: {unverified[:10]}")
@@ -104,6 +107,9 @@ def _raw_path(report_id: str, source: str) -> Path:
         return TEMPLATE_PATH
     suffix = report_id.removeprefix("RPT_")
     matches = sorted(RAWDATA_DIR.glob(f"RDT_{suffix}.*"))
+    # A verified conversion can coexist with its retained TXT backup.
+    matches = [path for path in matches if path.suffix in {".txt", ".parquet"} and
+               not (path.suffix == ".txt" and path.with_suffix(".parquet") in matches)]
     source_matches = [path for path in matches if f".{source}." in path.name]
     candidates = source_matches or matches
     if len(candidates) != 1:
@@ -187,10 +193,23 @@ def backfill_report(
     profile = SOURCE_PROFILES.get(source.lower())
     if profile is None:
         raise RuntimeError(f"unsupported raw-data source adapter: {source}")
+    stat = raw_path.stat()
+    signature = f"{stat.st_size}:{stat.st_mtime_ns}"
+    with sqlite3.connect(db_path) as check:
+        columns = {row[1] for row in check.execute("PRAGMA table_info(report_trait_import_state)")}
+        if "file_signature" in columns:
+            previous = check.execute(
+                "SELECT importer_version, registry_hash, file_signature FROM report_trait_import_state WHERE report_id=?",
+                (report_id,),
+            ).fetchone()
+            if previous == (IMPORTER_VERSION, registry_hash, signature):
+                return 0
     wanted = set(loci)
     raw_rows = {}
-    for rsid, chromosome, position, raw_genotype in iter_raw_variants(raw_path, source):
+    for rsid, chromosome, position, raw_genotype in iter_raw_variants(raw_path, source, wanted):
         if rsid not in wanted:
+            continue
+        if raw_genotype.strip().upper() in {"", "--", "00", "NN"}:
             continue
         locus = loci[rsid]
         if not _position_matches(chromosome, position, locus):
@@ -209,16 +228,12 @@ def backfill_report(
     conn = sqlite3.connect(db_path)
     try:
         _ensure_state_table(conn)
-        previous = conn.execute(
-            "SELECT importer_version, registry_hash FROM report_trait_import_state WHERE report_id=?",
-            (report_id,),
-        ).fetchone()
-        if previous == (IMPORTER_VERSION, registry_hash):
-            conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{report_id}_rsid ON {report_id}(rsid)")
-            conn.commit()
-            return 0
-
-        existing = dict(conn.execute(f"SELECT rsid, genotype FROM {report_id} WHERE rsid IS NOT NULL"))
+        if "file_signature" not in {r[1] for r in conn.execute("PRAGMA table_info(report_trait_import_state)")}:
+            conn.execute("ALTER TABLE report_trait_import_state ADD COLUMN file_signature TEXT")
+        marks = ",".join("?" for _ in raw_rows)
+        existing = dict(conn.execute(
+            f"SELECT rsid, genotype FROM {report_id} WHERE rsid IN ({marks})", tuple(raw_rows)
+        )) if raw_rows else {}
         additions = []
         for rsid, genotype in raw_rows.items():
             if rsid in existing:
@@ -254,18 +269,19 @@ def backfill_report(
         conn.execute(f"CREATE INDEX IF NOT EXISTS idx_{report_id}_rsid ON {report_id}(rsid)")
         conn.execute(
             """INSERT INTO report_trait_import_state
-                (report_id, importer_version, registry_hash, added_count, updated_at)
-                VALUES (?, ?, ?, ?, ?)
+                (report_id, importer_version, registry_hash, added_count, updated_at, file_signature)
+                VALUES (?, ?, ?, ?, ?, ?)
                 ON CONFLICT(report_id) DO UPDATE SET
                     importer_version=excluded.importer_version,
                     registry_hash=excluded.registry_hash,
                     added_count=excluded.added_count,
-                    updated_at=excluded.updated_at""",
+                    updated_at=excluded.updated_at, file_signature=excluded.file_signature""",
             (
                 report_id, IMPORTER_VERSION, registry_hash, len(additions),
-                datetime.now(timezone.utc).isoformat(),
+                datetime.now(timezone.utc).isoformat(), signature,
             ),
         )
+        conn.execute(f"UPDATE reports SET total_snps=(SELECT COUNT(*) FROM {report_id}) WHERE report_id=?", (report_id,))
         conn.commit()
         return len(additions)
     except Exception:

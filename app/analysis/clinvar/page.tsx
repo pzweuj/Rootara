@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -43,6 +43,8 @@ import { useReport } from "@/contexts/report-context" // 导入报告上下文
 
 // 定义ClinVar数据类型
 interface ClinVarVariant {
+  row_id: number
+  classification: string
   chromosome: string
   position: number
   ref: string
@@ -57,6 +59,7 @@ interface ClinVarVariant {
 }
 
 interface ClinVarResponse {
+  total: number
   data: Record<string, ClinVarVariant>
   statistics: {
     pathogenic: number
@@ -85,141 +88,73 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function ClinvarAnalysisPage() {
-  const { language, t } = useLanguage()
   const { currentReportId } = useReport() // 使用报告上下文获取当前报告ID
+  return (
+    <ReportClinvar key={currentReportId} currentReportId={currentReportId} />
+  )
+}
+
+function ReportClinvar({ currentReportId }: { currentReportId: string }) {
+  const { t } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("") // 用于存储防抖后的搜索词
   const [classificationFilter, setClassificationFilter] = useState("all")
-  const [geneFilter, setGeneFilter] = useState("all")
   const [loading, setLoading] = useState(true)
   const [clinvarData, setClinvarData] = useState<ClinVarResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [statistics, setStatistics] = useState({
-    pathogenic: 0,
-    likely_pathogenic: 0,
-    benign: 0,
-    likely_benign: 0,
-    uncertain_significance: 0,
-  })
-
-  // 使用防抖处理搜索查询
   const debouncedQuery = useDebounce(searchQuery, 300)
-
-  // 当防抖查询变化时更新搜索结果
+  const [attempt, setAttempt] = useState(0)
   useEffect(() => {
-    setDebouncedSearchQuery(debouncedQuery)
-  }, [debouncedQuery])
-
-  // 获取ClinVar数据的函数
-  const fetchClinvarData = async (reportId: string) => {
+    if (!currentReportId) {
+      return
+    }
+    const controller = new AbortController()
     setLoading(true)
     setError(null)
-
-    try {
-      // 修改为调用新的API路由
-      const response = await fetch(`/api/report/clinvar`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          report_id: reportId,
-          sort_by: "",
-          sort_order: "asc",
-          search_term: "",
-          filters: {},
-          indel: false,
-        }),
+    fetch("/api/report/clinvar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        report_id: currentReportId,
+        page: currentPage,
+        page_size: itemsPerPage,
+        search_term: debouncedQuery,
+        classification: classificationFilter,
+      }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(await response.text())
+        }
+        const data = await response.json()
+        if (!controller.signal.aborted) {
+          setClinvarData(data)
+        }
       })
+      .catch((error) => {
+        if (!controller.signal.aborted) {
+          setError(String(error))
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
+      })
+    return () => controller.abort()
+  }, [
+    currentReportId,
+    currentPage,
+    itemsPerPage,
+    debouncedQuery,
+    classificationFilter,
+    attempt,
+  ])
 
-      if (!response.ok) {
-        throw new Error(`API请求失败: ${response.status}`)
-      }
-
-      const data = await response.json()
-      setClinvarData(data)
-    } catch (err) {
-      console.error("获取ClinVar数据失败:", err)
-      setError(err instanceof Error ? err.message : "获取数据失败")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 当全局报告ID变化时重新加载数据
-  useEffect(() => {
-    if (currentReportId) {
-      console.log("使用全局报告ID加载数据:", currentReportId)
-      fetchClinvarData(currentReportId)
-    }
-  }, [currentReportId])
-
-  // Local translations for ClinVar-specific terms not in global context
-  const localTranslations = {
-    en: {
-      clinicalVariants: "Clinical Variants Analysis",
-      exportData: "Export Data",
-      shareResults: "Share Results",
-      overview: "Overview",
-      variantList: "Variant List",
-      allGenes: "All Genes",
-      reviewStatus: "Review Status",
-      lastUpdated: "Last Updated",
-      totalVariants: "Total variants with ClinVar annotations",
-    },
-    "zh-CN": {
-      clinicalVariants: "临床变异分析",
-      exportData: "导出数据",
-      shareResults: "分享结果",
-      overview: "概览",
-      variantList: "变异列表",
-      allGenes: "所有基因",
-      reviewStatus: "审查状态",
-      lastUpdated: "最后更新",
-      totalVariants: "存在Clinvar注释的总变异数",
-    },
-  }
-
-  const localT = (key: keyof (typeof localTranslations)["en"]) => {
-    return localTranslations[language][key] || key
-  }
-
-  const normalizeClassification = (classification: string) => {
-    const lowerClass = classification.toLowerCase()
-
-    // 如果包含多个分类（用/分隔），按优先级选择一个
-    if (lowerClass.includes("/")) {
-      if (lowerClass.includes("pathogenic")) {
-        return "pathogenic"
-      }
-      if (lowerClass.includes("likely pathogenic")) {
-        return "likely pathogenic"
-      }
-      if (lowerClass.includes("benign")) {
-        return "benign"
-      }
-      if (lowerClass.includes("likely benign")) {
-        return "likely benign"
-      }
-      if (
-        lowerClass.includes("uncertain_significance") ||
-        lowerClass.includes("uncertain significance")
-      ) {
-        return "uncertain significance"
-      }
-      return lowerClass.split("/")[0].trim() // 如果没有匹配到优先级，返回第一个
-    }
-
-    return lowerClass.replace(/_/g, " ")
-  }
-
-  // 根据API返回的分类获取对应的Badge
   const getClassificationBadge = (classification: string) => {
-    // 将API返回的分类映射到UI显示的分类
-    const normalizedClassification = normalizeClassification(classification)
-
+    const normalizedClassification = classification.replace(/_/g, " ")
     switch (normalizedClassification) {
       case "pathogenic":
         return (
@@ -285,7 +220,7 @@ export default function ClinvarAnalysisPage() {
   }
 
   // 如果正在加载，显示加载状态
-  if (loading) {
+  if (loading && !clinvarData) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -304,7 +239,7 @@ export default function ClinvarAnalysisPage() {
         </p>
         <button
           className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-          onClick={() => fetchClinvarData(currentReportId)}
+          onClick={() => setAttempt((value) => value + 1)}
         >
           {t("retry")}
         </button>
@@ -322,93 +257,13 @@ export default function ClinvarAnalysisPage() {
   }
 
   // 将API返回的数据转换为数组形式，方便处理
-  const variants = Object.entries(clinvarData.data).map(([rsid, variant]) => ({
-    id: rsid,
+  const currentItems = Object.values(clinvarData.data).map((variant) => ({
     ...variant,
-    // 将API返回的clnsig映射到UI显示的classification
-    classification: variant.clnsig.replace(/_/g, " "),
-    // 将API返回的clndn映射到UI显示的condition
+    id: variant.rsid,
     condition: variant.clndn.replace(/_/g, " "),
   }))
-
-  // 获取所有基因的唯一列表
-  const uniqueGenes = Array.from(
-    new Set(variants.map((variant) => variant.gene))
-  ).sort()
-
-  // 计算各个分类的数量
-  const calculateStatistics = () => {
-    const stats = {
-      pathogenic: 0,
-      likely_pathogenic: 0,
-      benign: 0,
-      likely_benign: 0,
-      uncertain_significance: 0,
-    }
-
-    variants.forEach((variant) => {
-      const normalizedClass = normalizeClassification(variant.classification)
-
-      switch (normalizedClass) {
-        case "pathogenic":
-          stats.pathogenic += 1
-          break
-        case "likely pathogenic":
-          stats.likely_pathogenic += 1
-          break
-        case "benign":
-          stats.benign += 1
-          break
-        case "likely benign":
-          stats.likely_benign += 1
-          break
-        case "uncertain significance":
-          stats.uncertain_significance += 1
-          break
-      }
-    })
-
-    return stats
-  }
-
-  // 计算统计数据
-  const variantStatistics = calculateStatistics()
-
-  // 过滤变异
-  const filteredVariants = variants.filter((variant) => {
-    const matchesSearch =
-      debouncedSearchQuery === "" || // 如果搜索词为空，显示所有结果
-      variant.id.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      variant.gene.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      variant.condition
-        .toLowerCase()
-        .includes(debouncedSearchQuery.toLowerCase())
-
-    const normalizedClassification = normalizeClassification(
-      variant.classification
-    )
-
-    const matchesClassification =
-      classificationFilter === "all" ||
-      (classificationFilter === "pathogenic" &&
-        normalizedClassification === "pathogenic") ||
-      (classificationFilter === "likely_pathogenic" &&
-        normalizedClassification === "likely pathogenic") ||
-      (classificationFilter === "uncertain" &&
-        normalizedClassification.includes("uncertain")) ||
-      (classificationFilter === "likely_benign" &&
-        normalizedClassification === "likely benign") ||
-      (classificationFilter === "benign" &&
-        normalizedClassification === "benign")
-
-    return matchesSearch && matchesClassification
-  })
-
-  // 计算分页 - 获取当前页的数据
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentItems = filteredVariants.slice(indexOfFirstItem, indexOfLastItem)
-  const totalPages = Math.ceil(filteredVariants.length / itemsPerPage)
+  const variantStatistics = clinvarData.statistics
+  const totalPages = Math.ceil(clinvarData.total / itemsPerPage)
 
   return (
     <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">
@@ -508,13 +363,19 @@ export default function ClinvarAnalysisPage() {
               placeholder={t("searchVariants")}
               className="pl-8 text-sm sm:text-base"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
             />
           </div>
           <div className="w-full sm:w-1/3">
             <Select
               value={classificationFilter}
-              onValueChange={setClassificationFilter}
+              onValueChange={(value) => {
+                setClassificationFilter(value)
+                setCurrentPage(1)
+              }}
             >
               <SelectTrigger className="text-sm sm:text-base">
                 <SelectValue placeholder={t("classification")} />
@@ -527,7 +388,7 @@ export default function ClinvarAnalysisPage() {
                 <SelectItem value="likely_pathogenic">
                   {t("likelyPathogenic")}
                 </SelectItem>
-                <SelectItem value="uncertain">
+                <SelectItem value="uncertain_significance">
                   {t("uncertainSignificance")}
                 </SelectItem>
                 <SelectItem value="likely_benign">
@@ -560,7 +421,7 @@ export default function ClinvarAnalysisPage() {
                 <TableBody>
                   {currentItems.length > 0 ? (
                     currentItems.map((variant) => (
-                      <TableRow key={variant.id}>
+                      <TableRow key={variant.row_id}>
                         <TableCell className="font-medium">
                           {variant.gene}
                         </TableCell>
@@ -609,7 +470,7 @@ export default function ClinvarAnalysisPage() {
               {currentItems.length > 0 ? (
                 <div className="space-y-3 p-4">
                   {currentItems.map((variant) => (
-                    <Card key={variant.id} className="border border-border">
+                    <Card key={variant.row_id} className="border border-border">
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between items-start">
                           <div className="space-y-1">
@@ -675,7 +536,7 @@ export default function ClinvarAnalysisPage() {
         </Card>
 
         {/* 分页控件 */}
-        {filteredVariants.length > 0 && (
+        {clinvarData.total > 0 && (
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between mt-4 px-4 sm:px-0">
             <div className="flex items-center justify-center sm:justify-start space-x-2">
               <span className="text-xs sm:text-sm text-muted-foreground">
@@ -702,8 +563,7 @@ export default function ClinvarAnalysisPage() {
 
             <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
               <div className="text-xs sm:text-sm text-muted-foreground text-center">
-                {t("page")} {currentPage} {t("of")}{" "}
-                {Math.ceil(filteredVariants.length / itemsPerPage)}
+                {t("page")} {currentPage} {t("of")} {totalPages}
               </div>
               <div className="flex items-center space-x-2">
                 <Button
@@ -721,10 +581,7 @@ export default function ClinvarAnalysisPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={
-                    currentPage ===
-                    Math.ceil(filteredVariants.length / itemsPerPage)
-                  }
+                  disabled={currentPage === totalPages}
                   aria-label={t("next")}
                   className="h-8 px-2 sm:px-3"
                 >
@@ -739,7 +596,7 @@ export default function ClinvarAnalysisPage() {
 
       <div className="flex justify-center sm:justify-between items-center px-4 sm:px-0">
         <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-          {t("totalVariants")}: {Object.keys(clinvarData.data).length}
+          {t("totalVariants")}: {clinvarData.total}
         </p>
       </div>
     </div>

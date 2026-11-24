@@ -47,10 +47,10 @@ def test_normalized_catalog_round_trips_compatibility_artifacts():
     assert loci == json.loads((DATABASE / "trait-locus-registry.json").read_text(encoding="utf-8"))
 
 
-def test_registry_has_153_reviewed_forward_loci_and_rs495828_is_corrected():
+def test_registry_has_154_reviewed_forward_loci_and_rs495828_is_corrected():
     registry = json.loads((DATABASE / "trait-locus-registry.json").read_text(encoding="utf-8"))
     assert registry["counts"] == {
-        "expected": 153, "resolved": 153, "verified": 153,
+        "expected": 154, "resolved": 154, "verified": 154,
         "conflicts": 0, "fetchErrors": 0,
     }
     assert all(locus["status"] == "verified" for locus in registry["loci"].values())
@@ -79,7 +79,7 @@ def test_catalog_and_empty_report_results_are_compact_and_never_use_na(tmp_path)
     ensure_report_rsid_indexes(db_path)
     catalog = get_catalog_payload(db_path)
     results = get_report_results("RPT_TEMPLATE01", db_path)
-    assert catalog["count"] == results["count"] == 150
+    assert catalog["count"] == results["count"] == 152
     assert all(item["status"] == "insufficient_data" for item in results["results"])
     assert all(item["missingRsids"] for item in results["results"])
     serialized = json.dumps(
@@ -111,6 +111,9 @@ def test_backfill_preserves_raw_rsid_and_is_idempotent(tmp_path, monkeypatch):
         }
     }
     assert backfill_report(db_path, report_id, "23andme", loci, "hash-1") == 1
+    def forbid_rescan(*args):
+        raise AssertionError("unchanged raw data was reopened")
+    monkeypatch.setattr(migration, "iter_raw_variants", forbid_rescan)
     assert backfill_report(db_path, report_id, "23andme", loci, "hash-1") == 0
     conn = sqlite3.connect(db_path)
     assert conn.execute(f"SELECT rsid, genotype FROM {report_id}").fetchall() == [("rs999", "AG")]
@@ -121,15 +124,15 @@ def test_backfill_preserves_raw_rsid_and_is_idempotent(tmp_path, monkeypatch):
     conn.close()
 
 
-def test_template_backfill_restores_128_loci_and_evaluates_125_cards(tmp_path):
+def test_template_backfill_restores_129_loci_and_evaluates_127_cards(tmp_path):
     db_path = tmp_path / "rootara.db"
     _report_database(db_path, "RPT_TEMPLATE01")
     loci, registry_hash = load_locus_registry()
     assert backfill_report(
         db_path, "RPT_TEMPLATE01", "23andme", loci, registry_hash
-    ) == 128
+    ) == 129
     results = get_report_results("RPT_TEMPLATE01", db_path)
-    assert sum(item["status"] == "ok" for item in results["results"]) == 125
+    assert sum(item["status"] == "ok" for item in results["results"]) == 127
     rs495828 = next(
         item for item in results["results"]
         if item["traitId"] == "gwas-gcst000565-rs495828"

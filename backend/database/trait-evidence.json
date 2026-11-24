@@ -2,7 +2,7 @@
   "schema_version": 1,
   "description": "Evidence, complete legacy genotype mappings and executable fixtures for every Rootara default rule.",
   "release_contract": {
-    "target_count": 150,
+    "target_count": 152,
     "requires_all_curated": true,
     "allowed_evidence_grades": [
       "A",
@@ -18107,6 +18107,221 @@
         "en": "The cited study supports an association between rs2470893, CYP1A1, and Coffee consumption.",
         "zh-CN": "引用研究支持 CYP1A1 的 rs2470893 与咖啡摄入倾向相关，报告方向为升高。",
         "default": ""
+      }
+    },
+    "photic-sneeze": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "population_scope": "This association was observed in Chinese participants who answered a questionnaire.",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs10427255",
+          "gene": "Near ZEB2",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "mapping_status": "complete",
+          "genotype_map": {
+            "CC": {
+              "score": 0,
+              "result_key": "copies_0"
+            },
+            "CT": {
+              "score": 1,
+              "result_key": "copies_1"
+            },
+            "TT": {
+              "score": 2,
+              "result_key": "copies_2"
+            }
+          },
+          "effect_allele": "T",
+          "direction": "increase",
+          "literature_effect_allele": "T",
+          "forward_effect_allele": "T",
+          "strand_transform": "identity"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "30899065",
+          "role": "primary",
+          "title": "A genome-wide association study on photic sneeze reflex in the Chinese population",
+          "journal": "Scientific Reports",
+          "year": 2019,
+          "studyType": "GWAS",
+          "population": "This association was observed in Chinese participants who answered a questionnaire.",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/30899065/",
+          "supports": [
+            "rs10427255",
+            "Sneeze on moving into bright light"
+          ],
+          "effectAllele": "T",
+          "forwardEffectAllele": "T",
+          "direction": "increase"
+        },
+        {
+          "type": "PMID",
+          "id": "20585627",
+          "role": "contrasting cohort",
+          "title": "Web-based, participant-driven studies yield novel genetic associations for common traits",
+          "journal": "PLoS Genetics",
+          "year": 2010,
+          "studyType": "GWAS",
+          "population": "23andMe study participants",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/20585627/",
+          "supports": [
+            "rs10427255",
+            "Sneeze on moving into bright light"
+          ],
+          "effectAllele": "C",
+          "forwardEffectAllele": "C",
+          "direction": "increase"
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "CC",
+          "genotypes": {
+            "rs10427255": "CC"
+          },
+          "expected_score": 0,
+          "expected_result_key": "copies_0"
+        },
+        {
+          "name": "CT",
+          "genotypes": {
+            "rs10427255": "CT"
+          },
+          "expected_score": 1,
+          "expected_result_key": "copies_1"
+        },
+        {
+          "name": "TT",
+          "genotypes": {
+            "rs10427255": "TT"
+          },
+          "expected_score": 2,
+          "expected_result_key": "copies_2"
+        }
+      ],
+      "limitations": [
+        "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+        "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+      ],
+      "population_scope_i18n": {
+        "en": "This association was observed in Chinese participants who answered a questionnaire.",
+        "zh-CN": "该关联来自中国参与者的自报问卷。",
+        "default": ""
+      },
+      "limitations_i18n": {
+        "en": [
+          "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+          "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+        ],
+        "zh-CN": [
+          "多个基因均可能参与。单个位点无法判断某人遇到强光时是否会打喷嚏。",
+          "中国队列报告的关联等位基因为 T，23andMe 队列报告的为 C。本卡片仅展示中国研究中该标记的拷贝数，无法据此推断个人发生概率。"
+        ],
+        "default": []
+      }
+    },
+    "hair-greying": {
+      "status": "curated",
+      "evidence_grade": "B",
+      "population_scope": "The CANDELA study recruited people in five Latin American countries.",
+      "rule_type": "genotype",
+      "variants": [
+        {
+          "rsid": "rs12203592",
+          "gene": "IRF4",
+          "literature_alleles": "C>T",
+          "input_alleles": "C>T",
+          "mapping_status": "complete",
+          "genotype_map": {
+            "CC": {
+              "score": 0,
+              "result_key": "copies_0"
+            },
+            "CT": {
+              "score": 1,
+              "result_key": "copies_1"
+            },
+            "TT": {
+              "score": 2,
+              "result_key": "copies_2"
+            }
+          },
+          "effect_allele": "T",
+          "direction": "increase",
+          "literature_effect_allele": "T",
+          "forward_effect_allele": "T",
+          "strand_transform": "identity"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "PMID",
+          "id": "26926045",
+          "role": "primary",
+          "title": "A genome-wide association scan in admixed Latin Americans identifies loci influencing facial and scalp hair features",
+          "journal": "Nature Communications",
+          "year": 2016,
+          "studyType": "GWAS",
+          "population": "The CANDELA study recruited people in five Latin American countries.",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/26926045/",
+          "supports": [
+            "rs12203592",
+            "Greater extent of hair greying"
+          ],
+          "effectAllele": "T",
+          "forwardEffectAllele": "T",
+          "direction": "increase"
+        }
+      ],
+      "fixtures": [
+        {
+          "name": "CC",
+          "genotypes": {
+            "rs12203592": "CC"
+          },
+          "expected_score": 0,
+          "expected_result_key": "copies_0"
+        },
+        {
+          "name": "CT",
+          "genotypes": {
+            "rs12203592": "CT"
+          },
+          "expected_score": 1,
+          "expected_result_key": "copies_1"
+        },
+        {
+          "name": "TT",
+          "genotypes": {
+            "rs12203592": "TT"
+          },
+          "expected_score": 2,
+          "expected_result_key": "copies_2"
+        }
+      ],
+      "limitations": [
+        "Age and other genes contribute. This marker cannot predict the age of onset."
+      ],
+      "population_scope_i18n": {
+        "en": "The CANDELA study recruited people in five Latin American countries.",
+        "zh-CN": "CANDELA 研究招募了五个拉丁美洲国家的参与者。",
+        "default": ""
+      },
+      "limitations_i18n": {
+        "en": [
+          "Age and other genes contribute. This marker cannot predict the age of onset."
+        ],
+        "zh-CN": [
+          "年龄和其他位点也会影响头发变白，单个位点无法预测开始变白的年龄。"
+        ],
+        "default": []
       }
     }
   }

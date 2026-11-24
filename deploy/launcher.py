@@ -108,9 +108,9 @@ def _initialize_database() -> None:
         raise RuntimeError(
             f"trait catalog count {catalog['count']} does not match {expected_count}"
         )
-    if catalog.get("locus_count") != 153 or catalog.get("verified_locus_count") != 153:
+    if catalog.get("locus_count") != 154 or catalog.get("verified_locus_count") != 154:
         raise RuntimeError(
-            "release requires 153 verified trait loci; "
+            "release requires 154 verified trait loci; "
             f"found {catalog.get('verified_locus_count', 0)}/{catalog.get('locus_count', 0)}"
         )
     if os.environ.get("ROOTARA_REQUIRE_CURATED_CATALOG") == "1":

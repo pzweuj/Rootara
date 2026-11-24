@@ -45,7 +45,7 @@ def validate_production_catalog(
     default_path: str | Path = DEFAULT,
     evidence_path: str | Path = EVIDENCE,
     locus_path: str | Path = LOCI,
-    expected_count: int = 150,
+    expected_count: int = 152,
 ) -> list[str]:
     """Return errors that must block a production release.
 
@@ -71,8 +71,8 @@ def validate_production_catalog(
 
     ids = [trait.get("id") for trait in traits]
     declared_rsids = {rsid for trait in traits for rsid in trait.get("rsids", [])}
-    if len(declared_rsids) != 153:
-        errors.append(f"production locus count {len(declared_rsids)} != 153")
+    if len(declared_rsids) != 154:
+        errors.append(f"production locus count {len(declared_rsids)} != 154")
     if set(loci) != declared_rsids:
         errors.append("trait locus registry does not exactly match production RSIDs")
     for rsid, locus in loci.items():

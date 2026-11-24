@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "description": "Normalized, versioned Rootara production trait catalog.",
-  "reviewedAt": "2026-08-26",
+  "reviewedAt": "2026-11-24",
   "evidenceMetadata": {
     "schema_version": 1,
     "description": "Evidence, complete legacy genotype mappings and executable fixtures for every Rootara default rule.",
     "release_contract": {
-      "target_count": 150,
+      "target_count": 152,
       "requires_all_curated": true,
       "allowed_evidence_grades": [
         "A",
@@ -152,13 +152,13 @@
   "locusRegistry": {
     "schemaVersion": 1,
     "description": "Reviewed Rootara trait locus registry; runtime use requires status=verified.",
-    "reviewedAt": "2026-08-26",
+    "reviewedAt": "2026-11-24",
     "primarySource": "NCBI RefSNP",
     "crossCheckSource": "Ensembl GRCh38/GRCh37 variation APIs",
     "counts": {
-      "expected": 153,
-      "resolved": 153,
-      "verified": 153,
+      "expected": 154,
+      "resolved": 154,
+      "verified": 154,
       "conflicts": 0,
       "fetchErrors": 0
     },
@@ -10466,6 +10466,71 @@
           "ensemblGRCh37": "https://grch37.rest.ensembl.org/variation/human/rs9985399?content-type=application/json",
           "orientationResolution": null,
           "assemblyResolution": null
+        }
+      },
+      "rs10427255": {
+        "rsid": "rs10427255",
+        "gene": "Near ZEB2",
+        "status": "verified",
+        "reviewedAt": "2026-11-24",
+        "grch38": {
+          "chromosome": "2",
+          "position": 145367955,
+          "reference": "C",
+          "alternates": [
+            "T"
+          ],
+          "accession": "NC_000002.12",
+          "oppositeOrientation": false
+        },
+        "grch37": {
+          "chromosome": "2",
+          "position": 146125523,
+          "reference": "C",
+          "alternates": [
+            "T"
+          ],
+          "strand": 1,
+          "primaryAlleles": [
+            "C",
+            "T"
+          ]
+        },
+        "ensemblGRCh38": {
+          "chromosome": "2",
+          "position": 145367955,
+          "reference": "C",
+          "alternates": [
+            "T"
+          ],
+          "strand": 1,
+          "primaryAlleles": [
+            "C",
+            "T"
+          ]
+        },
+        "traitAlleles": [
+          "C",
+          "T"
+        ],
+        "traitAlleleSelection": "study_and_reference_agreement",
+        "alleleEncoding": "nucleotide",
+        "traitReferenceAllele": null,
+        "literatureAlleles": "C>T",
+        "literatureEffectAllele": "T",
+        "previousInputAlleles": "C>T",
+        "previousEffectAllele": "T",
+        "forwardEffectAllele": "T",
+        "effectDirection": "increase",
+        "inputTransform": "identity",
+        "sourceAgreement": true,
+        "sources": {
+          "ncbi": {
+            "url": "https://api.ncbi.nlm.nih.gov/variation/v0/refsnp/10427255",
+            "lastUpdate": "2024-10-30T23:09Z"
+          },
+          "ensemblGRCh38": "https://rest.ensembl.org/variation/human/rs10427255?content-type=application/json",
+          "ensemblGRCh37": "https://grch37.rest.ensembl.org/variation/human/rs10427255?content-type=application/json"
         }
       }
     },
@@ -38937,7 +39002,332 @@
           "default": ""
         }
       }
+    },
+    {
+      "id": "photic-sneeze",
+      "name": {
+        "en": "Photic sneeze reflex",
+        "zh-CN": "强光喷嚏反射",
+        "default": ""
+      },
+      "description": {
+        "en": "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations.",
+        "zh-CN": "中国队列报告的关联等位基因为 T，23andMe 队列报告的为 C。本卡片仅展示中国研究中该标记的拷贝数，无法据此推断个人发生概率。",
+        "default": ""
+      },
+      "icon": "Sun",
+      "confidence": "medium",
+      "isDefault": true,
+      "createdAt": "2026-11-24T00:00:00Z",
+      "category": "appearance",
+      "rsids": [
+        "rs10427255"
+      ],
+      "formula": "SCORE(rs10427255:TT=2,CT=1,CC=0)",
+      "scoreThresholds": {
+        "copies_2": 2,
+        "copies_1": 1,
+        "copies_0": 0
+      },
+      "result": {
+        "copies_0": {
+          "en": "0 copies of the associated T allele",
+          "zh-CN": "检出 0 个关联 T 等位基因",
+          "default": ""
+        },
+        "copies_1": {
+          "en": "1 copy of the associated T allele",
+          "zh-CN": "检出 1 个关联 T 等位基因",
+          "default": ""
+        },
+        "copies_2": {
+          "en": "2 copies of the associated T allele",
+          "zh-CN": "检出 2 个关联 T 等位基因",
+          "default": ""
+        }
+      },
+      "reference": [
+        "30899065",
+        "20585627"
+      ],
+      "evidenceStatus": "curated",
+      "evidenceGrade": "B",
+      "limitations": [
+        "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+        "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+      ],
+      "reviewBlockers": [],
+      "populationScope": "This association was observed in Chinese participants who answered a questionnaire.",
+      "evidenceRecord": {
+        "status": "curated",
+        "evidence_grade": "B",
+        "population_scope": "This association was observed in Chinese participants who answered a questionnaire.",
+        "rule_type": "genotype",
+        "variants": [
+          {
+            "rsid": "rs10427255",
+            "gene": "Near ZEB2",
+            "literature_alleles": "C>T",
+            "input_alleles": "C>T",
+            "mapping_status": "complete",
+            "genotype_map": {
+              "CC": {
+                "score": 0,
+                "result_key": "copies_0"
+              },
+              "CT": {
+                "score": 1,
+                "result_key": "copies_1"
+              },
+              "TT": {
+                "score": 2,
+                "result_key": "copies_2"
+              }
+            },
+            "effect_allele": "T",
+            "direction": "increase",
+            "literature_effect_allele": "T",
+            "forward_effect_allele": "T",
+            "strand_transform": "identity"
+          }
+        ],
+        "evidence": [
+          {
+            "type": "PMID",
+            "id": "30899065",
+            "role": "primary",
+            "title": "A genome-wide association study on photic sneeze reflex in the Chinese population",
+            "journal": "Scientific Reports",
+            "year": 2019,
+            "studyType": "GWAS",
+            "population": "This association was observed in Chinese participants who answered a questionnaire.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/30899065/",
+            "supports": [
+              "rs10427255",
+              "Sneeze on moving into bright light"
+            ],
+            "effectAllele": "T",
+            "forwardEffectAllele": "T",
+            "direction": "increase"
+          },
+          {
+            "type": "PMID",
+            "id": "20585627",
+            "role": "contrasting cohort",
+            "title": "Web-based, participant-driven studies yield novel genetic associations for common traits",
+            "journal": "PLoS Genetics",
+            "year": 2010,
+            "studyType": "GWAS",
+            "population": "23andMe study participants",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/20585627/",
+            "supports": [
+              "rs10427255",
+              "Sneeze on moving into bright light"
+            ],
+            "effectAllele": "C",
+            "forwardEffectAllele": "C",
+            "direction": "increase"
+          }
+        ],
+        "fixtures": [
+          {
+            "name": "CC",
+            "genotypes": {
+              "rs10427255": "CC"
+            },
+            "expected_score": 0,
+            "expected_result_key": "copies_0"
+          },
+          {
+            "name": "CT",
+            "genotypes": {
+              "rs10427255": "CT"
+            },
+            "expected_score": 1,
+            "expected_result_key": "copies_1"
+          },
+          {
+            "name": "TT",
+            "genotypes": {
+              "rs10427255": "TT"
+            },
+            "expected_score": 2,
+            "expected_result_key": "copies_2"
+          }
+        ],
+        "limitations": [
+          "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+          "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+        ],
+        "population_scope_i18n": {
+          "en": "This association was observed in Chinese participants who answered a questionnaire.",
+          "zh-CN": "该关联来自中国参与者的自报问卷。",
+          "default": ""
+        },
+        "limitations_i18n": {
+          "en": [
+            "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+            "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+          ],
+          "zh-CN": [
+            "多个基因均可能参与。单个位点无法判断某人遇到强光时是否会打喷嚏。",
+            "中国队列报告的关联等位基因为 T，23andMe 队列报告的为 C。本卡片仅展示中国研究中该标记的拷贝数，无法据此推断个人发生概率。"
+          ],
+          "default": []
+        }
+      }
+    },
+    {
+      "id": "hair-greying",
+      "name": {
+        "en": "Hair greying",
+        "zh-CN": "头发变白倾向",
+        "default": ""
+      },
+      "description": {
+        "en": "Greater extent of hair greying was associated with the T allele at rs12203592 in the study population.",
+        "zh-CN": "研究人群中，rs12203592 的 T 等位基因与较高的头发变白程度相关。",
+        "default": ""
+      },
+      "icon": "Scissors",
+      "confidence": "medium",
+      "isDefault": true,
+      "createdAt": "2026-11-24T00:00:00Z",
+      "category": "appearance",
+      "rsids": [
+        "rs12203592"
+      ],
+      "formula": "SCORE(rs12203592:TT=2,CT=1,CC=0)",
+      "scoreThresholds": {
+        "copies_2": 2,
+        "copies_1": 1,
+        "copies_0": 0
+      },
+      "result": {
+        "copies_0": {
+          "en": "0 copies of the associated T allele",
+          "zh-CN": "检出 0 个关联 T 等位基因",
+          "default": ""
+        },
+        "copies_1": {
+          "en": "1 copy of the associated T allele",
+          "zh-CN": "检出 1 个关联 T 等位基因",
+          "default": ""
+        },
+        "copies_2": {
+          "en": "2 copies of the associated T allele",
+          "zh-CN": "检出 2 个关联 T 等位基因",
+          "default": ""
+        }
+      },
+      "reference": [
+        "26926045"
+      ],
+      "evidenceStatus": "curated",
+      "evidenceGrade": "B",
+      "limitations": [
+        "Age and other genes contribute. This marker cannot predict the age of onset."
+      ],
+      "reviewBlockers": [],
+      "populationScope": "The CANDELA study recruited people in five Latin American countries.",
+      "evidenceRecord": {
+        "status": "curated",
+        "evidence_grade": "B",
+        "population_scope": "The CANDELA study recruited people in five Latin American countries.",
+        "rule_type": "genotype",
+        "variants": [
+          {
+            "rsid": "rs12203592",
+            "gene": "IRF4",
+            "literature_alleles": "C>T",
+            "input_alleles": "C>T",
+            "mapping_status": "complete",
+            "genotype_map": {
+              "CC": {
+                "score": 0,
+                "result_key": "copies_0"
+              },
+              "CT": {
+                "score": 1,
+                "result_key": "copies_1"
+              },
+              "TT": {
+                "score": 2,
+                "result_key": "copies_2"
+              }
+            },
+            "effect_allele": "T",
+            "direction": "increase",
+            "literature_effect_allele": "T",
+            "forward_effect_allele": "T",
+            "strand_transform": "identity"
+          }
+        ],
+        "evidence": [
+          {
+            "type": "PMID",
+            "id": "26926045",
+            "role": "primary",
+            "title": "A genome-wide association scan in admixed Latin Americans identifies loci influencing facial and scalp hair features",
+            "journal": "Nature Communications",
+            "year": 2016,
+            "studyType": "GWAS",
+            "population": "The CANDELA study recruited people in five Latin American countries.",
+            "url": "https://pubmed.ncbi.nlm.nih.gov/26926045/",
+            "supports": [
+              "rs12203592",
+              "Greater extent of hair greying"
+            ],
+            "effectAllele": "T",
+            "forwardEffectAllele": "T",
+            "direction": "increase"
+          }
+        ],
+        "fixtures": [
+          {
+            "name": "CC",
+            "genotypes": {
+              "rs12203592": "CC"
+            },
+            "expected_score": 0,
+            "expected_result_key": "copies_0"
+          },
+          {
+            "name": "CT",
+            "genotypes": {
+              "rs12203592": "CT"
+            },
+            "expected_score": 1,
+            "expected_result_key": "copies_1"
+          },
+          {
+            "name": "TT",
+            "genotypes": {
+              "rs12203592": "TT"
+            },
+            "expected_score": 2,
+            "expected_result_key": "copies_2"
+          }
+        ],
+        "limitations": [
+          "Age and other genes contribute. This marker cannot predict the age of onset."
+        ],
+        "population_scope_i18n": {
+          "en": "The CANDELA study recruited people in five Latin American countries.",
+          "zh-CN": "CANDELA 研究招募了五个拉丁美洲国家的参与者。",
+          "default": ""
+        },
+        "limitations_i18n": {
+          "en": [
+            "Age and other genes contribute. This marker cannot predict the age of onset."
+          ],
+          "zh-CN": [
+            "年龄和其他位点也会影响头发变白，单个位点无法预测开始变白的年龄。"
+          ],
+          "default": []
+        }
+      }
     }
   ],
-  "catalogVersion": "749171e48dad594d"
+  "catalogVersion": "c7ece968c6beb7cf"
 }

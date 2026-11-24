@@ -8,7 +8,7 @@ Rootara is a self-hosted platform for importing and exploring personal genetic d
 
 > **Testing status:** genetic trait results are currently test data and must not be used for medical, health, or other important decisions.
 
-The v1 catalog ships exactly 150 reviewed relative-tendency cards backed by 153
+The v1 catalog ships exactly 152 reviewed relative-tendency cards backed by 154
 verified variant loci. Each card exposes its evidence grade, source links,
 population scope, and limitations; none is a diagnosis or treatment
 recommendation. The release supports `linux/amd64`.
@@ -54,7 +54,7 @@ docker run -d --name rootara \
 | `CACHE_TTL` | `3600` | In-memory cache TTL in seconds |
 | `CACHE_MAX_ENTRIES` | `1024` | Maximum in-memory cache entries |
 
-The release image also enforces `ROOTARA_EXPECTED_TRAIT_COUNT=150` and
+The release image also enforces `ROOTARA_EXPECTED_TRAIT_COUNT=152` and
 `ROOTARA_REQUIRE_CURATED_CATALOG=1`; startup is rejected if the shipped
 catalog is incomplete or contains an audit-blocked rule.
 
@@ -71,6 +71,12 @@ corresponding authenticated endpoints are `GET /api/traits/catalog`,
 `GET /api/reports/{reportId}/traits/results`, and
 `GET /api/traits/{traitId}?report_id=...`. Missing genotypes are reported as
 `insufficient_data` with the missing RSIDs; they are never imputed.
+
+New uploads use Zstandard-compressed Parquet with byte-exact raw export and projected locus reads. Indexed SQLite tables serve report browsing and RSID lookup. Existing TXT archives remain readable. Reimport a source file to apply the new multi-allelic matching rules to a historical report.
+
+With the service stopped, run `docker compose run --rm --no-deps --entrypoint python rootara -m scripts.raw_archive` to convert existing TXT uploads. The command verifies SHA-256 and keeps the source. Add `--remove-text` to remove each TXT after verification.
+
+Imports are queued and resume after service restarts. Dashboard responses are cached in browser memory per report for five minutes and cleared on sign-out. The ancestry map uses bundled country boundaries. For upgrades with an explicit `ROOTARA_EXPECTED_TRAIT_COUNT=150`, change the value to `152`.
 
 ## Data, backups, and upgrades
 

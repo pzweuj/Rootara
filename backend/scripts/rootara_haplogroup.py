@@ -10,82 +10,25 @@ import argparse
 import sqlite3
 import tempfile
 import pandas as pd
-import shutil
+import subprocess
 from scripts.runtime_config import HAPLOGROUPER_DIR, TEMP_DIR
 
-def y_haplogroup(vcf_file, output_dir, rpt_id):
-    base_dir = str(HAPLOGROUPER_DIR)
-    data_dir = f'{base_dir}/data'
-    tool = f'{base_dir}/haploGrouper.py'
-
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    cmd = f"""
-        python3 {tool} \\
-            -v {vcf_file} \\
-            -t {data_dir}/chrY_isogg2019_tree.txt \\
-            -l {data_dir}/chrY_isogg2019-decode1_loci_b37.txt \\
-            -o {output_dir}/{rpt_id}.YHap.txt
-    """
-
-    os.system(cmd)
-
-def mt_haplogroup(vcf_file, output_dir, rpt_id):
-    base_dir = str(HAPLOGROUPER_DIR)
-    data_dir = f'{base_dir}/data'
-    tool = f'{base_dir}/haploGrouper.py'
-
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    cmd = f"""
-        python3 {tool} \\
-            -v {vcf_file} \\
-            -t {data_dir}/chrMT_phylotree17_tree.txt \\
-            -l {data_dir}/chrMT_phylotree17_loci.txt \\
-            -o {output_dir}/{rpt_id}.MTHap.txt
-    """
-
-    os.system(cmd)
-
-# 查询数据库中这个编号的报告是否已存在结果，如已存在，不重新分析
 def insert_haplogroup_to_db(rpt_id, vcf_file, db_file, force=False):
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-
-    # 检查是否已存在结果
-    cursor.execute("SELECT COUNT(*) FROM haplogroup WHERE report_id = ?", (rpt_id,))
-    count = cursor.fetchone()[0]
-
-    if count > 0 and not force:
-        print(f"报告 {rpt_id} 已存在结果，跳过分析。")
-        return
-
-    # 创建一个固定的临时目录
-    temp_base_dir = str(TEMP_DIR)
-    if not os.path.exists(temp_base_dir):
-        os.makedirs(temp_base_dir, exist_ok=True)
-    
-    # 使用固定目录创建临时目录
-    running_dir = tempfile.mkdtemp(dir=temp_base_dir)
-    
-    y_haplogroup(vcf_file, running_dir, rpt_id)
-    mt_haplogroup(vcf_file, running_dir, rpt_id)
-    y_haplogroup_result = f"{running_dir}/{rpt_id}.YHap.txt"
-    mt_haplogroup_result = f"{running_dir}/{rpt_id}.MTHap.txt"
-
-    # 对结果进行解析
-    df_y = pd.read_csv(y_haplogroup_result, sep='\t', header=0)
-    df_mt = pd.read_csv(mt_haplogroup_result, sep='\t', header=0)
-
-    y_hap = df_y['Haplogroup'].values[0]
-    mt_hap = df_mt['Haplogroup'].values[0]
-
-    # 插入结果到数据库
-    cursor.execute("INSERT INTO haplogroup (report_id, y_hap, mt_hap) VALUES (?, ?, ?)", (rpt_id, y_hap, mt_hap))
-    conn.commit()
-    shutil.rmtree(running_dir)
+    with sqlite3.connect(db_file) as conn:
+        if not force and conn.execute("SELECT 1 FROM haplogroup WHERE report_id=?", (rpt_id,)).fetchone():
+            return
+        data = HAPLOGROUPER_DIR / "data"
+        results = []
+        with tempfile.TemporaryDirectory(dir=TEMP_DIR) as work:
+            for tree, loci in (("chrY_isogg2019_tree", "chrY_isogg2019-decode1_loci_b37"),
+                               ("chrMT_phylotree17_tree", "chrMT_phylotree17_loci")):
+                output = os.path.join(work, tree + ".tsv")
+                subprocess.run([sys.executable, str(HAPLOGROUPER_DIR / "haploGrouper.py"),
+                                "-v", str(vcf_file), "-t", str(data / (tree + ".txt")),
+                                "-l", str(data / (loci + ".txt")), "-o", output], check=True)
+                results.append(pd.read_csv(output, sep="\t").iloc[0]["Haplogroup"])
+        conn.execute("INSERT OR REPLACE INTO haplogroup (report_id,y_hap,mt_hap) VALUES (?,?,?)",
+                     (rpt_id, *results))
 
 def main():
     parser = argparse.ArgumentParser(description='分析单倍型')

@@ -1,13 +1,20 @@
 # coding=utf-8
 import os
 import secrets
+import tempfile
+import asyncio
+from pathlib import Path
+from typing import Literal
+from fastapi.concurrency import run_in_threadpool
+from scripts import import_jobs
 import time
 import uuid
 import logging
 import json
 from contextlib import asynccontextmanager
+from functools import lru_cache
 from fastapi import FastAPI, HTTPException, Depends, Header, Response, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field, RootModel
 from typing import List, Dict, Any, Union
 
@@ -42,7 +49,9 @@ async def lifespan(app: FastAPI):
 
     logger.info("Rootara API 服务启动完成")
 
+    import_jobs.initialize()
     yield
+    import_jobs.executor.shutdown(wait=True)
 
     # 关闭时清理
     logger.info("Rootara API 服务关闭中...")
@@ -65,6 +74,8 @@ from scripts.trait_catalog_service import (
     get_legacy_traits_payload,
     get_report_results,
     get_trait_detail,
+    get_trait_highlights,
+    dashboard_revision,
 )
 from scripts.trait_report_migration import get_report_backfill_status
 
@@ -172,7 +183,7 @@ async def api_get_user_id(api_key: str = Depends(verify_api_key)):
 class CreateReportInput(BaseModel):
     user_id: str
     input_data: str
-    source_from: str
+    source_from: Literal["ancestry", "23andme", "wegene"]
     report_name: str
     default_report: bool = False
 
@@ -182,16 +193,47 @@ async def api_create_new_report(input_data: CreateReportInput, api_key: str = De
     """
     Create a new report.
     """
-    create_new_report(
-        input_data.user_id,
+    await asyncio.wrap_future(import_jobs.executor.submit(
+        create_new_report, input_data.user_id,
         input_data.input_data,
         input_data.source_from,
         input_data.report_name,
         DB_PATH,
         input_data.default_report,
         False
-    )
+    ))
     return StatusOutput(status_code=201)
+
+@app.post("/imports/{job}", status_code=202)
+async def submit_import(job: uuid.UUID, request: Request, source: Literal["23andme","ancestry","wegene"],
+                        name: str, default: bool = False, api_key: str = Depends(verify_api_key)):
+    if not name.strip() or len(name) > 200:
+        raise HTTPException(422, "Invalid report name")
+    with tempfile.NamedTemporaryFile(dir=import_jobs.SPOOL, prefix="receiving-", suffix=".part", delete=False) as upload:
+        path = Path(upload.name)
+    try:
+        size = 0
+        with path.open("wb") as handle:
+            async for chunk in request.stream():
+                size += len(chunk)
+                if size > 50 * 1024 * 1024:
+                    raise HTTPException(413, "Maximum upload size is 50 MiB")
+                handle.write(chunk)
+        if not size:
+            raise HTTPException(422, "Empty upload")
+        await run_in_threadpool(import_jobs.enqueue, str(job), path, get_user_id(DB_PATH), source, name, default)
+        return {"id": str(job)}
+    finally:
+        path.unlink(missing_ok=True)
+
+
+@app.get("/imports/{job}")
+def import_status(job: uuid.UUID, api_key: str = Depends(verify_api_key)):
+    result = import_jobs.status(str(job))
+    if result is None:
+        raise HTTPException(404, "Import not found")
+    return result
+
 
 ## 导出原始数据
 @app.post("/report/{report_id}/rawdata", tags=["report_rawdata"])
@@ -205,8 +247,8 @@ async def api_export_rawdata(report_id: str, api_key: str = Depends(verify_api_k
         raise HTTPException(status_code=404, detail="原始数据文件不存在或无法读取")
 
     # 返回文件内容作为响应
-    return Response(
-        content=file_content,
+    return StreamingResponse(
+        file_content,
         media_type="text/plain",
         headers={
             "Content-Disposition": f"attachment; filename={filename}"
@@ -277,6 +319,26 @@ async def api_get_all_report_info(api_key: str = Depends(verify_api_key)):
         raise HTTPException(status_code=500, detail=f"获取报告列表失败: {str(e)}")
 
 ## 查询祖源分析结果 - 从GET改为POST
+@app.get("/reports/{report_id}/dashboard")
+def dashboard(report_id: str, api_key: str = Depends(verify_api_key)):
+    info = get_report_info(report_id, DB_PATH)
+    if not info:
+        raise HTTPException(status_code=404, detail="Report not found")
+    return _dashboard_snapshot(report_id, info[6], dashboard_revision(report_id, DB_PATH))
+
+
+@lru_cache(maxsize=32)
+def _dashboard_snapshot(report_id, total_snps, revision):
+    # Report import and custom trait revisions are part of the cache key.
+    return {
+        "totalSnps": total_snps,
+        "ancestry": get_admixture_info(report_id, DB_PATH),
+        "haplogroups": get_haplogroup_info(report_id, DB_PATH),
+        "clinvar": get_clinvar_data(report_id, DB_PATH, summary=True),
+        "traits": get_trait_highlights(report_id, DB_PATH),
+    }
+
+
 @app.post("/report/{report_id}/admixture", tags=["admixture_info"])
 async def api_get_admixture_info(report_id: str, api_key: str = Depends(verify_api_key)):
     """
@@ -315,8 +377,8 @@ async def api_get_snp_info_by_rsid(input_data: RsidInput, api_key: str = Depends
 # 添加表格数据查询的请求模型
 class TableQueryInput(BaseModel):
     report_id: str
-    page_size: int = 1000
-    page: int = 1
+    page_size: int = Field(default=1000, ge=1, le=5000)
+    page: int = Field(default=1, ge=1)
     sort_by: str = ""  # 修改为空字符串，而不是 None
     sort_order: str = "asc"
     search_term: str = ""  # 同样修改为空字符串
@@ -324,7 +386,7 @@ class TableQueryInput(BaseModel):
 
 ## 查询表格数据
 @app.post("/report/table", tags=["report_table"])
-async def api_get_table_data(input_data: TableQueryInput, api_key: str = Depends(verify_api_key)):
+def api_get_table_data(input_data: TableQueryInput, api_key: str = Depends(verify_api_key)):
     """
     查询报告表格数据，支持分页、排序、搜索和筛选。
     """
@@ -346,6 +408,10 @@ async def api_get_table_data(input_data: TableQueryInput, api_key: str = Depends
 
 # 添加ClinVar数据查询的请求模型
 class ClinvarQueryInput(BaseModel):
+    page: int | None = Field(default=None, ge=1)
+    page_size: int = Field(default=10, ge=1, le=500)
+    summary: bool = False
+    classification: str | None = None
     report_id: str
     sort_by: str = ""  # 默认为空字符串
     sort_order: str = "asc"
@@ -355,7 +421,7 @@ class ClinvarQueryInput(BaseModel):
 
 ## 查询ClinVar数据
 @app.post("/report/clinvar", tags=["report_clinvar"])
-async def api_get_clinvar_data(input_data: ClinvarQueryInput, api_key: str = Depends(verify_api_key)):
+def api_get_clinvar_data(input_data: ClinvarQueryInput, api_key: str = Depends(verify_api_key)):
     """
     查询报告中的ClinVar数据，支持分页、排序、搜索和筛选。
     返回结果包含致病性分类统计信息。
@@ -368,7 +434,8 @@ async def api_get_clinvar_data(input_data: ClinvarQueryInput, api_key: str = Dep
             input_data.sort_order,
             input_data.search_term,
             input_data.filters,
-            input_data.indel
+            input_data.indel, page=input_data.page, page_size=input_data.page_size,
+            summary=input_data.summary, classification=input_data.classification,
         )
         return result
     except Exception as e:

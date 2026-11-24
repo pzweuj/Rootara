@@ -6,6 +6,7 @@ import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/contexts/language-context"
+import { clearDashboardCache } from "@/lib/dashboard-cache"
 import type { Trait } from "@/types/trait"
 
 interface TraitImportExportProps {
@@ -220,6 +221,9 @@ export function TraitImportExport({ onImport }: TraitImportExportProps) {
         body: JSON.stringify({ input_data: JSON.stringify(processedTraits) }),
       })
 
+      if (response.ok) {
+        clearDashboardCache()
+      }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }

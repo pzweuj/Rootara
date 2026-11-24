@@ -9,6 +9,8 @@ import {
   type ReactNode,
 } from "react"
 
+import { clearDashboardCache } from "@/lib/dashboard-cache"
+
 type User = {
   name: string
   email: string
@@ -103,6 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async (): Promise<void> => {
     // 立即清除用户状态，提高响应速度
+    clearDashboardCache()
     setUser(null)
 
     try {

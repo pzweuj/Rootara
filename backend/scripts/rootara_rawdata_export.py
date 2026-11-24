@@ -1,32 +1,14 @@
-# coding=utf-8
-# 原始数据导出
-
-import os
+from scripts.raw_archive import original_bytes
 from scripts.runtime_config import RAWDATA_DIR
+from scripts.rootara_table_info import validate_report_table_name
+
 
 def export_rawdata(report_id):
-    if report_id == 'RPT_TEMPLATE01':
-        print('模板报告，无法导出!')
+    validate_report_table_name(report_id)
+    if report_id == "RPT_TEMPLATE01":
         return None, None
-    
-    rawdata_id = report_id.replace('RPT_', 'RDT_')
-    rawdata_path = str(RAWDATA_DIR)
-    
-    if os.path.exists(rawdata_path):
-        for file in os.listdir(rawdata_path):
-            if file.startswith(rawdata_id) and len(rawdata_id) == 14:
-                rawdata_file = os.path.join(rawdata_path, file)
-                
-                # 获取文件名和扩展名
-                filename = os.path.basename(rawdata_file)
-                
-                # 读取文件内容
-                try:
-                    with open(rawdata_file, 'r', encoding='utf-8') as f:
-                        file_content = f.read()
-                    return filename, file_content
-                except Exception as e:
-                    print(f"读取文件失败: {str(e)}")
-                    return None, None
-    
+    prefix = "RDT_" + report_id[4:]
+    for extension in ("parquet", "txt"):
+        for path in sorted(RAWDATA_DIR.glob(f"{prefix}.*.{extension}")):
+            return path.with_suffix(".txt").name, original_bytes(path)
     return None, None

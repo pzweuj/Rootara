@@ -1,185 +1,31 @@
 "use client"
 
-import { Dna, Globe, Heart, Brain } from "lucide-react"
+import { Dna } from "lucide-react"
 import { ExternalLink } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react" // 添加useState和useEffect
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
-import { useReport } from "@/contexts/report-context"
 
-const profileData = {
-  totalSnps: 0, // 初始化为0，将从API获取
-  healthTraits: 127,
-  clinvarPathogenic: 20,
-  reportId: "RPT_TEMPLATE01",
-}
-
-// 定义单倍群数据接口
-interface HaplogroupData {
-  y_hap: string
-  mt_hap: string
-}
-
-export function GeneticProfileOverview() {
-  const { currentReportId } = useReport()
+export function GeneticProfileOverview({
+  currentReportId,
+  totalSnps,
+  ancestry,
+  haplogroups,
+}: {
+  currentReportId: string
+  totalSnps: number
+  ancestry: Record<string, number>
+  haplogroups: { y_hap?: string; mt_hap?: string }
+}) {
   const { t, language } = useLanguage()
-  const [ancestryComposition, setAncestryComposition] = useState([
-    { region: "East Asian", percentage: 45 },
-    { region: "European", percentage: 30 },
-    { region: "South Asian", percentage: 15 },
-    { region: "African", percentage: 10 },
-  ])
-  const [loading, setLoading] = useState(false)
-  const [reportInfoLoading, setReportInfoLoading] = useState(false)
-  const [haplogroupData, setHaplogroupData] = useState<HaplogroupData | null>(
-    null
-  )
-  const [haplogroupLoading, setHaplogroupLoading] = useState(true)
-  const [haplogroupError, setHaplogroupError] = useState<string | null>(null)
-
-  profileData.reportId = currentReportId
-
-  // 从API获取报告信息
-  useEffect(() => {
-    const fetchReportInfo = async () => {
-      if (!currentReportId) {
-        return
-      }
-
-      setReportInfoLoading(true)
-      try {
-        // 调用我们的Next.js API路由而不是直接调用后端
-        const response = await fetch(`/api/report/info`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ reportId: currentReportId }),
-        })
-
-        if (!response.ok) {
-          throw new Error("获取报告信息失败")
-        }
-
-        const data = await response.json()
-
-        // 如果API返回了错误信息
-        if (data.error) {
-          throw new Error(data.error)
-        }
-
-        // 根据API返回格式，totalSnps是数组中的第7个元素（索引为6）
-        if (Array.isArray(data) && data.length >= 7) {
-          profileData.totalSnps = data[6]
-        }
-      } catch (error) {
-        console.error("获取报告信息错误:", error)
-      } finally {
-        setReportInfoLoading(false)
-      }
-    }
-
-    fetchReportInfo()
-  }, [currentReportId])
-
-  // 从API获取祖源构成数据
-  useEffect(() => {
-    const fetchAncestryData = async () => {
-      if (!currentReportId) {
-        return
-      }
-
-      setLoading(true)
-      try {
-        // 调用我们的Next.js API路由而不是直接调用后端
-        const response = await fetch(`/api/ancestry/admixture`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ reportId: currentReportId }),
-        })
-
-        if (!response.ok) {
-          throw new Error("获取祖源数据失败")
-        }
-
-        const data = await response.json()
-
-        // 如果API返回了错误信息
-        if (data.error) {
-          throw new Error(data.error)
-        }
-
-        // 将数据转换为数组格式，按百分比降序排序，并只保留前4个区域
-        const sortedData = Object.entries(data)
-          .map(([region, percentage]) => ({
-            region,
-            percentage: Number(percentage),
-          }))
-          .sort((a, b) => b.percentage - a.percentage)
-          .slice(0, 4)
-
-        setAncestryComposition(sortedData)
-      } catch (error) {
-        console.error("获取祖源数据错误:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAncestryData()
-  }, [currentReportId])
-
-  // 获取单倍群数据
-  useEffect(() => {
-    const fetchHaplogroupData = async () => {
-      if (!currentReportId) {
-        console.log("没有可用的报告ID")
-        return
-      }
-
-      setHaplogroupLoading(true)
-      setHaplogroupError(null)
-
-      try {
-        // 调用我们的Next.js API路由而不是直接调用后端
-        const response = await fetch(`/api/ancestry/haplogroup`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ reportId: currentReportId }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`API请求失败: ${response.status}`)
-        }
-
-        const data = await response.json()
-
-        // 如果API返回了错误信息
-        if (data.error) {
-          throw new Error(data.error)
-        }
-
-        setHaplogroupData(data)
-      } catch (err) {
-        console.error("获取单倍群数据失败:", err)
-        setHaplogroupError(
-          err instanceof Error ? err.message : "获取单倍群数据失败"
-        )
-      } finally {
-        setHaplogroupLoading(false)
-      }
-    }
-
-    fetchHaplogroupData()
-  }, [currentReportId])
+  const ancestryComposition = Object.entries(ancestry)
+    .filter(([, percentage]) => percentage > 0)
+    .map(([region, percentage]) => ({ region, percentage }))
+    .sort((a, b) => b.percentage - a.percentage)
+    .slice(0, 4)
 
   // 更新区域名称翻译对象
   const regionTranslations = {
@@ -284,7 +130,7 @@ export function GeneticProfileOverview() {
           </CardTitle>
           <Badge variant="outline" className="text-xs font-mono">
             {t("reportId")}
-            {profileData.reportId}
+            {currentReportId}
           </Badge>
         </div>
       </CardHeader>
@@ -292,14 +138,9 @@ export function GeneticProfileOverview() {
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <div className="text-2xl font-semibold mb-4">
-              {reportInfoLoading ? (
-                <span>{t("loading")}</span>
-              ) : (
-                <>
-                  {profileData.totalSnps.toLocaleString()}{" "}
-                  {t("variantsAnalyzed")}
-                </>
-              )}
+              <span>
+                {totalSnps.toLocaleString()} {t("variantsAnalyzed")}
+              </span>
             </div>
 
             <div className="space-y-4">
@@ -308,28 +149,24 @@ export function GeneticProfileOverview() {
                   {t("ancestryComposition")}
                 </div>
                 <div className="space-y-3">
-                  {loading ? (
-                    <div className="text-sm">{t("loading")}</div>
-                  ) : (
-                    ancestryComposition.map((ancestry) => (
-                      <div key={ancestry.region} className="flex items-center">
-                        <span className="text-sm font-medium w-28 mr-24">
-                          {getRegionName(ancestry.region)}
-                        </span>
-                        <div className="flex-1 flex items-center">
-                          <div className="w-32 h-3 bg-secondary rounded-full mr-2">
-                            <div
-                              className="h-3 bg-primary rounded-full"
-                              style={{ width: `${ancestry.percentage}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm font-medium">
-                            {ancestry.percentage}%
-                          </span>
+                  {ancestryComposition.map((ancestry) => (
+                    <div key={ancestry.region} className="flex items-center">
+                      <span className="text-sm font-medium w-28 mr-24">
+                        {getRegionName(ancestry.region)}
+                      </span>
+                      <div className="flex flex-1 items-center gap-2">
+                        <div className="h-2 flex-1 rounded bg-muted">
+                          <div
+                            className="h-2 rounded bg-primary"
+                            style={{ width: `${ancestry.percentage}%` }}
+                          ></div>
                         </div>
+                        <span className="text-sm font-medium">
+                          {ancestry.percentage}%
+                        </span>
                       </div>
-                    ))
-                  )}
+                    </div>
+                  ))}
                 </div>
 
                 {/* 查看详情按钮 - 移动到祖源构成下方 */}
@@ -350,48 +187,27 @@ export function GeneticProfileOverview() {
               <span>{t("haplogroups")}</span>
             </div>
 
-            {haplogroupLoading ? (
-              <div className="space-y-4">
-                <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
-                  <p className="text-blue-700 dark:text-blue-300">
-                    {ht("loading")}
-                  </p>
-                </div>
-                <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
-                  <p className="text-red-700 dark:text-red-300">
-                    {ht("loading")}
-                  </p>
-                </div>
-              </div>
-            ) : haplogroupError ? (
-              <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800">
-                <p className="text-red-700 dark:text-red-300">
-                  {ht("error")}: {haplogroupError}
+            <div className="space-y-4">
+              {/* 父系谱系 Y-DNA - 蓝色卡片 */}
+              <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
+                <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+                  {ht("paternalLineage")}
+                </h3>
+                <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">
+                  {haplogroups.y_hap || "未知"}
                 </p>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {/* 父系谱系 Y-DNA - 蓝色卡片 */}
-                <div className="rounded-lg bg-blue-50 dark:bg-blue-950 p-4 border border-blue-200 dark:border-blue-800 flex flex-col items-center justify-center">
-                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
-                    {ht("paternalLineage")}
-                  </h3>
-                  <p className="text-3xl font-bold text-blue-700 dark:text-blue-300">
-                    {haplogroupData?.y_hap || "未知"}
-                  </p>
-                </div>
 
-                {/* 母系谱系 mtDNA - 红色卡片 */}
-                <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
-                    {ht("maternalLineage")}
-                  </h3>
-                  <p className="text-3xl font-bold text-red-700 dark:text-red-300">
-                    {haplogroupData?.mt_hap || "未知"}
-                  </p>
-                </div>
+              {/* 母系谱系 mtDNA - 红色卡片 */}
+              <div className="rounded-lg bg-red-50 dark:bg-red-950 p-4 border border-red-200 dark:border-red-800 flex flex-col items-center justify-center">
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
+                  {ht("maternalLineage")}
+                </h3>
+                <p className="text-3xl font-bold text-red-700 dark:text-red-300">
+                  {haplogroups.mt_hap || "未知"}
+                </p>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </CardContent>

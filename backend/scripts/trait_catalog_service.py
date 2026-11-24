@@ -330,6 +330,26 @@ def get_report_results(report_id: str, db_path: str | Path) -> dict[str, Any]:
     )
 
 
+def dashboard_revision(report_id, db_path):
+    return (_catalog_for_db(db_path)["version"], _report_revision(str(db_path), report_id))
+
+
+def get_trait_highlights(report_id, db_path):
+    catalog = _catalog_for_db(db_path)["byId"]
+    highlights = []
+    categories = set()
+    for evaluation in get_report_results(report_id, db_path)["results"]:
+        trait = catalog[evaluation["traitId"]]
+        if evaluation["status"] != "ok" or trait["category"] in categories:
+            continue
+        categories.add(trait["category"])
+        highlights.append({**{k: trait.get(k) for k in ("id", "icon", "name", "description", "confidence")},
+                           "result_current": evaluation["resultCurrent"]})
+        if len(highlights) == 4:
+            break
+    return highlights
+
+
 def get_trait_detail(trait_id: str, report_id: str, db_path: str | Path) -> dict[str, Any] | None:
     compiled = _catalog_for_db(db_path)
     trait = compiled["byId"].get(trait_id)

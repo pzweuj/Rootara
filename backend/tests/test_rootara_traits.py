@@ -109,7 +109,7 @@ def test_default_catalog_upgrade_from_legacy_count_keeps_custom_rows(tmp_path):
     defaults = conn.execute("SELECT COUNT(*) FROM traits WHERE isDefault = 1").fetchone()[0]
     custom = conn.execute("SELECT COUNT(*) FROM traits WHERE isDefault = 0 AND id = 'TRA_CUSTOM'").fetchone()[0]
     conn.close()
-    assert defaults == 150
+    assert defaults == 152
     assert custom == 1
 
 

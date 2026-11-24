@@ -6,9 +6,11 @@
 
 import sqlite3
 import argparse
-import sys
+from scripts.runtime_config import RAWDATA_DIR
+from scripts.rootara_table_info import validate_report_table_name
 
 def delete_report(report_id, db_file):
+    validate_report_table_name(report_id)
     print("删除报告：{report_id}".format(report_id=report_id))
 
     if report_id == 'RPT_TEMPLATE01':
@@ -33,7 +35,7 @@ def delete_report(report_id, db_file):
     result = cursor.fetchone()
     
     # 如果是，则先需要将其他报告设置为默认报告
-    if result:
+    if result and result[0]:
         # 按上传时间排序选择最新的报告作为默认报告，排除当前要删除的报告
         cursor.execute("""
             UPDATE reports 
@@ -46,10 +48,17 @@ def delete_report(report_id, db_file):
                 LIMIT 1
             )
         """, (report_id,))
-        conn.commit()
 
     cursor.execute("DELETE FROM reports WHERE report_id = ?", (report_id,))
+    if cursor.execute("SELECT 1 FROM sqlite_master WHERE name='report_trait_import_state'").fetchone():
+        cursor.execute("DELETE FROM report_trait_import_state WHERE report_id=?", (report_id,))
+    if cursor.execute("SELECT 1 FROM sqlite_master WHERE name='import_jobs'").fetchone():
+        cursor.execute("DELETE FROM import_jobs WHERE report_id=?", (report_id,))
     conn.commit()
+    conn.close()
+    for path in RAWDATA_DIR.glob(f"RDT_{report_id[4:]}.*"):
+        if path.suffix in {".txt", ".parquet"}:
+            path.unlink(missing_ok=True)
 
 def main():
     parser = argparse.ArgumentParser(description='删除报告')
@@ -62,7 +71,7 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    delete_report(args.db, args.report)
+    delete_report(args.report, args.db)
 
 if __name__ == '__main__':
     main()

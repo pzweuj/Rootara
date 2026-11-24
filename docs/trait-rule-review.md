@@ -5,10 +5,10 @@ data, not proof that the underlying interpretation is valid. Every shipped
 rule has a record in `backend/database/trait-evidence.json`, and the
 status/grade/limitations are materialized in the default file. The release
 gate in `scripts.production_catalog_validation` is stricter than the audit
-catalog: a production build must contain exactly 150 rules, all `curated`,
+catalog: a production build must contain exactly 152 rules, all `curated`,
 with grade A or B evidence.
 
-- `curated`: the production release contains exactly 150 rules; every rule
+- `curated`: the production release contains exactly 152 rules; every rule
   has a direct source record, complete mapping, population scope, limitations,
   and executable fixtures. Evidence grades are A/B only.
 - The 108 WeGene discovery records remain rejected and are not counted as
@@ -52,7 +52,7 @@ genotype map is recorded. Rejected candidates use an explicit disposition:
 `rejected_medical_model_insufficient`; each remains in the manifest with a
 reason and reviewer/date so the path to the 150-rule release is auditable.
 WeGene text and results are discovery metadata, not evidence. The release gate
-is open only when the exact 150-rule production catalog validator passes.
+is open only when the exact 152-rule production catalog validator passes.
 
 Run the deterministic checks from the repository root:
 

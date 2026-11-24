@@ -3,12 +3,10 @@
 import { ExternalLink } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
-import { useReport } from "@/contexts/report-context"
 import type { Trait } from "@/types/trait"
 
 const iconNames = [
@@ -133,55 +131,9 @@ iconNames.forEach((name) => {
   ) as React.ComponentType<{ className?: string }>
 })
 
-export function TraitHighlights() {
+export function TraitHighlights({ traits }: { traits: Trait[] }) {
   const { language } = useLanguage()
   const router = useRouter()
-  const { currentReportId } = useReport()
-  const [traits, setTraits] = useState<Trait[]>([])
-  const [loading, setLoading] = useState(true)
-
-  // 随机选择特征的函数
-  const getRandomTraits = (allTraits: Trait[], count: number = 4): Trait[] => {
-    const shuffled = [...allTraits].sort(() => 0.5 - Math.random())
-    return shuffled.slice(0, count)
-  }
-
-  // 从API加载特征数据
-  useEffect(() => {
-    const loadTraits = async () => {
-      if (!currentReportId) {
-        return
-      }
-
-      try {
-        setLoading(true)
-        const response = await fetch("/api/traits/info", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ report_id: currentReportId }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`)
-        }
-
-        const data = await response.json()
-        // 随机选择4个特征
-        const randomTraits = getRandomTraits(data, 4)
-        setTraits(randomTraits)
-      } catch (error) {
-        console.error("Failed to load traits:", error)
-        setTraits([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadTraits()
-  }, [currentReportId])
-
   const translations = {
     en: {
       traitHighlights: "Trait Highlights",
@@ -222,23 +174,6 @@ export function TraitHighlights() {
     return field[language as keyof typeof field] || field.default || fallback
   }
 
-  // 辅助函数：从result Record中获取第一个结果的文本
-  const getResultText = (
-    result:
-      | Record<string, { en: string; "zh-CN": string; default: string }>
-      | undefined
-  ): string => {
-    if (!result) {
-      return "N/A"
-    }
-    const firstKey = Object.keys(result)[0]
-    if (!firstKey) {
-      return "N/A"
-    }
-    const firstResult = result[firstKey]
-    return getLocalizedText(firstResult, "N/A")
-  }
-
   // 辅助函数：获取图标组件
   const getIconComponent = (
     iconName: string
@@ -277,42 +212,6 @@ export function TraitHighlights() {
     )
   }
 
-  // 如果正在加载，显示加载状态
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">
-            {t("traitHighlights")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">{t("loading")}</p>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // 如果没有特征数据，显示空状态
-  if (traits.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">
-            {t("traitHighlights")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center py-8">
-            <p className="text-muted-foreground">{t("noTraits")}</p>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -322,6 +221,9 @@ export function TraitHighlights() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {traits.length === 0 && (
+            <p className="text-sm text-muted-foreground">{t("noTraits")}</p>
+          )}
           {traits.map((trait) => {
             const IconComponent = getIconComponent(trait.icon)
             return (
@@ -339,8 +241,7 @@ export function TraitHighlights() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold">
-                    {getLocalizedText(trait.result_current) ||
-                      getResultText(trait.result)}
+                    {getLocalizedText(trait.result_current)}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {getLocalizedText(

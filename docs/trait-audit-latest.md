@@ -1,7 +1,7 @@
 # Rootara trait evidence audit
 
-- Production rules: **150**
-- Production evidence statuses: **{'curated': 150}**
+- Production rules: **152**
+- Production evidence statuses: **{'curated': 152}**
 - Discovery candidates: **108** (95 priority + 13 supplemental)
 - Candidate review statuses: **{'rejected': 108}**
 
@@ -159,6 +159,8 @@
 | `gwas-gcst001074-rs1173766` | internal | `curated` | `B` | rs1173766 | — |
 | `gwas-gcst001207-rs4950806` | internal | `curated` | `B` | rs4950806 | — |
 | `gwas-gcst001215-rs2470893` | lifestyle | `curated` | `B` | rs2470893 | — |
+| `photic-sneeze` | appearance | `curated` | `B` | rs10427255 | — |
+| `hair-greying` | appearance | `curated` | `B` | rs12203592 | — |
 
 ## Production audit decisions
 

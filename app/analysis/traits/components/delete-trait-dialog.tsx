@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { useLanguage } from "@/contexts/language-context"
+import { clearDashboardCache } from "@/lib/dashboard-cache"
 import type { TraitCardModel } from "@/types/trait"
 
 interface DeleteTraitDialogProps {
@@ -73,6 +74,9 @@ export function DeleteTraitDialog({
         body: JSON.stringify({ traits_id: traitToDelete.id }),
       })
 
+      if (response.ok) {
+        clearDashboardCache()
+      }
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
       }

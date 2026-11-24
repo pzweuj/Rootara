@@ -11,6 +11,7 @@ import tempfile
 import sqlite3
 import argparse
 import shutil
+import subprocess
 
 # admix运行，可能会占用较高的计算资源
 def admix_cli(input_file, rpt_id, method):
@@ -24,8 +25,12 @@ def admix_cli(input_file, rpt_id, method):
     # 使用固定目录创建临时目录
     temp_dir = tempfile.mkdtemp(dir=temp_base_dir)
     
-    cmd = f'admix -f {input_file} -v {method} -m K47 > {temp_dir}/{rpt_id}.admix.txt'
-    os.system(cmd)
+    try:
+        with open(os.path.join(temp_dir, f"{rpt_id}.admix.txt"), "w") as output:
+            subprocess.run(["admix", "-f", input_file, "-v", method, "-m", "K47"], stdout=output, check=True)
+    except Exception:
+        shutil.rmtree(temp_dir)
+        raise
     return f'{temp_dir}/{rpt_id}.admix.txt'
 
 # 解析admix结果
@@ -100,10 +105,14 @@ def data_to_sqlite(input_file, rpt_id, method, db_path, force=False):
         return
     
     admix_file = admix_cli(input_file, rpt_id, method)
-    ances_dict = parse_admix_result(admix_file)
-    import_result_to_db(ances_dict, rpt_id, db_path)
-    print(f"报告 {rpt_id} 的祖源分析结果已导入数据库")
-    shutil.rmtree(os.path.dirname(admix_file))
+    try:
+        ances_dict = parse_admix_result(admix_file)
+        if not ances_dict:
+            raise ValueError("K47 did not produce ancestry estimates")
+        import_result_to_db(ances_dict, rpt_id, db_path)
+    finally:
+        shutil.rmtree(os.path.dirname(admix_file))
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process input file and report ID.')

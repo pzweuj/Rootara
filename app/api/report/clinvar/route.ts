@@ -31,6 +31,9 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         report_id,
+        page: requestData.page,
+        page_size: requestData.page_size,
+        classification: requestData.classification,
         sort_by: sort_by || "",
         sort_order: sort_order || "asc",
         search_term: search_term || "",

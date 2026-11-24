@@ -8,7 +8,7 @@ Rootara 是一个用于导入和探索个人基因数据的自托管平台。所
 
 > **测试状态：** 当前遗传特征结果仍为测试数据，不得用于医学、健康或其他重要决策。
 
-v1 默认目录恰好包含 150 条已审核的相对倾向卡片，覆盖 153 个已核验
+v1 默认目录恰好包含 152 条已审核的相对倾向卡片，覆盖 154 个已核验
 位点。每张卡片展示证据等级、来源链接、适用人群和局限；它们都不是
 诊断或治疗建议。首发支持 `linux/amd64`。
 
@@ -52,7 +52,7 @@ docker run -d --name rootara \
 | `CACHE_TTL` | `3600` | 内存缓存过期时间（秒） |
 | `CACHE_MAX_ENTRIES` | `1024` | 内存缓存最大条目数 |
 
-发布镜像会强制检查 `ROOTARA_EXPECTED_TRAIT_COUNT=150` 和
+发布镜像会强制检查 `ROOTARA_EXPECTED_TRAIT_COUNT=152` 和
 `ROOTARA_REQUIRE_CURATED_CATALOG=1`；目录不完整或包含审核阻塞项时会拒绝启动。
 
 JWT 签名密钥首次启动时自动生成，并保存到 `/data/config/jwt-secret`。SQLite 数据库和上传的原始数据都在 `/data` 下，请保留该卷用于备份和升级。
@@ -67,6 +67,16 @@ FastAPI 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口�
 `GET /api/traits/catalog`、`GET /api/reports/{reportId}/traits/results` 和
 `GET /api/traits/{traitId}?report_id=...`。缺失基因型会以
 `insufficient_data` 返回具体缺失 RSID，绝不会进行推断填充。
+
+## 本地存储与报告加载
+
+新上传的文件按行保存为 Zstandard 压缩的 Parquet，原文件字节、行序和换行均可还原。特征回填只读取所需的位点列。SQLite 保留报告目录和带 RSID 索引的注释表，用于单点查询与分页。旧版 TXT 继续支持导出和回填。现有报告保留原导入结果；重新导入原文件可应用新的多候选位点匹配规则。
+
+如需转换旧 TXT，可在服务停止时运行 `docker compose run --rm --no-deps --entrypoint python rootara -m scripts.raw_archive`。命令逐个校验 SHA-256，默认保留旧文件。追加 `--remove-text` 会在每个文件校验成功后删除对应 TXT。
+
+导入任务在服务端排队，重启后继续处理。上传页面可以查看当前步骤。仪表盘在内存中按报告缓存五分钟，退出登录时清空。祖源地图只使用镜像内的国家边界数据。
+
+如果旧部署在环境变量中显式设置了 `ROOTARA_EXPECTED_TRAIT_COUNT=150`，升级时请改为 `152`。
 
 ## 数据、备份与升级
 

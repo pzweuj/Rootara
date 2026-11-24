@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         report_id: reportId,
-        sort_by: "",
+        summary: true,
         sort_order: "asc",
         search_term: "",
         filters: {},

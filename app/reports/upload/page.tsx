@@ -3,7 +3,7 @@
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,53 +26,95 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLanguage } from "@/contexts/language-context"
+import { useReport } from "@/contexts/report-context"
 // 移除 useAuth 导入
 
 export default function UploadReportPage() {
   const router = useRouter()
-  const { t, language } = useLanguage()
+  const { language } = useLanguage()
+  const { setCurrentReportId } = useReport()
+  const [finishedReport, setFinishedReport] = useState("")
+  const submissionId = useRef("")
   // 移除 useAuth 相关代码
   const [uploadState, setUploadState] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle")
   const [progress, setProgress] = useState(0)
   const [fileName, setFileName] = useState("")
-  const [fileContent, setFileContent] = useState("") // 存储文件内容
+  const [uploadFile, setUploadFile] = useState<File | null>(null)
+  const [job, setJob] = useState("")
+  const [stage, setStage] = useState("")
   const [reportName, setReportName] = useState("")
   const [source, setSource] = useState("")
   const [isDefault, setIsDefault] = useState(false)
   const [errorMessage, setErrorMessage] = useState("") // 存储错误信息
-  const [userId, setUserId] = useState("guest") // 添加用户ID状态，默认为guest
-
-  // 文件大小限制（50MB）
-  const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB in bytes
-
-  // 在组件加载时获取用户ID
   useEffect(() => {
-    // 修改fetchUserId函数
-    const fetchUserId = async () => {
-      try {
-        const response = await fetch("/api/user/id", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}),
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          if (data && data.user_id) {
-            setUserId(data.user_id)
-          }
-        }
-      } catch (error) {
-        console.error("获取用户ID出错:", error)
-      }
+    submissionId.current = ""
+  }, [uploadFile, source, reportName, isDefault])
+  const MAX_FILE_SIZE = 50 * 1024 * 1024
+  useEffect(() => {
+    const pending = localStorage.getItem("rootara-import")
+    if (pending) {
+      setJob(pending)
+      setUploadState("uploading")
     }
-
-    fetchUserId()
-  }, []) // 添加依赖项
+  }, [])
+  useEffect(() => {
+    if (!job) {
+      return
+    }
+    const controller = new AbortController()
+    let timer: ReturnType<typeof setTimeout>
+    async function poll() {
+      try {
+        const response = await fetch(`/api/imports/${job}`, {
+          signal: controller.signal,
+          cache: "no-store",
+        })
+        if (response.status === 404) {
+          localStorage.removeItem("rootara-import")
+          setErrorMessage("Import not found")
+          setUploadState("error")
+          return
+        }
+        if (!response.ok) {
+          throw new Error(String(response.status))
+        }
+        const data = await response.json()
+        if (controller.signal.aborted) {
+          return
+        }
+        setStage(data.stage)
+        if (data.stage === "done" || data.stage === "failed") {
+          localStorage.removeItem("rootara-import")
+          submissionId.current = ""
+          setFinishedReport(data.stage === "done" ? data.report_id : "")
+          setUploadState(data.stage === "done" ? "success" : "error")
+          setErrorMessage(data.error || "")
+          setJob("")
+          return
+        }
+        const stages = [
+          "queued",
+          "variants",
+          "ancestry",
+          "haplogroups",
+          "archive",
+        ]
+        setProgress((stages.indexOf(data.stage) + 1) * 16)
+      } catch {
+        if (controller.signal.aborted) {
+          return
+        }
+      }
+      timer = setTimeout(poll, 1500)
+    }
+    poll()
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
+  }, [job])
 
   // 添加额外的翻译项
   const translations = {
@@ -188,13 +230,7 @@ export default function UploadReportPage() {
       setFileName(file.name)
 
       // 读取文件内容
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setFileContent(event.target.result as string)
-        }
-      }
-      reader.readAsText(file) // 读取为文本
+      setUploadFile(file)
 
       // Auto-detect source based on file name (simplified example)
       if (file.name.toLowerCase().includes("23andme")) {
@@ -214,7 +250,7 @@ export default function UploadReportPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!fileName || !reportName || !source || !fileContent) {
+    if (!fileName || !reportName || !source || !uploadFile) {
       return
     }
 
@@ -222,47 +258,32 @@ export default function UploadReportPage() {
     setProgress(0)
     setErrorMessage("")
 
-    // 创建进度动画
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        // 最多到95%，剩下的5%在API成功后完成
-        if (prev >= 96) {
-          clearInterval(progressInterval)
-          return 96
-        }
-        return prev + 2
-      })
-    }, 3000)
-
     try {
-      // 准备请求数据
-      const requestData = {
-        user_id: userId, // 使用获取到的用户ID
-        input_data: fileContent,
-        source_from: source,
-        report_name: reportName,
-        default_report: isDefault,
-      }
-
-      // 使用新的API端点和API_KEY
-      const response = await fetch("/api/report/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
+      const id =
+        submissionId.current ||
+        Array.from(crypto.getRandomValues(new Uint8Array(16)), (v) =>
+          v.toString(16).padStart(2, "0")
+        )
+          .join("")
+          .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, "$1-$2-$3-$4-$5")
+      submissionId.current = id
+      const query = new URLSearchParams({
+        source,
+        name: reportName,
+        default: String(isDefault),
       })
-      // 处理响应
-      if (response.ok) {
-        clearInterval(progressInterval)
-        setProgress(100)
-        setUploadState("success")
-      } else {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "上传失败")
+      const response = await fetch(`/api/imports/${id}?${query}`, {
+        method: "POST",
+        body: uploadFile,
+      })
+      if (!response.ok) {
+        throw new Error(
+          (await response.json()).detail || String(response.status)
+        )
       }
+      localStorage.setItem("rootara-import", id)
+      setJob(id)
     } catch (error) {
-      clearInterval(progressInterval)
       setUploadState("error")
       setErrorMessage(
         error instanceof Error ? error.message : "上传过程中发生错误"
@@ -335,13 +356,7 @@ export default function UploadReportPage() {
                     setFileName(file.name)
 
                     // 读取文件内容
-                    const reader = new FileReader()
-                    reader.onload = (event) => {
-                      if (event.target?.result) {
-                        setFileContent(event.target.result as string)
-                      }
-                    }
-                    reader.readAsText(file) // 读取为文本
+                    setUploadFile(file)
 
                     // Auto-detect source based on file name (simplified example)
                     if (file.name.toLowerCase().includes("23andme")) {
@@ -431,7 +446,15 @@ export default function UploadReportPage() {
             <div className="space-y-4">
               <div className="p-6 text-center">
                 <p className="text-sm font-medium mb-4">
-                  {localT("uploading")}
+                  {(
+                    {
+                      queued: ["Queued", "排队中"],
+                      variants: ["Matching variants", "匹配位点"],
+                      ancestry: ["Calculating ancestry", "计算祖源"],
+                      haplogroups: ["Calculating haplogroups", "计算单倍群"],
+                      archive: ["Saving report", "保存报告"],
+                    } as Record<string, string[]>
+                  )[stage]?.[language === "en" ? 0 : 1] || localT("uploading")}
                 </p>
                 <Progress value={progress} className="h-2 mb-4" />
                 <p className="text-xs text-muted-foreground">
@@ -451,7 +474,14 @@ export default function UploadReportPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   {localT("dataProcessing")}
                 </p>
-                <Button onClick={() => router.push("/reports")}>
+                <Button
+                  onClick={() => {
+                    if (finishedReport) {
+                      setCurrentReportId(finishedReport)
+                    }
+                    router.push("/reports")
+                  }}
+                >
                   {localT("viewMyReports")}
                 </Button>
               </div>
@@ -480,7 +510,15 @@ export default function UploadReportPage() {
         </CardContent>
         {uploadState === "idle" && (
           <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => router.push("/reports")}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (finishedReport) {
+                  setCurrentReportId(finishedReport)
+                }
+                router.push("/reports")
+              }}
+            >
               {localT("cancel")}
             </Button>
             <Button

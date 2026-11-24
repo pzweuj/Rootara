@@ -50,6 +50,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useLanguage } from "@/contexts/language-context"
 import { useReport } from "@/contexts/report-context" // 导入报告上下文
+import { clearDashboardCache } from "@/lib/dashboard-cache"
 
 interface ToastOptions {
   title: string
@@ -123,6 +124,9 @@ export function ReportSwitcher({
         body: JSON.stringify({ report_id: reportId }),
       })
 
+      if (response.ok) {
+        clearDashboardCache()
+      }
       if (!response.ok) {
         throw new Error("Failed to delete report")
       }
@@ -260,6 +264,9 @@ export function ReportSwitcher({
         }),
       })
 
+      if (response.ok) {
+        clearDashboardCache()
+      }
       if (!response.ok) {
         throw new Error(`重命名失败: ${response.status}`)
       }

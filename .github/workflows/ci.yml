@@ -35,6 +35,12 @@ jobs:
           ROOTARA_BACKEND_API_KEY: ci-only-backend-key
           ROOTARA_BACKEND_URL: http://127.0.0.1:8000
 
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache: false
+      - run: go test backend/scripts/rootara_reader.go backend/scripts/rootara_reader_test.go
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'

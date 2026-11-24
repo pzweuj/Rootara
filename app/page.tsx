@@ -6,35 +6,69 @@ import { ClinvarSummary } from "@/components/clinvar-summary"
 import { GeneticProfileOverview } from "@/components/genetic-profile-overview"
 import { TraitHighlights } from "@/components/trait-highlights"
 import { useLanguage } from "@/contexts/language-context"
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-// import dynamic from 'next/dynamic'
+import { useReport } from "@/contexts/report-context"
+import { cachedDashboard, loadDashboard } from "@/lib/dashboard-cache"
+
+function ReportDashboard({ id }: { id: string }) {
+  const { t } = useLanguage()
+  const [data, setData] = useState(() => cachedDashboard(id)?.value)
+  const [error, setError] = useState("")
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    let active = true
+    loadDashboard(id)
+      .then((value) => {
+        if (active) {
+          setData(value)
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setError(String(error))
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [id, attempt])
+  if (error) {
+    return (
+      <p role="alert">
+        {error}{" "}
+        <button
+          onClick={() => {
+            setError("")
+            setAttempt((n) => n + 1)
+          }}
+        >
+          {t("retry")}
+        </button>
+      </p>
+    )
+  }
+  if (!data) {
+    return <p role="status">{t("loading")}</p>
+  }
+  return (
+    <>
+      <GeneticProfileOverview currentReportId={id} {...data} />
+      <TraitHighlights traits={data.traits} />
+      <ClinvarSummary clinvarData={data.clinvar} />
+    </>
+  )
+}
 
 export default function Dashboard() {
   const { t } = useLanguage()
-  const [refreshKey, setRefreshKey] = useState(0)
-
-  // 页面加载时自动刷新所有模块
-  useEffect(() => {
-    // 页面初次加载时触发刷新
-    setRefreshKey((prevKey) => prevKey + 1)
-  }, [])
-
+  const { currentReportId } = useReport()
   return (
     <div className="space-y-4 sm:space-y-6">
       <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
         {t("geneticDashboard")}
       </h1>
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-        <GeneticProfileOverview key={`genetic-overview-${refreshKey}`} />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-        <TraitHighlights key={`trait-highlights-${refreshKey}`} />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-1">
-        <ClinvarSummary key={`clinvar-summary-${refreshKey}`} />
-      </div>
+      {currentReportId && (
+        <ReportDashboard key={currentReportId} id={currentReportId} />
+      )}
     </div>
   )
 }

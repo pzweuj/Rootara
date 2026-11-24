@@ -4,6 +4,7 @@ const nextConfig = {
     unoptimized: true,
   },
   experimental: {
+    middlewareClientMaxBodySize: "50mb",
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,

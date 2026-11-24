@@ -93,7 +93,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   ]
 
   // 获取数据的函数
-  const fetchData = async () => {
+  const fetchData = async (signal: AbortSignal) => {
     if (!currentReportId) {
       return
     }
@@ -121,6 +121,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
+        signal,
       })
 
       if (!response.ok) {
@@ -130,7 +131,9 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
       }
 
       const result = await response.json()
-      console.log("API返回数据:", result)
+      if (signal.aborted) {
+        return
+      }
 
       // 安全处理数据
       if (!result.data) {
@@ -156,7 +159,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
         // 如果是对象，转换为数组
         dataArray = Object.entries(result.data).map(
           ([key, value]: [string, any]) => ({
-            id: value.id || value.rsid || key,
+            id: value.row_id || value.id || key,
             rsid: value.rsid || "",
             chromosome: value.chromosome || "",
             position: value.position || "",
@@ -175,23 +178,35 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
 
       // 移除提取染色体的代码，使用预设的染色体列表
     } catch (err) {
+      if (signal.aborted) {
+        return
+      }
       console.error("获取数据失败:", err)
       setError(err instanceof Error ? err.message : "未知错误")
     } finally {
-      setLoading(false)
+      if (!signal.aborted) {
+        setLoading(false)
+      }
     }
   }
 
   // 当报告ID、页码、搜索条件或染色体筛选变化时获取数据
   useEffect(() => {
-    fetchData()
+    const controller = new AbortController()
+    const timer = setTimeout(
+      () => fetchData(controller.signal),
+      searchQuery ? 200 : 0
+    )
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
   }, [currentReportId, pagination.page, searchQuery, selectedChromosome])
 
   // 处理搜索
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setPagination((prev) => ({ ...prev, page: 1 })) // 重置到第一页
-    fetchData()
   }
 
   // 处理染色体选择
@@ -235,7 +250,10 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
             placeholder={t("searchByRsID")}
             className="pl-8"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setPagination((prev) => ({ ...prev, page: 1 }))
+            }}
           />
         </form>
         <div className="w-full md:w-1/3">

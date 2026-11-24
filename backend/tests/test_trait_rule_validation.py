@@ -23,7 +23,7 @@ def test_evidence_catalog_and_fixtures_are_valid():
 def test_curated_catalog_contains_independent_sources():
     catalog = load_json(EVIDENCE)
     curated = [rule for rule in catalog["rules"].values() if rule["status"] == "curated"]
-    assert len(curated) == 150
+    assert len(curated) == 152
     assert all(rule["evidence"] for rule in curated)
     assert all(item["type"] in {"PMID", "DOI", "ClinVar", "CPIC", "PharmGKB"} for rule in curated for item in rule["evidence"])
     assert all(
@@ -69,7 +69,7 @@ def test_generated_fixtures_exercise_all_formula_genotypes():
 
 def test_production_audit_has_no_missing_references():
     report = audit_legacy_traits(DEFAULT_TRAITS)
-    assert report["total"] == 150
+    assert report["total"] == 152
     assert report["missing_references"] == []
     assert report["placeholder_references"] == []
     assert report["formula_rsid_mismatches"] == []
@@ -93,7 +93,7 @@ def test_production_release_gate_has_exact_count_and_medical_sources():
     traits = load_json(DEFAULT_TRAITS)
     evidence = load_json(EVIDENCE)
     risk_traits = [trait for trait in traits if trait.get("category") == "risk"]
-    assert len(traits) == 150
+    assert len(traits) == 152
     assert {trait["id"] for trait in risk_traits} == {
         "warfarin-sensitivity",
         "clopidogrel-response",

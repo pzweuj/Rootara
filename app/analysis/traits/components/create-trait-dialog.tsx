@@ -13,6 +13,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { useLanguage } from "@/contexts/language-context"
+import { clearDashboardCache } from "@/lib/dashboard-cache"
 import type { Trait } from "@/types/trait"
 
 import { FormulaInput } from "./create-trait/formula-input"
@@ -154,6 +155,9 @@ export function CreateTraitDialog({
         body: JSON.stringify({ traitData }),
       })
 
+      if (response.ok) {
+        clearDashboardCache()
+      }
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
       }

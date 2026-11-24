@@ -10500,5 +10500,115 @@
       ],
       "default": []
     }
+  },
+  {
+    "id": "photic-sneeze",
+    "name": {
+      "en": "Photic sneeze reflex",
+      "zh-CN": "强光喷嚏反射",
+      "default": ""
+    },
+    "description": {
+      "en": "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations.",
+      "zh-CN": "中国队列报告的关联等位基因为 T，23andMe 队列报告的为 C。本卡片仅展示中国研究中该标记的拷贝数，无法据此推断个人发生概率。",
+      "default": ""
+    },
+    "icon": "Sun",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2026-11-24T00:00:00Z",
+    "category": "appearance",
+    "rsids": [
+      "rs10427255"
+    ],
+    "formula": "SCORE(rs10427255:TT=2,CT=1,CC=0)",
+    "scoreThresholds": {
+      "copies_2": 2,
+      "copies_1": 1,
+      "copies_0": 0
+    },
+    "result": {
+      "copies_0": {
+        "en": "0 copies of the associated T allele",
+        "zh-CN": "检出 0 个关联 T 等位基因",
+        "default": ""
+      },
+      "copies_1": {
+        "en": "1 copy of the associated T allele",
+        "zh-CN": "检出 1 个关联 T 等位基因",
+        "default": ""
+      },
+      "copies_2": {
+        "en": "2 copies of the associated T allele",
+        "zh-CN": "检出 2 个关联 T 等位基因",
+        "default": ""
+      }
+    },
+    "reference": [
+      "30899065",
+      "20585627"
+    ],
+    "evidenceStatus": "curated",
+    "evidenceGrade": "B",
+    "limitations": [
+      "Several genes influence this reflex. Allele count cannot tell whether a person will sneeze.",
+      "The Chinese study reported T, while the 23andMe study reported C. The displayed count describes the Chinese study marker; individual likelihood cannot be inferred across populations."
+    ],
+    "reviewBlockers": [],
+    "populationScope": "This association was observed in Chinese participants who answered a questionnaire."
+  },
+  {
+    "id": "hair-greying",
+    "name": {
+      "en": "Hair greying",
+      "zh-CN": "头发变白倾向",
+      "default": ""
+    },
+    "description": {
+      "en": "Greater extent of hair greying was associated with the T allele at rs12203592 in the study population.",
+      "zh-CN": "研究人群中，rs12203592 的 T 等位基因与较高的头发变白程度相关。",
+      "default": ""
+    },
+    "icon": "Scissors",
+    "confidence": "medium",
+    "isDefault": true,
+    "createdAt": "2026-11-24T00:00:00Z",
+    "category": "appearance",
+    "rsids": [
+      "rs12203592"
+    ],
+    "formula": "SCORE(rs12203592:TT=2,CT=1,CC=0)",
+    "scoreThresholds": {
+      "copies_2": 2,
+      "copies_1": 1,
+      "copies_0": 0
+    },
+    "result": {
+      "copies_0": {
+        "en": "0 copies of the associated T allele",
+        "zh-CN": "检出 0 个关联 T 等位基因",
+        "default": ""
+      },
+      "copies_1": {
+        "en": "1 copy of the associated T allele",
+        "zh-CN": "检出 1 个关联 T 等位基因",
+        "default": ""
+      },
+      "copies_2": {
+        "en": "2 copies of the associated T allele",
+        "zh-CN": "检出 2 个关联 T 等位基因",
+        "default": ""
+      }
+    },
+    "reference": [
+      "26926045"
+    ],
+    "evidenceStatus": "curated",
+    "evidenceGrade": "B",
+    "limitations": [
+      "Age and other genes contribute. This marker cannot predict the age of onset."
+    ],
+    "reviewBlockers": [],
+    "populationScope": "The CANDELA study recruited people in five Latin American countries."
   }
 ]

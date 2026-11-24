@@ -6,18 +6,17 @@ import {
   CheckCircle,
   Info,
   ExternalLink,
-  Loader2,
 } from "lucide-react"
 import Link from "next/link"
-import { useState, useEffect, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useLanguage } from "@/contexts/language-context"
-import { useReport } from "@/contexts/report-context"
 
 // 定义ClinVar数据类型
 interface ClinVarVariant {
+  row_id: number
+  classification: string
   chromosome: string
   position: number
   ref: string
@@ -31,7 +30,8 @@ interface ClinVarVariant {
   gt: string
 }
 
-interface ClinVarResponse {
+export interface ClinVarResponse {
+  total: number
   data: Record<string, ClinVarVariant>
   statistics: {
     pathogenic: number
@@ -42,63 +42,16 @@ interface ClinVarResponse {
   }
 }
 
-export function ClinvarSummary() {
-  const { language, t } = useLanguage()
-  const { currentReportId } = useReport()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [clinvarData, setClinvarData] = useState<ClinVarResponse | null>(null)
-  const prevReportIdRef = useRef<string | null>(null)
-
-  // 获取ClinVar数据的函数
-  const fetchClinvarData = async (reportId: string) => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      // 修改为调用新的API路由
-      const response = await fetch(`/api/report/clinvar-summary`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          reportId,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`API请求失败: ${response.status}`)
-      }
-
-      const data = await response.json()
-      setClinvarData(data)
-    } catch (err) {
-      console.error("获取ClinVar数据失败:", err)
-      setError(err instanceof Error ? err.message : "获取数据失败")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // 当全局报告ID变化时重新加载数据
-  useEffect(() => {
-    // 只有当currentReportId存在，并且与之前的reportId不同或者是首次加载时才获取数据
-    if (
-      currentReportId &&
-      (prevReportIdRef.current !== currentReportId ||
-        prevReportIdRef.current === null)
-    ) {
-      fetchClinvarData(currentReportId)
-      // 更新ref以记录当前的reportId
-      prevReportIdRef.current = currentReportId
-    }
-  }, [currentReportId])
-
+export function ClinvarSummary({
+  clinvarData,
+}: {
+  clinvarData: ClinVarResponse
+}) {
+  const { t } = useLanguage()
   const getClassificationIcon = (classification: string) => {
-    const lowerClass = classification.toLowerCase()
+    const lowerClass = classification.replace(/_/g, " ")
 
-    if (lowerClass.includes("pathogenic")) {
+    if (lowerClass === "pathogenic") {
       return <AlertCircle className="h-4 w-4 text-red-500" />
     } else if (lowerClass.includes("likely pathogenic")) {
       return <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -116,106 +69,7 @@ export function ClinvarSummary() {
     }
   }
 
-  // 如果正在加载，显示加载状态
-  if (loading) {
-    return (
-      <Card>
-        <CardContent className="flex justify-center items-center h-40 py-6">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <span className="ml-2">{t("loading")}</span>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // 如果有错误，显示错误信息
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="flex justify-center items-center h-40 py-6">
-          <AlertCircle className="h-6 w-6 text-red-500" />
-          <span className="ml-2 text-red-500">
-            {t("error")}: {error}
-          </span>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // 如果没有数据，返回空卡片
-  if (!clinvarData) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-medium">
-            {t("clinvarAnalysis")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center text-muted-foreground">
-            {t("noVariantsFound")}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  // 将API返回的数据转换为数组形式，方便处理
-  const variants = Object.entries(clinvarData.data).map(([rsid, variant]) => ({
-    id: rsid,
-    ...variant,
-    classification: variant.clnsig,
-    condition: variant.clndn,
-  }))
-
-  // 获取前4个变异，优先展示致病和可能致病的位点
-  const getTopFindings = () => {
-    // 评估变异的分类优先级
-    const getClassificationPriority = (classification: string) => {
-      const lowerClass = classification.toLowerCase()
-
-      // 按优先级顺序评估
-      if (lowerClass.includes("pathogenic") && !lowerClass.includes("likely")) {
-        return 1 // 致病
-      } else if (
-        lowerClass.includes("likely pathogenic") ||
-        lowerClass.includes("likely_pathogenic")
-      ) {
-        return 2 // 可能致病
-      } else if (
-        lowerClass.includes("benign") &&
-        !lowerClass.includes("likely")
-      ) {
-        return 3 // 良性
-      } else if (
-        lowerClass.includes("likely benign") ||
-        lowerClass.includes("likely_benign")
-      ) {
-        return 4 // 可能良性
-      } else if (
-        lowerClass.includes("uncertain") ||
-        lowerClass.includes("significance")
-      ) {
-        return 5 // 意义未明
-      } else {
-        return 6 // 其他
-      }
-    }
-
-    // 按分类优先级排序变异
-    const sortedVariants = [...variants].sort((a, b) => {
-      const aPriority = getClassificationPriority(a.classification)
-      const bPriority = getClassificationPriority(b.classification)
-
-      // 优先级数字越小越优先
-      return aPriority - bPriority
-    })
-
-    // 返回前4个变异
-    return sortedVariants.slice(0, 4)
-  }
-
-  const recentFindings = getTopFindings()
+  const recentFindings = Object.values(clinvarData.data)
 
   return (
     <Card className="w-full overflow-hidden">
@@ -274,13 +128,13 @@ export function ClinvarSummary() {
             <div className="space-y-2 w-full">
               {recentFindings.map((finding) => (
                 <div
-                  key={finding.rsid}
+                  key={finding.row_id}
                   className="border rounded-md p-2 sm:p-3 w-full overflow-hidden"
                 >
                   <div className="flex items-start justify-between gap-2 w-full">
                     <div className="flex items-center min-w-0 flex-1 overflow-hidden">
                       <div className="flex-shrink-0">
-                        {getClassificationIcon(finding.clnsig)}
+                        {getClassificationIcon(finding.classification)}
                       </div>
                       <span className="ml-2 font-medium text-sm truncate">
                         {finding.gene}
@@ -303,7 +157,7 @@ export function ClinvarSummary() {
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm text-muted-foreground w-full">
             <span className="text-xs sm:text-sm truncate">
-              {t("totalVariants")}: {Object.keys(clinvarData.data).length}
+              {t("totalVariants")}: {clinvarData.total}
             </span>
             <Button
               variant="outline"

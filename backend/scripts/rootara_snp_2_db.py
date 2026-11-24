@@ -1,95 +1,30 @@
 # coding=utf-8
 # 将数据进行转换，并写入数据库
 
-import pandas as pd
+import argparse
+import csv
 import sqlite3
-import re
+from contextlib import closing
+
+from scripts.rootara_table_info import validate_report_table_name
 
 
-REPORT_TABLE_RE = re.compile(r"^RPT_(?:TEMPLATE01|[A-Z0-9]{10})$")
-
-
-def convert_data_to_df(file_path):
-    df = pd.read_csv(file_path, sep=',', header=0, low_memory=False)
-    return df
-
-def dataframe_to_sqlite(df, db_path, table_name, if_exists='replace'):
-    """
-    将Pandas DataFrame转换为SQLite表
-    
-    :param df: Pandas DataFrame对象
-    :param db_path: SQLite数据库文件路径
-    :param table_name: 要创建的表名
-    :param if_exists: 如果表已存在，执行的操作：'replace'(替换)、'append'(追加)或'fail'(报错)
-    :return: 成功返回True，失败返回False
-    """
-    try:
-        if not REPORT_TABLE_RE.fullmatch(table_name):
-            raise ValueError("invalid report table name")
-        # 连接到数据库
-        conn = sqlite3.connect(db_path)
-        
-        # 重命名DataFrame的列以匹配数据库表结构
-        df_renamed = df.rename(columns={
-            'Chrom': 'chromosome',
-            'Start': 'position',
-            'Ref': 'ref',
-            'Alt': 'alt',
-            'RSID': 'rsid',
-            'gnomAD_AF': 'gnomAD_AF',
-            'Gene': 'gene',
-            'CLNSIG': 'clnsig',
-            'CLNDN': 'clndn',
-            'Genotype': 'genotype',
-            'Check': 'gt'
-        })
-        
-        # 使用pandas的to_sql方法直接将DataFrame写入数据库
-        # 设置index=False避免写入DataFrame的索引列
-        df_renamed.to_sql(
-            name=table_name,
-            con=conn,
-            if_exists=if_exists,
-            index=False,
-            dtype={
-                'chromosome': 'TEXT',
-                'position': 'INTEGER',
-                'ref': 'TEXT',
-                'alt': 'TEXT',
-                'rsid': 'TEXT',
-                'gnomAD_AF': 'FLOAT',
-                'gene': 'TEXT',
-                'clnsig': 'TEXT',
-                'clndn': 'TEXT',
-                'genotype': 'TEXT',
-                'gt': 'TEXT'
-            }
-        )
-
-        # Trait evaluation and variant lookup are RSID-first operations. Every
-        # report table must carry the index at creation time; existing tables
-        # receive the same index from the startup backfill migration.
-        conn.execute(
-            f"CREATE INDEX IF NOT EXISTS idx_{table_name}_rsid ON {table_name}(rsid)"
-        )
-        conn.commit()
-        
-        conn.close()
-        
-        print(f"成功将DataFrame转换为SQLite表 '{table_name}'，共 {len(df)} 行")
-        return True
-    
-    except Exception as e:
-        print(f"将DataFrame转换为SQLite表失败: {e}")
-        return False
-
-# 流程
 def csv_to_sqlite(file_path, db_path, table_name, force=False):
-    df = convert_data_to_df(file_path)
-    if_exists = 'fail'
-    if force:
-        if_exists = 'replace'
-    dataframe_to_sqlite(df, db_path, table_name, if_exists)
+    table = validate_report_table_name(table_name)
+    columns = ("Chrom","Start","Ref","Alt","RSID","gnomAD_AF","Gene","CLNSIG","CLNDN","Genotype","Check")
+    with closing(sqlite3.connect(db_path)) as conn, conn, open(file_path, newline="", encoding="utf-8") as source:
+        reader = csv.reader(source)
+        header = next(reader)
+        indexes = [header.index(col) for col in columns]
+        conn.execute("BEGIN IMMEDIATE")
+        if force:
+            conn.execute(f"DROP TABLE IF EXISTS {table}")
+        conn.execute(f"""CREATE TABLE {table} (
+            chromosome TEXT, position INTEGER, ref TEXT, alt TEXT, rsid TEXT, gnomAD_AF REAL,
+            gene TEXT, clnsig TEXT, clndn TEXT, genotype TEXT, gt TEXT)""")
+        rows = (tuple(row[i] or None for i in indexes) for row in reader)
+        conn.executemany(f"INSERT INTO {table} VALUES (?,?,?,?,?,?,?,?,?,?,?)", rows)
+        conn.execute(f"CREATE INDEX idx_{table}_rsid ON {table}(rsid)")
 
 def main():
     parser = argparse.ArgumentParser(description='将Rootara CSV转换为SQLite数据库')

@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "description": "Reviewed Rootara trait locus registry; runtime use requires status=verified.",
-  "reviewedAt": "2026-08-26",
+  "reviewedAt": "2026-11-24",
   "primarySource": "NCBI RefSNP",
   "crossCheckSource": "Ensembl GRCh38/GRCh37 variation APIs",
   "counts": {
-    "expected": 153,
-    "resolved": 153,
-    "verified": 153,
+    "expected": 154,
+    "resolved": 154,
+    "verified": 154,
     "conflicts": 0,
     "fetchErrors": 0
   },
@@ -10315,6 +10315,71 @@
         "ensemblGRCh37": "https://grch37.rest.ensembl.org/variation/human/rs9985399?content-type=application/json",
         "orientationResolution": null,
         "assemblyResolution": null
+      }
+    },
+    "rs10427255": {
+      "rsid": "rs10427255",
+      "gene": "Near ZEB2",
+      "status": "verified",
+      "reviewedAt": "2026-11-24",
+      "grch38": {
+        "chromosome": "2",
+        "position": 145367955,
+        "reference": "C",
+        "alternates": [
+          "T"
+        ],
+        "accession": "NC_000002.12",
+        "oppositeOrientation": false
+      },
+      "grch37": {
+        "chromosome": "2",
+        "position": 146125523,
+        "reference": "C",
+        "alternates": [
+          "T"
+        ],
+        "strand": 1,
+        "primaryAlleles": [
+          "C",
+          "T"
+        ]
+      },
+      "ensemblGRCh38": {
+        "chromosome": "2",
+        "position": 145367955,
+        "reference": "C",
+        "alternates": [
+          "T"
+        ],
+        "strand": 1,
+        "primaryAlleles": [
+          "C",
+          "T"
+        ]
+      },
+      "traitAlleles": [
+        "C",
+        "T"
+      ],
+      "traitAlleleSelection": "study_and_reference_agreement",
+      "alleleEncoding": "nucleotide",
+      "traitReferenceAllele": null,
+      "literatureAlleles": "C>T",
+      "literatureEffectAllele": "T",
+      "previousInputAlleles": "C>T",
+      "previousEffectAllele": "T",
+      "forwardEffectAllele": "T",
+      "effectDirection": "increase",
+      "inputTransform": "identity",
+      "sourceAgreement": true,
+      "sources": {
+        "ncbi": {
+          "url": "https://api.ncbi.nlm.nih.gov/variation/v0/refsnp/10427255",
+          "lastUpdate": "2024-10-30T23:09Z"
+        },
+        "ensemblGRCh38": "https://rest.ensembl.org/variation/human/rs10427255?content-type=application/json",
+        "ensemblGRCh37": "https://grch37.rest.ensembl.org/variation/human/rs10427255?content-type=application/json"
       }
     }
   },

@@ -31,8 +31,14 @@ export async function POST(
       return proxyBackendResponse(response)
     }
 
-    const data = await response.json()
-    return NextResponse.json(data)
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition":
+          response.headers.get("Content-Disposition") || "attachment",
+        "Cache-Control": "no-store",
+      },
+    })
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },

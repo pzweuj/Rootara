@@ -6,7 +6,7 @@
 # vcf文件用于单倍群计算
 
 import sys
-import pandas as pd
+import csv
 import pysam
 import argparse
 
@@ -22,25 +22,13 @@ def trans_rootara_to_vcf(rootara_csv, vcf_file):
         f.write('##reference=GRCh37\n')
         f.write('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tRootara\n')
 
-        df = pd.read_csv(rootara_csv, sep=',', header=0, low_memory=False)
-        df_filter = df[df['Check'] != 'WT']
-        df_filter = df_filter[~df_filter['Genotype'].isin(['DD', 'II', 'DI', 'ID', '--'])]
+        with open(rootara_csv, newline="", encoding="utf-8") as source:
+            for row in csv.DictReader(source):
+                if row["Check"] == "WT" or row["Genotype"] in {"DD","II","DI","ID","--"}:
+                    continue
+                gt = {"HET": "0/1", "HOM": "1/1"}.get(row["Check"], "0/0")
+                f.write(f"{row['Chrom']}\t{row['Start']}\t.\t{row['Ref']}\t{row['Alt']}\t.\tPASS\t.\tGT\t{gt}\n")
 
-        for i, row in df_filter.iterrows():
-            chrom = row['Chrom']
-            pos = row['Start']
-            ref = row['Ref']
-            alt = row['Alt']
-            genotype = row['Check']
-
-            gt = '0/0'
-            if genotype == 'HET':
-                gt = '0/1'
-            elif genotype == 'HOM':
-                gt = '1/1'
-
-            f.write('{}\t{}\t.\t{}\t{}\t.\tPASS\t.\tGT\t{}\n'.format(str(chrom), str(pos), ref, alt, gt))
-    
     # 使用pysam将VCF压缩为vcf.gz并创建索引
     pysam.tabix_compress(temp_vcf, vcf_file + '.gz', force=True)
     pysam.tabix_index(vcf_file + '.gz', preset='vcf', force=True)
