@@ -1,10 +1,10 @@
 "use client"
 
-import { Search, Copy } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Search } from "lucide-react"
+import { useState, useEffect, useCallback } from "react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -33,27 +33,15 @@ interface SNPData {
   [key: string]: any
 }
 
-interface ApiResponse {
-  data: { [key: string]: SNPData }
-  columns: string[]
-  pagination: {
-    total: number
-    page: number
-    page_size: number
-    total_pages: number
-  }
-}
-
 interface RawGeneticDataProps {
   currentReportId: string
 }
 
 export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedChromosome, setSelectedChromosome] = useState("all")
   const [snpData, setSnpData] = useState<SNPData[]>([])
-  const [metadata, setMetadata] = useState<any>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pagination, setPagination] = useState({
@@ -93,102 +81,111 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   ]
 
   // 获取数据的函数
-  const fetchData = async (signal: AbortSignal) => {
-    if (!currentReportId) {
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      const requestBody = {
-        report_id: currentReportId,
-        page_size: pagination.page_size,
-        page: pagination.page,
-        sort_by: "",
-        sort_order: "asc",
-        search_term: searchQuery || "",
-        filters:
-          selectedChromosome !== "all"
-            ? { chromosome: selectedChromosome }
-            : {},
-      }
-
-      const response = await fetch("/api/report/table", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-        signal,
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error("API响应错误:", response.status, errorText)
-        throw new Error(`API请求失败: ${response.status} - ${errorText}`)
-      }
-
-      const result = await response.json()
-      if (signal.aborted) {
+  const fetchData = useCallback(
+    async (signal: AbortSignal) => {
+      if (!currentReportId) {
         return
       }
 
-      // 安全处理数据
-      if (!result.data) {
-        console.error("API返回数据格式不正确:", result)
-        throw new Error("API返回数据格式不正确")
-      }
+      setLoading(true)
+      setError(null)
 
-      // 转换数据格式 - 使用更安全的方式处理数据
-      let dataArray: SNPData[] = []
+      try {
+        const requestBody = {
+          report_id: currentReportId,
+          page_size: pagination.page_size,
+          page: pagination.page,
+          sort_by: "",
+          sort_order: "asc",
+          search_term: searchQuery || "",
+          filters:
+            selectedChromosome !== "all"
+              ? { chromosome: selectedChromosome }
+              : {},
+        }
 
-      // 检查数据类型并相应处理
-      if (Array.isArray(result.data)) {
-        // 如果是数组，直接使用
-        dataArray = result.data.map((item: any) => ({
-          id: item.id || item.rsid || String(Math.random()),
-          rsid: item.rsid || "",
-          chromosome: item.chromosome || "",
-          position: item.position || "",
-          genotype: item.genotype || "",
-          ...item,
-        }))
-      } else if (typeof result.data === "object" && result.data !== null) {
-        // 如果是对象，转换为数组
-        dataArray = Object.entries(result.data).map(
-          ([key, value]: [string, any]) => ({
-            id: value.row_id || value.id || key,
-            rsid: value.rsid || "",
-            chromosome: value.chromosome || "",
-            position: value.position || "",
-            genotype: value.genotype || "",
-            ...value,
-          })
-        )
-      }
+        const response = await fetch("/api/report/table", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+          signal,
+        })
 
-      setSnpData(dataArray)
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error("API响应错误:", response.status, errorText)
+          throw new Error(`API请求失败: ${response.status} - ${errorText}`)
+        }
 
-      // 安全处理分页信息
-      if (result.pagination) {
-        setPagination(result.pagination)
-      }
+        const result = await response.json()
+        if (signal.aborted) {
+          return
+        }
 
-      // 移除提取染色体的代码，使用预设的染色体列表
-    } catch (err) {
-      if (signal.aborted) {
-        return
+        // 安全处理数据
+        if (!result.data) {
+          console.error("API返回数据格式不正确:", result)
+          throw new Error("API返回数据格式不正确")
+        }
+
+        // 转换数据格式 - 使用更安全的方式处理数据
+        let dataArray: SNPData[] = []
+
+        // 检查数据类型并相应处理
+        if (Array.isArray(result.data)) {
+          // 如果是数组，直接使用
+          dataArray = result.data.map((item: any) => ({
+            id: item.id || item.rsid || String(Math.random()),
+            rsid: item.rsid || "",
+            chromosome: item.chromosome || "",
+            position: item.position || "",
+            genotype: item.genotype || "",
+            ...item,
+          }))
+        } else if (typeof result.data === "object" && result.data !== null) {
+          // 如果是对象，转换为数组
+          dataArray = Object.entries(result.data).map(
+            ([key, value]: [string, any]) => ({
+              id: value.row_id || value.id || key,
+              rsid: value.rsid || "",
+              chromosome: value.chromosome || "",
+              position: value.position || "",
+              genotype: value.genotype || "",
+              ...value,
+            })
+          )
+        }
+
+        setSnpData(dataArray)
+
+        // 安全处理分页信息
+        if (result.pagination) {
+          setPagination(result.pagination)
+        }
+
+        // 移除提取染色体的代码，使用预设的染色体列表
+      } catch (err) {
+        if (signal.aborted) {
+          return
+        }
+        console.error("获取数据失败:", err)
+        setError(err instanceof Error ? err.message : "未知错误")
+      } finally {
+        if (!signal.aborted) {
+          setLoading(false)
+        }
       }
-      console.error("获取数据失败:", err)
-      setError(err instanceof Error ? err.message : "未知错误")
-    } finally {
-      if (!signal.aborted) {
-        setLoading(false)
-      }
-    }
-  }
+    },
+    [
+      currentReportId,
+      pagination.page,
+      pagination.page_size,
+      searchQuery,
+      selectedChromosome,
+    ]
+  )
 
   // 当报告ID、页码、搜索条件或染色体筛选变化时获取数据
   useEffect(() => {
@@ -201,7 +198,7 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
       clearTimeout(timer)
       controller.abort()
     }
-  }, [currentReportId, pagination.page, searchQuery, selectedChromosome])
+  }, [fetchData, searchQuery])
 
   // 处理搜索
   const handleSearch = (e: React.FormEvent) => {
@@ -213,17 +210,6 @@ export function RawGeneticData({ currentReportId }: RawGeneticDataProps) {
   const handleChromosomeChange = (value: string) => {
     setSelectedChromosome(value)
     setPagination((prev) => ({ ...prev, page: 1 })) // 重置到第一页
-  }
-
-  const handleCopyRsid = (rsid: string) => {
-    navigator.clipboard
-      .writeText(rsid)
-      .then(() => {
-        console.log(`Copied ${rsid} to clipboard`)
-      })
-      .catch((err) => {
-        console.error("Failed to copy: ", err)
-      })
   }
 
   // 处理分页

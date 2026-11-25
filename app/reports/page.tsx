@@ -10,10 +10,6 @@ export default function ReportsPage() {
   const { t } = useLanguage()
   const [currentReportId, setCurrentReportId] = useState("RPT_TEMPLATE01")
 
-  const handleExport = () => {
-    console.log(`Exporting data for report ${currentReportId}`)
-  }
-
   const handleReportChange = (reportId: string) => {
     setCurrentReportId(reportId)
   }

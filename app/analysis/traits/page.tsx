@@ -2,7 +2,7 @@
 
 import { AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import type React from "react"
 import { toast } from "sonner"
 
@@ -39,50 +39,53 @@ export default function TraitsPage() {
   )
 
   // Function to refresh traits data from API
-  const refreshTraitsData = async (reportId: string, signal?: AbortSignal) => {
-    setIsLoading(true)
-    setLoadError(null)
-    try {
-      const [catalog, resultPayload] = await Promise.all([
-        loadTraitCatalog(),
-        loadTraitResults(reportId, signal),
-      ])
-      if (catalog.version !== resultPayload.catalogVersion) {
-        throw new Error("Trait catalog version changed during evaluation")
+  const refreshTraitsData = useCallback(
+    async (reportId: string, signal?: AbortSignal) => {
+      setIsLoading(true)
+      setLoadError(null)
+      try {
+        const [catalog, resultPayload] = await Promise.all([
+          loadTraitCatalog(),
+          loadTraitResults(reportId, signal),
+        ])
+        if (catalog.version !== resultPayload.catalogVersion) {
+          throw new Error("Trait catalog version changed during evaluation")
+        }
+        const resultById = new Map(
+          resultPayload.results.map((result) => [result.traitId, result])
+        )
+        setTraits(
+          catalog.traits.map((trait) => ({
+            ...trait,
+            evaluation: resultById.get(trait.id) || {
+              traitId: trait.id,
+              status: "invalid_rule" as const,
+              resultKey: null,
+              resultCurrent: null,
+              genotypes: {},
+              missingRsids: trait.loci.map((locus) => locus.rsid),
+              detectedCount: 0,
+              requiredCount: trait.loci.length,
+            },
+          }))
+        )
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return
+        }
+        console.error("Failed to load traits:", error)
+        setTraits([])
+        setLoadError(
+          language === "zh-CN" ? "特征数据加载失败" : "Failed to load traits"
+        )
+      } finally {
+        if (!signal?.aborted) {
+          setIsLoading(false)
+        }
       }
-      const resultById = new Map(
-        resultPayload.results.map((result) => [result.traitId, result])
-      )
-      setTraits(
-        catalog.traits.map((trait) => ({
-          ...trait,
-          evaluation: resultById.get(trait.id) || {
-            traitId: trait.id,
-            status: "invalid_rule" as const,
-            resultKey: null,
-            resultCurrent: null,
-            genotypes: {},
-            missingRsids: trait.loci.map((locus) => locus.rsid),
-            detectedCount: 0,
-            requiredCount: trait.loci.length,
-          },
-        }))
-      )
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") {
-        return
-      }
-      console.error("Failed to load traits:", error)
-      setTraits([])
-      setLoadError(
-        language === "zh-CN" ? "特征数据加载失败" : "Failed to load traits"
-      )
-    } finally {
-      if (!signal?.aborted) {
-        setIsLoading(false)
-      }
-    }
-  }
+    },
+    [language]
+  )
 
   // Load traits on component mount and when report ID changes
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function TraitsPage() {
     const controller = new AbortController()
     refreshTraitsData(currentReportId, controller.signal)
     return () => controller.abort()
-  }, [currentReportId])
+  }, [currentReportId, refreshTraitsData])
 
   // Filter traits based on search query and selected category
   const filteredTraits = traits.filter((trait) => {

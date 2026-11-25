@@ -15,8 +15,6 @@ export async function POST(request: Request) {
   try {
     const { input_data } = await request.json()
 
-    console.log("Received import request with data:", input_data)
-
     // Parse the JSON data to validate and transform it
     let traitsData
     try {
@@ -36,8 +34,6 @@ export async function POST(request: Request) {
       )
     }
 
-    console.log("Parsed traits data:", traitsData)
-
     // Send the parsed data directly to the backend
     const response = await backendFetch("/traits/import", {
       method: "POST",
@@ -48,14 +44,11 @@ export async function POST(request: Request) {
       body: JSON.stringify(traitsData),
     })
 
-    console.log("Backend response status:", response.status)
-
     if (!response.ok) {
       return proxyBackendResponse(response)
     }
 
     const data = await response.json()
-    console.log("Backend response data:", data)
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error in traits/import API:", error)

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     cookieStore.set(cookieOptions)
 
     return NextResponse.json({ success: true })
-  } catch (error) {
+  } catch {
     // 即使出错也返回成功，因为客户端状态已经清除
     return NextResponse.json({ success: true })
   }

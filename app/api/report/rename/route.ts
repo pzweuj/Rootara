@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { report_id, new_name, new_name_zh } = await request.json()
+    const { report_id, new_name } = await request.json()
 
     const response = await backendFetch(
       `/report/rename?report_id=${encodeURIComponent(report_id)}&new_name=${encodeURIComponent(new_name)}`,

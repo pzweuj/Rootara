@@ -106,7 +106,7 @@ JWT 签名密钥首次启动时自动生成，并保存到 `/data/config/jwt-sec
 
 本机开发后端与导入流程时，执行 `cargo build --release --locked --manifest-path backend/reader/Cargo.toml` 和 `cargo build --release --locked --manifest-path backend/server/Cargo.toml`，并把 `rootara-server`、`rootara-reader`、`rootara-archive`、`admixrs` 和 `haplogrouper-rs` 放入 PATH。运行 `rootara-server build-reference backend/database/Rootara.core.202404.txt.gz backend/database/Rootara.core.sqlite` 生成参考索引。Dockerfile 中列有固定的上游提交、`backend/database/admix/` 的 K47 模型文件和 `backend/haploGrouper/data/` 的四张参考表，也可以从本地构建的镜像复制这些数据。
 
-前端仍位于仓库根目录，Rust 后端位于 `backend/server/` 和 `backend/reader/`。为后端和前端进程设置 `ROOTARA_API_KEY=dev-only-key`、`ROOTARA_BACKEND_API_KEY=dev-only-key`、`ROOTARA_BACKEND_ROOT=$PWD/backend`、`ROOTARA_DATA_DIR=.data`、`ADMIN_PASSWORD=dev-only-password` 和 `JWT_SECRET=dev-only-jwt-secret`，运行 `ROOTARA_DISABLE_PUBLIC=1 cargo run --manifest-path backend/server/Cargo.toml -- serve` 在 `127.0.0.1:8000` 启动私有 API；另开终端在根目录执行 `pnpm dev`，并设置 `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`。目录审核脚本与遗留测试仍位于 `backend/scripts/` 与 `backend/tests/`。
+前端仍位于仓库根目录，Rust 后端位于 `backend/server/` 和 `backend/reader/`。为后端和前端进程设置 `ROOTARA_API_KEY=dev-only-key`、`ROOTARA_BACKEND_API_KEY=dev-only-key`、`ROOTARA_BACKEND_ROOT=$PWD/backend`、`ROOTARA_DATA_DIR=.data`、`ADMIN_PASSWORD=dev-only-password` 和 `JWT_SECRET=dev-only-jwt-secret`，运行 `ROOTARA_DISABLE_PUBLIC=1 cargo run --manifest-path backend/server/Cargo.toml -- serve` 在 `127.0.0.1:8000` 启动私有 API；另开终端在根目录执行 `pnpm dev`，并设置 `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`。特征目录与候选清单审核校验可通过 `cargo run --locked --manifest-path backend/server/Cargo.toml -- validate-catalog` 执行。
 
 ## 版本与迁移
 

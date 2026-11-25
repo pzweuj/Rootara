@@ -13,7 +13,7 @@ import {
   Trash2,
   Edit,
 } from "lucide-react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { toast as sonnerToast } from "sonner"
 
@@ -90,7 +90,6 @@ export function ReportSwitcher({
   onReportChange,
 }: ReportSwitcherProps = {}) {
   const router = useRouter()
-  const pathname = usePathname()
   const { language, t } = useLanguage()
   const { currentReportId, setCurrentReportId } = useReport() // 使用报告上下文
 
@@ -130,16 +129,11 @@ export function ReportSwitcher({
       if (!response.ok) {
         throw new Error("Failed to delete report")
       }
-      // 添加调试信息
-      console.log("执行删除操作，报告ID:", reportId)
 
       // 验证reportId是否有效，防止传入错误的路径
       if (!reportId || reportId.includes("/") || reportId.includes("\\")) {
         throw new Error(`无效的报告ID: ${reportId}`)
       }
-
-      // 打印响应状态
-      console.log("删除API响应状态:", response.status)
 
       if (!response.ok) {
         throw new Error(`删除失败: ${response.status}`)
@@ -193,8 +187,6 @@ export function ReportSwitcher({
       return
     }
 
-    // 添加调试信息，显示将要删除的reportId
-    console.log("准备删除的报告ID:", reportId)
     toast({
       title: t("debugInfo"),
       description: `报告ID: ${reportId}`,
@@ -224,8 +216,6 @@ export function ReportSwitcher({
         return
       }
 
-      // 添加调试信息，显示确认删除的reportId
-      console.log("确认删除的报告ID:", reportToDelete)
       toast({
         title: t("debugInfo"),
         description: `确认删除报告ID: ${reportToDelete}`,
@@ -444,8 +434,7 @@ export function ReportSwitcher({
         throw new Error(`设置默认报告失败: ${response.status}`)
       }
 
-      // 获取响应数据
-      const data = await response.json()
+      await response.json()
 
       // 更新本地报告列表，将选中的报告设为默认
       setReports(

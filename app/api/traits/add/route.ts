@@ -59,15 +59,6 @@ export async function POST(request: NextRequest) {
         : [],
     }
 
-    console.log(
-      "Original trait data received:",
-      JSON.stringify(traitData, null, 2)
-    )
-    console.log(
-      "Processed trait data to send to backend:",
-      JSON.stringify(backendTraitData, null, 2)
-    )
-
     const response = await backendFetch("/traits/add", {
       method: "POST",
       headers: {

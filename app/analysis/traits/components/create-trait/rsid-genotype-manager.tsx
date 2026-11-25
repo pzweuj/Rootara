@@ -30,8 +30,6 @@ export function RsidGenotypeManager({
   const { language } = useLanguage()
   const { currentReportId } = useReport()
   const [rsidInput, setRsidInput] = useState("")
-  const [referenceGenotypeInput, setReferenceGenotypeInput] = useState("")
-  const [yourGenotypeInput, setYourGenotypeInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   const translations = {
@@ -69,8 +67,6 @@ export function RsidGenotypeManager({
     setIsLoading(true)
     try {
       const genotypeData = await fetchGenotypeData(rsid, currentReportId)
-      setReferenceGenotypeInput(genotypeData.reference)
-      setYourGenotypeInput(genotypeData.user)
       setIsLoading(false)
       return {
         success: true,
@@ -79,8 +75,6 @@ export function RsidGenotypeManager({
       }
     } catch (error) {
       console.error("Error fetching genotype data:", error)
-      setReferenceGenotypeInput("--")
-      setYourGenotypeInput("--")
       setIsLoading(false)
       return { success: false, reference: "--", user: "--" }
     }
@@ -106,8 +100,6 @@ export function RsidGenotypeManager({
 
     // 重置输入
     setRsidInput("")
-    setReferenceGenotypeInput("")
-    setYourGenotypeInput("")
   }
 
   const removeRsidGenotype = (index: number) => {

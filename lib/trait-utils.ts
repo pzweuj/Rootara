@@ -168,7 +168,7 @@ export function calculateTraitScore(trait: Trait): number {
 /**
  * Determines the result for a trait based on its score or boolean values
  */
-export function determineTraitResult(trait: Trait, language = "en"): string {
+export function determineTraitResult(trait: Trait, _language = "en"): string {
   const score = calculateTraitScore(trait)
 
   // 分离数字阈值和布尔值阈值

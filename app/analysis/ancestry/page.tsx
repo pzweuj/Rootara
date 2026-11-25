@@ -2,7 +2,7 @@
 
 import { Info } from "lucide-react"
 import dynamic from "next/dynamic"
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { HaplogroupDistribution } from "@/components/haplogroup-distribution"
 import { Badge } from "@/components/ui/badge"

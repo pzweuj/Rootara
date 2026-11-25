@@ -4,7 +4,7 @@ import { AlertCircle, Moon, Sun } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -53,6 +53,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/90 to-primary/70 relative">
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-12">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/rootara_logo_rmbg_small_white.svg"
             alt="Rootara"
@@ -102,6 +103,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <div className="flex justify-center mb-4 lg:hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/rootara_logo_rmbg_small.svg"
                 alt="Rootara"

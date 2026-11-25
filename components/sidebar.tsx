@@ -5,7 +5,6 @@ import {
   BarChart2,
   FileText,
   Dna,
-  Heart,
   User,
   Menu,
   ChevronLeft,
@@ -58,6 +57,7 @@ export function Sidebar() {
       }
     })
     setOpenItems(newOpenItems)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
   const navigation = [
@@ -99,7 +99,7 @@ export function Sidebar() {
   const NavItem = ({
     item,
     level = 0,
-    isBottom = false,
+    isBottom: _isBottom = false,
   }: {
     item: {
       name: string
@@ -323,6 +323,7 @@ export function Sidebar() {
                 className="flex items-center font-semibold"
                 onClick={() => setIsMobileOpen(false)}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/rootara_logo_rmbg_small.svg"
                   alt="Rootara"

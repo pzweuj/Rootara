@@ -6,7 +6,7 @@ import {
   requireApiAuth,
 } from "@/lib/backend-client"
 
-export async function POST(request: Request) {
+export async function POST() {
   const unauthorized = await requireApiAuth()
   if (unauthorized) {
     return unauthorized

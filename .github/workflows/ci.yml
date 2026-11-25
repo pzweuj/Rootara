@@ -42,20 +42,7 @@ jobs:
       - run: cargo build --locked --manifest-path backend/reader/Cargo.toml
       - run: cargo fmt --manifest-path backend/server/Cargo.toml --check
       - run: cargo test --locked --manifest-path backend/server/Cargo.toml
-      - run: cargo build --locked --manifest-path backend/server/Cargo.toml
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: pip
-
-      - run: python -m pip install --upgrade pip
-      - run: python -m pip install -r backend/requirements-dev.txt
-      - run: PYTHONPATH=backend python -m compileall -q backend deploy
-      - run: PYTHONPATH=backend python -m scripts.trait_rule_validation
-      - run: PYTHONPATH=backend python -m scripts.candidate_review_validation
-      - run: PYTHONPATH=backend python -m scripts.production_catalog_validation
-      - run: PYTHONPATH=backend python -m pytest -q backend/tests
+      - run: cargo run --locked --manifest-path backend/server/Cargo.toml -- validate-catalog
 
   image:
     needs: checks

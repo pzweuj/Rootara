@@ -1,6 +1,7 @@
 pub mod archive;
 pub mod auth;
 pub mod cache;
+pub mod catalog_audit;
 pub mod config;
 pub mod db;
 pub mod health;

@@ -5,12 +5,6 @@ import type { NextRequest } from "next/server"
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const isProduction = process.env.NODE_ENV === "production"
-
-  // 在开发环境中添加调试日志
-  if (!isProduction) {
-    console.log(`[Middleware] Processing path: ${path}`)
-  }
 
   // Login, logout and health probes are intentionally public. API routes use
   // JSON 401 responses so clients never receive an HTML redirect.
@@ -26,12 +20,6 @@ export async function middleware(request: NextRequest) {
   // Get the token from the cookies
   const token = request.cookies.get("auth_token")?.value || ""
 
-  if (!isProduction) {
-    console.log(
-      `[Middleware] Public path: ${isPublicPath}, Has token: ${!!token}`
-    )
-  }
-
   // If the path is public and the user is logged in, redirect to home
   if (redirectAuthenticated && token) {
     try {
@@ -39,20 +27,9 @@ export async function middleware(request: NextRequest) {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET || "")
       await jose.jwtVerify(token, secret)
 
-      if (!isProduction) {
-        console.log(`[Middleware] Valid token found, redirecting to home`)
-      }
-
       return NextResponse.redirect(new URL("/", request.url))
-    } catch (error) {
+    } catch {
       // If token verification fails, continue to login page
-      if (!isProduction) {
-        console.log(
-          `[Middleware] Token verification failed:`,
-          error instanceof Error ? error.message : error
-        )
-      }
-
       // 清除无效的token cookie
       const response = NextResponse.next()
       response.cookies.set("auth_token", "", {
@@ -68,11 +45,6 @@ export async function middleware(request: NextRequest) {
 
   // If the path is not public and the user is not logged in, redirect to login
   if (!isPublicPath && !token) {
-    if (!isProduction) {
-      console.log(
-        `[Middleware] No token for protected path, redirecting to login`
-      )
-    }
     return isApiPath
       ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })
       : NextResponse.redirect(new URL("/login", request.url))
@@ -83,17 +55,7 @@ export async function middleware(request: NextRequest) {
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET || "")
       await jose.jwtVerify(token, secret)
-
-      if (!isProduction) {
-        console.log(`[Middleware] Token verified for protected path`)
-      }
-    } catch (error) {
-      if (!isProduction) {
-        console.log(
-          `[Middleware] Invalid token for protected path, redirecting to login`
-        )
-      }
-
+    } catch {
       // 清除无效的token并重定向到登录页面
       const response = isApiPath
         ? NextResponse.json({ error: "Unauthorized" }, { status: 401 })

@@ -1,6 +1,10 @@
 use anyhow::{anyhow, Result};
 use clap::{Parser, Subcommand};
 use rootara_server::archive::migrate_text_archives;
+use rootara_server::catalog_audit::{
+    audit_legacy_traits, validate_candidate_manifest, validate_catalog,
+    validate_production_catalog_full,
+};
 use rootara_server::config::RuntimeConfig;
 use rootara_server::init::initialize_database;
 use rootara_server::reference::build_reference;
@@ -52,6 +56,13 @@ enum Commands {
         report_id: String,
         #[arg(long)]
         db: Option<PathBuf>,
+    },
+    /// Run full trait catalog, evidence, locus registry, and candidate manifest audits.
+    ValidateCatalog {
+        #[arg(long, default_value = ".")]
+        repo_root: PathBuf,
+        #[arg(long, default_value_t = 152)]
+        expected_count: usize,
     },
 }
 
@@ -127,6 +138,47 @@ fn main() -> Result<()> {
             let db_path = db.unwrap_or(cfg.db_path);
             let digest = verify_report_rows_sha256(&db_path, &report_id)?;
             println!("{digest}");
+        }
+        Commands::ValidateCatalog {
+            repo_root,
+            expected_count,
+        } => {
+            let db_dir = repo_root.join("backend").join("database");
+            let default_path = db_dir.join("default-traits.json");
+            let evidence_path = db_dir.join("trait-evidence.json");
+            let locus_path = db_dir.join("trait-locus-registry.json");
+            let normalized_path = db_dir.join("trait-catalog.json");
+            let manifest_path = db_dir.join("trait-candidate-review.json");
+            let candidate_source = repo_root
+                .join("docs")
+                .join("wegene-demo-priority-candidates.json");
+
+            let audit = audit_legacy_traits(&default_path)?;
+            let rule_errors = validate_catalog(&default_path, &evidence_path)?;
+            let prod_errors = validate_production_catalog_full(
+                &default_path,
+                &evidence_path,
+                &locus_path,
+                &normalized_path,
+                expected_count,
+            )?;
+            let manifest_errors = if manifest_path.exists() && candidate_source.exists() {
+                validate_candidate_manifest(&manifest_path, &candidate_source, &repo_root)?
+            } else {
+                Vec::new()
+            };
+
+            let summary = serde_json::json!({
+                "valid": rule_errors.is_empty() && prod_errors.is_empty() && manifest_errors.is_empty(),
+                "audit": audit,
+                "rule_errors": rule_errors,
+                "production_errors": prod_errors,
+                "candidate_manifest_errors": manifest_errors,
+            });
+            println!("{}", serde_json::to_string_pretty(&summary)?);
+            if summary["valid"].as_bool() != Some(true) {
+                return Err(anyhow!("trait catalog validation failed"));
+            }
         }
     }
     Ok(())

@@ -45,7 +45,6 @@ export function HaplogroupDistribution() {
   useEffect(() => {
     const fetchHaplogroupData = async () => {
       if (!currentReportId) {
-        console.log("没有可用的报告ID")
         return
       }
 
