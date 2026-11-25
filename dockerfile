@@ -5,16 +5,16 @@ ARG ROOTARA_VERSION=2.0.0
 FROM rust:1-bookworm AS reader-builder
 WORKDIR /build
 COPY backend/reader/ ./
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=rootara-reader-target,target=/build/target \
+RUN --mount=type=cache,id=rootara-reader-registry,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,id=rootara-reader-target,target=/build/target,sharing=locked \
     cargo build --release --locked && mkdir -p /out \
     && cp target/release/rootara-reader target/release/rootara-archive /out/
 
 FROM rust:1-bookworm AS server-builder
 WORKDIR /build
 COPY backend/server/ ./
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=rootara-server-target,target=/build/target \
+RUN --mount=type=cache,id=rootara-server-registry,target=/usr/local/cargo/registry,sharing=locked \
+    --mount=type=cache,id=rootara-server-target,target=/build/target,sharing=locked \
     cargo build --release --locked && mkdir -p /out \
     && cp target/release/rootara-server /out/
 
