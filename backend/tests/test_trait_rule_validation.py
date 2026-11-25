@@ -8,12 +8,14 @@ from scripts.trait_rule_validation import (
     validate_catalog,
 )
 from scripts.candidate_review_validation import validate_manifest
+from scripts.materialize_trait_catalog import SOURCE, materialize_compatibility
 from scripts.production_catalog_validation import validate_production_catalog
 
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_TRAITS = ROOT / "backend" / "database" / "default-traits.json"
-EVIDENCE = ROOT / "backend" / "database" / "trait-evidence.json"
+DATABASE = ROOT / "backend" / "database"
+DEFAULT_TRAITS = DATABASE / "default-traits.json"
+EVIDENCE = DATABASE / "trait-evidence.json"
 
 
 def test_evidence_catalog_and_fixtures_are_valid():
@@ -119,3 +121,37 @@ def test_production_release_gate_rejects_unvalidated_risk_rule(tmp_path):
     evidence_path.write_text(json.dumps(evidence), encoding="utf-8")
     errors = validate_production_catalog(default_path, evidence_path)
     assert any("needs ClinVar, CPIC, PharmGKB" in error for error in errors)
+
+
+def test_normalized_catalog_round_trips_compatibility_artifacts():
+    document = json.loads(SOURCE.read_text(encoding="utf-8"))
+    traits, evidence, loci = materialize_compatibility(document)
+    assert traits == json.loads((DATABASE / "default-traits.json").read_text(encoding="utf-8"))
+    assert evidence == json.loads((DATABASE / "trait-evidence.json").read_text(encoding="utf-8"))
+    assert loci == json.loads((DATABASE / "trait-locus-registry.json").read_text(encoding="utf-8"))
+
+
+def test_registry_has_154_reviewed_forward_loci_and_rs495828_is_corrected():
+    registry = json.loads((DATABASE / "trait-locus-registry.json").read_text(encoding="utf-8"))
+    assert registry["counts"] == {
+        "expected": 154, "resolved": 154, "verified": 154,
+        "conflicts": 0, "fetchErrors": 0,
+    }
+    assert all(locus["status"] == "verified" for locus in registry["loci"].values())
+    for locus in registry["loci"].values():
+        assert locus["grch37"]["chromosome"]
+        assert locus["grch37"]["position"]
+        assert locus["grch38"]["chromosome"]
+        assert locus["grch38"]["position"]
+        assert len(locus["traitAlleles"]) == 2
+        assert locus["sources"]["ncbi"]["url"]
+        assert locus["sources"]["ensemblGRCh38"]
+
+    rs495828 = registry["loci"]["rs495828"]
+    assert rs495828["grch37"]["position"] == 136154867
+    assert rs495828["grch38"]["position"] == 133279294
+    assert rs495828["inputTransform"] == "complement"
+    assert rs495828["forwardEffectAllele"] == "T"
+    traits = json.loads((DATABASE / "default-traits.json").read_text(encoding="utf-8"))
+    trait = next(item for item in traits if "rs495828" in item["rsids"])
+    assert trait["formula"] == "SCORE(rs495828:TT=10,GT=5,GG=0)"

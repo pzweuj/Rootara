@@ -35,12 +35,6 @@ jobs:
           ROOTARA_BACKEND_API_KEY: ci-only-backend-key
           ROOTARA_BACKEND_URL: http://127.0.0.1:8000
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.23"
-          cache: false
-      - run: go test backend/scripts/rootara_reader.go backend/scripts/rootara_reader_test.go
-
       - run: cargo fmt --manifest-path backend/reader/Cargo.toml --check
       - run: cargo build --locked --manifest-path backend/reader/Cargo.toml
       - run: cargo fmt --manifest-path backend/server/Cargo.toml --check
@@ -58,7 +52,7 @@ jobs:
       - run: PYTHONPATH=backend python -m scripts.trait_rule_validation
       - run: PYTHONPATH=backend python -m scripts.candidate_review_validation
       - run: PYTHONPATH=backend python -m scripts.production_catalog_validation
-      - run: PATH="$PWD/backend/reader/target/debug:$PATH" PYTHONPATH=backend python -m pytest -q backend/tests
+      - run: PYTHONPATH=backend python -m pytest -q backend/tests
 
   image:
     needs: checks

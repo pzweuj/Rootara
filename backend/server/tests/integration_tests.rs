@@ -1002,3 +1002,167 @@ async fn test_full_api_routes_traits_reports_and_health() {
         .unwrap();
     assert_eq!(clear.status(), StatusCode::OK);
 }
+
+fn find_native_binary(name: &str) -> String {
+    let exe = if cfg!(windows) {
+        format!("{name}.exe")
+    } else {
+        name.to_string()
+    };
+    let reader_target = repo_backend_root().join("reader").join("target");
+    for profile in ["debug", "release"] {
+        let candidate = reader_target.join(profile).join(&exe);
+        if candidate.is_file() {
+            return candidate.to_string_lossy().into_owned();
+        }
+    }
+    name.to_string()
+}
+
+#[test]
+fn test_rust_reader_multiallelic_haploid_and_rollback() {
+    let reader_bin = find_native_binary("rootara-reader");
+    for (vendor, rows, expected_mt) in [
+        ("23andme", "rs2\t1\t50\tAA\nunknown\t1\t50\tAA\nmt\tMT\t10\tG\n", true),
+        ("wegene", "rs2\t1\t50\tAA\nunknown\t1\t50\tAA\nmt\tMT\t10\tG\n", false),
+        (
+            "ancestry",
+            "rsid\tposition\tchromosome\tallele2\tallele1\nrs2\t50\t1\tA\tA\nunknown\t50\t1\tA\tA\nmt\t10\t26\tG\tG\n",
+            true,
+        ),
+    ] {
+        let tmp = TempDir::new().unwrap();
+        let core = tmp.path().join("core.gz");
+        {
+            let f = fs::File::create(&core).unwrap();
+            let mut enc = GzEncoder::new(f, Compression::default());
+            writeln!(enc, "Chrom\tStart\tRef\tAlt\tGene\tRSID\tgnomAD_AF\tCLNSIG\tCLNDN").unwrap();
+            for (chrom, pos, alt, rsid) in [
+                ("chr1", 50, "C", "rs1"),
+                ("chr1", 50, "G", "rs2"),
+                ("chrM", 10, "G", "mt"),
+            ] {
+                writeln!(enc, "{chrom}\t{pos}\tA\t{alt}\tgene\t{rsid}\t0.0004735077378849575\t.\t.")
+                    .unwrap();
+            }
+            enc.finish().unwrap();
+        }
+        let reference = tmp.path().join("reference.db");
+        build_reference(&core, &reference).unwrap();
+
+        let source = tmp.path().join("input.txt");
+        fs::write(&source, format!("# comment\n{rows}")).unwrap();
+        let report_db = tmp.path().join("out.db");
+
+        let status = std::process::Command::new(&reader_bin)
+            .args(["--input"])
+            .arg(&source)
+            .args(["--db"])
+            .arg(&report_db)
+            .args(["--reference"])
+            .arg(&reference)
+            .args(["--method", vendor, "--report", "RPT_TEMPLATE01"])
+            .status()
+            .expect("failed to execute rootara-reader");
+        assert!(status.success(), "rootara-reader failed for {vendor}");
+
+        let conn = open_connection(&report_db).unwrap();
+        let got: Vec<(String, String, String, String)> = {
+            let mut stmt = conn
+                .prepare("SELECT rsid, chromosome, genotype, gt FROM RPT_TEMPLATE01 ORDER BY rowid")
+                .unwrap();
+            let rows = stmt
+                .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)))
+                .unwrap()
+                .collect::<Result<Vec<_>, _>>()
+                .unwrap();
+            rows
+        };
+        let mut expected = vec![("rs2".into(), "1".into(), "AA".into(), "WT".into())];
+        if expected_mt {
+            expected.push(("mt".into(), "MT".into(), "GG".into(), "HOM".into()));
+        }
+        assert_eq!(got, expected);
+
+        // A failed replacement must roll back and leave the previous table intact.
+        let mut bytes = fs::read(&source).unwrap();
+        bytes.extend_from_slice(b"bad\t1\t50\t\xff\n");
+        fs::write(&source, bytes).unwrap();
+        let bad_status = std::process::Command::new(&reader_bin)
+            .args(["--input"])
+            .arg(&source)
+            .args(["--db"])
+            .arg(&report_db)
+            .args(["--reference"])
+            .arg(&reference)
+            .args(["--method", vendor, "--report", "RPT_TEMPLATE01"])
+            .status()
+            .unwrap();
+        assert!(!bad_status.success());
+        let cnt: usize = conn
+            .query_row("SELECT COUNT(*) FROM RPT_TEMPLATE01", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(cnt, expected.len());
+    }
+}
+
+#[test]
+fn test_lossless_archive_and_legacy_migration() {
+    let archive_bin = find_native_binary("rootara-archive");
+    for (source, raw) in [
+        (
+            "23andme",
+            b"\xef\xbb\xbf# 23andMe\r\nrs91\t1\t55\tAG\r\nrs92\tX\t42\tA".as_slice(),
+        ),
+        (
+            "ancestry",
+            b"# comment\nrsid\tchromosome\tposition\tallele1\tallele2\nrs91\t23\t55\tA\tG\n"
+                .as_slice(),
+        ),
+        ("wegene", b"# header\r\nrs91,1,55,AG\r\n".as_slice()),
+    ] {
+        let tmp = TempDir::new().unwrap();
+        let upload = tmp.path().join("source.txt");
+        fs::write(&upload, raw).unwrap();
+        let archive = tmp.path().join("raw.parquet");
+        rootara_server::archive::write_archive(&archive_bin, &upload, &archive, source).unwrap();
+
+        let expected_sha = rootara_server::archive::sha256_file(&upload).unwrap();
+        let exported_sha =
+            rootara_server::archive::sha256_archive_export(&archive_bin, &archive).unwrap();
+        assert_eq!(exported_sha, expected_sha);
+
+        let projected = rootara_server::archive::archive_variants(
+            &archive_bin,
+            &archive,
+            Some(&["rs91".to_string()]),
+        )
+        .unwrap();
+        assert_eq!(projected.len(), 1);
+        assert_eq!(projected[0].0, "rs91");
+        assert_eq!(projected[0].2, 55);
+        assert_eq!(projected[0].3, "AG");
+    }
+
+    // Legacy TXT migration verifies SHA-256 before optional removal
+    let tmp = TempDir::new().unwrap();
+    let txt = tmp.path().join("RDT_0123456789.23andme.txt");
+    let orig = b"# vendor\r\nrs1\t1\t9\tAG\r\n";
+    fs::write(&txt, orig).unwrap();
+    let migrated =
+        rootara_server::archive::migrate_text_archives(&archive_bin, tmp.path(), false).unwrap();
+    assert_eq!(migrated, vec!["RDT_0123456789.23andme.parquet".to_string()]);
+    assert!(txt.is_file());
+
+    // Tampered source must fail verification and preserve text
+    fs::write(&txt, b"updated").unwrap();
+    assert!(
+        rootara_server::archive::migrate_text_archives(&archive_bin, tmp.path(), true).is_err()
+    );
+    assert_eq!(fs::read(&txt).unwrap(), b"updated");
+
+    // Matching source passes and removes text when requested
+    fs::write(&txt, orig).unwrap();
+    rootara_server::archive::migrate_text_archives(&archive_bin, tmp.path(), true).unwrap();
+    assert!(!txt.exists());
+}

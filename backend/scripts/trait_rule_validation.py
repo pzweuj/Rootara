@@ -13,12 +13,149 @@ from pathlib import Path
 from itertools import product
 from typing import Any
 
-from scripts.rootara_traits import parse_formula
-
-
 RSID_RE = re.compile(r"^rs\d+$")
 GENOTYPE_RE = re.compile(r"^(?:[ACGTDI-]{2}|--)$")
 SCORE_RULE_RE = re.compile(r"(rs\d+)\s*:\s*([^;]+)")
+_GENOTYPE_ORDER = {base: index for index, base in enumerate("-ACGTDI")}
+
+
+class InsufficientGeneticData(ValueError):
+    """Raised when a rule cannot be evaluated from the available genotypes."""
+
+
+def normalize_genotype(genotype: str) -> str:
+    """Normalize an unphased two-allele genotype to a stable order."""
+
+    if not isinstance(genotype, str):
+        return genotype
+    value = genotype.strip().upper()
+    if len(value) != 2 or any(base not in _GENOTYPE_ORDER for base in value):
+        return value
+    return "".join(sorted(value, key=lambda base: _GENOTYPE_ORDER[base]))
+
+
+def _find_matching_brace(text: str, start_index: int) -> int:
+    count = 1
+    for i in range(start_index, len(text)):
+        if text[i] == "{":
+            count += 1
+        elif text[i] == "}":
+            count -= 1
+            if count == 0:
+                return i
+    return -1
+
+
+def _parse_score_formula(formula: str, genotype_dict: dict[str, str]) -> float:
+    if not formula.startswith("SCORE(") or not formula.endswith(")"):
+        raise ValueError("invalid SCORE formula")
+    total_score = 0.0
+    for rule in formula[6:-1].strip().split(";"):
+        rule = rule.strip()
+        if not rule:
+            continue
+        parts = rule.split(":")
+        if len(parts) != 2:
+            raise ValueError(f"invalid SCORE rule: {rule}")
+        rsid, score_rules = parts[0].strip(), parts[1].strip()
+        if rsid not in genotype_dict:
+            raise InsufficientGeneticData(f"missing genotype: {rsid}")
+        genotype = normalize_genotype(genotype_dict[rsid])
+        if not genotype:
+            raise InsufficientGeneticData(f"empty genotype: {rsid}")
+        for pair in score_rules.split(","):
+            pair = pair.strip()
+            if not pair:
+                continue
+            gt_score = pair.split("=")
+            if len(gt_score) != 2:
+                raise ValueError(f"invalid SCORE genotype pair: {pair}")
+            if normalize_genotype(gt_score[0].strip()) == genotype:
+                total_score += float(gt_score[1].strip())
+                break
+        else:
+            raise InsufficientGeneticData(f"unmapped genotype: {rsid}={genotype}")
+    return total_score
+
+
+def _parse_if_formula(formula: str, genotype_dict: dict[str, str]) -> bool:
+    if not formula.startswith("IF(") or not formula.endswith(")"):
+        raise ValueError("invalid IF formula")
+    rsid_rules = formula[3:-1].strip().split(";")
+    for rule in rsid_rules:
+        rule = rule.strip()
+        if not rule:
+            continue
+        parts = rule.split(":")
+        if len(parts) != 2:
+            raise ValueError(f"invalid IF rule: {rule}")
+        rsid, condition_rules = parts[0].strip(), parts[1].strip()
+        if rsid not in genotype_dict:
+            raise InsufficientGeneticData(f"missing genotype: {rsid}")
+        genotype = normalize_genotype(genotype_dict[rsid])
+        if not genotype:
+            raise InsufficientGeneticData(f"empty genotype: {rsid}")
+        matched = False
+        rule_result = False
+        for pair in condition_rules.split(","):
+            pair = pair.strip()
+            if not pair:
+                continue
+            gt_condition = pair.split("=")
+            if len(gt_condition) != 2:
+                raise ValueError(f"invalid IF genotype pair: {pair}")
+            cond_str = gt_condition[1].strip().lower()
+            if cond_str == "true":
+                condition = True
+            elif cond_str == "false":
+                condition = False
+            else:
+                raise ValueError(f"non-boolean IF condition: {pair}")
+            if normalize_genotype(gt_condition[0].strip()) == genotype:
+                matched = True
+                rule_result = condition
+                break
+        if not matched:
+            raise InsufficientGeneticData(f"unmapped genotype: {rsid}={genotype}")
+        if not rule_result:
+            return False
+    if not any(rule.strip() for rule in rsid_rules):
+        raise ValueError("empty IF formula")
+    return True
+
+
+def _parse_combined_formula(formula: str, genotype_dict: dict[str, str]) -> float | bool:
+    if_end = formula.find("{")
+    if if_end == -1:
+        raise ValueError("missing { in combined formula")
+    true_end = _find_matching_brace(formula, if_end + 1)
+    if true_end == -1:
+        raise ValueError("missing } in combined formula")
+    true_formula = formula[if_end + 1 : true_end]
+    else_formula = None
+    if true_end + 1 < len(formula) and formula[true_end + 1 :].strip().startswith("ELSE{"):
+        else_start = formula.find("{", true_end) + 1
+        else_end = _find_matching_brace(formula, else_start)
+        if else_end == -1:
+            raise ValueError("missing } in ELSE branch")
+        else_formula = formula[else_start:else_end]
+    if _parse_if_formula(formula[:if_end], genotype_dict):
+        return parse_formula(true_formula, genotype_dict)
+    if else_formula is not None:
+        return parse_formula(else_formula, genotype_dict)
+    return 0
+
+
+def parse_formula(formula: str, genotype_dict: dict[str, str]) -> float | bool:
+    """Evaluate a SCORE, IF, or combined IF{}ELSE{} trait formula."""
+
+    if formula.startswith("IF(") and "{" in formula:
+        return _parse_combined_formula(formula, genotype_dict)
+    if formula.startswith("IF("):
+        return _parse_if_formula(formula, genotype_dict)
+    if formula.startswith("SCORE("):
+        return _parse_score_formula(formula, genotype_dict)
+    raise ValueError("formula must start with SCORE( or IF(")
 
 
 def _canonical_genotype(genotype: str) -> str:

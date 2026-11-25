@@ -107,7 +107,7 @@ pub fn initialize_database(cfg: &RuntimeConfig) -> Result<()> {
     let backfilled = backfill_all_reports(cfg, &cfg.db_path)?;
     info!("Trait report backfill complete: {:?}", backfilled);
 
-    // Release gates matching deploy/launcher.py.
+    // Release gates for the reviewed production trait catalog.
     let catalog = get_trait_catalog_metadata(cfg)?;
     let count = catalog.get("count").and_then(Value::as_u64).unwrap_or(0) as usize;
     if let Some(expected) = cfg.expected_trait_count {
