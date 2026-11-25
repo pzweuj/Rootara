@@ -42,13 +42,7 @@ export async function POST(request: NextRequest) {
       }),
     })
 
-    if (!response.ok) {
-      return proxyBackendResponse(response)
-    }
-
-    // 获取并返回数据
-    const data = await response.json()
-    return NextResponse.json(data)
+    return proxyBackendResponse(response)
   } catch (error) {
     console.error("获取ClinVar数据失败:", error)
     return NextResponse.json(

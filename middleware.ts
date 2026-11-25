@@ -124,6 +124,8 @@ export const config = {
      * - *.ico (all ico files)
      * - *.png, *.jpg, *.jpeg, *.gif, *.svg (static images)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
+    // The streaming importer authenticates and enforces its own 50 MiB limit.
+    // Keep Next's middleware limit on the legacy JSON import route.
+    "/((?!api/imports/[^/]+$|health(?:/live|/ready)?$|_next/static|_next/image|favicon.ico|.*\\.ico$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
   ],
 }

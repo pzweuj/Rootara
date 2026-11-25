@@ -1,10 +1,112 @@
 "use client"
 
-import * as LucideIcons from "lucide-react"
+import {
+  Activity,
+  AlertCircle,
+  Apple,
+  Baby,
+  Banana,
+  Beef,
+  Beer,
+  Book,
+  Braces,
+  Brain,
+  Briefcase,
+  Cake,
+  Camera,
+  Car,
+  Cat,
+  ChefHat,
+  Cherry,
+  Clock,
+  Cloud,
+  Code,
+  Coffee,
+  Compass,
+  Cookie,
+  Cpu,
+  Crown,
+  Diamond,
+  Dna,
+  Dog,
+  Droplet,
+  Egg,
+  Eye,
+  Fish,
+  Flame,
+  Flower,
+  Frown,
+  Heart,
+  Leaf,
+  Moon,
+  Music,
+  Scissors,
+  Smile,
+  Snowflake,
+  Sun,
+  Thermometer,
+  Umbrella,
+  Utensils,
+  Wind,
+  Wine,
+  Zap,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useLanguage } from "@/contexts/language-context"
+
+const commonIcons = {
+  AlertCircle,
+  Eye,
+  Coffee,
+  Moon,
+  Droplet,
+  Brain,
+  Scissors,
+  Utensils,
+  Wine,
+  Clock,
+  Music,
+  Heart,
+  Dna,
+  Leaf,
+  Zap,
+  Sun,
+  Smile,
+  Frown,
+  Thermometer,
+  Wind,
+  Umbrella,
+  Flame,
+  Snowflake,
+  Activity,
+  Apple,
+  Baby,
+  Banana,
+  Beef,
+  Beer,
+  Book,
+  Braces,
+  Briefcase,
+  Cake,
+  Camera,
+  Car,
+  Cat,
+  ChefHat,
+  Cherry,
+  Cloud,
+  Code,
+  Compass,
+  Cookie,
+  Cpu,
+  Crown,
+  Diamond,
+  Dog,
+  Egg,
+  Fish,
+  Flower,
+}
 
 interface IconSelectorProps {
   selectedIcon: string
@@ -31,67 +133,13 @@ export function IconSelector({
   const t = (key: keyof typeof translations.en) =>
     translations[language as keyof typeof translations][key] || key
 
-  // Common icons to display in the selector
-  const commonIcons = [
-    "AlertCircle",
-    "Eye",
-    "Coffee",
-    "Moon",
-    "Droplet",
-    "Brain",
-    "Scissors",
-    "Utensils",
-    "Wine",
-    "Clock",
-    "Music",
-    "Heart",
-    "Dna",
-    "Leaf",
-    "Zap",
-    "Sun",
-    "Smile",
-    "Frown",
-    "Thermometer",
-    "Wind",
-    "Umbrella",
-    "Flame",
-    "Snowflake",
-    "Activity",
-    "Apple",
-    "Baby",
-    "Banana",
-    "Beef",
-    "Beer",
-    "Book",
-    "Braces",
-    "Briefcase",
-    "Cake",
-    "Camera",
-    "Car",
-    "Cat",
-    "ChefHat",
-    "Cherry",
-    "Cloud",
-    "Code",
-    "Compass",
-    "Cookie",
-    "Cpu",
-    "Crown",
-    "Diamond",
-    "Dog",
-    "Egg",
-    "Fish",
-    "Flower",
-  ]
-
   return (
     <div className="space-y-2 mt-2 sm:mt-4">
       <Label className="text-sm">{t("iconSelector")}</Label>
       <div className="p-2 sm:p-3 border rounded-md">
         <p className="text-xs text-muted-foreground mb-2">{t("selectIcon")}</p>
         <div className="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-10 gap-1 sm:gap-2 max-h-32 sm:max-h-40 overflow-y-auto">
-          {commonIcons.map((iconName) => {
-            const IconComponent = (LucideIcons as any)[iconName]
+          {Object.entries(commonIcons).map(([iconName, IconComponent]) => {
             return (
               <Button
                 key={iconName}

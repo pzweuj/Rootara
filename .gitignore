@@ -11,6 +11,9 @@
 
 # production
 /build
+/backend/reader/target/
+/backend/server/target/
+/backend/database/Rootara.core.sqlite
 
 # debug
 npm-debug.log*

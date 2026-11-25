@@ -33,7 +33,7 @@ class DatabaseConnectionPool:
         self.timeout = timeout
         self.pool = Queue(maxsize=max_connections)
         self.created_connections = 0
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
 
         # 统计信息
         self.stats = {
@@ -45,7 +45,7 @@ class DatabaseConnectionPool:
         }
 
         # 预创建一些连接
-        self._warm_up_pool(min(3, max_connections))
+        self._warm_up_pool(min(1, max_connections))
 
     def _create_connection(self) -> sqlite3.Connection:
         """创建新的数据库连接"""
@@ -59,8 +59,8 @@ class DatabaseConnectionPool:
             # 优化SQLite配置
             conn.execute("PRAGMA journal_mode=WAL")  # 启用WAL模式
             conn.execute("PRAGMA synchronous=NORMAL")  # 平衡性能和安全性
-            conn.execute("PRAGMA cache_size=10000")  # 增加缓存大小
-            conn.execute("PRAGMA temp_store=MEMORY")  # 临时表存储在内存中
+            conn.execute("PRAGMA cache_size=-2048")  # 2 MiB per connection
+            conn.execute("PRAGMA temp_store=FILE")
             conn.execute("PRAGMA foreign_keys=ON")  # 启用外键约束
 
             with self.lock:

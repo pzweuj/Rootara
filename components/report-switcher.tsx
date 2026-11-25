@@ -327,52 +327,6 @@ export function ReportSwitcher({
     setRenameDialogOpen(true)
   }
 
-  // 处理报告导出
-  const handleExportReport = async (reportId: string) => {
-    try {
-      // 调用API导出原始数据
-      const response = await fetch(`/api/report/${reportId}/rawdata`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      })
-
-      if (!response.ok) {
-        throw new Error(`导出失败: ${response.status}`)
-      }
-
-      // 获取响应数据
-      const data = await response.blob()
-
-      // 创建下载链接
-      const url = window.URL.createObjectURL(data)
-      const link = document.createElement("a")
-      link.href = url
-      link.setAttribute("download", `report-${reportId}-rawdata.txt`)
-      document.body.appendChild(link)
-
-      // 触发下载
-      link.click()
-
-      // 清理
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(link)
-    } catch (error) {
-      console.error("导出报告时出错:", error)
-
-      // 显示错误通知
-      toast({
-        title: t("exportError"),
-        description:
-          error instanceof Error ? error.message : t("unknownErrorChinese"),
-        variant: "destructive",
-        duration: 5000,
-      })
-    }
-  }
-
   // 从API获取报告数据
   useEffect(() => {
     const fetchReports = async () => {
@@ -791,11 +745,15 @@ export function ReportSwitcher({
                       {t("rename")}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => handleExportReport(selectedReport.id)}
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      {t("download")}
+                    <DropdownMenuItem asChild>
+                      <a
+                        href={`/api/report/${encodeURIComponent(selectedReport.id)}/rawdata`}
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        {t("download")}
+                      </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600 dark:text-red-400"
@@ -926,11 +884,15 @@ export function ReportSwitcher({
                             {t("rename")}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleExportReport(report.id)}
-                          >
-                            <Download className="mr-2 h-4 w-4" />
-                            {t("download")}
+                          <DropdownMenuItem asChild>
+                            <a
+                              href={`/api/report/${encodeURIComponent(report.id)}/rawdata`}
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              <Download className="mr-2 h-4 w-4" />
+                              {t("download")}
+                            </a>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-red-600 dark:text-red-400"

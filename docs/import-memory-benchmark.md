@@ -1,14 +1,46 @@
 # Rootara 自托管导入内存实测
 
+## v2.0.0（全 Rust 后端）与首轮 v2.0.0（FastAPI）、v1.0.3 对照
+
+2026-11-25，在 Linux/amd64 Docker Desktop 上使用 2 核 CPU 配额、1 GiB 内存上限、禁用 swap、空数据卷。三版都从公开上传接口导入同一份 603,450 行的 23andMe 模板。登录后和导入、下载完成后各静置 30 秒，取容器 `memory.current` 采样中位数。静置期间 Docker 健康检查照常运行。
+
+| 指标 | v1.0.3 | v2.0.0（首轮 FastAPI） | v2.0.0（全 Rust 后端） |
+| --- | ---: | ---: | ---: |
+| 镜像体积（磁盘 / 内容） | 2.55 GB / 665 MB | 1.11 GB / 272 MB | 381 MB / 89.8 MB |
+| 导入前静息内存 | 280.4 MiB | 137.3 MiB | 48.9 MiB |
+| 导入并下载后静息内存 | 504.3 MiB | 200.4 MiB | 109.2 MiB |
+| 导入峰值（cgroup `memory.peak`） | 983.5 MiB | 286.0 MiB | 140.1 MiB |
+| 从上传到任务完成 | 269.83 秒 | 5.88 秒 | 4.25 秒 |
+| 导入消耗的容器 CPU 时间 | 501.85 核秒 | 5.64 核秒 | 3.78 核秒 |
+
+另以 **512 MiB** 和 **256 MiB** 上限及相同 CPU 配额测试全 Rust 后端镜像，空卷启动、完整导入、浏览器 GET 下载和全表校验全部通过：
+
+- 512 MiB 配额：内核峰值 **142.4 MiB**，导入耗时 4.22 秒，导入后静息 111.6 MiB（匿名 24.1 MiB + 文件缓存 81.7 MiB），`oom_kill` 为 0。
+- 256 MiB 配额：内核峰值 **146.8 MiB**，导入耗时 4.27 秒，导入前静息 48.9 MiB（匿名 21.2 MiB），`oom_kill` 为 0。
+
+在 1 GiB 对照轮中，导入后静置时，v1 的匿名内存和文件缓存分别为 285.0 和 206.2 MiB，首轮 FastAPI v2 为 133.2 和 57.8 MiB，全 Rust 后端为 **22.3 和 81.8 MiB**。总数还包含内核记账。容器 CPU 时间取自 cgroup `cpu.stat` 的 `usage_usec` 差值，包含任务、服务和采样进程的 CPU 使用。阶段采样间隔约 0.5 秒。上述数字各对应一轮完整测试，主机文件缓存状态会影响实测值。
+
+按 SQLite 行序对全部 328,355 行及所有字段计算 SHA-256，三版结果均为 `2ae5ad9f02b7d0cda04c33b09bdb35b7879977e0038048849175c55fd305439b`。Y 和线粒体单倍群相同（`R1b1a1b1a1a2c1a5b1a1` / `L0a'b'f'g`），47 项 K47 成分与首轮 v2 完全一致（相对 v1 最大绝对差 0.07 个百分点）。下载文件的 SHA-256 均与原始输入一致。另在独立卷上运行 v1.0.3 至全 Rust 后端的启动迁移，旧示例报告的全表哈希保持一致，仪表盘、特征目录、特征详情、ClinVar 与表格查询均通过验证。
+
+v1.0.3 的本地镜像 ID 为 `sha256:b6deeab2eebe517a30d186814621f1d1bd1f8169be22665b4314378f1a58e3e4`，首轮 FastAPI v2.0.0（保留为 `rootara-local:2.0.0-fastapi`）为 `sha256:9d103020817ab0becb1b36be33cb1699d29a587262527ffb868769435b2522ad`，全 Rust 后端 v2.0.0 为 `sha256:dea76a0adc30fef166b06e9b78c3cf9c0f39c18fac69002e6c35ac0362764e79`。v2 测试覆盖浏览器使用的 GET 下载入口。
+
+```sh
+python deploy/benchmark_import_memory.py --image rootara-local:1.0.3 --cpus 2 1024
+docker build -f dockerfile -t rootara-local:2.0.0 .
+python deploy/benchmark_import_memory.py --image rootara-local:2.0.0 --cpus 2 --download-method GET --expected-variant-sha256 2ae5ad9f02b7d0cda04c33b09bdb35b7879977e0038048849175c55fd305439b 1024 512 256
+```
+
+## 2026-11-24 的旧版基准
+
 测试日期为 2026-11-24。使用 Linux/amd64 Docker Desktop、cgroup v2 和生产镜像 `rootara-local:optimized`，镜像 ID 为 `sha256:b48d712cd21ef9ca1e07b38670b49bc9d995648320451f93a5c3860af84aec6f`。以下容量按 MiB 计，1 MiB 等于 1,048,576 字节。
 
-## 测试方法
+### 测试方法
 
 每轮使用空数据目录和独立容器，限制 2 核 CPU 配额，禁用容器 swap。正常启动会先构建内置示例报告。服务就绪后登录，从宿主机通过公开上传接口提交仓库的 23andMe 格式模板 `backend/database/TEMPLATE01.txt`，共 603,450 条数据行、15,957,301 字节。导入计时从开始发送文件到任务返回完成。随后读取报告摘要并下载原始数据，比对 SHA-256。各轮顺序执行。
 
 内核 `memory.peak` 记录容器生命周期峰值，包含服务、分析子进程、文件缓存和内核记账。监测脚本每约 0.5 秒读取一次 `memory.current`、`memory.stat`、`memory.events` 和进程 RSS。各阶段以任务状态轮询划分，其采样最大值可能低于瞬时峰值。宿主机与 Docker 虚拟机自身用量不在容器计数内。
 
-## 不同容器配额的结果
+### 不同容器配额的结果
 
 | 容器上限（MiB） | 首次启动峰值（MiB） | 导入峰值（MiB） | 上传至完成或失败（秒） | 结果 |
 | ---: | ---: | ---: | ---: | --- |
@@ -23,7 +55,7 @@
 
 这些结果适用于本次模板、镜像及 CPU 配额。建议自托管时给容器留 2 GiB，并为操作系统和其他服务另留内存。ARM NAS、更大文件、不同供应商及多人同时使用的情况需要单独测量。
 
-## 2 GiB 基线的阶段采样
+### 2 GiB 基线的阶段采样
 
 | 阶段 | 容器采样最大值（MiB） | 该样本的匿名内存（MiB） | 该样本的文件内存（MiB） |
 | --- | ---: | ---: | ---: |
@@ -36,9 +68,9 @@
 
 2 GiB 组就绪并登录后占用 230.3 MiB。变异匹配期间内核峰值升至 928.6 MiB，在该阶段最高采样点，Go 进程 `rootara_reader` 的 RSS 为 644.2 MiB。代码里的 `-memlimit=200` 传给 `debug.SetMemoryLimit`，这是 Go 运行时的软目标。读取器把核心注释装入按染色体、坐标分组的内存映射，并把每一批匹配结果追加到切片，最后才写出 CSV。这两处适合先做堆分析，再测分批写出的收益。
 
-## 在自己的设备上复测
+### 复测旧镜像
 
-从仓库根目录使用 Python 3 和 Docker CLI 运行。镜像可通过 `docker build -f dockerfile -t rootara-local:optimized .` 构建。脚本为每轮生成临时账号，使用随机的本机端口，结束后移除该轮容器。标准输出每行是一轮 JSON 结果。
+使用该日期的旧版镜像 `rootara-local:optimized`，从仓库根目录使用 Python 3 和 Docker CLI 运行。脚本为每轮生成临时账号，使用随机的本机端口，结束后移除该轮容器。标准输出每行是一轮 JSON 结果。
 
 ```sh
 python deploy/benchmark_import_memory.py --image rootara-local:optimized --cpus 2 2048 1024 768 512 896 1024

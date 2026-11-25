@@ -1,77 +1,44 @@
-"""Lossless upload archives with projected, typed columns for trait lookup."""
-import csv
-import os
-import tempfile
+"""Lossless Parquet archives, streamed through the native archive worker."""
+import json
 from pathlib import Path
+import subprocess
+from contextlib import contextmanager
 
-import pyarrow as pa
-import pyarrow.dataset as ds
-import pyarrow.parquet as pq
-
-
-SCHEMA = pa.schema([
-    ("original_line", pa.binary()), ("rsid", pa.string()), ("chromosome", pa.string()),
-    ("position", pa.int64()), ("genotype", pa.string()),
-])
-VARIANT_COLUMNS = SCHEMA.names[1:]
+from scripts.runtime_config import ARCHIVE_TOOL
 
 
 def write_archive(source_path: Path, destination: Path, vendor: str):
-    from scripts.trait_report_migration import _normalize_chromosome
     destination.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as tmp:
-        temporary = Path(tmp.name)
-    try:
-        with pq.ParquetWriter(temporary, SCHEMA, compression="zstd",
-                              use_dictionary=["chromosome", "genotype"]) as writer, source_path.open("rb") as raw:
-            batch = [[] for _ in SCHEMA]
-            header = None
-            for line in raw:
-                text = line.decode("utf-8-sig", errors="replace").rstrip("\r\n")
-                values = (None,) * 4
-                if text and not text.startswith("#"):
-                    if vendor == "ancestry":
-                        fields = next(csv.reader([text], delimiter="\t"))
-                        if header is None:
-                            header = [fields.index(name) for name in ("rsid", "chromosome", "position", "allele1", "allele2")]
-                        else:
-                            try:
-                                rsid, chrom, position, a, b = (fields[i] for i in header)
-                                values = rsid, _normalize_chromosome(chrom), int(position), a + b
-                            except (IndexError, ValueError):
-                                pass
-                    else:
-                        fields = text.replace(",", "\t").split("\t")
-                        if len(fields) >= 4 and fields[0].lower().startswith("rs"):
-                            try:
-                                values = fields[0], _normalize_chromosome(fields[1]), int(fields[2]), fields[3]
-                            except ValueError:
-                                pass
-                for column, item in zip(batch, (line, *values)):
-                    column.append(item)
-                if len(batch[0]) >= 32768:
-                    writer.write_table(pa.table(batch, schema=SCHEMA))
-                    batch = [[] for _ in SCHEMA]
-            if batch[0]:
-                writer.write_table(pa.table(batch, schema=SCHEMA))
-        os.replace(temporary, destination)
-    finally:
-        temporary.unlink(missing_ok=True)
+    subprocess.run([ARCHIVE_TOOL, "pack", source_path, destination, vendor], check=True)
+
+
+@contextmanager
+def _output(arguments):
+    with subprocess.Popen([ARCHIVE_TOOL, *arguments], stdout=subprocess.PIPE) as process:
+        try:
+            yield process.stdout
+            if process.wait():
+                raise RuntimeError(f"Archive {arguments[0]} failed")
+        finally:
+            process.stdout.close()
+            if process.poll() is None:
+                process.terminate()
 
 
 def archive_variants(path, rsids=None):
-    predicate = ds.field("chromosome").is_valid()
-    if rsids is not None:
-        predicate = predicate & ds.field("rsid").isin(list(rsids))
-    for batch in ds.dataset(path, format="parquet").to_batches(columns=VARIANT_COLUMNS, filter=predicate):
-        yield from zip(*(column.to_pylist() for column in batch.columns))
+    selected = list(rsids) if rsids is not None else []
+    if rsids is not None and not selected:
+        return
+    with _output(["variants", path, "--", *selected]) as output:
+        for line in output:
+            yield tuple(json.loads(line))
 
 
 def original_bytes(path):
     if path.suffix == ".parquet":
-        with pq.ParquetFile(path) as archive:
-            for batch in archive.iter_batches(batch_size=8192, columns=["original_line"]):
-                yield b"".join(batch.column(0).to_pylist())
+        with _output(["export", path]) as handle:
+            while chunk := handle.read(128 * 1024):
+                yield chunk
     else:
         with path.open("rb") as handle:
             while chunk := handle.read(128 * 1024):

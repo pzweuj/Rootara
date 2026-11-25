@@ -1,5 +1,8 @@
 # 依赖目录
 node_modules
+**/target
+**/__pycache__
+.pytest_cache
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

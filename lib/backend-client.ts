@@ -50,19 +50,15 @@ export function backendError(
 export async function proxyBackendResponse(
   response: Response
 ): Promise<NextResponse> {
-  const body = await response.text()
   const headers = new Headers()
   const contentType = response.headers.get("content-type")
   if (contentType) {
     headers.set("content-type", contentType)
   }
-  return new NextResponse(
-    body || JSON.stringify({ error: response.statusText }),
-    {
-      status: response.status,
-      headers,
-    }
-  )
+  return new NextResponse(response.body, {
+    status: response.status,
+    headers,
+  })
 }
 
 export function withApiAuth<T extends (...args: any[]) => Promise<Response>>(

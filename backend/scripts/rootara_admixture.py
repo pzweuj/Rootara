@@ -1,117 +1,41 @@
-# coding=utf-8
-# pzw
-# 20250507
-# 用于从原始输入数据中进行祖源分析
-# 使用 https://github.com/stevenliuyi/admix
-# 模型参考 https://dnagenics.com/products/admixturecalculators
-
-import os
-from scripts.runtime_config import TEMP_DIR
-import tempfile
-import sqlite3
+"""Run the K47 Rust estimator and publish a complete result atomically."""
 import argparse
-import shutil
+import sqlite3
 import subprocess
+from contextlib import closing
 
-# admix运行，可能会占用较高的计算资源
-def admix_cli(input_file, rpt_id, method):
-    input_file = os.path.abspath(input_file)
-    
-    # 创建一个固定的临时目录
-    temp_base_dir = str(TEMP_DIR)
-    if not os.path.exists(temp_base_dir):
-        os.makedirs(temp_base_dir, exist_ok=True)
-    
-    # 使用固定目录创建临时目录
-    temp_dir = tempfile.mkdtemp(dir=temp_base_dir)
-    
-    try:
-        with open(os.path.join(temp_dir, f"{rpt_id}.admix.txt"), "w") as output:
-            subprocess.run(["admix", "-f", input_file, "-v", method, "-m", "K47"], stdout=output, check=True)
-    except Exception:
-        shutil.rmtree(temp_dir)
-        raise
-    return f'{temp_dir}/{rpt_id}.admix.txt'
+from scripts.runtime_config import ADMIX_DATA
 
-# 解析admix结果
-def parse_admix_result(admix_file):
-    admix_file = os.path.abspath(admix_file)
-    with open(admix_file, 'r') as f:
-        lines = f.readlines()
 
-    ances_dict = {}
-    begin = False
-    for line in lines:
-        if line == "\n":
-            continue
-        if 'K47' in line:
-            begin = True
-            continue
-        if line.startswith('Calcuation'):
-            continue
-        if begin:
-            line = line.strip()
-            line = line.split(': ')
-            ances_dict[line[0].replace('-', '_')] = float(line[1].replace('%', ''))
-
-    return ances_dict
-
-# 结果导入数据库
-def import_result_to_db(ances_dict, rpt_id, db_path):
-    db_path = os.path.abspath(db_path)
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # 获取表结构信息
-    cursor.execute("PRAGMA table_info(admixture)")
-    columns = [column[1] for column in cursor.fetchall()]
-    
-    # 准备SQL语句的列名和占位符部分
-    valid_columns = ['report_id']
-    values = [rpt_id]
-    
-    # 检查每个祖源成分是否在表结构中存在
-    for ances, ratio in ances_dict.items():
-        if ances in columns:
-            valid_columns.append(ances)
-            values.append(ratio)
-        else:
-            print(f"警告: 祖源成分 '{ances}' 在数据表结构中不存在，已忽略")
-    
-    # 构建SQL语句
-    columns_str = ", ".join(valid_columns)
-    placeholders = ", ".join(["?" for _ in valid_columns])
-    
-    # 执行插入
-    sql = f"INSERT INTO admixture ({columns_str}) VALUES ({placeholders})"
-    cursor.execute(sql, values)
-    
-    # 提交并关闭连接
-    conn.commit()
-    conn.close()
-
-# 完整流程
 def data_to_sqlite(input_file, rpt_id, method, db_path, force=False):
-    # 检查数据库中是否已经存在该报告的祖源分析结果
-    db_path = os.path.abspath(db_path)
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM admixture WHERE report_id=?", (rpt_id,))
-    result_count = cursor.fetchone()[0]
-    conn.close()
-
-    if result_count > 0 and not force:
-        print(f"报告 {rpt_id} 的祖源分析结果已存在于数据库中，跳过该报告")
-        return
-    
-    admix_file = admix_cli(input_file, rpt_id, method)
-    try:
-        ances_dict = parse_admix_result(admix_file)
-        if not ances_dict:
-            raise ValueError("K47 did not produce ancestry estimates")
-        import_result_to_db(ances_dict, rpt_id, db_path)
-    finally:
-        shutil.rmtree(os.path.dirname(admix_file))
+    with closing(sqlite3.connect(db_path)) as conn, conn:
+        if not force and conn.execute(
+            "SELECT 1 FROM admixture WHERE report_id=?", (rpt_id,)
+        ).fetchone():
+            return
+        result = subprocess.run(
+            ["admixrs", "--data-dir", ADMIX_DATA, "-f", input_file, "-v", method, "-m", "K47"],
+            stdout=subprocess.PIPE, text=True, encoding="utf-8", check=True,
+        )
+        header, *rows = result.stdout.strip().splitlines()
+        if header != "K47":
+            raise ValueError("Expected an AdmixRS K47 report")
+        expected = [row[1] for row in conn.execute("PRAGMA table_info(admixture)")
+                    if row[1] != "report_id"]
+        estimates = {}
+        for row in rows:
+            label, percent = row.split(": ")
+            column = label.replace("-", "_")
+            value = float(percent.removesuffix("%"))
+            if not percent.endswith("%") or not 0 <= value <= 100 or column in estimates:
+                raise ValueError(f"Invalid K47 estimate for {label}")
+            estimates[column] = value
+        if set(estimates) != set(expected) or len(expected) != 47:
+            raise ValueError("K47 components do not match the report schema")
+        columns = ", ".join(expected)
+        placeholders = ", ".join("?" for _ in expected)
+        conn.execute(f"INSERT OR REPLACE INTO admixture (report_id, {columns}) "
+                     f"VALUES (?, {placeholders})", (rpt_id, *(estimates[k] for k in expected)))
 
 
 def main():
@@ -120,7 +44,7 @@ def main():
     parser.add_argument('--rpt_id', type=str, required=True, help='Report ID')
     parser.add_argument('--method', type=str, required=True, help='Source of data')
     parser.add_argument('--db_path', type=str, required=True, help='Path to the SQLite database')
-    parser.add_argument('--force', help='Force overwrite existing results, default=False', default=False)
+    parser.add_argument('--force', help='Force overwrite existing results, default=False', action='store_true')
     args = parser.parse_args()
 
     data_to_sqlite(args.input, args.rpt_id, args.method, args.db_path, args.force)

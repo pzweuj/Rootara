@@ -12,7 +12,7 @@ const nextConfig = {
       bodySizeLimit: '50mb',
     },
   },
-  output: "standalone",
+  output: process.env.ROOTARA_STATIC_WEB === "1" ? "export" : "standalone",
 }
 
 export default nextConfig

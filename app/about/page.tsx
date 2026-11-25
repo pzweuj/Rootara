@@ -115,48 +115,27 @@ const openSourceLibraries: LicenseInfo[] = [
     repository: "https://github.com/lukeed/clsx",
   },
   {
-    name: "admix",
-    version: "1fd5181",
-    license: "GPL-3.0",
+    name: "AdmixRS",
+    version: "0.1.0",
+    license: "GPL-3.0-only",
     description: {
-      en: "An admixture analysis tool for Python that supports raw data from 23andme, AncestryDNA, etc.",
-      "zh-CN":
-        "一个用于 Python 的 admixture 分析工具，支持 23andme、AncestryDNA 等原始数据。",
+      en: "Estimates K47 ancestry proportions from consumer genotype files.",
+      "zh-CN": "从个人基因型文件估算 K47 祖源成分比例。",
     },
-    repository: "https://github.com/stevenliuyi/admix",
+    repository: "https://github.com/pzweuj/AdmixRS",
   },
   {
-    name: "haploGrouper",
-    version: "1.1",
-    license: "Apache-2.0",
+    name: "HaploGrouperRS",
+    version: "0.2.0",
+    license: "HaploGrouperRS Noncommercial",
+    licenseUrl:
+      "https://github.com/pzweuj/HaploGrouperRS/blob/70108d6844f7dbdaa6a483f1ff9c2bba6a035c27/LICENSE",
     description: {
-      en: "A software to classify haplotypes into haplogroups on the basis of a known phylogenetic tree.",
-      "zh-CN": "一个基于已知的系统发育树，将等位基因进行单倍群分组的软件。",
-    },
-    url: "https://gitlab.com/bio_anth_decode/haploGrouper",
-  },
-  {
-    name: "pandas",
-    version: "2.3.0",
-    license: "BSD-3",
-    description: {
-      en: "Flexible and powerful data analysis / manipulation library for Python, providing labeled data structures similar to R data.frame objects, statistical functions, and much more.",
+      en: "Assigns Y and mitochondrial haplogroups using the GRCh37 ISOGG and PhyloTree 17 references.",
       "zh-CN":
-        "一个用于 Python 的数据分析和操作库，提供类似于 R 中 data.frame 对象的带标签数据结构、统计函数等。",
+        "使用 GRCh37 ISOGG 和 PhyloTree 17 参考数据判定 Y 染色体与线粒体单倍群。",
     },
-    url: "https://pandas.pydata.org",
-    repository: "https://github.com/pandas-dev/pandas",
-  },
-  {
-    name: "pysam",
-    version: "0.23.3",
-    license: "MIT",
-    description: {
-      en: "Pysam is a Python package for reading, manipulating, and writing genomics data such as SAM/BAM/CRAM and VCF/BCF files. It's a lightweight wrapper of the HTSlib API, the same one that powers samtools, bcftools, and tabix.",
-      "zh-CN":
-        "一个用于 Python 的生物学数据处理库，提供对 SAM/BAM/CRAM 和 VCF/BCF 文件的读取、操作和写入功能。",
-    },
-    repository: "https://github.com/pysam-developers/pysam",
+    repository: "https://github.com/pzweuj/HaploGrouperRS",
   },
   {
     name: "sqlite3",

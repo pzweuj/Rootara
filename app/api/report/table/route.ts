@@ -24,12 +24,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(body),
     })
 
-    if (!response.ok) {
-      return proxyBackendResponse(response)
-    }
-
-    const data = await response.json()
-    return NextResponse.json(data)
+    return proxyBackendResponse(response)
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },

@@ -4,16 +4,23 @@
   <p><a href="README.md">English</a> | <strong>中文</strong></p>
 </div>
 
-Rootara 是一个用于导入和探索个人基因数据的自托管平台。所有分析都在一个完整镜像中本地执行；浏览器访问 Next.js，Next.js 在容器内部调用私有 FastAPI 分析服务。前端仍位于仓库根目录，后端源码位于 `backend/`。
+Rootara 是一个用于导入和探索个人基因数据的自托管平台。所有分析都在一个容器中本地执行。Next.js 在构建时生成静态页面，Rust 后端服务 `rootara-server` 提供页面、登录认证、浏览器接口与导入队列，生产镜像不再包含 Python 运行时。前端源码位于仓库根目录，后端位于 `backend/`。
 
 > **测试状态：** 当前遗传特征结果仍为测试数据，不得用于医学、健康或其他重要决策。
 
-v1 默认目录恰好包含 152 条已审核的相对倾向卡片，覆盖 154 个已核验
+默认目录包含 152 条已审核的相对倾向卡片，覆盖 154 个已核验
 位点。每张卡片展示证据等级、来源链接、适用人群和局限；它们都不是
 诊断或治疗建议。首发支持 `linux/amd64`。
 
-运行时不再依赖 Redis。私有 FastAPI 服务只在容器内监听
-`127.0.0.1:8000`，对外只开放 Next.js 端口。
+生产环境由单个 `rootara-server` 进程（Axum/Tokio）在 3000 端口提供静态网页和浏览器接口，并在容器内的 `127.0.0.1:8000` 提供私有 API。原生分析工具随任务启动，完成后退出。
+
+### v2.0.0 全 Rust 后端与分析引擎
+
+启动初始化、数据卷迁移、HTTP 接口、持久化导入队列、特征公式求值与健康检查均由 Rust 服务 `rootara-server`（`backend/server/`）实现。新导入的报告由 `rootara-reader` 逐行匹配变异，`AdmixRS` 0.1.0 计算 K47 祖源，`HaploGrouperRS` 0.2.0 判定 GRCh37 Y 染色体和线粒体单倍群。构建镜像时通过 `rootara-server build-reference` 生成带索引的参考库，导入时只查询当前位点，在一个事务中写入报告。`rootara-archive` 分小批写入 Parquet，下载时只读原始字节列，查询特征位点时只读分型列。已有 SQLite 报告、TXT 和 Parquet 原始文件可以继续读取。重新导入会使用 Rust 求解器重新计算祖源百分比。
+
+在本地验证当前代码可运行 `docker build -f dockerfile -t rootara-local:2.0.0 .`。测试条件、实测数据和复现命令见[导入资源基准](docs/import-memory-benchmark.md)。
+
+Rootara 自身代码使用 AGPLv3。镜像内的 AdmixRS 使用 GPL-3.0-only；HaploGrouperRS 0.2.0 限非商业使用，随附的 ISOGG 参考数据使用 CC BY-NC-SA 3.0。镜像在 `/opt/rootara/licenses/` 提供这些组件的许可与数据来源说明。[AdmixRS](https://github.com/pzweuj/AdmixRS) · [HaploGrouperRS 许可原文](https://github.com/pzweuj/HaploGrouperRS/blob/70108d6844f7dbdaa6a483f1ff9c2bba6a035c27/LICENSE)
 
 ## 快速开始
 
@@ -57,7 +64,7 @@ docker run -d --name rootara \
 
 JWT 签名密钥首次启动时自动生成，并保存到 `/data/config/jwt-secret`。SQLite 数据库和上传的原始数据都在 `/data` 下，请保留该卷用于备份和升级。
 
-FastAPI 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口。公开健康检查端点为：
+私有 API 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口。公开健康检查端点为：
 
 - `GET /health/live`
 - `GET /health/ready`
@@ -72,7 +79,7 @@ FastAPI 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口�
 
 新上传的文件按行保存为 Zstandard 压缩的 Parquet，原文件字节、行序和换行均可还原。特征回填只读取所需的位点列。SQLite 保留报告目录和带 RSID 索引的注释表，用于单点查询与分页。旧版 TXT 继续支持导出和回填。现有报告保留原导入结果；重新导入原文件可应用新的多候选位点匹配规则。
 
-如需转换旧 TXT，可在服务停止时运行 `docker compose run --rm --no-deps --entrypoint python rootara -m scripts.raw_archive`。命令逐个校验 SHA-256，默认保留旧文件。追加 `--remove-text` 会在每个文件校验成功后删除对应 TXT。
+如需转换旧 TXT，可在服务停止时运行 `docker compose run --rm --no-deps rootara migrate-archives`。命令逐个校验 SHA-256，默认保留旧文件。追加 `--remove-text` 会在每个文件校验成功后删除对应 TXT。
 
 导入任务在服务端排队，重启后继续处理。上传页面可以查看当前步骤。仪表盘在内存中按报告缓存五分钟，退出登录时清空。祖源地图只使用镜像内的国家边界数据。
 
@@ -97,7 +104,9 @@ FastAPI 只在容器内部监听 `127.0.0.1:8000`，对外只开放 3000 端口�
 
 ## 开发
 
-前端仍位于仓库根目录，后端源码位于 `backend/`。在仓库根目录使用 Python 3.11 虚拟环境安装锁定的 `backend/requirements.txt`，然后执行 `PYTHONPATH=backend python -m uvicorn main:app --host 127.0.0.1 --port 8000`。为后端和前端进程设置 `ROOTARA_API_KEY=dev-only-key`、`ROOTARA_BACKEND_API_KEY=dev-only-key`、`ROOTARA_DATA_DIR=.data`、`ADMIN_PASSWORD=dev-only-password` 和 `JWT_SECRET=dev-only-jwt-secret`。另开终端在根目录执行 `pnpm dev`，并设置 `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`。
+本机开发后端与导入流程时，执行 `cargo build --release --locked --manifest-path backend/reader/Cargo.toml` 和 `cargo build --release --locked --manifest-path backend/server/Cargo.toml`，并把 `rootara-server`、`rootara-reader`、`rootara-archive`、`admixrs` 和 `haplogrouper-rs` 放入 PATH。运行 `rootara-server build-reference backend/database/Rootara.core.202404.txt.gz backend/database/Rootara.core.sqlite` 生成参考索引。Dockerfile 中列有固定的上游提交、`backend/database/admix/` 的 K47 模型文件和 `backend/haploGrouper/data/` 的四张参考表，也可以从本地构建的镜像复制这些数据。
+
+前端仍位于仓库根目录，Rust 后端位于 `backend/server/` 和 `backend/reader/`。为后端和前端进程设置 `ROOTARA_API_KEY=dev-only-key`、`ROOTARA_BACKEND_API_KEY=dev-only-key`、`ROOTARA_BACKEND_ROOT=$PWD/backend`、`ROOTARA_DATA_DIR=.data`、`ADMIN_PASSWORD=dev-only-password` 和 `JWT_SECRET=dev-only-jwt-secret`，运行 `ROOTARA_DISABLE_PUBLIC=1 cargo run --manifest-path backend/server/Cargo.toml -- serve` 在 `127.0.0.1:8000` 启动私有 API；另开终端在根目录执行 `pnpm dev`，并设置 `ROOTARA_BACKEND_URL=http://127.0.0.1:8000`。目录审核脚本与遗留测试仍位于 `backend/scripts/` 与 `backend/tests/`。
 
 ## 版本与迁移
 

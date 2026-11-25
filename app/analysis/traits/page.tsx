@@ -106,7 +106,7 @@ export default function TraitsPage() {
 
   // Handle trait card click - navigate to detail page
   const handleTraitClick = (trait: TraitCardModel) => {
-    router.push(`/analysis/traits/${trait.id}`)
+    router.push(`/analysis/traits/detail?id=${encodeURIComponent(trait.id)}`)
   }
 
   // Handle creating a new trait

@@ -86,6 +86,16 @@ def _load_trait_evidence_catalog():
 
 def get_trait_catalog_metadata() -> dict:
     """Return a small, non-sensitive catalog summary for health checks."""
+    paths = (NORMALIZED_TRAIT_CATALOG_PATH, TRAIT_CATALOG_PATH, TRAIT_EVIDENCE_PATH, TRAIT_LOCUS_PATH)
+    revision = []
+    for path in paths:
+        stat = path.stat()
+        revision.append((path, stat.st_mtime_ns, stat.st_size))
+    return _catalog_metadata(tuple(revision))
+
+
+@lru_cache(maxsize=1)
+def _catalog_metadata(revision) -> dict:
 
     import hashlib
 

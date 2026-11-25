@@ -84,7 +84,7 @@ app = FastAPI(
     lifespan=lifespan,
     title = 'Rootara API',
     description = 'Rootara API 基因数据分析平台',
-    version = os.environ.get("ROOTARA_VERSION", "1.0.1"),
+    version = os.environ.get("ROOTARA_VERSION", "2.0.0"),
     docs_url=None if os.environ.get("ROOTARA_ENV", "production") == "production" else "/docs",
     redoc_url=None if os.environ.get("ROOTARA_ENV", "production") == "production" else "/redoc",
 )
@@ -563,6 +563,8 @@ async def api_get_trait_catalog(
 async def api_get_trait_results(report_id: str, api_key: str = Depends(verify_api_key)):
     """Evaluate the full catalog with one indexed report query."""
 
+    if not get_report_info(report_id, DB_PATH):
+        raise HTTPException(status_code=404, detail="Report not found")
     return get_report_results(report_id, DB_PATH)
 
 

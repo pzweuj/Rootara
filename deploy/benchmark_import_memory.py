@@ -10,6 +10,7 @@ import subprocess
 import sys
 import threading
 import time
+from statistics import median
 import urllib.error
 import urllib.request
 import uuid
@@ -40,7 +41,10 @@ while read current < memory.current; do
             maxrss=$rss
         fi
     done
-    echo "$current $peak $anon $files $kills $((maxrss * pagesize)) $owner"
+    while read k v; do
+        case "$k" in usage_usec) cpu=$v;; esac
+    done < cpu.stat
+    echo "$current $peak $anon $files $kills $((maxrss * pagesize)) $owner $cpu"
     sleep 0.5
 done
 """
@@ -50,7 +54,7 @@ def docker(*args, **kwargs):
     return subprocess.check_output(["docker", *args], text=True, **kwargs).strip()
 
 
-def trial(image, limit, cpus):
+def trial(image, limit, cpus, download_method="POST", expected_variant_sha256=None):
     name = "rootara-membench-" + uuid.uuid4().hex[:12]
     email, password = "benchmark@example.invalid", secrets.token_urlsafe(27)
     env = dict(os.environ, ADMIN_PASSWORD=password)
@@ -70,9 +74,10 @@ def trial(image, limit, cpus):
             if line.startswith("limits "):
                 limits.extend(map(int, line.split()[1:]))
             else:
-                current, peak, anon, files, kills, rss, owner = line.strip().split(" ", 6)
+                current, peak, anon, files, kills, rss, rest = line.strip().split(" ", 6)
+                owner, cpu = rest.rsplit(" ", 1)
                 samples.append((phase, int(current), int(peak), int(anon),
-                                int(files), int(kills), int(rss), owner))
+                                int(files), int(kills), int(rss), owner, int(cpu)))
 
     try:
         base = "http://" + docker("port", container, "3000/tcp")
@@ -102,12 +107,14 @@ def trial(image, limit, cpus):
             time.sleep(1)
         else:
             raise RuntimeError("startup timed out")
+        out["ready_s"] = round(time.monotonic() - start, 2)
         request("/api/auth/login", json.dumps(dict(email=email, password=password)).encode(),
                 {"Content-Type": "application/json"})
-        time.sleep(1)
+        phase = "idle_before"
+        time.sleep(30)
         assert samples and limits == [limit * 1048576, 0], f"invalid instrumentation: {limits}"
-        out["ready_s"] = round(time.monotonic() - start, 2)
         out["idle_bytes"] = samples[-1][1]
+        cpu_start = samples[-1][8]
         phase = "upload"
         started = time.monotonic()
         job = "/api/imports/" + str(uuid.uuid4())
@@ -126,15 +133,41 @@ def trial(image, limit, cpus):
         else:
             raise RuntimeError("import timed out")
         out["import_s"] = round(time.monotonic() - started, 2)
+        out["import_cpu_s"] = round((samples[-1][8] - cpu_start) / 1e6, 2)
         if job_state["stage"] == "failed":
             raise RuntimeError(job_state["error"])
         phase = "verify"
         report = job_state["report_id"]
         summary = request("/api/reports/" + report + "/dashboard")
-        raw = request("/api/report/" + report + "/rawdata", method="POST", raw=True)
+        raw = request("/api/report/" + report + "/rawdata", method=download_method, raw=True)
         assert hashlib.sha256(raw).digest() == hashlib.sha256(TEMPLATE.read_bytes()).digest()
-        assert summary["totalSnps"] > 300000 and summary["haplogroups"] and summary["ancestry"]
-        out.update(result="ok", snps=summary["totalSnps"])
+        assert summary["totalSnps"] > 300000 and all(summary["haplogroups"].get(k) for k in ("y_hap", "mt_hap"))
+        estimates = summary["ancestry"]
+        assert len(estimates) == 47 and abs(sum(estimates.values()) - 100) <= 0.24
+        out.update(snps=summary["totalSnps"], ancestry=estimates,
+                   haplogroups=summary["haplogroups"])
+        phase = "idle_after"
+        time.sleep(30)
+        phase = "verify_rows"
+        try:
+            out["variant_sha256"] = docker(
+                "exec", container, "/usr/local/bin/rootara-server", "verify-rows", report
+            )
+        except subprocess.CalledProcessError:
+            out["variant_sha256"] = docker("exec", container, "python", "-c", """
+import hashlib, json, sqlite3, sys
+from scripts.rootara_table_info import validate_report_table_name
+table = validate_report_table_name(sys.argv[1])
+digest = hashlib.sha256()
+with sqlite3.connect("/data/rootara.db") as db:
+    for row in db.execute(f"SELECT * FROM {table} ORDER BY rowid"):
+        digest.update(json.dumps(row, separators=(",", ":")).encode() + b'\\n')
+print(digest.hexdigest())
+""", report)
+        if expected_variant_sha256 and out["variant_sha256"] != expected_variant_sha256:
+            raise AssertionError("variant rows differ from the expected report digest")
+        assert samples[-1][0] in {"idle_after", "verify_rows"}, "resource sampler stopped early"
+        out["result"] = "ok"
     except (OSError, RuntimeError, AssertionError) as exc:
         out.update(result="failed", phase_at_failure=phase, error=str(exc))
     finally:
@@ -154,6 +187,9 @@ def trial(image, limit, cpus):
                     lifetime_peak_bytes=max(row[2] for row in group), anon_bytes=high[3],
                     file_bytes=high[4], oom_kills=max(row[5] for row in group),
                     largest_rss_bytes=high[6], largest_process=high[7])
+                if label.startswith("idle_"):
+                    out[label] = {key: int(median(row[i] for row in group))
+                                  for key, i in (("current_bytes", 1), ("anon_bytes", 3), ("file_bytes", 4))}
         finally:
             docker("rm", "-f", "-v", container)
     return out
@@ -163,7 +199,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--image", default="rootara-local:optimized")
     parser.add_argument("--cpus", type=float, default=2)
+    parser.add_argument("--download-method", choices=("POST", "GET"), default="POST",
+                        help="use GET to exercise the v2 browser download link")
+    parser.add_argument("--expected-variant-sha256", help="compare every report row to a baseline run")
     parser.add_argument("limits", nargs="+", type=int, help="successive container limits in MiB")
     args = parser.parse_args()
     for limit in args.limits:
-        print(json.dumps(trial(args.image, limit, args.cpus)), flush=True)
+        print(json.dumps(trial(args.image, limit, args.cpus, args.download_method,
+                               args.expected_variant_sha256)), flush=True)

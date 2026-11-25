@@ -41,6 +41,12 @@ jobs:
           cache: false
       - run: go test backend/scripts/rootara_reader.go backend/scripts/rootara_reader_test.go
 
+      - run: cargo fmt --manifest-path backend/reader/Cargo.toml --check
+      - run: cargo build --locked --manifest-path backend/reader/Cargo.toml
+      - run: cargo fmt --manifest-path backend/server/Cargo.toml --check
+      - run: cargo test --locked --manifest-path backend/server/Cargo.toml
+      - run: cargo build --locked --manifest-path backend/server/Cargo.toml
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -52,7 +58,7 @@ jobs:
       - run: PYTHONPATH=backend python -m scripts.trait_rule_validation
       - run: PYTHONPATH=backend python -m scripts.candidate_review_validation
       - run: PYTHONPATH=backend python -m scripts.production_catalog_validation
-      - run: PYTHONPATH=backend python -m pytest -q backend/tests
+      - run: PATH="$PWD/backend/reader/target/debug:$PATH" PYTHONPATH=backend python -m pytest -q backend/tests
 
   image:
     needs: checks

@@ -25,6 +25,7 @@ export async function POST(
         "Content-Type": "application/json",
       },
       body: "",
+      signal: request.signal,
     })
 
     if (!response.ok) {
@@ -46,3 +47,5 @@ export async function POST(
     )
   }
 }
+
+export const GET = POST

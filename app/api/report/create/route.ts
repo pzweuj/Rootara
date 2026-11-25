@@ -13,24 +13,17 @@ export async function POST(request: Request) {
       return unauthorized
     }
 
-    const requestData = await request.json()
-
-    const response = await backendFetch("/report/create", {
+    const init: RequestInit & { duplex: "half" } = {
       method: "POST",
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestData),
+      body: request.body,
+      duplex: "half",
       signal: request.signal,
-    })
-
-    if (!response.ok) {
-      return proxyBackendResponse(response)
     }
-
-    const data = await response.json()
-    return NextResponse.json(data)
+    return proxyBackendResponse(await backendFetch("/report/create", init))
   } catch (error) {
     console.error("Error in report/create API:", error)
     return NextResponse.json(

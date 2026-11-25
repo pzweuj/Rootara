@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
-"""Start and supervise the private FastAPI service and public Next.js server."""
+"""Initialize the volume and start the single production web process."""
 
 from __future__ import annotations
 
 import os
 import secrets
-import signal
-import subprocess
 import sys
-import time
-import urllib.error
-import urllib.request
 from pathlib import Path
 
 
@@ -18,14 +13,10 @@ BACKEND_ROOT = Path(os.environ.get("ROOTARA_BACKEND_ROOT", "/opt/rootara/backend
 DATA_DIR = Path(os.environ.get("ROOTARA_DATA_DIR", "/data"))
 DB_PATH = Path(os.environ.get("DB_PATH", str(DATA_DIR / "rootara.db")))
 JWT_SECRET_PATH = DATA_DIR / "config" / "jwt-secret"
-VERSION = os.environ.get("ROOTARA_VERSION", "1.0.1")
+VERSION = os.environ.get("ROOTARA_VERSION", "2.0.0")
 
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
-
-children: list[subprocess.Popen] = []
-stopping = False
-
 
 def _require_configuration() -> None:
     if not os.environ.get("ADMIN_PASSWORD"):
@@ -72,20 +63,10 @@ def _configure_environment() -> None:
 
 
 def _initialize_database() -> None:
-    command = [
-        sys.executable,
-        "-m",
-        "scripts.rootara_initial",
-        "--name",
-        os.environ["ADMIN_EMAIL"].split("@", 1)[0],
-        "--email",
-        os.environ["ADMIN_EMAIL"],
-        "--db",
-        str(DB_PATH),
-        "--force",
-        "false",
-    ]
-    subprocess.run(command, cwd=BACKEND_ROOT, env=os.environ.copy(), check=True)
+    from scripts.rootara_initial import init_db
+
+    email = os.environ["ADMIN_EMAIL"]
+    init_db(email.split("@", 1)[0], email, str(DB_PATH), force=False)
 
     # Upgrade legacy report tables before publishing catalog readiness. The
     # migration preserves existing rows, restores catalog RSIDs from the saved
@@ -127,101 +108,21 @@ def _initialize_database() -> None:
     persist_trait_catalog_metadata(catalog)
 
 
-def _wait_for_backend(timeout: float = 30.0) -> None:
-    deadline = time.monotonic() + timeout
-    request = urllib.request.Request("http://127.0.0.1:8000/health/live")
-    while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen(request, timeout=2) as response:
-                if response.status == 200:
-                    return
-        except (urllib.error.URLError, TimeoutError):
-            time.sleep(0.25)
-    raise RuntimeError("FastAPI did not become ready within 30 seconds")
-
-
-def _start_processes() -> None:
-    backend = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "uvicorn",
-            "main:app",
-            "--host",
-            "127.0.0.1",
-            "--port",
-            "8000",
-            "--workers",
-            "1",
-            "--loop",
-            "uvloop",
-            "--http",
-            "httptools",
-        ],
-        cwd=BACKEND_ROOT,
-        env=os.environ.copy(),
-    )
-    children.append(backend)
-    _wait_for_backend()
-
-    frontend_root = Path(os.environ.get("ROOTARA_WEB_ROOT", "/opt/rootara/web"))
-    frontend = subprocess.Popen(
-        ["node", "server.js"],
-        cwd=frontend_root,
-        env={
-            **os.environ,
-            "NODE_ENV": "production",
-            "PORT": "3000",
-            "HOSTNAME": "0.0.0.0",
-        },
-    )
-    children.append(frontend)
-
-
-def _stop_children() -> None:
-    for child in children:
-        if child.poll() is None:
-            child.terminate()
-    deadline = time.monotonic() + 15
-    for child in children:
-        remaining = max(0.0, deadline - time.monotonic())
-        try:
-            child.wait(timeout=remaining)
-        except subprocess.TimeoutExpired:
-            child.kill()
-            child.wait()
-
-
-def _signal_handler(signum, _frame) -> None:
-    global stopping
-    stopping = True
-    _stop_children()
-
-
 def main() -> int:
-    global children
     try:
         _require_configuration()
         _ensure_data_directory()
         _configure_environment()
+        os.chdir(BACKEND_ROOT)
         _initialize_database()
-        _start_processes()
-
-        signal.signal(signal.SIGTERM, _signal_handler)
-        signal.signal(signal.SIGINT, _signal_handler)
-        while not stopping:
-            for child in children:
-                return_code = child.poll()
-                if return_code is not None:
-                    _stop_children()
-                    return return_code or 1
-            time.sleep(0.5)
-        return 0
+        os.execv(sys.executable, [sys.executable, "-m", "web_runtime"])
     except Exception as exc:
         print(f"Rootara startup failed: {exc}", file=sys.stderr)
-        _stop_children()
         return 1
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    if sys.argv[1:] == ["--initialize"]:
+        _initialize_database()
+    else:
+        raise SystemExit(main())

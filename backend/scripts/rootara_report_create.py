@@ -8,14 +8,11 @@ import sqlite3
 import subprocess
 import tempfile
 
-from scripts.raw_archive import write_archive
-from scripts.rootara_2_vcf import trans_rootara_to_vcf
+from scripts.archive_report import archive_report
 from scripts.rootara_admixture import data_to_sqlite
-from scripts.rootara_haplogroup import insert_haplogroup_to_db
-from scripts.rootara_snp_2_db import csv_to_sqlite
+from scripts.rootara_haplogroup import insert_haplogroup_to_db, write_haplogroup_vcf
 from scripts.runtime_config import CORE_DATABASE_PATH, RAWDATA_DIR, READER_PATH, TEMP_DIR
 from scripts.rootara_table_info import validate_report_table_name
-from scripts.trait_report_migration import backfill_report, load_locus_registry
 
 
 def create_new_report(user_id, input_data, source_from, report_name, db_path,
@@ -40,23 +37,20 @@ def create_new_report(user_id, input_data, source_from, report_name, db_path,
         else:
             source = work / "upload.txt"
             source.write_bytes(input_data.encode("utf-8"))
-        output = work / "variants.csv"
         try:
             progress("variants")
-            subprocess.run([str(READER_PATH), "-input", str(source), "-output", str(output),
-                            "-method", source_from, "-rootara", str(CORE_DATABASE_PATH)], check=True)
-            csv_to_sqlite(output, db_path, report_id, force=True)
+            subprocess.run([READER_PATH, "--input", source, "--method", source_from,
+                            "--reference", CORE_DATABASE_PATH, "--db", db_path,
+                            "--report", report_id], check=True)
             if not initail:
                 progress("ancestry")
                 data_to_sqlite(str(source), report_id, source_from, db_path, force=True)
                 progress("haplogroups")
-                vcf = str(work / "variants.vcf.gz")
-                trans_rootara_to_vcf(str(output), vcf)
+                vcf = work / "haplogroups.vcf"
+                write_haplogroup_vcf(conn, report_id, vcf)
                 insert_haplogroup_to_db(report_id, vcf, db_path, force=True)
                 progress("archive")
-                write_archive(source, archive, source_from)
-                loci, registry_hash = load_locus_registry()
-                backfill_report(db_path, report_id, source_from, loci, registry_hash)
+                archive_report(source, archive, source_from, db_path, report_id)
             with conn:
                 conn.execute("BEGIN IMMEDIATE")
                 count = conn.execute(f"SELECT COUNT(*) FROM {report_id}").fetchone()[0]
