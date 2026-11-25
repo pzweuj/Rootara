@@ -178,6 +178,24 @@ def test_vendor_adapters_preserve_rsid_and_normalize_chromosome(
     assert list(iter_raw_variants(raw, source)) == [expected]
 
 
+@pytest.mark.parametrize("position", [102670495, 102799764])
+def test_backfill_accepts_verified_mmp1_spdi_positions(tmp_path, monkeypatch, position):
+    from scripts import trait_report_migration as migration
+
+    db_path = tmp_path / "rootara.db"
+    report_id = "RPT_47Z37DVO3Y"
+    _report_database(db_path, report_id)
+    raw_path = tmp_path / "RDT_47Z37DVO3Y.23andme.txt"
+    raw_path.write_text(f"rs1799750\t11\t{position}\tDI\n", encoding="utf-8")
+    monkeypatch.setattr(migration, "RAWDATA_DIR", tmp_path)
+    loci, registry_hash = load_locus_registry()
+
+    assert backfill_report(db_path, report_id, "23andme", loci, registry_hash) == 1
+    with sqlite3.connect(db_path) as conn:
+        assert conn.execute(f"SELECT position, genotype FROM {report_id}").fetchone() == (102799765, "DI")
+    assert raw_path.read_text(encoding="utf-8") == f"rs1799750\t11\t{position}\tDI\n"
+
+
 def test_backfill_position_conflict_rolls_back_report(tmp_path, monkeypatch):
     from scripts import trait_report_migration as migration
 

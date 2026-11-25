@@ -14,7 +14,7 @@ from scripts.rootara_table_info import validate_report_table_name
 from scripts.runtime_config import BACKEND_ROOT, RAWDATA_DIR
 
 
-IMPORTER_VERSION = "3"
+IMPORTER_VERSION = "4"
 REGISTRY_PATH = BACKEND_ROOT / "database" / "trait-locus-registry.json"
 TEMPLATE_PATH = BACKEND_ROOT / "database" / "TEMPLATE01.txt"
 COMPLEMENT = str.maketrans("ACGT", "TGCA")
@@ -156,12 +156,16 @@ def _forward_genotype(genotype: str, locus: dict, source_strand: str = "auto") -
     raise ValueError(f"genotype {normalized} does not match forward alleles {sorted(alleles)}")
 
 
-def _position_matches(chromosome: str, position: int, locus: dict) -> bool:
+def _position_matches(rsid: str, chromosome: str, position: int, locus: dict) -> bool:
     for assembly in ("grch37", "grch38"):
         placement = locus.get(assembly) or {}
         if str(placement.get("chromosome")) == chromosome and placement.get("position") == position:
             return True
-    return False
+    # dbSNP records this MMP1 indel at zero-based SPDI positions on
+    # NC_000011.9 and NC_000011.10. The registry keeps one-based positions.
+    # https://api.ncbi.nlm.nih.gov/variation/v0/refsnp/1799750
+    return (rsid == "rs1799750" and locus.get("alleleEncoding") == "insertion_deletion"
+            and chromosome == "11" and position in {102670495, 102799764})
 
 
 def _classification(genotype: str, reference: str) -> str:
@@ -212,7 +216,7 @@ def backfill_report(
         if raw_genotype.strip().upper() in {"", "--", "00", "NN"}:
             continue
         locus = loci[rsid]
-        if not _position_matches(chromosome, position, locus):
+        if not _position_matches(rsid, chromosome, position, locus):
             raise RuntimeError(
                 f"{report_id}/{rsid}: source position {chromosome}:{position} "
                 "matches neither GRCh37 nor GRCh38"
